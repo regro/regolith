@@ -83,10 +83,10 @@ class ProgressReportHelper(SoutHelperBase):
         rc = self.rc
         if selected_projecta == []:
             return
-        selected_projecta.sort(key=lambda prum: prum.get("begin_date"), reverse=True)
+        selected_projecta.sort(key=lambda prum: prum.get("deliverable", {}).get("due_date"), reverse=False)
         for p in selected_projecta:
             if rc.verbose:
-                print(f"{p.get('_id')}")
+                print(f"{p.get('name', p.get('_id'))}")
                 if p.get("deliverable"):
                     print(
                         f"  status: {p.get('status')}, begin_date: {p.get('begin_date')}, "
@@ -94,22 +94,16 @@ class ProgressReportHelper(SoutHelperBase):
                     )
                 if p.get("status") == "finished":
                     print(f"  finished: {p.get('end_date')}")
-                print(f"  description: {p.get('description')}")
+                print(f"  {p.get('description')}")
                 print(f"  log_url: {p.get('log_url')}")
                 print("  team:")
-                grp_members = None
-                if p.get("group_members"):
-                    grp_members = ", ".join(p.get("group_members"))
-                collaborators = None
-                if p.get("collaborators"):
-                    collaborators = ", ".join(p.get("collaborators"))
+                grp_members = _format_names(p.get("group_members", []))
+                collaborators = _format_names(p.get("collaborators", []))
                 print(f"    group_members: {grp_members}")
                 print(f"    collaborators: {collaborators}")
                 d = p.get("deliverable")
                 print("  deliverable:")
-                audience = None
-                if d.get("audience"):
-                    audience = ", ".join(d.get("audience"))
+                audience = _format_names(d.get("audience", []))
                 print(f"    audience: {audience}")
                 iter, title = 1, "scope:"
                 for scopum in d.get("scope", ["no scope"]):
@@ -123,25 +117,22 @@ class ProgressReportHelper(SoutHelperBase):
                     print(f"      objective: {m.get('objective')}")
                     print(f"      status: {m.get('status')}")
             else:
-                print(f"{p.get('_id')}")
-                if p.get("deliverable"):
-                    print(
-                        f"  status: {p.get('status')}, begin_date: {p.get('begin_date')}, "
-                        f"due_date: {p.get('deliverable').get('due_date')}"
-                    )
-                    print(f"  description: {p.get('description')}")
-                if p.get("status") == "finished":
-                    print(f"    finished: {p.get('end_date')}")
-                elif p.get("status") in PROJECTUM_ACTIVE_STATI:
-                    print(f"  log_url: {p.get('log_url')}")
+                print(f"{p.get('name', p.get('_id'))}")
+                print(_get_cline(p.get("name", ""), "="))
+                print(f"  {p.get('description', 'description: None')}")
+                if p.get("status") in PROJECTUM_ACTIVE_STATI:
                     if p.get("milestones"):
                         print("  milestones:")
+                        print(f"  {_get_cline('milestones:  ', '-')}")
                     for m in p.get("milestones"):
                         print(
-                            f"    due: {m.get('due_date')}, {m.get('name')}, "
-                            f"type: {m.get('type')}, status: {m.get('status')}"
+                            f"    {m.get('name')} ({m.get('uuid')[:6]}, due: {m.get('due_date')},"
+                            f" {m.get('status')})"
                         )
-                        print(f"    objective: {m.get('objective')}")
+                        print(f"      - {m.get('objective')}")
+                        if m.get("progress") and m.get("status") != "finished":
+                            print(f"        progress: {m.get('progress').get('text', '')}")
+                print("")
 
     def sout(self):
         rc = self.rc
@@ -179,9 +170,21 @@ class ProgressReportHelper(SoutHelperBase):
         print("*************************[Finished Projecta]*************************")
         for prum in finishedp:
             print(f"{prum.get('_id')}, grant: {prum.get('grants')}")
-            print(f"  description: {prum.get('description')}")
+            print(f"  {prum.get('description')}")
             print(f"  finished: {prum.get('end_date')}")
         print("*************************[Proposed Projecta]*************************")
         self.print_projectum(proposedp)
         print("*************************[In Progress Projecta]*************************")
         self.print_projectum(startedp)
+
+
+def _get_cline(thing_to_underline: str, linestyle: str) -> str:
+    if linestyle == "=":
+        n_str = int(0.75 * len(thing_to_underline))
+    else:
+        n_str = len(thing_to_underline)
+    return linestyle * n_str
+
+
+def _format_names(namelist):
+    return ", ".join(namelist)
