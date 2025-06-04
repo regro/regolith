@@ -123,7 +123,7 @@ class ProgressReportHelper(SoutHelperBase):
                 if p.get("status") in PROJECTUM_ACTIVE_STATI:
                     if p.get("milestones"):
                         print("  milestones:")
-                        print(f"  {_get_cline("milestones:  ", "-")}")
+                        print(f"  {_get_cline('milestones:  ', '-')}")
                     for m in p.get("milestones"):
                         print(
                             f"    {m.get('name')} ({m.get('uuid')[:6]}, due: {m.get('due_date')},"
