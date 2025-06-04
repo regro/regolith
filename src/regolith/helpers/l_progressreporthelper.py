@@ -119,7 +119,7 @@ class ProgressReportHelper(SoutHelperBase):
             else:
                 print(f"{p.get('name', p.get('_id'))}")
                 print(_get_cline(p.get("name", ""), "="))
-                print(f"  {p.get('description', "description: None")}")
+                print(f"  {p.get('description', 'description: None')}")
                 if p.get("status") in PROJECTUM_ACTIVE_STATI:
                     if p.get("milestones"):
                         print("  milestones:")
