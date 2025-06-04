@@ -10,6 +10,7 @@ from regolith.tools import (
     fuzzy_retrieval,
     get_pi_id,
     key_value_pair_filter,
+    strip_str,
 )
 
 TARGET_COLL = "people"
@@ -21,7 +22,9 @@ def subparser(subpi):
     subpi.add_argument("-c", "--current", action="store_true", help="get only current group members ")
     subpi.add_argument("-p", "--prior", action="store_true", help="get only former group members ")
     subpi.add_argument("-v", "--verbose", action="store_true", help="increase verbosity of output")
-    subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs")
+    subpi.add_argument(
+        "-f", "--filter", nargs="+", help="Search this collection by giving key element pairs", type=strip_str
+    )
     subpi.add_argument(
         "-k",
         "--keys",

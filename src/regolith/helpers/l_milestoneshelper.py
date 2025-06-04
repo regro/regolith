@@ -16,7 +16,7 @@ from regolith.schemas import (
     PROJECTUM_PAUSED_STATI,
     alloweds,
 )
-from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, key_value_pair_filter
+from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, key_value_pair_filter, strip_str
 
 PROJECTUM_STATI = alloweds.get("PROJECTUM_STATI")
 TARGET_COLL = "projecta"
@@ -48,12 +48,16 @@ def subparser(subpi):
         f"u_milestone to see those.",
     )
     subpi.add_argument(
-        "-l", "--lead", help="Filter milestones for this project lead specified as an ID, " "e.g., sbillinge"
+        "-l",
+        "--lead",
+        help="Filter milestones for this project lead specified as an ID, " "e.g., sbillinge",
+        type=strip_str,
     )
     subpi.add_argument(
         "-p",
         "--person",
         help="Filter milestones for this person whether lead or not, specified " "by id, e.g., sbillinge",
+        type=strip_str,
     )
     subpi.add_argument(
         "-c", "--current", action="store_true", help="Same behavior as default.  Here for consistency"

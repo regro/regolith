@@ -3,13 +3,13 @@ import datetime as dt
 from regolith.dates import get_dates
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.tools import all_docs_from_collection
+from regolith.tools import all_docs_from_collection, strip_str
 
 TARGET_COLL = "expenses"
 
 
 def subparser(subpi):
-    subpi.add_argument("payee", help="payee id for the expense")
+    subpi.add_argument("payee", help="payee id for the expense", type=strip_str)
     return subpi
 
 

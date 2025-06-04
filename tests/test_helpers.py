@@ -13,7 +13,7 @@ MILESTONE_TYPES = alloweds.get("MILESTONE_TYPES")
 dash = "-"
 helper_map = [
     (
-        ["helper", "attestations", "--grant", "dmref15", "--no-plot", "--verbose"],
+        ["helper", "attestations", "--grant", "dmref15 ", "--no-plot", "--verbose"],
         "Instructions/Notes:\n"
         "  Quarters are: Q1 July thru Sept, Q2 Oct - Dec, Q3 Jan - Mar, Q4 Apr - Jun\n"
         "  Grad salaries are about $3400 per month\n"
@@ -59,7 +59,7 @@ helper_map = [
             "helper",
             "attestations",
             "--begin-date",
-            "2019-01-01",
+            "2019-01-01 ",
             "--end-date",
             "2019-05-30",
             "--effort-reporting",
@@ -69,7 +69,7 @@ helper_map = [
         "scopatz, dmref15, 0.0, 75.0, 75.0, 0.0, 0.0\n",
     ),
     (
-        ["helper", "l_progress", "-l", "ascopatz", "--date", "2022-01-09"],
+        ["helper", "l_progress", "ascopatz ", "--date", "2022-01-09"],
         "\nProgress report for ascopatz, generated 2022-01-09\n"
         "*************************[Orphan Projecta]*************************\n"
         "*************************[Finished Projecta]*************************\n"
@@ -86,7 +86,7 @@ helper_map = [
         "    objective: develop a detailed plan with dates\n",
     ),
     (
-        ["helper", "l_progress", "-l", "pliu", "--date", "2022-01-09"],
+        ["helper", "l_progress", "-l", "pliu ", "--date", "2022-01-09"],
         "\nProgress report for pliu, generated 2022-01-09\n"
         "*************************[Orphan Projecta]*************************\n"
         "pl_thirdprojectum, status: backburner\n"
@@ -162,7 +162,7 @@ helper_map = [
         "2020-05-06 (kosb_f): lead: ascopatz, sb_firstprojectum, status: finished\n    Type: meeting\n    Title: Kick off meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: introduce project to the lead\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - kickoff note\n    uuid: kosb_firstprojectum\n",
     ),
     (
-        ["helper", "l_milestones", "--verbose", "--person", "aeinstein"],
+        ["helper", "l_milestones", "--verbose", "--person", "aeinstein "],
         "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n"
         "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n    uuid: milestone_uuid_sb1_2\n"
         "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n    uuid: milestone_uuid_sb1\n",
@@ -186,7 +186,7 @@ helper_map = [
         "ab_inactive\n    status: backburner, begin_date: 2020-05-03, due_date: 2021-05-03, grant: dmref15\n    description: a prum that has various inactive states in milestones and overall\n    team:\n        lead: abeing\n        group_members: None\n        collaborators: None\n",
     ),
     (
-        ["helper", "l_projecta", "--verbose", "--lead", "ascopatz"],
+        ["helper", "l_projecta", "--verbose", "--lead", "ascopatz "],
         "sb_firstprojectum\n    status: started, begin_date: 2020-04-28, due_date: 2021-05-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n",
     ),
     (
@@ -217,7 +217,7 @@ helper_map = [
         "\nNo projecta finished within the 7 days leading up to 2020-06-02\n",
     ),
     (
-        ["helper", "l_grants", "--current", "--date", "2020-05-25"],
+        ["helper", "l_grants", "--current", "--date", "2020-05-25 "],
         "\nAdministered by: apam\n"
         "  sym2.0         \t awardnr: NF-1234        \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n",
     ),
@@ -276,7 +276,7 @@ helper_map = [
         "    current organization: The University of South Carolina\n"
         "    current position: Assistant Professor\n",
     ),
-    (["helper", "l_members", "--filter", "name", "sco"], "scopatz    \n"),
+    (["helper", "l_members", "--filter", "name", "sco "], "scopatz    \n"),
     (
         ["helper", "l_members", "--filter", "name", "sco", "-v"],
         "Anthony Scopatz, professor | group_id: scopatz\n"
@@ -294,7 +294,7 @@ helper_map = [
             "--notes",
             "coffee",
             "--date",
-            "2020-01-15",
+            "2020-01-15 ",
             "--range",
             "2",
         ],
@@ -331,7 +331,7 @@ helper_map = [
         "        -A. B. Friend\n        -AB Friend\n        -Tony Friend\n",
     ),
     (
-        ["helper", "l_abstract", "--year", "2018", "--author", "afriend"],
+        ["helper", "l_abstract", "--year", "2018 ", "--author", "afriend"],
         "\n---------------------------------------\n"
         "2018-05-22 - Meeting to check flexibility on dates, Upton NY\n"
         "---------------------------------------\n"
@@ -498,7 +498,7 @@ helper_map = [
         "Abstract: We made the case for local structure\n",
     ),
     (
-        ["helper", "l_todo", "--assigned-to", "sbillinge", "--date", "2020-05-01"],
+        ["helper", "l_todo", "--assigned-to", "sbillinge ", "--date", "2020-05-01"],
         "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
         "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
         "--------------------------------------------------------------------------------\n"
@@ -591,14 +591,14 @@ helper_map = [
         "Manuscript by Wingit in Nature is due on 2021-04-11\n",
     ),
     (
-        ["helper", "l_currentappointments", "-d", "2021-08-10"],
+        ["helper", "l_currentappointments", "-d", "2021-08-10 "],
         "scopatz future_grant n/a 1.0 2020-09-01 2021-08-31\n",
     ),
     (["helper", "l_currentappointments", "-d", "2020-06-01"], "scopatz abc42 abc42 0.8 2020-06-01 2020-08-31\n"),
     (["helper", "l_currentappointments", "-d", "2020-01-01", "-s"], "scopatz sym sym 1.0 2020-01-01 2020-05-15\n"),
     (["helper", "v_meetings", "--test"], "Meeting validator helper\n"),
     (
-        ["helper", "l_reimbstatus", "scopatz"],
+        ["helper", "l_reimbstatus", "scopatz "],
         "Reimbursed expenses:\n"
         "\n"
         "Submitted expenses:\n"
@@ -651,7 +651,7 @@ helper_map = [
             "helper",
             "u_milestone",
             "--milestone_uuid",
-            "kosb_fir",
+            "kosb_fir ",
             "--name",
             "Kick off meeting",
             "--date",
@@ -676,7 +676,7 @@ helper_map = [
         "The milestone 'Kick off meeting' has been marked as finished in prum sb_firstprojectum.\n",
     ),
     (
-        ["helper", "u_milestone", "--milestone_uuid", "bad_id"],
+        ["helper", "u_milestone", "--milestone_uuid", "bad_id "],
         "Failed to update projecta.\n"
         "No ids were found that match your milestone_uuid entry (bad_id).\n"
         "Make sure you have entered the correct uuid or uuid fragment and rerun the helper.\n\n",
@@ -729,7 +729,7 @@ helper_map = [
         "If this is not the case, rerun with --database set to the database where the item is located.\n",
     ),
     (
-        ["helper", "u_logurl", "sb", "--index", "1", "https://docs.google.com/document/d/1pQMFpuI"],
+        ["helper", "u_logurl", "sb ", "--index", "1", "https://docs.google.com/document/d/1pQMFpuI"],
         "sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n",
     ),
     (
@@ -753,7 +753,7 @@ helper_map = [
             "--aliases",
             "Friend",
             "--date",
-            "2020-01-02",
+            "2020-01-02 ",
         ],
         "afriend has been added/updated in contacts\n",
     ),
@@ -786,7 +786,7 @@ helper_map = [
             "6",
             "50",
             "--assigned-to",
-            "sbillinge",
+            "sbillinge ",
             "--assigned-by",
             "sbillinge",
             "--begin-date",
@@ -815,7 +815,7 @@ helper_map = [
             "--index",
             "3",
             "--assigned-to",
-            "sbillinge",
+            "sbillinge ",
             "--end-date",
             "2020-07-20",
             "--date",
@@ -853,7 +853,7 @@ helper_map = [
             "--index",
             "3",
             "--assigned-to",
-            "sbillinge",
+            "sbillinge ",
             "--description",
             "update the description",
             "--due-date",
@@ -931,7 +931,7 @@ helper_map = [
         "sb_firstprojectum status has been updated to finished\n",
     ),
     (
-        ["helper", "f_prum", "sb_"],
+        ["helper", "f_prum", "sb_ "],
         "Projectum not found. Projecta with similar names: \n"
         "sb_firstprojectum     status:finished\n"
         "Please rerun the helper specifying the complete ID.\n",
@@ -943,7 +943,7 @@ helper_map = [
         "Results of your search:\nsbillinge    name: Simon J. L. Billinge    position: professor\n",
     ),
     (
-        ["helper", "lister", "people", "--keys"],
+        ["helper", "lister", "people ", "--keys"],
         "Available keys:\n"
         "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
         "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
@@ -973,7 +973,7 @@ helper_map = [
         [
             "helper",
             "u_institution",
-            "columbiau",
+            "columbiau ",
             "--aka",
             "ucolumbia",
             "Columbia University in the City of New York",
@@ -1002,7 +1002,7 @@ helper_map = [
         "2. columbiau      Columbia University.\n",
     ),
     (
-        ["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31"],
+        ["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31 "],
         "WARNING: appointment gap for scopatz from 2019-02-01 to 2019-12-31\n"
         "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
         "appointments on outdated grants:\n"
@@ -1029,7 +1029,7 @@ helper_map = [
         "plotting mode is on\n",
     ),
     (
-        ["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31", "-v"],
+        ["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31 ", "-v"],
         "WARNING: appointment gap for scopatz from 2019-02-01 to 2019-12-31\n"
         "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
         "appointments on outdated grants:\n"
@@ -1091,7 +1091,7 @@ helper_map = [
             "-q",
             "Tess Guebre",
             "--status",
-            "downloaded",
+            "downloaded ",
             "--title",
             "A flat world theory",
         ],
@@ -1106,7 +1106,7 @@ helper_map = [
             "Nature",
             "On the Quantum Theory of Radiation",
             "--requester",
-            "Niels Bohr",
+            "Niels Bohr ",
             "--reviewer",
             "zcliu",
             "--status",
@@ -1120,7 +1120,7 @@ helper_map = [
         [
             "helper",
             "a_grppub_readlist",
-            "pdf",
+            "pdf ",
             "--title",
             "A list to test the lister",
             "--purpose",
@@ -1138,7 +1138,7 @@ helper_map = [
             "100.0",
             "To destroy numbers",
             "--begin-date",
-            "2020-09-15",
+            "2020-09-15 ",
             "--end-date",
             "2022-02-14",
             "--duration",

@@ -15,32 +15,6 @@ from regolith.validators import DEFAULT_VALIDATORS, always_true, noop
 FORBIDDEN_NAMES = frozenset(["del", "global"])
 
 
-def strip_rc(rc):
-    """strip whitespace from all string-like rc members
-
-    Parameters
-    ----------
-    rc : runcontrol object
-      The rc with unstripped strings
-
-    Return
-    ------
-    rc : runcontrol object
-      The rc with all strings sstripped of whitespace
-    """
-    stripped_rc = rc.__class__()
-    for attr in dir(rc):
-        if not attr.startswith("__"):
-            value = getattr(rc, attr)
-            if isinstance(value, str):
-                print("str", attr, value)
-                setattr(stripped_rc, attr, value.strip())
-            else:
-                print("non-str", attr, value)
-                setattr(stripped_rc, attr, value)
-    return stripped_rc
-
-
 def warn_forbidden_name(forname, inname=None, rename=None):
     """Warns the user that a forbidden name has been found."""
     msg = "found forbidden name {0!r}".format(forname)

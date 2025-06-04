@@ -12,7 +12,7 @@ from gooey import GooeyParser
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.schemas import PROJECTUM_ACTIVE_STATI, PROJECTUM_FINISHED_STATI, alloweds
-from regolith.tools import all_docs_from_collection, get_pi_id, key_value_pair_filter
+from regolith.tools import all_docs_from_collection, get_pi_id, key_value_pair_filter, strip_str
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_progress"
@@ -25,7 +25,7 @@ def subparser(subpi):
     if isinstance(subpi, GooeyParser):
         listbox_kwargs["widget"] = "Listbox"
 
-    subpi.add_argument("lead", help="Generate report for this project lead")
+    subpi.add_argument("lead", help="Generate report for this project lead", type=strip_str)
     subpi.add_argument("-v", "--verbose", action="store_true", help="increase verbosity of output")
     subpi.add_argument(
         "-s",
@@ -46,7 +46,7 @@ def subparser(subpi):
         help="Specify what keys to return values from when running "
         "--filter. If no argument is given the default is just the id.",
     )
-    subpi.add_argument("--date", help="date used in testing. Defaults to " "today's date.")
+    subpi.add_argument("--date", help="date used in testing. Defaults to " "today's date.", type=strip_str)
     return subpi
 
 

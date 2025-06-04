@@ -18,6 +18,7 @@ from regolith.tools import (
     get_pi_id,
     key_value_pair_filter,
     print_task,
+    strip_str,
 )
 
 TARGET_COLL = "todos"
@@ -41,7 +42,7 @@ def subparser(subpi):
     subpi.add_argument(
         "--short",
         nargs="?",
-        const=30,
+        const=20,
         help="Filter for tasks of short duration. "
         "All items with a duration <= # mins, will be returned "
         "if the number # is specified.",
@@ -51,6 +52,7 @@ def subparser(subpi):
         "--tags",
         nargs="+",
         help="Filter tasks by tags. Items are returned if they contain any of the tags listed",
+        type=strip_str,
     )
     subpi.add_argument(
         "-s",
@@ -59,13 +61,15 @@ def subparser(subpi):
         choices=TODO_STATI,
         help="Filter tasks with specific stati",
         default=["started"],
+        type=strip_str,
         **listbox_kwargs,
     )
     subpi.add_argument("-o", "--outstandingreview", help="List outstanding reviews", action="store_true")
     subpi.add_argument(
         "-a",
         "--assigned-to",
-        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ",
+        help="Filter tasks that are assigned to this user id. Default id is saved in user.json.",
+        type=strip_str,
     )
     subpi.add_argument(
         "-b",
@@ -73,11 +77,13 @@ def subparser(subpi):
         nargs="?",
         const="default_id",
         help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ",
+        type=strip_str,
     )
     subpi.add_argument(
         "--date",
         help="Enter a date such that the helper can calculate how many days are left "
         "from that date to the due-date. Default is today.",
+        type=strip_str,
         **date_kwargs,
     )
     subpi.add_argument(
@@ -86,6 +92,7 @@ def subparser(subpi):
         nargs="+",
         help="Search this collection by giving key element pairs. '-f description paper' will return tasks "
         "with description containing 'paper' ",
+        type=strip_str,
     )
 
     return subpi

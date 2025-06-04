@@ -17,7 +17,7 @@ from regolith.schemas import (
     PROJECTUM_FINISHED_STATI,
     PROJECTUM_PAUSED_STATI,
 )
-from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, key_value_pair_filter
+from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, key_value_pair_filter, strip_str
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_projecta"
@@ -32,14 +32,18 @@ def subparser(subpi):
         int_kwargs["widget"] = "IntegerField"
 
     subpi.add_argument(
-        "-l", "--lead", help="Filter milestones for this project lead, " "specified by id, e.g., sbillinge"
+        "-l",
+        "--lead",
+        help="Filter milestones for this project lead, " "specified by id, e.g., sbillinge",
+        type=strip_str,
     )
     subpi.add_argument(
         "-p",
         "--person",
+        type=strip_str,
         help="Filter milestones for this person whether lead or " "not, specified by id, e.g., sbillinge",
     )
-    subpi.add_argument("-g", "--grant", help="Filter projecta by a grant ID")
+    subpi.add_argument("-g", "--grant", help="Filter projecta by a grant ID", type=strip_str)
     subpi.add_argument(
         "-c",
         "--current",
@@ -76,6 +80,7 @@ def subparser(subpi):
         help="date range back from DATE, in days, to search over "
         "for finished prums."
         "If no range is specified, search range will be 7 days",
+        type=int,
     )
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs")
     subpi.add_argument(
@@ -91,6 +96,7 @@ def subparser(subpi):
         help="projecta with end_date within RANGE before this date will be listed. "
         "The default is today. Some projecta don't have an end date and won't appear in a search. "
         "mostly used for testing.",
+        type=strip_str,
         **date_kwargs,
     )
     return subpi
