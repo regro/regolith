@@ -13,7 +13,7 @@ from gooey import GooeyParser
 from regolith.dates import get_due_date
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.schemas import alloweds
+from regolith.schemas import SCHEMAS, alloweds
 from regolith.tools import all_docs_from_collection, fragment_retrieval, get_uuid
 
 TARGET_COLL = "projecta"
@@ -26,7 +26,8 @@ def subparser(subpi):
     if isinstance(subpi, GooeyParser):
         date_kwargs["widget"] = "DateChooser"
 
-    subpi.add_argument("-i", "--milestone_uuid", help="The uuid of a milestone. " "Takes a full or partial uuid.")
+    # subpi.add_argument("-i", "--uuid", help="The universally unique id for the task so it
+    #   can be referenced elsewhere. " "Takes a full or partial uuid.")
     subpi.add_argument(
         "-p",
         "--projectum_id",
@@ -35,37 +36,48 @@ def subparser(subpi):
         "you are adding a new milestone "
         "to the specified projectum.",
     )
-    subpi.add_argument(
-        "-u", "--due-date", help="New due date of the milestone. " "Required for a new milestone.", **date_kwargs
-    )
+    # subpi.add_argument(
+    #     "-u", "--due-date", help="New due date of the milestone. " "Required for a new milestone.", **date_kwargs
+    # )
     # Do not delete --database arg
     subpi.add_argument(
         "--database",
         help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
     )
     subpi.add_argument("-f", "--finish", action="store_true", help="Finish milestone. ")
-    subpi.add_argument("-n", "--name", help="Name of the milestone. " "Required for a new milestone.")
-    subpi.add_argument("-o", "--objective", help="Objective of the milestone. " "Required for a new milestone.")
-    subpi.add_argument(
-        "-s",
-        "--status",
-        help="Status of the milestone/deliverable: "
-        f"{*PROJECTUM_STATI, }. "
-        "Defaults to proposed for a new milestone.",
-    )
-    subpi.add_argument(
-        "-t",
-        "--type",
-        help="Type of the milestone: " f"{*MILESTONE_TYPES, } " "Defaults to meeting for a new milestone.",
-    )
-    subpi.add_argument(
-        "-a",
-        "--audience",
-        nargs="+",
-        help="Audience of the milestone. " "Defaults to ['lead', 'pi', 'group_members'] for a new milestone.",
-    )
-    subpi.add_argument("--notes", nargs="+", help="Any notes you want to add to the milestone.")
+    # subpi.add_argument("-n", "--name", help="Name of the milestone. " "Required for a new milestone.")
+    # subpi.add_argument("-o", "--objective", help="Objective of the milestone. " "Required for a new milestone.")
+    # # subpi.add_argument(
+    # #     "-s",
+    # #     "--status",
+    # #     help="Status of the milestone/deliverable: "
+    # #     f"{*PROJECTUM_STATI, }. "
+    # #     "Defaults to proposed for a new milestone.",
+    # # )
+    # subpi.add_argument(
+    #     "-t",
+    #     "--type",
+    #     help="Type of the milestone: " f"{*MILESTONE_TYPES, } " "Defaults to meeting for a new milestone.",
+    # )
+    # subpi.add_argument(
+    #     "-a",
+    #     "--audience",
+    #     nargs="+",
+    #     help="Audience of the milestone. " "Defaults to ['lead', 'pi', 'group_members'] for a new milestone.",
+    # )
+    # subpi.add_argument("--notes", nargs="+", help="Any notes you want to add to the milestone.")
     subpi.add_argument("--date", help="The date that will be used for testing.", **date_kwargs)
+
+    milestone_keys = [key for key in SCHEMAS.get("projecta").get("milestones").get("schema").get("schema")]
+    milestone_helps = milestone_keys
+    milestone_helps = [
+        help[1].get("description")
+        for help in SCHEMAS.get("projecta").get("milestones").get("schema").get("schema").items()
+    ]
+
+    for key, help in zip(milestone_keys, milestone_helps):
+        subpi.add_argument(f"--{key}", help=f"{help}")
+
     return subpi
 
 
@@ -97,14 +109,14 @@ class MilestoneUpdaterHelper(DbHelperBase):
             now = dt.date.today()
         new_mil = []
         pdoc = {}
-        if rc.projectum_id and rc.milestone_uuid:
+        if rc.projectum_id and rc.uuid:
             raise RuntimeError(
                 "Detected both a uuid fragment and projectum id.\n"
                 "You may enter either a milestone uuid or a projectum id but not both.\n"
                 "Enter a milestone uuid to update an existing milestone, "
                 "or a projectum id to add a new milestone to that projectum.\n"
             )
-        if not rc.projectum_id and not rc.milestone_uuid:
+        if not rc.projectum_id and not rc.uuid:
             raise RuntimeError(
                 "No milestone uuid or projectum id was entered.\n"
                 "Enter a milestone uuid to update an existing milestone, "
@@ -178,14 +190,14 @@ class MilestoneUpdaterHelper(DbHelperBase):
             updated.append(f"{rc.projectum_id} has been updated in projecta")
         else:
             pdoc, upd_mil, all_miles, id = {}, [], [], []
-            target_mil = fragment_retrieval(self.gtx["projecta"], ["milestones"], rc.milestone_uuid)
-            target_del = fragment_retrieval(self.gtx["projecta"], ["_id"], rc.milestone_uuid)
-            target_ko = fragment_retrieval(self.gtx["projecta"], ["_id"], rc.milestone_uuid[2:])
+            target_mil = fragment_retrieval(self.gtx["projecta"], ["milestones"], rc.uuid)
+            target_del = fragment_retrieval(self.gtx["projecta"], ["_id"], rc.uuid)
+            target_ko = fragment_retrieval(self.gtx["projecta"], ["_id"], rc.uuid[2:])
             if target_mil and not target_del and not target_ko:
                 for prum in target_mil:
                     milestones = prum["milestones"]
                     for milestone in milestones:
-                        if milestone.get("uuid")[0 : len(rc.milestone_uuid)] == rc.milestone_uuid:
+                        if milestone.get("uuid")[0 : len(rc.uuid)] == rc.uuid:
                             upd_mil.append(milestone)
                         else:
                             all_miles.append(milestone)
@@ -194,28 +206,28 @@ class MilestoneUpdaterHelper(DbHelperBase):
                         id.append(pid)
             if target_del:
                 for prum in target_del:
-                    if prum.get("_id")[0 : len(rc.milestone_uuid)] == rc.milestone_uuid:
+                    if prum.get("_id")[0 : len(rc.uuid)] == rc.uuid:
                         deliverable = prum["deliverable"]
                         upd_mil.append(deliverable)
                     if upd_mil:
                         pid = prum.get("_id")
                         id.append(pid)
-            if target_ko and rc.milestone_uuid[:2] == "ko":
+            if target_ko and rc.uuid[:2] == "ko":
                 for prum in target_ko:
-                    if prum.get("_id")[0 : len(rc.milestone_uuid) - 2] == rc.milestone_uuid[2:]:
+                    if prum.get("_id")[0 : len(rc.uuid) - 2] == rc.uuid[2:]:
                         kickoff = prum["kickoff"]
                         upd_mil.append(kickoff)
                     if upd_mil:
                         pid = prum.get("_id")
                         id.append(pid)
             if len(upd_mil) == 0:
-                zero.append(rc.milestone_uuid)
+                zero.append(rc.uuid)
             elif len(upd_mil) == 1:
                 for dict in upd_mil:
                     pdoc.update(dict)
                 if not pdoc.get("type") and not rc.type and not target_del and not target_ko:
                     raise ValueError(
-                        f"Milestone ({rc.milestone_uuid}) does not have a type set and this is required.\n"
+                        f"Milestone ({rc.uuid}) does not have a type set and this is required.\n"
                         "Specify '--type' and rerun the helper to update this milestone.\n"
                     )
                 if rc.type:
@@ -250,11 +262,11 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 if rc.name and pdoc.get("name"):
                     pdoc.update({"name": rc.name})
                 elif rc.name and not pdoc.get("name"):
-                    print(f"Ignoring 'name' assignment for deliverable uuid ({rc.milestone_uuid})")
+                    print(f"Ignoring 'name' assignment for deliverable uuid ({rc.uuid})")
                 if rc.objective and pdoc.get("name"):
                     pdoc.update({"objective": rc.objective})
                 elif rc.objective and not pdoc.get("name"):
-                    print(f"Ignoring 'objective' assignment for deliverable uuid ({rc.milestone_uuid})")
+                    print(f"Ignoring 'objective' assignment for deliverable uuid ({rc.uuid})")
                 if rc.status:
                     pdoc.update({"status": rc.status})
                 if rc.notes:
@@ -267,15 +279,13 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     doc.update({"milestones": all_miles})
                 if target_del:
                     doc.update({"deliverable": pdoc})
-                if target_ko and rc.milestone_uuid[:2] == "ko":
+                if target_ko and rc.uuid[:2] == "ko":
                     doc.update({"kickoff": pdoc})
                 rc.client.update_one(rc.database, rc.coll, {"_id": id[0]}, doc)
                 if not rc.finish:
-                    updated.append(
-                        f"The milestone uuid {rc.milestone_uuid} in {id[0]} has been updated in projecta."
-                    )
+                    updated.append(f"The milestone uuid {rc.uuid} in {id[0]} has been updated in projecta.")
             else:
-                multiple.append(rc.milestone_uuid)
+                multiple.append(rc.uuid)
         if updated:
             for msg in updated:
                 print(msg)
@@ -283,12 +293,12 @@ class MilestoneUpdaterHelper(DbHelperBase):
             print("Failed to update projecta.")
         if zero:
             print(
-                f"No ids were found that match your milestone_uuid entry ({zero[0]}).\n"
+                f"No ids were found that match your uuid entry ({zero[0]}).\n"
                 "Make sure you have entered the correct uuid or uuid fragment and rerun the helper.\n"
             )
         if multiple:
             print(
-                f"Multiple ids match your milestone_uuid entry ({multiple[0]}).\n"
+                f"Multiple ids match your uuid entry ({multiple[0]}).\n"
                 "Try entering more characters of the uuid and rerun the helper.\n"
             )
         return
