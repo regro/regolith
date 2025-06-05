@@ -943,7 +943,11 @@ helper_map = [
         "Please rerun the helper specifying the complete ID.\n",
     ),
     (["helper", "lister", "people"], "Results of your search:\nabeing    \nsbillinge    \nscopatz\n"),
-    (["helper", "lister", "people", "--kv-filter", "name", "simon"], "Results of your search:\n" "sbillinge\n"),
+    (["helper", "lister", "people", "--kv-filter", "name", "simon"], "Results of your search:\nsbillinge\n"),
+    (
+        ["helper", "lister", "people", "--kv-filter", "active", "True"],
+        "Warning: value True interpreted as a bool\nResults of your search:\nsbillinge\n",
+    ),
     (
         ["helper", "lister", "people", "--kv-filter", "name", "simon", "--return-fields", "name", "position"],
         "Results of your search:\nsbillinge    name: Simon J. L. Billinge    position: professor\n",

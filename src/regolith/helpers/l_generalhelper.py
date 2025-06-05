@@ -59,6 +59,11 @@ class GeneralListerHelper(SoutHelperBase):
         list_keys = []
         if rc.kv_filter:
             list_keys.extend([rc.kv_filter[n] for n in range(len(rc.kv_filter)) if n % 2 == 0])
+            for i, item in enumerate(rc.kv_filter):
+                if item.lower() == "true":
+                    print(f"Warning: value {item} interpreted as a bool")
+                if item.lower() == "false":
+                    print(f"Warning: value {item} interpreted as a bool")
         if rc.return_fields:
             list_keys.extend(rc.return_fields)
         for i in list_keys:

@@ -1497,6 +1497,8 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
                     ret = compound_list(ret, [])
                 elif isinstance(ret, dict):
                     ret = compound_dict(ret, [])
+                elif isinstance(ret, bool):
+                    ret = [str(ret)]
                 else:
                     ret = [ret]
 
