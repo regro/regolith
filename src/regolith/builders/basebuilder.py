@@ -60,7 +60,8 @@ class BuilderBase(object):
         gtx["date_to_rfc822"] = date_to_rfc822
 
     def render(self, tname, fname, **kwargs):
-        """Render the template into a file using the kwargs and global context.
+        """Render the template into a file using the kwargs and global
+        context.
 
         Parameters
         ----------
@@ -82,8 +83,8 @@ class BuilderBase(object):
             f.write(result)
 
     def build(self):
-        """Build the thing that is being built, note this runs all commands
-        listed in ``self.cmds``"""
+        """Build the thing that is being built, note this runs all
+        commands listed in ``self.cmds``"""
         os.makedirs(self.bldir, exist_ok=True)
         for cmd in self.cmds:
             getattr(self, cmd)()

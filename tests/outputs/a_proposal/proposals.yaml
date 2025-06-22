@@ -8,34 +8,34 @@
   cpp_info:
     cppflag: true
     other_agencies_submitted: Flatland
-    institution: ''
+    institution: ""
     person_months_academic: 0.0
     person_months_summer: 0.0
-    project_scope: ''
+    project_scope: ""
   currency: Bitcoin
   due_date: tbd
   end_date: 2022-02-14
-  funder: ''
+  funder: ""
   notes:
     - this is a sample added proposal
   pi: scopatz
   status: inprep
   team:
-    - name: ''
+    - name: ""
       subaward_amount: 0
   title: To destroy numbers
 SymPy-1.1:
   amount: 3000.0
-  begin_date: '2030-05-01'
+  begin_date: "2030-05-01"
   cpp_info:
     cppflag: true
     other_agencies_submitted: None
     institution: Columbia University
     person_months_academic: 0
     person_months_summer: 1
-    project_scope: ''
+    project_scope: ""
   currency: USD
-  end_date: '2030-12-31'
+  end_date: "2030-12-31"
   pi: Anthony Scopatz
   status: pending
   team:
@@ -45,16 +45,16 @@ SymPy-1.1:
   title: SymPy 1.1 Release Support
 SymPy-2.1:
   amount: 3000.0
-  begin_date: '2019-06-01'
+  begin_date: "2019-06-01"
   cpp_info:
     cppflag: true
     other_agencies_submitted: None
     institution: Columbia University
     person_months_academic: 0
     person_months_summer: 1
-    project_scope: ''
+    project_scope: ""
   currency: USD
-  end_date: '2030-12-31'
+  end_date: "2030-12-31"
   pi: sbillinge
   status: accepted
   team:
@@ -64,16 +64,16 @@ SymPy-2.1:
   title: SymPy 2.1 Release Support
 abc42:
   amount: 42000.0
-  begin_date: '2020-06-01'
+  begin_date: "2020-06-01"
   cpp_info:
     cppflag: true
     other_agencies_submitted: None
     institution: Columbia University
     person_months_academic: 0
     person_months_summer: 1
-    project_scope: ''
+    project_scope: ""
   currency: USD
-  end_date: '2020-12-31'
+  end_date: "2020-12-31"
   pi: sbillinge
   status: submitted
   title: The answer to life, the universe, and everything
@@ -104,7 +104,7 @@ dmref15:
   notes: Quite an idea
   pi: Simon Billinge
   status: accepted
-  submitted_date: '2015-02-02'
+  submitted_date: "2015-02-02"
   team:
     - institution: Columbia University
       name: qdu
@@ -116,8 +116,9 @@ dmref15:
       name: sbillinge
       position: pi
       subaward_amount: 330000.0
-  title: 'DMREF: Novel, data validated, nanostructure determination methods for accelerating
-    materials discovery'
+  title:
+    "DMREF: Novel, data validated, nanostructure determination methods for accelerating
+    materials discovery"
   title_short: DMREF nanostructure
 mypropsal:
   amount: 1000000.0

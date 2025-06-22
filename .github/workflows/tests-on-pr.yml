@@ -44,7 +44,6 @@ jobs:
           pip install gooey
           python -m pip install . --no-deps
 
-
       - name: Validate regolith
         run: |
           pytest --cov

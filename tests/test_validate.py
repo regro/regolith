@@ -22,8 +22,8 @@ def test_validate_python(make_db):
 
 
 def test_validate_python_single_col(make_db):
-    """To see output from a failed test, comment out the code that rediriects
-    stdout to out and replace the assert with 'assert false'.
+    """To see output from a failed test, comment out the code that
+    rediriects stdout to out and replace the assert with 'assert false'.
 
     Change it back afterwards
     """

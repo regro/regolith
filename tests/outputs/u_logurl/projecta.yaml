@@ -1,18 +1,18 @@
 ab_inactive:
-  begin_date: '2020-05-03'
+  begin_date: "2020-05-03"
   deliverable:
-    due_date: '2021-05-03'
+    due_date: "2021-05-03"
     status: paused
   description: a prum that has various inactive states in milestones and overall
   grants: dmref15
   kickoff:
-    due_date: '2021-05-03'
+    due_date: "2021-05-03"
     name: Kickoff
     status: backburner
     type: meeting
   lead: abeing
   milestones:
-    - due_date: '2021-05-03'
+    - due_date: "2021-05-03"
       name: Milestone
       status: converged
       uuid: milestone_uuid_inactive
@@ -24,9 +24,9 @@ ly_newprojectum:
   deliverable:
     due_date: 2021-01-01
     audience: []
-    success_def: ''
+    success_def: ""
     scope: []
-    platform: ''
+    platform: ""
     roll_out: []
     status: proposed
   description: more work
@@ -45,7 +45,7 @@ ly_newprojectum:
     objective: introduce project to the lead
     status: finished
   lead: lyang
-  log_url: ''
+  log_url: ""
   milestones: []
   name: New projectum
   notes:
@@ -54,68 +54,69 @@ ly_newprojectum:
   status: started
   supplementary_info_urls: []
 pl_firstprojectum:
-  begin_date: '2020-07-25'
+  begin_date: "2020-07-25"
   deliverable:
-    due_date: '2021-08-26'
+    due_date: "2021-08-26"
     status: finished
-  end_date: '2020-07-27'
+  end_date: "2020-07-27"
   kickoff:
-    due_date: '2021-08-03'
+    due_date: "2021-08-03"
     name: Kickoff
     status: backburner
   lead: pliu
   milestones:
-    - due_date: '2021-08-03'
+    - due_date: "2021-08-03"
       name: Milestone
       status: converged
       uuid: milestone_uuid_pl1
   status: finished
 pl_secondprojectum:
-  begin_date: '2020-07-25'
+  begin_date: "2020-07-25"
   deliverable:
-    due_date: '2021-08-26'
+    due_date: "2021-08-26"
     status: finished
   kickoff:
-    due_date: '2021-08-03'
+    due_date: "2021-08-03"
     name: Kickoff
     status: backburner
   lead: pliu
   milestones:
-    - due_date: '2021-08-03'
+    - due_date: "2021-08-03"
       name: Milestone
       status: converged
       uuid: milestone_uuid_pl2
   status: proposed
 pl_thirdprojectum:
-  begin_date: '2020-07-25'
+  begin_date: "2020-07-25"
   deliverable:
-    due_date: '2021-08-26'
+    due_date: "2021-08-26"
     status: finished
   kickoff:
-    due_date: '2021-08-03'
+    due_date: "2021-08-03"
     name: Kickoff
     status: backburner
   lead: pliu
   milestones:
-    - due_date: '2021-08-03'
+    - due_date: "2021-08-03"
       name: Milestone
       status: converged
       uuid: milestone_uuid_pl3
   status: backburner
 sb_firstprojectum:
-  begin_date: '2020-04-28'
+  begin_date: "2020-04-28"
   collaborators:
     - aeinstein
     - pdirac
   deliverable:
     audience:
       - beginning grad in chemistry
-    due_date: '2021-05-05'
+    due_date: "2021-05-05"
     success_def: audience is happy
     scope:
       - UCs that are supported or some other scope description if it is software
       - sketch of science story if it is paper
-    platform: description of how and where the audience will access the deliverable.  Journal
+    platform:
+      description of how and where the audience will access the deliverable.  Journal
       if it is a paper
     roll_out:
       - steps that the audience will take to access and interact with the deliverable
@@ -128,7 +129,7 @@ sb_firstprojectum:
   group_members:
     - ascopatz
   kickoff:
-    date: '2020-05-05'
+    date: "2020-05-05"
     due_date: 2020-06-01
     end_date: 2020-05-07
     name: Kick off meeting
@@ -145,7 +146,7 @@ sb_firstprojectum:
   lead: ascopatz
   log_url: https://docs.google.com/document/d/1pQMFpuI
   milestones:
-    - due_date: '2020-05-20'
+    - due_date: "2020-05-20"
       name: Project lead presentation
       notes:
         - do background reading
@@ -160,14 +161,15 @@ sb_firstprojectum:
       status: started
       type: meeting
       progress:
-        text: The samples have been synthesized and places in the sample cupboard.
+        text:
+          The samples have been synthesized and places in the sample cupboard.
           They turned out well and are blue as expected
         figure:
           - token that dereferences a figure or image in group local storage db
         slides_urls:
           - url to slides describing the development, e.g. Google slides url
       uuid: milestone_uuid_sb1
-    - due_date: '2020-05-27'
+    - due_date: "2020-05-27"
       name: planning meeting
       objective: develop a detailed plan with dates
       audience:
