@@ -91,3 +91,6 @@ target/
 
 # Ipython Notebook
 .ipynb_checkpoints
+
+# Auto sphinx docs
+doc/source/collections/
