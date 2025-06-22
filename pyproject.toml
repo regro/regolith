@@ -1,20 +1,20 @@
 [build-system]
-requires = ["setuptools>=62.0", "setuptools-git-versioning<2"]
+requires = ["setuptools>=62.0", "setuptools-git-versioning>=2.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "regolith"
 dynamic=['version', 'dependencies']
 authors = [
-  { name="Simon J.L. Billinge group", email="simon.billinge@gmail.com" },
+  { name="Simon J.L. Billinge group", email="sb2896@columbia.edu" },
   { name="Anthony Scopatz", email="scopatz@gmail.com" },
 ]
 maintainers = [
-  { name="Simon J.L. Billinge group", email="simon.billinge@gmail.com" },
+  { name="Simon J.L. Billinge group", email="sb2896@columbia.edu" },
   { name="Anthony Scopatz", email="scopatz@gmail.com" },
 ]
 description = "Python package for research group content management system"
-keywords = ["content management system"]
+keywords = ['content management system']
 readme = "README.rst"
 requires-python = ">=3.11, <3.14"
 classifiers = [
@@ -22,7 +22,7 @@ classifiers = [
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication',
+        'License :: OSI Approved :: BSD License',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
@@ -39,7 +39,7 @@ script-files = ["scripts/regolith", "scripts/helper_gui", "scripts/helper_connec
 
 [project.urls]
 Homepage = "https://github.com/regro/regolith/"
-Issues = "https://github.com/regro/regolith/issues"
+Issues = "https://github.com/regro/regolith/issues/"
 
 [tool.setuptools-git-versioning]
 enabled = true
