@@ -1,4 +1,5 @@
-"""Helper for listing a summary of finished prums and progress on open prums.
+"""Helper for listing a summary of finished prums and progress on open
+prums.
 
 Projecta are small bite-sized project quanta that typically will result
 in one manuscript.

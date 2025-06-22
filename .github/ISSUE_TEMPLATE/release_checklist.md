@@ -42,5 +42,5 @@ Please let @sbillinge know that all checks are done and the package is ready for
 
 <!-- Before closing this issue, please complete the following: -->
 
-- [ ]  Run tutorial examples and conduct functional testing using the installation guide in the README.
-- [ ]  Documentation (README, tutorials, API references, and websites) is deployed without broken links or missing figures.
+- [ ] Run tutorial examples and conduct functional testing using the installation guide in the README.
+- [ ] Documentation (README, tutorials, API references, and websites) is deployed without broken links or missing figures.

@@ -27,8 +27,8 @@ def subparser(subpi):
 
 
 class CurrentAppointmentsListerHelper(SoutHelperBase):
-    """Helper for managing appointments on grants and studying the burn of
-    grants over time."""
+    """Helper for managing appointments on grants and studying the burn
+    of grants over time."""
 
     # btype must be the same as helper target in helper.py
     btype = "currentappointments"

@@ -42,7 +42,7 @@ columbiau:
         - CC
   state: NY
   street: 500 W 120th St
-  updated: '2020-01-01'
+  updated: "2020-01-01"
   uuid: avacazdraca345rfsvwre
   year: 2020
-  zip: '10027'
+  zip: "10027"

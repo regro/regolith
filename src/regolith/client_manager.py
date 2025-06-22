@@ -13,8 +13,8 @@ CLIENTS = {
 
 
 class ClientManager:
-    """Client wrapper that allows for multiple backend clients to be used in
-    parallel with one chained DB."""
+    """Client wrapper that allows for multiple backend clients to be
+    used in parallel with one chained DB."""
 
     def __init__(self, databases, rc):
         client_tuple = tuple()

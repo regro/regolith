@@ -14,7 +14,8 @@
     - what a week!
   project: 18kj_conservation
   status: accepted
-  title: Nanostructure challenges and successes from 16th Century warships to 21st
+  title:
+    Nanostructure challenges and successes from 16th Century warships to 21st
     Century energy
   type: colloquium
   webinar: true
@@ -37,8 +38,9 @@
     - if the weather is nice we will go to the beach
   project: 18sob_clustermining
   status: accepted
-  title: 'ClusterMining: extracting core structures of metallic nanoparticles from
-    the atomic pair distribution function'
+  title:
+    "ClusterMining: extracting core structures of metallic nanoparticles from
+    the atomic pair distribution function"
   type: poster
 18sb_this_and_that:
   abstract: We pulled apart graphite with tape
