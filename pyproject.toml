@@ -7,9 +7,11 @@ name = "regolith"
 dynamic=['version', 'dependencies']
 authors = [
   { name="Simon J.L. Billinge group", email="sb2896@columbia.edu" },
+  { name="Anthony Scopatz", email="scopatz@gmail.com" },
 ]
 maintainers = [
   { name="Simon J.L. Billinge group", email="sb2896@columbia.edu" },
+  { name="Anthony Scopatz", email="scopatz@gmail.com" },
 ]
 description = "Python package for research group content management system"
 keywords = ['content management system']
@@ -32,6 +34,10 @@ classifiers = [
         'Topic :: Scientific/Engineering :: Chemistry',
 ]
 
+[tool.setuptools]
+script-files = ["scripts/regolith", "scripts/helper_gui", "scripts/helper_connect", "scripts/profile_regolith",
+"scripts/profile_helper_gui"]
+
 [project.urls]
 Homepage = "https://github.com/regro/regolith/"
 Issues = "https://github.com/regro/regolith/issues/"
@@ -41,6 +47,14 @@ enabled = true
 template = "{tag}"
 dev_template = "{tag}"
 dirty_template = "{tag}"
+
+[tool.setuptools.package-data]
+regolith = ["templates/*",
+            "static/*.*",
+            "static/img/*.*",
+            "*.xsh",
+            "*.json"
+            ]
 
 [tool.setuptools.packages.find]
 where = ["src"]  # list of folders that contain the packages (["."] by default)
