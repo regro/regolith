@@ -1,47 +1,53 @@
-{% extends "base.html" %}
-{% block header %}
+{% extends "base.html" %} {% block header %}
 <h1>{{job['title']}} ({{job['_id']}})</h1>
-{% endblock header %}
-{% block content %}
-{{job['description']}}
+{% endblock header %} {% block content %} {{job['description']}}
 
-
-<hr/><a name="positions" />
+<hr />
+<a name="positions" />
 <h1><a href="#positions">Positions</a></h1>
 This job is open for the following positions:
-<ul>{%for pos in job['positions']%}
+<ul>
+  {%for pos in job['positions']%}
   <li>{{pos}}</li>
-{%endfor-%}</ul>
+  {%endfor-%}
+</ul>
 {%-if len(job['compensation']) == 1%}
-  <p>{{job['compensation'][0]}}</p>
+<p>{{job['compensation'][0]}}</p>
 {%-else%}
-  <ul>{%for comp in job['compensation']%}
-    <li>{{comp}}</li>
-  {%-endfor%}</ul>
+<ul>
+  {%for comp in job['compensation']%}
+  <li>{{comp}}</li>
+  {%-endfor%}
+</ul>
 {%endif%}
 
-
-<hr/><a name="background" />
-<h1><a href="#background">Background</a></h1><br/>
+<hr />
+<a name="background" />
+<h1><a href="#background">Background</a></h1>
+<br />
 Background or experience in at least one of the following areas is preferred:
-<ul>{%for field in job['background_fields']%}
+<ul>
+  {%for field in job['background_fields']%}
   <li>{{field}}</li>
-{%endfor%}</ul>
+  {%endfor%}
+</ul>
 
-
-<hr/><a name="expertise" />
-<h1><a href="#expertise">Expertise</a></h1><br/>
+<hr />
+<a name="expertise" />
+<h1><a href="#expertise">Expertise</a></h1>
+<br />
 {{job['expertise']}}
 
-
-<hr/><a name="application" />
-<h1><a href="#application">Application Information</a></h1><br/>
-<p><b>Status:</b> This position is currently
-<b>{{'OPEN' if job['open'] else 'CLOSED'}}</b>.</p>
+<hr />
+<a name="application" />
+<h1><a href="#application">Application Information</a></h1>
+<br />
+<p>
+  <b>Status:</b> This position is currently
+  <b>{{'OPEN' if job['open'] else 'CLOSED'}}</b>.
+</p>
 <p><b>Start Date:</b> {{job['start_date']}}</p>
 <p><b>Posting Date:</b> {{job['month']}} {{job['day']}}, {{job['year']}}</p>
 <p><b>Contact:</b> {{job['contact']}}</p>
 
-{% endblock content %}
-{% block footer %}
-{% endblock footer %}
+{% endblock content %} {% block footer %} {% endblock footer %}

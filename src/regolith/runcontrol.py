@@ -33,8 +33,8 @@ def ensuredirs(f):
 
 
 def touch(filename):
-    """Opens a file and updates the mtime, like the posix command of the same
-    name."""
+    """Opens a file and updates the mtime, like the posix command of the
+    same name."""
     with io.open(filename, "a"):
         os.utime(filename, None)
 
@@ -52,16 +52,16 @@ def exec_file(filename, glb=None, loc=None):
 
 
 class NotSpecifiedType(object):
-    """A helper class singleton for run control meaning that a 'real' value has
-    not been given."""
+    """A helper class singleton for run control meaning that a 'real'
+    value has not been given."""
 
     def __repr__(self):
         return "NotSpecified"
 
 
 NotSpecified = NotSpecifiedType()
-"""A helper class singleton for run control meaning that a 'real' value has not
-been given."""
+"""A helper class singleton for run control meaning that a 'real' value
+has not been given."""
 
 
 class RunControl(object):
@@ -257,7 +257,8 @@ def load_rcfile(fname):
 
 
 def filter_databases(rc):
-    """Filters the databases list down to only the ones we need, in place."""
+    """Filters the databases list down to only the ones we need, in
+    place."""
     dbs = rc.databases
     public_only = rc._get("public_only", False)
     if public_only:

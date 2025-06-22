@@ -7,7 +7,7 @@
     - measured with a ruler
   did_what:
     - found a much cheaper way to measure gravity waves
-  due_date: '2020-04-11'
+  due_date: "2020-04-11"
   editor_eyes_only: to be honest, I don't believe a word of it
   final_assessment:
     - The authors should really start over
@@ -19,7 +19,7 @@
   requester: Max Planck
   reviewer: sbillinge
   status: submitted
-  submitted_date: '2019-01-01'
+  submitted_date: "2019-01-01"
   title: a ruler approach to measuring gravity waves
   validity_assessment:
     - complete rubbish
@@ -33,7 +33,7 @@
     - measured with a ruler
   did_what:
     - found an even cheaper way to measure gravity waves
-  due_date: '2021-04-11'
+  due_date: "2021-04-11"
   editor_eyes_only: to be honest, I don't believe a word of it
   final_assessment:
     - The authors should really start over
@@ -45,7 +45,7 @@
   requester: Max Planck
   reviewer: sbillinge
   status: accepted
-  submitted_date: '2020-01-01'
+  submitted_date: "2020-01-01"
   title: an even smaller ruler approach to measuring gravity waves
   validity_assessment:
     - complete rubbish
@@ -56,16 +56,16 @@
   did_how: []
   did_what: []
   due_date: 2020-09-15
-  editor_eyes_only: ''
+  editor_eyes_only: ""
   final_assessment: []
   first_author_last_name: Einstein
-  freewrite: ''
+  freewrite: ""
   journal: Nature
-  recommendation: ''
+  recommendation: ""
   requester: Niels Bohr
   reviewer: zcliu
   status: submitted
-  submitted_date: '2019-01-01'
+  submitted_date: "2019-01-01"
   title: On the Quantum Theory of Radiation
   validity_assessment: []
   year: 2020

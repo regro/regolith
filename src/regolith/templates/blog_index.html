@@ -1,11 +1,9 @@
-{% extends "base.html" %}
-{% block header %}
+{% extends "base.html" %} {% block header %}
 <h1>Blog</h1>
-{% endblock header %}
-{% block content %}
-<h2><a href="rss.xml">Subscribe to the RSS feed <i class="icon fa-rss"></i></a></h2>
-<br/>
-{% include 'blog_summary.html' %}
-{% endblock content %}
-{% block footer %}
-{% endblock footer %}
+{% endblock header %} {% block content %}
+<h2>
+  <a href="rss.xml">Subscribe to the RSS feed <i class="icon fa-rss"></i></a>
+</h2>
+<br />
+{% include 'blog_summary.html' %} {% endblock content %} {% block footer %} {%
+endblock footer %}

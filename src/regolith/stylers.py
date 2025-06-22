@@ -33,7 +33,8 @@ month_threelets = {
 
 
 def sentencecase(sentence):
-    """Returns a sentence in sentencecase but with text in braces preserved.
+    """Returns a sentence in sentencecase but with text in braces
+    preserved.
 
     Parameters
     ----------

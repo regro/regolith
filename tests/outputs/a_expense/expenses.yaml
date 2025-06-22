@@ -15,56 +15,56 @@
       segregated_expense: 0
       currency: USD
       notes:
-        - ''
+        - ""
     - date: 2020-06-20
       purpose: home to airport
       unsegregated_expense: 0
       segregated_expense: 0
       currency: USD
       notes:
-        - ''
+        - ""
     - date: 2020-06-20
       purpose: flights
       unsegregated_expense: 0
       segregated_expense: 0
       currency: USD
       notes:
-        - ''
+        - ""
     - date: 2020-06-20
       purpose: airport to hotel
       unsegregated_expense: 0
       segregated_expense: 0
       currency: USD
       notes:
-        - ''
+        - ""
     - date: 2020-06-20
       purpose: hotel
       unsegregated_expense: 0
       segregated_expense: 0
       currency: USD
       notes:
-        - ''
+        - ""
     - date: 2020-06-20
       purpose: hotel to airport
       unsegregated_expense: 0
       segregated_expense: 0
       currency: USD
       notes:
-        - ''
+        - ""
     - date: 2020-06-20
       purpose: airport to home
       unsegregated_expense: 0
       segregated_expense: 0
       currency: USD
       notes:
-        - ''
+        - ""
     - date: 2020-06-20
       purpose: meals
       unsegregated_expense: 0
       segregated_expense: 0
       currency: USD
       notes:
-        - ''
+        - ""
   notes: []
   overall_purpose: travel to timbuktoo
   payee: ashaaban
@@ -75,12 +75,12 @@
       where: bank
   status: unsubmitted
 test:
-  begin_date: '2018-01-01'
-  end_date: '2018-01-10'
+  begin_date: "2018-01-01"
+  end_date: "2018-01-10"
   expense_type: business
   grant_percentages:
-    - '50'
-    - '50'
+    - "50"
+    - "50"
   grants:
     - dmref15
     - SymPy-1.1
@@ -165,16 +165,16 @@ test:
       submission_date: tbd
       where: Columbia
     - amount: 1000
-      date: '2019-02-15'
-      submission_date: '2019-09-05'
+      date: "2019-02-15"
+      submission_date: "2019-09-05"
       where: Columbia
   status: submitted
 test2:
-  begin_date: '2019-01-01'
-  end_date: '2019-01-10'
+  begin_date: "2019-01-01"
+  end_date: "2019-01-10"
   expense_type: business
   grant_percentages:
-    - '100'
+    - "100"
   grants:
     - SymPy-1.1
   itemized_expenses:
@@ -194,16 +194,16 @@ test2:
   project: reimbursed expense
   reimbursements:
     - amount: 100
-      date: '2019-09-15'
+      date: "2019-09-15"
       submission_date: tbd
       where: Columbia
   status: reimbursed
 test3:
-  begin_date: '2020-01-01'
-  end_date: '2020-01-10'
+  begin_date: "2020-01-01"
+  end_date: "2020-01-10"
   expense_type: business
   grant_percentages:
-    - '100'
+    - "100"
   grants:
     - SymPy-1.1
   itemized_expenses:
@@ -220,7 +220,7 @@ test3:
   project: reimbursed expense
   reimbursements:
     - amount: 100
-      date: '2020-09-15'
+      date: "2020-09-15"
       submission_date: tbd
       where: Columbia
   status: bad_status

@@ -1,48 +1,44 @@
-{% extends "base.html" %}
-{% block header %}
-<img src="{{static}}/{{ group.get('banner', 'logo-banner-text-upper.png') }}" style="max-width:100%;"/><br/><br/>
-{% endblock header %}
-{% block content %}
-
-{% if group.get('mission_statement') %}
+{% extends "base.html" %} {% block header %}
+<img
+  src="{{static}}/{{ group.get('banner', 'logo-banner-text-upper.png') }}"
+  style="max-width: 100%"
+/><br /><br />
+{% endblock header %} {% block content %} {% if group.get('mission_statement')
+%}
 <a name="about" />
 <h1><a href="#about">About Us</a></h1>
 {{ group['mission_statement'] }}
-<br/><br/>
+<br /><br />
 {% endif %}
 
 <a name="news" />
 <h1><a href="#news">News</a></h1>
-{% include 'news.html' %}
-
-{% if group.get('projects') %}
+{% include 'news.html' %} {% if group.get('projects') %}
 <a name="projects" />
 <h1><a href="#projects">Projects</a></h1>
 {{ group['projects'] }}
-<br/><br/>
+<br /><br />
 {% endif %}
 
 <a name="who" />
-<h1><a href="#who">Who are we?</a></h1><br/>
+<h1><a href="#who">Who are we?</a></h1>
+<br />
 {% for p in people %}
-  <a href="{{root}}/people/{{p['_id']}}.html" class="image-link">
-    <img src="{{p.get('avatar')}}" style="width:100px"/>
-  </a>
-  <h3><a href="{{root}}/people/{{p['_id']}}.html">{{p['title']}} {{p['name']}}</a></h3>
-  <ul>
-    <li><b>Position:</b> {{p['position'].capitalize()}}</li>
-  </ul>
+<a href="{{root}}/people/{{p['_id']}}.html" class="image-link">
+  <img src="{{p.get('avatar')}}" style="width: 100px" />
+</a>
+<h3>
+  <a href="{{root}}/people/{{p['_id']}}.html">{{p['title']}} {{p['name']}}</a>
+</h3>
+<ul>
+  <li><b>Position:</b> {{p['position'].capitalize()}}</li>
+</ul>
 {% endfor %}
-
 
 <a name="join" />
 <h1><a href="#join">Join Us</a></h1>
 Join {{ group['name'] }} by checking out the open positions on our
 <a href="jobs/index.html">jobs page</a> or see if you are interested in any of
-the following!
-{% include 'jobs_open.html' %}
-
-{% endblock content %}
-{% block footer %}
-Feel free to contact {{ group['name'] }} by emailing {{ group['email'] }}.
-{% endblock footer %}
+the following! {% include 'jobs_open.html' %} {% endblock content %} {% block
+footer %} Feel free to contact {{ group['name'] }} by emailing {{ group['email']
+}}. {% endblock footer %}

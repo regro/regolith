@@ -14,7 +14,7 @@
     - they will find the cause of Malaria
     - when they find it they will determine a cure
   does_what: Find a cure for Malaria
-  due_date: '2020-04-10'
+  due_date: "2020-04-10"
   freewrite:
     - I can put extra things here, such as special instructions from the
     - program officer
@@ -53,7 +53,7 @@
     - they will find the cause of Poverty
     - when they find it they will determine a cure
   does_what: Find a cure for Poverty
-  due_date: '2020-04-10'
+  due_date: "2020-04-10"
   freewrite:
     - I can put extra things here, such as special instructions from the
     - program officer
@@ -93,8 +93,8 @@
   doe_reasonableness_of_budget: []
   doe_relevance_to_program_mission: []
   does_how: []
-  does_what: ''
-  due_date: '2020-04-08'
+  does_what: ""
+  due_date: "2020-04-08"
   freewrite: []
   goals: []
   importance: []
@@ -109,6 +109,6 @@
   requester: Tess Guebre
   reviewer: sbillinge
   status: downloaded
-  summary: ''
+  summary: ""
   title: A flat world theory
   year: 2020

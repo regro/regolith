@@ -52,7 +52,8 @@ class HelperBase(object):
         gtx["date_to_rfc822"] = date_to_rfc822
 
     def render(self, tname, fname, **kwargs):
-        """Render the template into a file using the kwargs and global context.
+        """Render the template into a file using the kwargs and global
+        context.
 
         Parameters
         ----------

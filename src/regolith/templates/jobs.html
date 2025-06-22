@@ -1,18 +1,15 @@
-{% extends "base.html" %}
-{% block header %}
+{% extends "base.html" %} {% block header %}
 <h1>Opportunities</h1>
-{% endblock header %}
-{% block content %}
+{% endblock header %} {% block content %}
 <a name="open" />
-<h1><a href="#open">Open Positions</a></h1><br/>
-We currently have available the following opportunities:
-{% include 'jobs_open.html' %}
+<h1><a href="#open">Open Positions</a></h1>
+<br />
+We currently have available the following opportunities: {% include
+'jobs_open.html' %}
 
 <a name="closed" />
-<h1><a href="#closed">Closed Positions</a></h1><br/>
-The following positions have been filled or have been otherwise closed:
-{% include 'jobs_closed.html' %}
-
-{% endblock content %}
-{% block footer %}
-{% endblock footer %}
+<h1><a href="#closed">Closed Positions</a></h1>
+<br />
+The following positions have been filled or have been otherwise closed: {%
+include 'jobs_closed.html' %} {% endblock content %} {% block footer %} {%
+endblock footer %}

@@ -91,9 +91,7 @@ def make_db():
                         "public": True,
                     }
                 ],
-                "tokens": [
-                    {"_id": "gitlab_private_token", "token": "<private_token>"}
-                ],
+                "tokens": [{"_id": "gitlab_private_token", "token": "<private_token>"}],
             },
             f,
         )
@@ -512,11 +510,7 @@ def exemplars_to_fs(fspath, collection_list=None):
     if collection_list is None:
         exemplars = exemplars_copy
     else:
-        exemplars = {
-            k: exemplars_copy[k]
-            for k in collection_list
-            if k in exemplars_copy
-        }
+        exemplars = {k: exemplars_copy[k] for k in collection_list if k in exemplars_copy}
     cwd = os.getcwd()
     os.chdir(fspath)
     for coll, example in exemplars.items():
@@ -533,11 +527,7 @@ def exemplars_to_mongo(mongo_db_name, collection_list=None):
     if collection_list is None:
         exemplars = exemplars_copy
     else:
-        exemplars = {
-            k: exemplars_copy[k]
-            for k in collection_list
-            if k in exemplars_copy
-        }
+        exemplars = {k: exemplars_copy[k] for k in collection_list if k in exemplars_copy}
     client = MongoClient("localhost", serverSelectionTimeoutMS=2000)
     client.server_info()
     for col_name, example in exemplars.items():
@@ -552,10 +542,6 @@ def exemplars_to_mongo(mongo_db_name, collection_list=None):
                 example["_id"].replace(".", "")
                 col.insert_one(example)
         except mongo_errors.DuplicateKeyError:
-            print(
-                "Duplicate key error, check exemplars for duplicates if tests fail"
-            )
+            print("Duplicate key error, check exemplars for duplicates if tests fail")
         except mongo_errors.BulkWriteError:
-            print(
-                "Duplicate key error, check exemplars for duplicates if tests fail"
-            )
+            print("Duplicate key error, check exemplars for duplicates if tests fail")

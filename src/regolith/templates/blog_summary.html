@@ -1,4 +1,10 @@
-<ul>{%for post in posts%}
-  <li><a href="{{root}}/blog/{{post['_id']}}.html"><b>{{post['title']}}</b>, by
-  {{post['author']}}, <i>{{post['month']}} {{post['day']}}, {{post['year']}}</i></a></li>
-{%endfor%}</ul>
+<ul>
+  {%for post in posts%}
+  <li>
+    <a href="{{root}}/blog/{{post['_id']}}.html"
+      ><b>{{post['title']}}</b>, by {{post['author']}},
+      <i>{{post['month']}} {{post['day']}}, {{post['year']}}</i></a
+    >
+  </li>
+  {%endfor%}
+</ul>

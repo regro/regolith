@@ -1,5 +1,9 @@
-<ul>{%for n in sorted(all_docs_from_collection(rc.client, 'news'), key=date_key, reverse=True)%}
-  <li>{{n['body']}} <i>
-    {{n.get('month', '')}} {{n.get('day', '')}} {{n.get('year', '')}}
-  </i></li>
-{%endfor%}</ul>
+<ul>
+  {%for n in sorted(all_docs_from_collection(rc.client, 'news'), key=date_key,
+  reverse=True)%}
+  <li>
+    {{n['body']}}
+    <i> {{n.get('month', '')}} {{n.get('day', '')}} {{n.get('year', '')}} </i>
+  </li>
+  {%endfor%}
+</ul>

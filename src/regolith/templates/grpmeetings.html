@@ -1,128 +1,198 @@
-{% extends "intbase.html" %}
-{% block header %}
-{% endblock header %}
-{% block content %}
-{% if fmeetings %}
+{% extends "intbase.html" %} {% block header %} {% endblock header %} {% block
+content %} {% if fmeetings %}
 <h1>Current Group Meeting ({{fmeetings[0]['datestr']}})</h1>
 <li>Meeting Lead: {{fmeetings[0].get('lead', '')}}</li>
 <li>Scribe: {{fmeetings[0].get('scribe', '')}}</li>
-  {% if fmeetings[0].get('journal_club') %}
-<li>Journal club presentation: </li>
-<div style="margin-left: 2em;">
-  <li>presenter: {{ fmeetings[0].get('journal_club').get('presenter','') }}
-  {% if "no jclub" not in fmeetings[0].get('journal_club').get('presenter','').lower() %}
-  <li>doi: {{ fmeetings[0].get('journal_club').get('doi','') }}
-{%if fmeetings[0].get('journal_club', '').get('link')%}
-<li>link: <a href="{{- fmeetings[0].get('journal_club', '').get('link','tbd')-}}">{{- fmeetings[0].get('journal_club', '').get('link','tbd')-}}</a></li>
+{% if fmeetings[0].get('journal_club') %}
+<li>Journal club presentation:</li>
+<div style="margin-left: 2em">
+  <li>
+    presenter: {{ fmeetings[0].get('journal_club').get('presenter','') }} {% if
+    "no jclub" not in
+    fmeetings[0].get('journal_club').get('presenter','').lower() %}
+  </li>
+
+  <li>
+    doi: {{ fmeetings[0].get('journal_club').get('doi','') }} {%if
+    fmeetings[0].get('journal_club', '').get('link')%}
+  </li>
+
+  <li>
+    link:
+    <a href="{{- fmeetings[0].get('journal_club', '').get('link','tbd')-}}"
+      >{{- fmeetings[0].get('journal_club', '').get('link','tbd')-}}</a
+    >
+  </li>
   {% else %}
-<li>Link: TBD</li>
-  {% endif %}{% endif %}</div>
-  {% endif %}
-  {% if fmeetings[0].get('presentation') %}
-  <li>Research Presentation:</li>
-<div style="margin-left: 2em;">
-    <li>presenter:  {{fmeetings[0].get('presentation').get('presenter','')}}</li>
-  {% if "no pres" not in fmeetings[0].get('presentation').get('presenter','').lower() %}
-    <li>title: {{fmeetings[0].get('presentation').get('title','')}}</li>
-{%if fmeetings[0].get('presentation', '').get('link')%}
-  <li>link: <a href="{{- fmeetings[0].get('presentation', '').get('link','tbd')-}}">{{- fmeetings[0].get('presentation', '').get('link','tbd')-}}</a></li>
-{%else%}
-<li> Link: TBD
-{%endif%}{%endif%}
-</li></div>  {% endif %}
-  <h3>Buddies:</h3>
-  <li>Please everyone prepare ahead of time by sitting with your buddy and talking.
-    If you are selected, present a 5 minute chalkboard talk about a project
-    on airtable that your buddy worked on this week.  You should present (1) the
-    overarching scientific goal of the project, (2) the challenge (why is the answer
-    not known already known?) (3) the importance (who cares?) (4) what your buddy is doing
-    to address the challenge (5) what problems he/she is running in to.</li>
-  {%if 'buddies' in fmeetings[0]%}<ul>
-  <li>For this meeting the pairings are:</li>{%for a in fmeetings[0]['buddies']%}
-   {% if len(a) > 1 %} <li>{{ a[0] }} is paired with {{ a[1] }}</li> {% else %}
-  <li> and {{ a[0] }} is our singleton! </li> {% endif %}
-  {%endfor%}</ul>{%endif%}
-  <h3>Agenda:</h3>
-  {%if 'agenda' in fmeetings[0]%}<ol>{%for a in fmeetings[0]['agenda']%}
-    <li>{{a}}</li>
-  {%endfor%}</ol>{%endif%}
-  {% endif %}
-<h1>Last time ({{ppmeetings[0]['datestr']}})</h1>
-  <li>Meeting Lead: {{ppmeetings[0].get('lead', '')}}</li>
-  <li>Scribe: {{ppmeetings[0].get('scribe', '')}}</li>
-  {% if ppmeetings[0].get('journal_club') %}
-  <li>Journal club presenter: {{ppmeetings[0].get('journal_club').get('presenter','')}}:<br>
-<div style="margin-left: 2em;">
-    {{ppmeetings[0].get('journal_club').get('doi','')}}
+  <li>Link: TBD</li>
+  {% endif %}{% endif %}
 </div>
-  {% endif %}
-  {% if ppmeetings[0].get('presentation') %}
-  <li>Presentation: {{ppmeetings[0].get('presentation').get('presenter','')}},
-    {{ppmeetings[0].get('presentation').get('title','')}}</li>
-<div style="margin-left: 2em;">
-  <li>Link: <a href="{{- ppmeetings[0].get('presentation', '').get('link','tbd')-}}">"Presentation" </a></li>
-</div>  {% endif %}
-  <h3>Action Items:</h3>
-  {%if 'actions' in ppmeetings[0]%}<ul>{%for a in ppmeetings[0]['actions']%}
-    <li>{{a}}</li>
-  {%endfor%}</ul>{%endif%}
-  <h3>Minutes:</h3>
-  {%if 'minutes' in ppmeetings[0]%}<ul>{%for a in ppmeetings[0]['minutes']%}
-    <li>{{a}}</li>
-  {%endfor%}</ul>{%endif%}
-  <h3>Agenda:</h3>
-  {%if 'agenda' in ppmeetings[0]%}<ol>{%for a in ppmeetings[0]['agenda']%}
-    <li>{{a}}</li>
-  {%endfor%}</ol>{%endif%}
+{% endif %} {% if fmeetings[0].get('presentation') %}
+<li>Research Presentation:</li>
+<div style="margin-left: 2em">
+  <li>presenter: {{fmeetings[0].get('presentation').get('presenter','')}}</li>
+  {% if "no pres" not in
+  fmeetings[0].get('presentation').get('presenter','').lower() %}
+  <li>title: {{fmeetings[0].get('presentation').get('title','')}}</li>
+  {%if fmeetings[0].get('presentation', '').get('link')%}
+  <li>
+    link:
+    <a href="{{- fmeetings[0].get('presentation', '').get('link','tbd')-}}"
+      >{{- fmeetings[0].get('presentation', '').get('link','tbd')-}}</a
+    >
+  </li>
+  {%else%}
+  <li>Link: TBD {%endif%}{%endif%}</li>
+</div>
+{% endif %}
+<h3>Buddies:</h3>
+<li>
+  Please everyone prepare ahead of time by sitting with your buddy and talking.
+  If you are selected, present a 5 minute chalkboard talk about a project on
+  airtable that your buddy worked on this week. You should present (1) the
+  overarching scientific goal of the project, (2) the challenge (why is the
+  answer not known already known?) (3) the importance (who cares?) (4) what your
+  buddy is doing to address the challenge (5) what problems he/she is running in
+  to.
+</li>
+{%if 'buddies' in fmeetings[0]%}
+<ul>
+  <li>For this meeting the pairings are:</li>
+  {%for a in fmeetings[0]['buddies']%} {% if len(a) > 1 %}
+  <li>{{ a[0] }} is paired with {{ a[1] }}</li>
+  {% else %}
+  <li>and {{ a[0] }} is our singleton!</li>
+  {% endif %} {%endfor%}
+</ul>
+{%endif%}
+<h3>Agenda:</h3>
+{%if 'agenda' in fmeetings[0]%}
+<ol>
+  {%for a in fmeetings[0]['agenda']%}
+  <li>{{a}}</li>
+  {%endfor%}
+</ol>
+{%endif%} {% endif %}
+<h1>Last time ({{ppmeetings[0]['datestr']}})</h1>
+<li>Meeting Lead: {{ppmeetings[0].get('lead', '')}}</li>
+<li>Scribe: {{ppmeetings[0].get('scribe', '')}}</li>
+{% if ppmeetings[0].get('journal_club') %}
+<li>
+  Journal club presenter:
+  {{ppmeetings[0].get('journal_club').get('presenter','')}}:<br />
+  <div style="margin-left: 2em">
+    {{ppmeetings[0].get('journal_club').get('doi','')}}
+  </div>
+  {% endif %} {% if ppmeetings[0].get('presentation') %}
+</li>
+
+<li>
+  Presentation: {{ppmeetings[0].get('presentation').get('presenter','')}},
+  {{ppmeetings[0].get('presentation').get('title','')}}
+</li>
+<div style="margin-left: 2em">
+  <li>
+    Link:
+    <a href="{{- ppmeetings[0].get('presentation', '').get('link','tbd')-}}"
+      >"Presentation"
+    </a>
+  </li>
+</div>
+{% endif %}
+<h3>Action Items:</h3>
+{%if 'actions' in ppmeetings[0]%}
+<ul>
+  {%for a in ppmeetings[0]['actions']%}
+  <li>{{a}}</li>
+  {%endfor%}
+</ul>
+{%endif%}
+<h3>Minutes:</h3>
+{%if 'minutes' in ppmeetings[0]%}
+<ul>
+  {%for a in ppmeetings[0]['minutes']%}
+  <li>{{a}}</li>
+  {%endfor%}
+</ul>
+{%endif%}
+<h3>Agenda:</h3>
+{%if 'agenda' in ppmeetings[0]%}
+<ol>
+  {%for a in ppmeetings[0]['agenda']%}
+  <li>{{a}}</li>
+  {%endfor%}
+</ol>
+{%endif%}
 <h1>Upcoming meetings</h1>
 {% for mtg in fmeetings[1:] %}
-  <h2><a>{{mtg['datestr']}}</a></h2>
-  <li>Meeting Lead: {{mtg.get('lead', '')}}</li>
-  <li>Scribe: {{mtg.get('scribe', '')}}</li>
-  <li>Journal club presenter: {{mtg.get('journal_club').get('presenter','')}},
-  <li>Presentation: {{mtg.get('presentation').get('presenter','')}},
-{% endfor %}
-    <h1>Ancient history</h1>
+<h2><a>{{mtg['datestr']}}</a></h2>
+<li>Meeting Lead: {{mtg.get('lead', '')}}</li>
+<li>Scribe: {{mtg.get('scribe', '')}}</li>
+<li>
+  Journal club presenter: {{mtg.get('journal_club').get('presenter','')}},
+</li>
+<li>
+  Presentation: {{mtg.get('presentation').get('presenter','')}}, {% endfor %}
+  <h1>Ancient history</h1>
   {%if len(jclublist) > 0 %}
   <h2><a>Journal Club Papers presented:</a></h2>
-  <div style="margin-left: 2em;">
-<ul>{% for paper in jclublist %}
-  <li>{{paper[0]}}</li>
-  {%endfor%}</ul>
+  <div style="margin-left: 2em">
+    <ul>
+      {% for paper in jclublist %}
+      <li>{{paper[0]}}</li>
+      {%endfor%}
+    </ul>
   </div>
-  {%endif%}
-{% for mtg in ppmeetings[1:] %}
+  {%endif%} {% for mtg in ppmeetings[1:] %}
   <h2><a>{{mtg['datestr']}}</a></h2>
-  <li>Meeting Lead: {{mtg.get('lead', '')}}</li>
-  {% if mtg.get('journal_club') %}
-  <li>Journal Club: {{mtg.get('journal_club').get('presenter','')}}:<br>
-<div style="margin-left: 2em;">
-  {{mtg.get('journal_club').get('doi','')}}
-</div>
-  {% endif %}
-  {% if mtg.get('presentation') %}
-  <li>Presentation: {{mtg.get('presentation').get('presenter','')}},
-    {{mtg.get('presentation').get('title','')}}</li>
-<div style="margin-left: 2em;">
+</li>
+
+<li>Meeting Lead: {{mtg.get('lead', '')}}</li>
+{% if mtg.get('journal_club') %}
+<li>
+  Journal Club: {{mtg.get('journal_club').get('presenter','')}}:<br />
+  <div style="margin-left: 2em">{{mtg.get('journal_club').get('doi','')}}</div>
+  {% endif %} {% if mtg.get('presentation') %}
+</li>
+
+<li>
+  Presentation: {{mtg.get('presentation').get('presenter','')}},
+  {{mtg.get('presentation').get('title','')}}
+</li>
+<div style="margin-left: 2em">
   {%if mtg.get('presentation', '').get('link') %}
-  <li>Link: <a href="{{- mtg.get('presentation', '').get('link','tbd')-}}">"Presentation" </a></li>
-{%else%}
-<li> Link: TBD
+  <li>
+    Link:
+    <a href="{{- mtg.get('presentation', '').get('link','tbd')-}}"
+      >"Presentation"
+    </a>
+  </li>
+  {%else%}
+  <li>Link: TBD {%endif%}</li>
+</div>
+{% endif %}
+<h3>Action Items:</h3>
+{%if 'actions' in mtg%}
+<ul>
+  {%for a in mtg['actions']%}
+  <li>{{a}}</li>
+  {%endfor%}
+</ul>
 {%endif%}
-</div>  {% endif %}
-  <h3>Action Items:</h3>
-  {%if 'actions' in mtg%}<ul>{%for a in mtg['actions']%}
-    <li>{{a}}</li>
-  {%endfor%}</ul>{%endif%}
-  <h3>Minutes:</h3>
-  {%if 'minutes' in mtg%}<ul>{%for a in mtg['minutes']%}
-    <li>{{a}}</li>
-  {%endfor%}</ul>{%endif%}
-  <h3>Agenda:</h3>
-  {%if 'agenda' in mtg%}<ol>{%for a in mtg['agenda']%}
-    <li>{{a}}</li>
-  {%endfor%}</ol>{%endif%}
-{% endfor %}
-{% endblock content %}
-{% block footer %}
-{% endblock footer %}
+<h3>Minutes:</h3>
+{%if 'minutes' in mtg%}
+<ul>
+  {%for a in mtg['minutes']%}
+  <li>{{a}}</li>
+  {%endfor%}
+</ul>
+{%endif%}
+<h3>Agenda:</h3>
+{%if 'agenda' in mtg%}
+<ol>
+  {%for a in mtg['agenda']%}
+  <li>{{a}}</li>
+  {%endfor%}
+</ol>
+{%endif%} {% endfor %} {% endblock content %} {% block footer %} {% endblock
+footer %}

@@ -1,21 +1,20 @@
 <head>
-  <link rel="stylesheet" type="text/css" href="/static/sensei-grid.min.css"/>
-  <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css"/>
+  <link rel="stylesheet" type="text/css" href="/static/sensei-grid.min.css" />
+  <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css" />
 
   <script src="/static/jquery.min.js"></script>
   <script src="/static/lodash.min.js"></script>
   <script src="/static/sensei-grid.min.js"></script>
 </head>
 <body>
-<h1>Welcome to the Regolith Grader!</h1>
-{% for dbname in rc.client.keys() if dbname != 'local' %}
+  <h1>Welcome to the Regolith Grader!</h1>
+  {% for dbname in rc.client.keys() if dbname != 'local' %}
   <h3>{{ dbname }}{% if status %} [{{status}}]{% endif %}</h3>
-  {% for course in sorted(rc.client.all_documents('courses'), key=by_id) %}
-  {% if course['active'] %}
-    {% set course_id = course['_id'] %}
-    <h4>Course: {{course_id}}</h4>
-    <div class="course_{{course_id}}"></div>
-    <script type="text/javascript">
+  {% for course in sorted(rc.client.all_documents('courses'), key=by_id) %} {%
+  if course['active'] %} {% set course_id = course['_id'] %}
+  <h4>Course: {{course_id}}</h4>
+  <div class="course_{{course_id}}"></div>
+  <script type="text/javascript">
     var courseColumns = [
         {name: "student", type: "string"},
         {%- for assign in sorted(rc.client.all_documents('assignments'), key=by_id) -%}
@@ -59,18 +58,17 @@
       http.onload = function() {};
     });
     grid.render();
-    </script>
-    <br/><br/>
- {% endif %}
- {% endfor %}
- <!-- end courses loop -->
-{% endfor %}
-<!-- end db loop -->
+  </script>
+  <br /><br />
+  {% endif %} {% endfor %}
+  <!-- end courses loop -->
+  {% endfor %}
+  <!-- end db loop -->
 
-<br/><br/>
-<hr/>
-<br/><br/>
-<form action="shutdown" method="post">
-  <button name="shutdown" value="shutdown">Shutdown Server</button>
-</form>
+  <br /><br />
+  <hr />
+  <br /><br />
+  <form action="shutdown" method="post">
+    <button name="shutdown" value="shutdown">Shutdown Server</button>
+  </form>
 </body>

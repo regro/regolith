@@ -1,16 +1,15 @@
-{% extends "base.html" %}
-{% block header %}
+{% extends "base.html" %} {% block header %}
 <h1>{{post['title']}}</h1>
-{% endblock header %}
-{% block content %}
-<h2>Posted by {{post['author']}} on
-    <i>{{post['month']}} {{post['day']}}, {{post['year']}}</i>
+{% endblock header %} {% block content %}
+<h2>
+  Posted by {{post['author']}} on
+  <i>{{post['month']}} {{post['day']}}, {{post['year']}}</i>
 </h2>
 {%if post.get('original')%}
-  <h3>This was originally posted at <a href="{{post['original']}}">{{post['original']}}</a>.</h3>
+<h3>
+  This was originally posted at
+  <a href="{{post['original']}}">{{post['original']}}</a>.
+</h3>
 {%endif%}
-<br/>
-{{post['post']}}
-{% endblock content %}
-{% block footer %}
-{% endblock footer %}
+<br />
+{{post['post']}} {% endblock content %} {% block footer %} {% endblock footer %}

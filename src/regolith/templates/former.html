@@ -1,17 +1,14 @@
-{% extends "base.html" %}
-{% block header %}
+{% extends "base.html" %} {% block header %}
 <h1>Former Members</h1>
-{% endblock header %}
-{% block content %}
-{% for p in people if not p.get('active', True) %}
-  <a href="{{root}}/people/{{p['_id']}}.html" class="image-link">
-    <img src="{{p.get('avatar')}}" style="width:200px"/>
-  </a>
-  <h1><a href="{{root}}/people/{{p['_id']}}.html">{{p['title']}} {{p['name']}}</a></h1>
-  <ul>
-    <li><b>Position:</b> {{p['position'].capitalize()}}</li>
-  </ul>
-{% endfor %}
-{% endblock content %}
-{% block footer %}
-{% endblock footer %}
+{% endblock header %} {% block content %} {% for p in people if not
+p.get('active', True) %}
+<a href="{{root}}/people/{{p['_id']}}.html" class="image-link">
+  <img src="{{p.get('avatar')}}" style="width: 200px" />
+</a>
+<h1>
+  <a href="{{root}}/people/{{p['_id']}}.html">{{p['title']}} {{p['name']}}</a>
+</h1>
+<ul>
+  <li><b>Position:</b> {{p['position'].capitalize()}}</li>
+</ul>
+{% endfor %} {% endblock content %} {% block footer %} {% endblock footer %}

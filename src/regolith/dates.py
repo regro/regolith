@@ -58,7 +58,8 @@ def month_to_int(m):
 
 
 def month_to_str_int(m):
-    """Converts a month to an int form, str type, with a leading zero."""
+    """Converts a month to an int form, str type, with a leading
+    zero."""
     mi = month_to_int(m)
     if mi < 10:
         ms = "0{}".format(mi)
@@ -77,8 +78,8 @@ def day_to_str_int(d):
 
 
 def date_to_float(y, m, d=0):
-    """Converts years / months / days to a float, eg 2015.0818 is August 18th
-    2015."""
+    """Converts years / months / days to a float, eg 2015.0818 is August
+    18th 2015."""
     y = int(y)
     m = month_to_int(m)
     d = int(d)
@@ -86,7 +87,8 @@ def date_to_float(y, m, d=0):
 
 
 def find_gaps_overlaps(dateslist, overlaps_ok=False):
-    """Find whether there is a gap or an overlap in a list of date-ranges.
+    """Find whether there is a gap or an overlap in a list of date-
+    ranges.
 
     Parameters
     ----------
@@ -129,8 +131,8 @@ def last_day(year, month):
 
 def convert_doc_iso_to_date(doc):
     def convert_date(obj):
-        """Recursively goes through the dictionary obj and converts date from
-        iso to datetime.date."""
+        """Recursively goes through the dictionary obj and converts date
+        from iso to datetime.date."""
         if isinstance(obj, str):
             try:
                 date = datetime.datetime.strptime(obj, "%Y-%m-%d").date()
@@ -342,9 +344,10 @@ def get_due_date(thing):
 
 
 def is_current(thing, now=None):
-    """Given a thing with dates, returns true if the thing is current looks for
-    begin_ and end_ date things (date, year, month, day), or just the date
-    things themselves. e.g., begin_date, end_month, month, and so on.
+    """Given a thing with dates, returns true if the thing is current
+    looks for begin_ and end_ date things (date, year, month, day), or
+    just the date things themselves. e.g., begin_date, end_month, month,
+    and so on.
 
     Parameters
     ----------
@@ -423,8 +426,8 @@ def has_finished(thing, now=None):
 
 
 def is_before(thing, now=None):
-    """Given a thing with a date, returns true if the thing is before the input
-    date.
+    """Given a thing with a date, returns true if the thing is before
+    the input date.
 
     Parameters
     ----------
@@ -450,8 +453,8 @@ def is_before(thing, now=None):
 
 
 def is_after(thing, now=None):
-    """Given a thing with a date, returns true if the thing is after the input
-    date.
+    """Given a thing with a date, returns true if the thing is after the
+    input date.
 
     Parameters
     ----------
@@ -477,8 +480,8 @@ def is_after(thing, now=None):
 
 
 def is_between(thing, start=None, end=None):
-    """Given a thing with a date, returns true if the thing is between the
-    start and end date.
+    """Given a thing with a date, returns true if the thing is between
+    the start and end date.
 
     Parameters
     ----------

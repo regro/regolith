@@ -1,63 +1,82 @@
 <head>
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
   <script src="/static/ace.js"></script>
-  <link href="/static/jsoneditor.min.css" rel="stylesheet" type="text/css">
+  <link href="/static/jsoneditor.min.css" rel="stylesheet" type="text/css" />
   <script src="/static/jsoneditor.min.js"></script>
 
   <script>
-  function makeEditor(elemId, jsonValue) {
-     // create the editor
-     var container = document.getElementById(elemId);
-     var options = {mode: 'code'};
-     var editor = new JSONEditor(container, options, jsonValue);
-     container.editor = editor;
-  }
+    function makeEditor(elemId, jsonValue) {
+      // create the editor
+      var container = document.getElementById(elemId);
+      var options = { mode: "code" };
+      var editor = new JSONEditor(container, options, jsonValue);
+      container.editor = editor;
+    }
 
-  function editorValue(editorId, bodyId) {
-     var container = document.getElementById(editorId);
-     var editor = container.editor;
-     document.getElementById(bodyId).value = editor.getText();
-  }
+    function editorValue(editorId, bodyId) {
+      var container = document.getElementById(editorId);
+      var editor = container.editor;
+      document.getElementById(bodyId).value = editor.getText();
+    }
   </script>
 </head>
 <body>
-<h1>Collection {{dbname}}/{{collname}}</h1>
+  <h1>Collection {{dbname}}/{{collname}}</h1>
 
-<form action="/shutdown" method="post">
-  <button name="shutdown" value="shutdown">Shutdown Server</button>
-</form>
+  <form action="/shutdown" method="post">
+    <button name="shutdown" value="shutdown">Shutdown Server</button>
+  </form>
 
-{% for doc in rc.client.all_documents(collname) %}
-  {% set docdump = json.dumps(conv(doc), sort_keys=True, indent=1) %}
-  <div id="{{doc._id}}" style="text-align:center;vertical-align:middle;">
-  <h3>{{doc._id}}
-  {% if status and status_id == str(doc._id) %}
-    [{{status}}]
-  {% endif %}
-  </h3>
-  <div id="jsoneditor{{doc._id}}" style="padding-left:5em;width:80em;height:25em;text-align:left;"></div>
-  <script>makeEditor("jsoneditor{{doc._id}}", {{docdump | safe}})</script>
-  <br/><br/>
-  <form method="POST" action="#{{doc._id}}" onsubmit="editorValue('jsoneditor{{doc._id}}', 'body{{doc._id}}');">
-    <input type="hidden" id="body{{doc._id}}" name="body" value="" />
-    <input type="submit" value="Save" name="save"/>
-    <input type="submit" value="Delete" name="delete"/>
-    <input type="submit" value="Cancel" name="cancel"/>
-  </form></div>
-  <br/><br/>
-{% endfor %}
+  {% for doc in rc.client.all_documents(collname) %} {% set docdump =
+  json.dumps(conv(doc), sort_keys=True, indent=1) %}
+  <div id="{{doc._id}}" style="text-align: center; vertical-align: middle">
+    <h3>
+      {{doc._id}} {% if status and status_id == str(doc._id) %} [{{status}}] {%
+      endif %}
+    </h3>
+    <div
+      id="jsoneditor{{doc._id}}"
+      style="padding-left: 5em; width: 80em; height: 25em; text-align: left"
+    ></div>
+    <script>
+      makeEditor("jsoneditor{{doc._id}}", {{docdump | safe}})
+    </script>
+    <br /><br />
+    <form
+      method="POST"
+      action="#{{doc._id}}"
+      onsubmit="editorValue('jsoneditor{{doc._id}}', 'body{{doc._id}}');"
+    >
+      <input type="hidden" id="body{{doc._id}}" name="body" value="" />
+      <input type="submit" value="Save" name="save" />
+      <input type="submit" value="Delete" name="delete" />
+      <input type="submit" value="Cancel" name="cancel" />
+    </form>
+  </div>
+  <br /><br />
+  {% endfor %}
 
-<div id="addnewdoc" style="text-align:center;vertical-align:middle;">
-<h3>Add New Entry</h3>
-<div id="jsoneditoraddnewdoc" style="padding-left:5em;width:80em;height:25em;text-align:left;"></div>
-<script>makeEditor("jsoneditoraddnewdoc", {"_id": "PROVIDE A UNIQUE ID"})</script>
-<br/><br/>
-<form method="POST" action="#addnewdoc" onsubmit="editorValue('jsoneditoraddnewdoc', 'bodyaddnewdoc');">
-  <input type="hidden" id="bodyaddnewdoc" name="body" value="" />
-  <input type="submit" value="Add" name="add"/>
-</form></div>
+  <div id="addnewdoc" style="text-align: center; vertical-align: middle">
+    <h3>Add New Entry</h3>
+    <div
+      id="jsoneditoraddnewdoc"
+      style="padding-left: 5em; width: 80em; height: 25em; text-align: left"
+    ></div>
+    <script>
+      makeEditor("jsoneditoraddnewdoc", { _id: "PROVIDE A UNIQUE ID" });
+    </script>
+    <br /><br />
+    <form
+      method="POST"
+      action="#addnewdoc"
+      onsubmit="editorValue('jsoneditoraddnewdoc', 'bodyaddnewdoc');"
+    >
+      <input type="hidden" id="bodyaddnewdoc" name="body" value="" />
+      <input type="submit" value="Add" name="add" />
+    </form>
+  </div>
 
-<form action="/shutdown" method="post">
-  <button name="shutdown" value="shutdown">Shutdown Server</button>
-</form>
+  <form action="/shutdown" method="post">
+    <button name="shutdown" value="shutdown">Shutdown Server</button>
+  </form>
 </body>
