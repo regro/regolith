@@ -1,4 +1,5 @@
-"""Helper for finding and listing contacts from the contacts.yml database.
+"""Helper for finding and listing contacts from the contacts.yml
+database.
 
 Prints name, institution, and email (if applicable) of the contact.
 """
@@ -64,7 +65,8 @@ def subparser(subpi):
 
 
 class ContactsListerHelper(SoutHelperBase):
-    """Helper for finding and listing contacts from the contacts.yml file."""
+    """Helper for finding and listing contacts from the contacts.yml
+    file."""
 
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
