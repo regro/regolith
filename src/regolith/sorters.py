@@ -6,7 +6,8 @@ from regolith.dates import date_to_float
 
 
 def doc_date_key(document):
-    """Convert a dict of Datetime object to float serialization of date info.
+    """Convert a dict of Datetime object to float serialization of date
+    info.
 
     Parameters
     ----------
@@ -21,8 +22,8 @@ def doc_date_key(document):
 
 
 def doc_date_key_high(document):
-    """Convert a dict of highest Datetime object to float serialization of date
-    info.
+    """Convert a dict of highest Datetime object to float serialization
+    of date info.
 
     Parameters
     ----------
@@ -37,8 +38,8 @@ def doc_date_key_high(document):
 
 
 def ene_date_key(document):
-    """Convert a dict of ene Datetime object to float serialization of date
-    info.
+    """Convert a dict of ene Datetime object to float serialization of
+    date info.
 
     Parameters
     ----------
