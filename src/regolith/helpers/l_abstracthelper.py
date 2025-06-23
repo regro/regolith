@@ -34,8 +34,8 @@ def subparser(subpi):
 
 
 class AbstractListerHelper(SoutHelperBase):
-    """Helper for finding and listing abstracts from the presentations.yml
-    file."""
+    """Helper for finding and listing abstracts from the
+    presentations.yml file."""
 
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET

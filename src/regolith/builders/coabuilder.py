@@ -464,7 +464,8 @@ class RecentCollaboratorsBuilder(BuilderBase):
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def query_ppl(self, target):
-        """Query the data base for the target's collaborators' information."""
+        """Query the data base for the target's collaborators'
+        information."""
         rc = self.rc
         gtx = self.gtx
         person = fuzzy_retrieval(
@@ -531,8 +532,8 @@ class RecentCollaboratorsBuilder(BuilderBase):
 
     @staticmethod
     def fill_in_tab(ws, ppl, start_row, template_cell_style=None, cols="ABCDE"):
-        """Add the information in person, institution pairs into the table 4 in
-        nsf table."""
+        """Add the information in person, institution pairs into the
+        table 4 in nsf table."""
         nsf_mappings = {
             "co-author": "A:",
             "collaborator": "C:",

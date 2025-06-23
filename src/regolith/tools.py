@@ -75,8 +75,8 @@ def dbpathname(db, rc):
 
 
 def fallback(cond, backup):
-    """Decorator for returning the object if cond is true and a backup if cond
-    is false."""
+    """Decorator for returning the object if cond is true and a backup
+    if cond is false."""
 
     def dec(obj):
         return obj if cond else backup
@@ -929,8 +929,8 @@ def document_by_value(documents, address, value):
 
 
 def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
-    """Retrieve a document from the documents where value is compared against
-    multiple potential sources.
+    """Retrieve a document from the documents where value is compared
+    against multiple potential sources.
 
     Parameters
     ----------
@@ -1196,7 +1196,8 @@ def get_person_contact(name, people_coll, contacts_coll):
 
 
 def merge_collections_intersect(a, b, target_id):
-    """Merge two collections such that just the intersection is returned.
+    """Merge two collections such that just the intersection is
+    returned.
 
     for shared keys that are in both collections, the value in b will be kept
 
@@ -1228,9 +1229,9 @@ def merge_collections_intersect(a, b, target_id):
 
 
 def update_schemas(default_schema, user_schema):
-    """Merging the user schema into the default schema recursively and return
-    the merged schema. The default schema and user schema will not be modified
-    during the merging.
+    """Merging the user schema into the default schema recursively and
+    return the merged schema. The default schema and user schema will
+    not be modified during the merging.
 
     Parameters
     ----------
@@ -1275,8 +1276,8 @@ def get_person(person_id, rc):
 
 
 def group(db, by):
-    """Group the document in the database according to the value of the doc[by]
-    in db.
+    """Group the document in the database according to the value of the
+    doc[by] in db.
 
     Parameters
     ----------
@@ -1407,8 +1408,8 @@ def group_member_employment_start_end(person, grpname):
 
 
 def compound_dict(doc, li):
-    """Recursive function that collects all the strings from a document that is
-    a dictionary.
+    """Recursive function that collects all the strings from a document
+    that is a dictionary.
 
     Parameters
     ----------
@@ -1434,8 +1435,8 @@ def compound_dict(doc, li):
 
 
 def compound_list(doc, li):
-    """Recursive function that collects all the strings from a document that is
-    a list.
+    """Recursive function that collects all the strings from a document
+    that is a list.
 
     Parameters
     ----------
@@ -1460,8 +1461,8 @@ def compound_list(doc, li):
 
 
 def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
-    """Retrieves a list of all documents from the collection where the fragment
-    appears in any one of the given fields.
+    """Retrieves a list of all documents from the collection where the
+    fragment appears in any one of the given fields.
 
     Parameters
     ----------
@@ -1529,8 +1530,8 @@ def get_id_from_name(coll, name):
 
 
 def is_fully_appointed(person, begin_date, end_date):
-    """Checks if a collection of appointments for a person is valid and fully
-    loaded for a given interval of time.
+    """Checks if a collection of appointments for a person is valid and
+    fully loaded for a given interval of time.
 
         Parameters
         ----------
@@ -1604,8 +1605,8 @@ def is_fully_appointed(person, begin_date, end_date):
 
 
 def key_value_pair_filter(collection, arguments):
-    """Retrieves a list of all documents from the collection where the fragment
-    appears in any one of the given fields.
+    """Retrieves a list of all documents from the collection where the
+    fragment appears in any one of the given fields.
 
     Parameters
     ----------
@@ -1636,8 +1637,8 @@ def key_value_pair_filter(collection, arguments):
 
 
 def collection_str(collection, keys=None):
-    """Retrieves a list of all documents from the collection where the fragment
-    appears in any one of the given fields.
+    """Retrieves a list of all documents from the collection where the
+    fragment appears in any one of the given fields.
 
     Parameters
     ----------
@@ -1667,8 +1668,8 @@ def collection_str(collection, keys=None):
 
 
 def search_collection(collection, arguments, keys=None):
-    """Retrieves a list of all documents from the collection where the fragment
-    appears in any one of the given fields.
+    """Retrieves a list of all documents from the collection where the
+    fragment appears in any one of the given fields.
 
     Parameters
     ----------
@@ -1697,8 +1698,9 @@ def search_collection(collection, arguments, keys=None):
 
 
 def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None, end_date=None):
-    """Retrieves a list of all the appointments on the given grant(s) in the
-    given interval of time for each person in the given people collection.
+    """Retrieves a list of all the appointments on the given grant(s) in
+    the given interval of time for each person in the given people
+    collection.
 
     Parameters
     ----------
@@ -1856,8 +1858,9 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
 
 def validate_meeting(meeting, date):
     """Validates a meeting by checking is it has a journal club doi, a
-    presentation link, and a presentation title. This function will return
-    nothing is the meeting is valid, otherwise it will raise a ValueError.
+    presentation link, and a presentation title. This function will
+    return nothing is the meeting is valid, otherwise it will raise a
+    ValueError.
 
     Parameters
     ----------
@@ -1934,8 +1937,8 @@ def print_task(task_list, stati, index=True):
 
 
 def get_formatted_crossref_reference(doi):
-    """Given a doi, return the full reference and the date of the reference
-    from Crossref REST-API.
+    """Given a doi, return the full reference and the date of the
+    reference from Crossref REST-API.
 
     parameters
     ----------
@@ -2053,7 +2056,8 @@ def validate_doc(collection_name, doc, rc):
 
 
 def add_to_google_calendar(event):
-    """Takes a newly created event, and adds it to the user's google calendar.
+    """Takes a newly created event, and adds it to the user's google
+    calendar.
 
     Parameters:
         event - a dictionary containing the event details to be added to google calendar
@@ -2097,8 +2101,9 @@ def add_to_google_calendar(event):
 
 
 def google_cal_auth_flow():
-    """First time authentication, this function opens a window to request user
-    consent to use google calendar API, and then returns a token."""
+    """First time authentication, this function opens a window to
+    request user consent to use google calendar API, and then returns a
+    token."""
     tokendir = os.path.expanduser("~/.config/regolith/tokens/google_calendar_api")
     os.makedirs(tokendir, exist_ok=True)
     tokenfile = os.path.join(tokendir, "token.json")
@@ -2256,7 +2261,8 @@ def create_repo(destination_id, token_info_id, rc):
 
 
 def get_tags(coll):
-    """Given a collection with a tags field, returns the set of tags as a list.
+    """Given a collection with a tags field, returns the set of tags as
+    a list.
 
     The tags field is expected to be a string with comma or space separated tags.
     get_tags splits the tags and returns the set of unique tags as a list of

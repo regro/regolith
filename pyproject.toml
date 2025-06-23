@@ -69,6 +69,11 @@ exclude-file = ".codespell/ignore_lines.txt"
 ignore-words = ".codespell/ignore_words.txt"
 skip = "*.cif,*.dat,*.js,*.tex,*.txt,*.html,*.bib,*.map,*.json"
 
+[tool.docformatter]
+recursive = true
+wrap-summaries = 72
+wrap-descriptions = 72
+
 [tool.black]
 line-length = 115
 include = '\.pyi?$'

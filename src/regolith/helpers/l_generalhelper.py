@@ -31,7 +31,8 @@ def subparser(subpi):
 
 
 class GeneralListerHelper(SoutHelperBase):
-    """Helper for listing filtered data from collections in the database."""
+    """Helper for listing filtered data from collections in the
+    database."""
 
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
