@@ -16,7 +16,7 @@ repos:
       - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
-        exclude: '\.(rst|txt)$'
+        exclude: '\.(rst|txt|yaml|yml)$'
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-toml

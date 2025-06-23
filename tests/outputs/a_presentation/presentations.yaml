@@ -14,7 +14,7 @@
     - what a week!
   project: 18kj_conservation
   status: accepted
-  title: Nanostructure challenges and successes from 16th Century warships to
+  title: Nanostructure challenges and successes from 16th Century warships to 
     21st Century energy
   type: colloquium
   webinar: true
@@ -72,7 +72,7 @@
   location: Test C.2
   meeting_name: Test Case C.2
   notes:
-    - This is to test Case C.2 where user wants an expense added and passed the
+    - This is to test Case C.2 where user wants an expense added and passed the 
       force option without specifying an expense db when default is public
   presentation_url: http://drive.google.com/SEV356DV
   project:
