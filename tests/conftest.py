@@ -1,4 +1,7 @@
-"""Copyright (c) 2017-2025, Anthony Scopatz All rights reserved."""
+"""Copyright (c) 2017-2020, Anthony Scopatz All rights reserved.
+
+Copyright (c) 2021-2025, Simon Billinge All rights reserved.
+"""
 
 import json
 import os

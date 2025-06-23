@@ -22,7 +22,7 @@ classifiers = [
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: BSD License',
+        'License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',

@@ -10,6 +10,6 @@ jobs:
     with:
       project: regolith
       c_extension: false
-      headless: true
+      headless: false
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
