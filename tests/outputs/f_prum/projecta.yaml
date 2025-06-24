@@ -115,10 +115,11 @@ sb_firstprojectum:
     scope:
       - UCs that are supported or some other scope description if it is software
       - sketch of science story if it is paper
-    platform: description of how and where the audience will access the deliverable.  Journal
-      if it is a paper
+    platform: description of how and where the audience will access the 
+      deliverable.  Journal if it is a paper
     roll_out:
-      - steps that the audience will take to access and interact with the deliverable
+      - steps that the audience will take to access and interact with the 
+        deliverable
       - not needed for paper submissions
     notes:
       - deliverable note
@@ -161,8 +162,8 @@ sb_firstprojectum:
       status: finished
       type: meeting
       progress:
-        text: The samples have been synthesized and places in the sample cupboard.
-          They turned out well and are blue as expected
+        text: The samples have been synthesized and places in the sample 
+          cupboard. They turned out well and are blue as expected
         figure:
           - token that dereferences a figure or image in group local storage db
         slides_urls:
