@@ -7,7 +7,10 @@ License
 
 OPEN SOURCE LICENSE AGREEMENT
 =============================
-Creative Commons Zero v1.0 Universal license (CC0 1.0)
+BSD 3-Clause License
+
+Copyright (c) 2025, The Trustees of Columbia University in the City of New York.
+All Rights Reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
