@@ -1,59 +1,15 @@
 name: Tests on PR
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
   workflow_dispatch:
 
 jobs:
-  validate:
-    defaults:
-      run:
-        shell: bash -l {0}
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out regolith repository
-        uses: actions/checkout@v4
-
-      - name: Initialize miniconda
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          activate-environment: test
-          auto-update-conda: true
-          environment-file: environment.yml
-          auto-activate-base: false
-          python-version: 3.11
-
-      - name: Conda config
-        run: >-
-          conda config --set always_yes yes
-          --set changeps1 no
-
-      - name: Install libgtk for Linux
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev
-
-      - name: Install regolith and requirements
-        run: |
-          conda install --file requirements/test.txt
-          conda install --file requirements/conda.txt
-          pip install gooey
-          python -m pip install . --no-deps
-
-
-      - name: Validate regolith
-        run: |
-          pytest --cov
-          coverage report -m
-          codecov
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          verbose: true
-          fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }}
+  tests-on-pr:
+    uses: scikit-package/release-scripts/.github/workflows/_tests-on-pr.yml@v0
+    with:
+      project: regolith
+      c_extension: false
+      headless: false
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
