@@ -3,7 +3,6 @@ graft tests
 graft requirements
 
 include AUTHORS.rst LICENSE*.rst README.rst
-include regolith/version.py
 
 # Exclude all bytecode files and __pycache__ directories
 global-exclude *.py[cod]  # Exclude all .pyc, .pyo, and .pyd files.
@@ -11,6 +10,3 @@ global-exclude .DS_Store  # Exclude Mac filesystem artifacts.
 global-exclude __pycache__  # Exclude Python cache directories.
 global-exclude .git*  # Exclude git files and directories.
 global-exclude .idea  # Exclude PyCharm project settings.
-
-# If including data files in the package, add them like:
-# include path/to/data_file
