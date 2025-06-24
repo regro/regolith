@@ -12,7 +12,7 @@ on:
 
 jobs:
   matrix-coverage:
-    uses: Billingegroup/release-scripts/.github/workflows/_matrix-and-codecov-on-merge-to-main.yml@v0
+    uses: scikit-package/release-scripts/.github/workflows/_matrix-and-codecov-on-merge-to-main.yml@v0
     with:
       project: regolith
       c_extension: false

@@ -1,15 +1,11 @@
 name: Deploy Documentation on Release
 
 on:
-  release:
-    types: [published]
   workflow_dispatch:
 
 jobs:
   docs:
-    permissions:
-      contents: write
-    uses: Billingegroup/release-scripts/.github/workflows/_publish-docs-on-release.yml@v0
+    uses: scikit-package/release-scripts/.github/workflows/_publish-docs-on-release.yml@v0
     with:
       project: regolith
       c_extension: false
