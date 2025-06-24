@@ -1,7 +1,9 @@
 Authors
 =======
 
-Billinge Group members and community contributors
+Originally written by Anthony Scopatz
+Significant contributions by Christopher "CJ" Wright and Simon J. L. Billinge
+Billinge Group and other community contributors.
 
 Contributors
 ------------
