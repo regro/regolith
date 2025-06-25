@@ -13,10 +13,20 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+import json
+import os
 import sys
+import tempfile
 import time
+from collections.abc import MutableMapping
 from importlib.metadata import version
 from pathlib import Path
+from subprocess import check_output
+from textwrap import indent
+
+from regolith.fsclient import _id_key, dump_json, json_to_yaml
+from regolith.main import CONNECTED_COMMANDS, DISCONNECTED_COMMANDS
+from regolith.schemas import EXEMPLARS, SCHEMAS
 
 # Attempt to import the version dynamically from GitHub tag.
 try:
@@ -52,6 +62,10 @@ extensions = [
     "sphinx_copybutton",
     "m2r",
 ]
+
+# napoleon_google_docstring = False
+# napoleon_use_param = False
+# napoleon_use_ivar = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -101,7 +115,7 @@ copybutton_prompt_is_regexp = True
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ["build"]
+exclude_patterns = ["_build", "build"]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -172,7 +186,7 @@ html_favicon = "_static/regolith-logo.ico"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -195,19 +209,19 @@ html_favicon = "_static/regolith-logo.ico"
 # html_additional_pages = {}
 
 # If false, no module index is generated.
-# html_domain_indices = True
+html_domain_indices = False
 
 # If false, no index is generated.
-# html_use_index = True
+html_use_index = True
 
 # If true, the index is split into individual pages for each letter.
-# html_split_index = False
+html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-# html_show_sourcelink = True
+html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-# html_show_sphinx = True
+html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
 # html_show_copyright = True
@@ -221,6 +235,7 @@ html_favicon = "_static/regolith-logo.ico"
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
+html_baseurl = "https://regro.github.io/regolith/"
 basename = "regolith".replace(" ", "").replace(".", "")
 htmlhelp_basename = basename + "doc"
 
@@ -243,7 +258,7 @@ latex_documents = [
     (
         "index",
         "regolith.tex",
-        "regolith Documentation",
+        "Regolith Documentation",
         ab_authors,
         "manual",
     ),
@@ -402,12 +417,15 @@ docs_not_in_schemas = ["citations", "courses", "jobs", "news"]
 all_collection_docs = sorted(list(SCHEMAS.keys()) + docs_not_in_schemas)
 
 collections_header = """.. _regolith_collections:
+
 =================
 Collections
 =================
 The following contain the regolith schemas and examples in both YAML and JSON/Mongo.
+
 .. toctree::
     :maxdepth: 1
+
 """
 
 collections_header += indent("\n".join(all_collection_docs), "    ")
@@ -424,12 +442,16 @@ def build_cli_doc(cli):
     s += indent(out, "\t") + "\n"
     if cli == "validate":
         s += """Misc
+
 ----
 This can also be added as a git hook by adding the following to
 ``.git/hooks/pre-commit``
+
 .. code-block:: sh
+
     #!/bin/sh
     regolith validate
+
 This can be enabled with ``chmod +x .git/hooks/pre-commit``"""
     with open(fn, "w") as f:
         f.write(s)
@@ -441,13 +463,17 @@ for cli in clis:
     build_cli_doc(cli)
 
 cli_index = """.. _commands:
+
 =================
 Regolith Commands
 =================
 Shell commands for regolith
+
 {}
+
 .. toctree::
     :maxdepth: 1
+
 """
 cli_index += indent("\n".join(clis), "    ")
 with open("commands/index.rst", "w") as f:
