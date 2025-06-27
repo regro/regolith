@@ -11,5 +11,8 @@ jobs:
       project: regolith
       c_extension: false
       headless: false
+      run: |
+        pip install gooey
+        echo "Done"
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
