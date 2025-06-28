@@ -3,10 +3,10 @@ name: Check for News
 on:
   pull_request_target:
     branches:
-    - main
+      - main
 
 jobs:
   check-news-item:
-    uses: Billingegroup/release-scripts/.github/workflows/_check-news-item.yml@v0
+    uses: scikit-package/release-scripts/.github/workflows/_check-news-item.yml@v0
     with:
       project: regolith

@@ -124,8 +124,8 @@ class UscHtmlParser(HTMLParser):
 
 
 def load_usc(filename):
-    """Returns students as a list of dicts from an HTML file obtainted from the
-    University of South Carolina."""
+    """Returns students as a list of dicts from an HTML file obtainted
+    from the University of South Carolina."""
     with open(filename, encoding="utf-8") as f:
         html = f.read()
     parser = UscHtmlParser()

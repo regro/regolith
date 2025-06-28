@@ -13,7 +13,8 @@ from regolith.tools import all_docs_from_collection, group, id_key
 
 
 class BeamPlanBuilder(LatexBuilderBase):
-    """Build a file of experiment plans for the beamtime from database entries.
+    """Build a file of experiment plans for the beamtime from database
+    entries.
 
     The report is in the '.tex' file. The template of the file is in the
     'templates/beamplan.tex'. The data will be grouped
@@ -58,8 +59,8 @@ class BeamPlanBuilder(LatexBuilderBase):
         return None
 
     def _gather_info(self, bt, docs):
-        """Query information from the list of documents. Return a table as the
-        summary of the plans and a list of experiment plans.
+        """Query information from the list of documents. Return a table
+        as the summary of the plans and a list of experiment plans.
 
         Parameters
         ----------

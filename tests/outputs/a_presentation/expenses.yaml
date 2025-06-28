@@ -140,8 +140,8 @@
       notes:
         - ''
   notes:
-    - This is to test Case C.2 where user wants an expense added and passed the force
-      option without specifying an expense db when default is public
+    - This is to test Case C.2 where user wants an expense added and passed the 
+      force option without specifying an expense db when default is public
   overall_purpose: give contributed_oral presentation at Test Case C.2, Test C.2
   payee: sbillinge
   reimbursements:

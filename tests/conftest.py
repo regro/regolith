@@ -41,8 +41,8 @@ def user_filesystem(tmp_path):
 
 @pytest.fixture(scope="session")
 def make_db():
-    """A test fixutre that creates and destroys a git repo in a temporary
-    directory.
+    """A test fixutre that creates and destroys a git repo in a
+    temporary directory.
 
     This will yield the path to the repo.
     """
@@ -104,8 +104,8 @@ def make_db():
 
 @pytest.fixture(scope="module")
 def make_mongodb():
-    """A test fixture that creates and destroys a git repo in a temporary
-    directory, as well as a mongo database.
+    """A test fixture that creates and destroys a git repo in a
+    temporary directory, as well as a mongo database.
 
     This will yield the path to the repo.
     """
@@ -199,9 +199,9 @@ def make_mongodb():
 
 @pytest.fixture(scope="module")
 def make_mixed_db():
-    """A test fixture that creates and destroys a git repo in a temporary
-    directory, as well as a mongo database. This will yield the path to the
-    repo.
+    """A test fixture that creates and destroys a git repo in a
+    temporary directory, as well as a mongo database. This will yield
+    the path to the repo.
 
     This specific test fixture points to a repo that mixes mongo and
     filesystem backends for the assignments and abstracts test
@@ -313,8 +313,8 @@ def make_mixed_db():
 
 @pytest.fixture(scope="session")
 def make_bad_db():
-    """A test fixutre that creates and destroys a git repo in a temporary
-    directory.
+    """A test fixutre that creates and destroys a git repo in a
+    temporary directory.
 
     This will yield the path to the repo.
     """
@@ -371,9 +371,9 @@ def make_bad_db():
 
 @pytest.fixture(scope="function")
 def make_fs_to_mongo_migration_db():
-    """A test fixture that creates and destroys a git repo in a temporary
-    directory, as well as a mongo database. This will yield the path to the
-    repo.
+    """A test fixture that creates and destroys a git repo in a
+    temporary directory, as well as a mongo database. This will yield
+    the path to the repo.
 
     This specific test fixture points to a repo that contains mongo and
     filesystem backends with only the filesystem containing the
@@ -384,9 +384,9 @@ def make_fs_to_mongo_migration_db():
 
 @pytest.fixture(scope="function")
 def make_mongo_to_fs_backup_db():
-    """A test fixture that creates and destroys a git repo in a temporary
-    directory, as well as a mongo database. This will yield the path to the
-    repo.
+    """A test fixture that creates and destroys a git repo in a
+    temporary directory, as well as a mongo database. This will yield
+    the path to the repo.
 
     This specific test fixture points to a repo that contains mongo and
     filesystem backends with only the filesystem containing the

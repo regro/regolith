@@ -10,6 +10,7 @@ __pycache__/
 .Python
 env/
 build/
+_build/
 develop-eggs/
 dist/
 downloads/
@@ -91,20 +92,5 @@ target/
 # Ipython Notebook
 .ipynb_checkpoints
 
-# version information
-setup.cfg
-/src/regro/*/version.cfg
-
-# Rever
-rever/
-
 # Auto sphinx docs
-docs/collections/grades.rst
-docs/collections/assignments.rst
-docs/collections/grants.rst
-docs/collections/abstracts.rst
-docs/collections/blog.rst
-docs/collections/people.rst
-docs/collections/projects.rst
-docs/collections/proposals.rst
-docs/collections/students.rst
+doc/source/collections/

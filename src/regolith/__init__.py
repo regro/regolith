@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ##############################################################################
 #
-# (c) 2024 The Trustees of Columbia University in the City of New York.
+# (c) 2024-2025 The Trustees of Columbia University in the City of New York.
 # All rights reserved.
 #
 # File coded by: Billinge Group members and community contributors.
@@ -16,9 +16,9 @@
 from xonsh.main import setup
 
 # package version
-from regolith.version import __version__
+from regolith.version import __version__  # noqa
 
-"""A Research group database management system"""
+"""Python package for research group content management system."""
 
 # silence the pyflakes syntax checker
 assert __version__ or True
