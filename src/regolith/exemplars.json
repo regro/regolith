@@ -1631,6 +1631,7 @@
             "institution": "columbiau",
             "location": "Upton NY",
             "meeting_name": "2018 NSLS-II and CFN Users Meeting",
+            "presenter": "sbillinge",
             "notes": [
                 "We hope the weather will be sunny",
                 "if the weather is nice we will go to the beach"
@@ -1638,6 +1639,7 @@
             "project": "18sob_clustermining",
             "status": "accepted",
             "title": "ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function",
+            "talk_id": "30-graphite-rock",
             "type": "poster"
         },
         {

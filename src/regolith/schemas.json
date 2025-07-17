@@ -1961,6 +1961,11 @@
             "required": false,
             "type": "string"
         },
+        "presenter": {
+            "description": "The _id or name of the person making the presentation",
+            "required": false,
+            "type": "string"
+        },
         "location": {
             "description": "city and {state or country} of meeting",
             "required": false,
@@ -1989,6 +1994,11 @@
         },
         "subtitle": {
             "description": "subtitle of the presentation",
+            "required": false,
+            "type": "string"
+        },
+        "talk_id": {
+            "description": "The id of the talk that will be presented",
             "required": false,
             "type": "string"
         },
