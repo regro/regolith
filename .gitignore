@@ -93,4 +93,4 @@ target/
 .ipynb_checkpoints
 
 # Auto sphinx docs
-doc/source/collections/
+docs/source/collections/
