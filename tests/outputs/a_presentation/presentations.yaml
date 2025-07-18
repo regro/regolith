@@ -35,8 +35,10 @@
   notes:
     - We hope the weather will be sunny
     - if the weather is nice we will go to the beach
+  presenter: sbillinge
   project: 18sob_clustermining
   status: accepted
+  talk_id: 30-graphite-rock
   title: 'ClusterMining: extracting core structures of metallic nanoparticles from
     the atomic pair distribution function'
   type: poster
