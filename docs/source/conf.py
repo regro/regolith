@@ -14,7 +14,6 @@
 # serve to show the default.
 
 import json
-import os
 import sys
 import tempfile
 import time
@@ -154,7 +153,7 @@ html_context = {
     "github_user": "regro",
     "github_repo": "regolith",
     "github_version": "main",
-    "conf_py_path": "/doc/source/",
+    "conf_py_path": "/docs/source/",
 }
 
 # Theme options are theme-specific and customize the look and feel of a theme
