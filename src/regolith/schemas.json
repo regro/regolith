@@ -2188,7 +2188,7 @@
                 "type": "dict",
                 "schema": {
                     "uuid": {
-                        "description": "a universally unique id for the task so it can be referenced elsewhere",
+                        "description": "a universally unique id for the milestone.",
                         "required": true,
                         "type": "string"
                     },

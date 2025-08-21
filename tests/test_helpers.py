@@ -656,7 +656,7 @@ helper_map = [
         [
             "helper",
             "u_milestone",
-            "--milestone_uuid",
+            "--uuid",
             "kosb_fir",
             "--name",
             "Kick off meeting",
@@ -682,7 +682,7 @@ helper_map = [
         "The milestone 'Kick off meeting' has been marked as finished in prum sb_firstprojectum.\n",
     ),
     (
-        ["helper", "u_milestone", "--milestone_uuid", "bad_id"],
+        ["helper", "u_milestone", "--uuid", "bad_id"],
         "Failed to update projecta.\n"
         "No ids were found that match your milestone_uuid entry (bad_id).\n"
         "Make sure you have entered the correct uuid or uuid fragment and rerun the helper.\n\n",
@@ -691,7 +691,7 @@ helper_map = [
         [
             "helper",
             "u_milestone",
-            "--milestone_uuid",
+            "--uuid",
             "pl",
             "--status",
             "finished",
@@ -808,7 +808,7 @@ helper_map = [
             "tag2",
             "--date",
             "2020-07-10",
-            "--milestone_uuid",
+            "--uuid",
             "milestone_uuid_sb1_2",
         ],
         "The milestone uuid milestone_uuid_sb1_2 in projectum sb_firstprojectum has been updated in projecta.\n"
@@ -1238,7 +1238,7 @@ db_srcs = [
 
 helper_map_bad = [
     (
-        ["helper", "u_milestone", "--milestone_uuid", "sb_fir", "--projectum_id", "sb_firstprojectum"],
+        ["helper", "u_milestone", "--uuid", "sb_fir", "--projectum_id", "sb_firstprojectum"],
         "Detected both a uuid fragment and projectum id.\n"
         "You may enter either a milestone uuid or a projectum id but not both.\n"
         "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n",
@@ -1266,13 +1266,13 @@ helper_map_bad = [
         RuntimeError,
     ),
     (
-        ["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_pl1", "--due_date", "2020-06-01"],
+        ["helper", "u_milestone", "--uuid", "milestone_uuid_pl1", "--due_date", "2020-06-01"],
         "Milestone (milestone_uuid_pl1) does not have a type set and this is required.\n"
         "Specify '--type' and rerun the helper to update this milestone.\n",
         ValueError,
     ),
     (
-        ["helper", "u_milestone", "--milestone_uuid", "kopl_first", "--type", "bad_type"],
+        ["helper", "u_milestone", "--uuid", "kopl_first", "--type", "bad_type"],
         "The type you have specified is not recognized. \n"
         "Please rerun your command adding '--type' \n"
         "and giving a type from this list:\n"
@@ -1301,7 +1301,7 @@ helper_map_bad = [
         ValueError,
     ),
     (
-        ["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_sb1_", "--type", "bad_type"],
+        ["helper", "u_milestone", "--uuid", "milestone_uuid_sb1_", "--type", "bad_type"],
         "The type you have specified is not recognized. \n"
         "Please rerun your command adding '--type' \n"
         "and giving a type from this list:\n"
