@@ -2953,6 +2953,109 @@
         }
 
     },
+    "releaseReports": {
+        "_description": {
+            "description": "This is a collection of information that will be be used to build a release report. This should probably be private."
+        },
+        "_id": {"description": "the ID", "required": true, "type": "string"},
+
+        "date": {
+            "description": "date the list was edited",
+            "required": false,
+            "anyof_type": ["date", "string"]
+        },
+        "day": {
+            "description": "The day the list was edited",
+            "required": false,
+            "type": "integer"
+        },
+        "month": {
+            "description": "The month the list was edited",
+            "required": false,
+            "anyof_type": ["integer", "string"]
+        },
+        "year": {
+            "description": "The day the list was edited",
+            "required": false,
+            "type": "integer"
+        },
+        "released_package": {
+            "description": "The list of software releases.",
+            "required": true,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "package_name": {
+                        "description": "the name of the package.",
+                        "required":true,
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "the description of what is the software doing.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    "url": {
+                        "description": "the url of the released software if it is public.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    "release_updates": {
+                        "description": "updated/added capacities for each time of release.",
+                        "required": true,
+                        "type": "list",
+                        "schema": {
+                            "type": "dict",
+                            "schema": {
+                                "version_number": {
+                                    "description": "The version number of the package.",
+                                    "required": true,
+                                    "type": "string"
+                                },
+                                "updated_capacities": {
+                                    "description": "the description of the updated capacity of the package.",
+                                    "required": true,
+                                    "type": "string",
+                                },
+                                "release_url": {
+                                    "description": "the released url of the package in specific version.",
+                                    "required": false,
+                                    "type": "string",
+                                },
+                                "release_year": {
+                                    "description": "the year of the version released.",
+                                    "required": true,
+                                    "type": "integer",
+                                },
+                                "release_month": {
+                                    "description": "the month of the version released.",
+                                    "required": true,
+                                    "anyof_type": ["integer", "string"],
+                                },
+                                "release_day": {
+                                    "description": "the day of the version released.",
+                                    "required": true,
+                                    "type": "integer",
+                                },
+                                "author": {
+                                    "description": "the author(s) who contribued to the version release.",
+                                    "required": true,
+                                    "anyof_type": ["list", "string"]
+                                },
+                                "author_id": {
+                                    "description": "the id of the author who contributed to the version release.",
+                                    "required": false,
+                                    "anyof_type": ["list", "string"]
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+    },
     "students": {
         "_description": {
             "description": "This is a collection of student names and metadata. This should probably be private."
