@@ -2169,6 +2169,49 @@
             "year": 2020
         }
     ],
+    "releaseReports": [
+        {
+            "_id": "sbillinge",
+            "date": "17/07/2025",
+            "releases": [
+                {
+                "package_name": "regolith",
+                "description": "A Group Content Management System",
+                "url": "https://github.com/regro/regolith",
+                "release_updates": [
+                    {
+                        "version_number": "0.9.1",
+                        "updated_capacities": ["Rearrange Regolith package to new Billingegroup package standards",
+                            "change name and then fix tests for function that formats awards and honors"],
+                        "release_url": "https://github.com/regro/regolith/releases/tag/0.9.1",
+                        "release_date": "21/07/2024",
+                        "author": ["Simon Billinge", "Rundong Hua"],
+                        "author_id": ["sbillinge", "stevenhua0320"]
+                    },
+                    {
+                        "version_number": "0.8.1",
+                        "updated_capacities": "Fix bug in builder",
+                        "release_date": "11/13/2023",
+                        "author": "Simon Billinge",
+                        "author_id": "sbillinge"
+                    }]
+            },
+                {
+                    "package_name": "diffpy.xpdfsuite",
+                    "description": "The suite of algorithms and software for diffpy programs.",
+                    "release_updates": [
+                        {
+                            "version_number": "0.2.0",
+                            "updated_capacities": "scikit-pakcage everything in the suite to new BillingeGroup standard.",
+                            "release_date": "20/10/2025",
+                            "author": ["Simon Billinge", "Zhiming Xu", "Rundong Hua"],
+                            "author_id": ["sbillinge", "zmx27", "stevenhua0320"]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
     "students": {
         "_id": "Human A. Person",
         "aka": ["H. A. Person"],
