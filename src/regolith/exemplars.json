@@ -2179,7 +2179,7 @@
         {
             "_id": "diffpy.utils",
             "groups": ["xrd"],
-            "active": True,
+            "active": true,
             "url": "https://github.com/diffpy/diffpy.utils",
             "grants": ["NSF Funding"],
             "author": ["Simon Billinge", "Sanjoon Bob Lee", "Zhiming Xu", "Tieqiong Zhang"],
@@ -2189,7 +2189,7 @@
         {
             "_id": "diffpy.srxplanar",
             "groups": ["billingegroup"],
-            "active": True,
+            "active": true,
             "url": "https://github.com/diffpy/diffpy.srxplanar",
             "grants": ["NSF Funding"],
             "author": ["Xiaohao Yang", "Zhiming Xu", "Rundong Hua", "Simon Billinge"],
@@ -2198,7 +2198,7 @@
         {
             "_id": "diffpy.distanceprinter",
             "groups": ["billingegroup"],
-            "active": False,
+            "active": false,
             "url": "https://github.com/diffpy/diffpy.distanceprinter",
             "grants": ["NSF Funding"],
             "author": ["Xiaohao Yang", "Dasun Abeykoon", "Simon Billinge"],
