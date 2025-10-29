@@ -2962,18 +2962,29 @@
             "type": "list",
             "schema": {
                 "major": {
-                    "description": "The major update of the software at the release.",
+                    "description": "The major release number of the software at the release.",
                     "required": true,
                     "type": "int"
                 },
                 "minor": {
-                    "description": "The minor update of the software at the release.",
+                    "description": "The minor release number of the software at the release.",
                     "required": true,
                     "type": "int"
                 },
                 "patch": {
-                    "description": "The patch update of the software at the release.",
+                    "description": "The patch number of the software at the release.",
                     "required": true,
+                    "type": "int"
+                },
+                "release_type": {
+                    "description": "The type of release: 'major', 'minor', 'patch', or 'pre-release'.",
+                    "required": true,
+                    "type": "string",
+                    "enum": ["major", "minor", "patch", "pre-release"]
+                },
+                "pre_release": {
+                    "description": "The number of the release candidate when the release_type is 'pre-release'. Pattern follows major.minor.patch-rc.pre_release.",
+                    "required": false,
                     "type": "int"
                 },
                 "release_date": {
@@ -2982,17 +2993,17 @@
                     "format": "date"
                 },
                 "summary": {
-                    "description": "The summary of the major and minor release of software.",
+                    "description": "The summary of main updates in the release.",
                     "required": true,
                     "type": "string"
                 },
-                "change": {
-                    "description": "The detailed change of the software in separate sentences.",
+                "changes": {
+                    "description": "Brief list of changes in the release.",
                     "required": false,
                     "type": "list"
                 },
                 "release_id": {
-                    "description": "The id of the release in the GH page of the released software.",
+                    "description": "The id of the release in the GH page of the released software, which is used to build the url pointing to the release given the 'org_name' and 'repo_name'.",
                     "required": true,
                     "type": "string"
                 },

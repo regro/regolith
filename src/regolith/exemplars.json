@@ -2190,14 +2190,15 @@
                     "major": 3,
                     "minor": 1,
                     "patch": 0,
+                    "release_type": "major",
                     "release_date": "2025-10-25",
                     "summary": "Python 3.14 and something else",
-                    "change": ["deprecated python2 feature.",
+                    "changes": ["deprecated python2 feature.",
                                 "changed to scikit-packaged standard.",
                                 "Add some functionality.",
                                 "Modify existing function to make convenient."
                     ],
-                    "release_id": "3.6.1"
+                    "release_id": "3.1.0"
                 }
             ]
         },
@@ -2215,19 +2216,22 @@
                     "major": 0,
                     "minor": 0,
                     "patch": 1,
+                    "release_type": "patch",
                     "release_date": "2025-10-26",
                     "summary": "Python 3.14 and something else",
-                    "change": [],
+                    "changes": [],
                     "release_id": "1.0.0"
                 },
                 {
                     "major": 0,
                     "minor": 1,
                     "patch": 1,
+                    "release_type": "pre-release",
+                    "pre_release": 2,
                     "release_date": "2025-10-20",
                     "summary": "Package pre-release",
-                    "change": ["change package to scikit-package level-5 standard."],
-                    "release_id": "0.9.1"
+                    "changes": ["change package to scikit-package level-5 standard."],
+                    "release_id": "0.1.1-rc.2"
                 }
             ]
         },
@@ -2245,9 +2249,10 @@
                     "major": 0,
                     "minor": 1,
                     "patch": 0,
+                    "release_type": "minor",
                     "release_date": "2025-10-26",
                     "summary": "Python 3.14 and something else",
-                    "change": [],
+                    "changes": [],
                     "release_id": "1.0.0"
                 },
             ]
