@@ -2205,6 +2205,7 @@
             "_id": "diffpy.srxplanar",
             "groups": ["billingegroup"],
             "active": true,
+            "author": ["Xiaohao Yang", "Rundong Hua","Zhiming Xu", "Simon Billinge"],
             "org_name": "diffpy",
             "repo_name": "diffpy.srxplanar",
             "platform_name": "Github",
@@ -2226,7 +2227,6 @@
                     "release_date": "2025-10-20",
                     "summary": "Package pre-release",
                     "change": ["change package to scikit-package level-5 standard."],
-                    "version_number": "0.0.1",
                     "release_id": "0.9.1"
                 }
             ]

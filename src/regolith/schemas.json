@@ -2936,10 +2936,67 @@
             "required": true,
             "type": "boolean"
         },
-        "url": {
-            "description": "url to the package on GitHub or GitLab, etc.",
+        "org_name": {
+            "description": "The organization name of the released software.",
             "required": true,
             "type": "string"
+        },
+        "repo_name": {
+            "description": "The repository name of the released software.",
+            "required": true,
+            "type": "string"
+        },
+        "platform_name": {
+            "description": "The platform that the software releases.",
+            "required": true,
+            "type": "string"
+        },
+        "author": {
+            "description": "The authors that contribute to the software.",
+            "required": true,
+            "type": "list"
+        },
+        "release": {
+            "description": "The release information of the software.",
+            "required": true,
+            "type": "list",
+            "schema": {
+                "major": {
+                    "description": "The major update of the software at the release.",
+                    "required": true,
+                    "type": "int"
+                },
+                "minor": {
+                    "description": "The minor update of the software at the release.",
+                    "required": true,
+                    "type": "int"
+                },
+                "patch": {
+                    "description": "The patch update of the software at the release.",
+                    "required": true,
+                    "type": "int"
+                },
+                "release_date": {
+                    "description": "The date of release of the software.",
+                    "required": true,
+                    "format": "date"
+                },
+                "summary": {
+                    "description": "The summary of the major and minor release of software.",
+                    "required": true,
+                    "type": "string"
+                },
+                "change": {
+                    "description": "The detailed change of the software in separate sentences.",
+                    "required": false,
+                    "type": "list"
+                },
+                "release_id": {
+                    "description": "The id of the release in the GH page of the released software.",
+                    "required": true,
+                    "type": "string"
+                },
+            }
         },
         "grants": {
             "description": "grant(s) that supported package development/maintenance",
