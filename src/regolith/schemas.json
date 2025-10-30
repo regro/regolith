@@ -3006,7 +3006,7 @@
                     "description": "The id of the release in the GH page of the released software, which is used to build the url pointing to the release given the 'org_name' and 'repo_name'.",
                     "required": true,
                     "type": "string"
-                },
+                }
             }
         },
         "grants": {
