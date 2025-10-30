@@ -2964,28 +2964,28 @@
                 "major": {
                     "description": "The major release number of the software at the release.",
                     "required": true,
-                    "type": "int"
+                    "type": "integer"
                 },
                 "minor": {
                     "description": "The minor release number of the software at the release.",
                     "required": true,
-                    "type": "int"
+                    "type": "integer"
                 },
                 "patch": {
                     "description": "The patch number of the software at the release.",
                     "required": true,
-                    "type": "int"
+                    "type": "integer"
                 },
                 "release_type": {
                     "description": "The type of release: 'major', 'minor', 'patch', or 'pre-release'.",
                     "required": true,
                     "type": "string",
-                    "enum": ["major", "minor", "patch", "pre-release"]
+                    "eallowed": "RELEASE_TYPES"
                 },
                 "pre_release": {
                     "description": "The number of the release candidate when the release_type is 'pre-release'. Pattern follows major.minor.patch-rc.pre_release.",
                     "required": false,
-                    "type": "int"
+                    "type": "integer"
                 },
                 "release_date": {
                     "description": "The date of release of the software.",
