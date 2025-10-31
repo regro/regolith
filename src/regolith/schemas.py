@@ -95,7 +95,6 @@ alloweds = {
     "PROJECTUM_STATI": PROJECTUM_STATI,
     "PROPOSAL_STATI": ["pending", "declined", "accepted", "inprep", "submitted"],
     "PUBLICITY_TYPES": ["online", "article"],
-    "RELEASE_TYPES": ["major", "minor", "patch", "pre-release"],
     "REVIEW_STATI": [
         "invited",
         "accepted",

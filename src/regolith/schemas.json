@@ -2980,7 +2980,7 @@
                     "description": "The type of release: 'major', 'minor', 'patch', or 'pre-release'.",
                     "required": true,
                     "type": "string",
-                    "eallowed": "RELEASE_TYPES"
+                    "allowed": ["major", "minor", "patch", "pre-release"]
                 },
                 "pre_release": {
                     "description": "The number of the release candidate when the release_type is 'pre-release'. Pattern follows major.minor.patch-rc.pre_release.",
@@ -2990,7 +2990,7 @@
                 "release_date": {
                     "description": "The date of release of the software.",
                     "required": true,
-                    "format": "date"
+                    "type": "date"
                 },
                 "summary": {
                     "description": "The summary of main updates in the release.",
