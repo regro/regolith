@@ -2175,6 +2175,89 @@
         "email": "haperson@uni.edu",
         "university_id": "HAP42"
     },
+    "software": [
+        {
+            "_id": "diffpy.utils",
+            "groups": ["xrd"],
+            "active": true,
+            "org_name": "diffpy",
+            "repo_name": "diffpy.utils",
+            "platform_name": "Github",
+            "grants": ["NSF Funding"],
+            "author": ["Simon Billinge", "Sanjoon Bob Lee", "Zhiming Xu", "Tieqiong Zhang"],
+            "release": [
+                {
+                    "major": 3,
+                    "minor": 1,
+                    "patch": 0,
+                    "release_type": "major",
+                    "release_date": "2025-10-25",
+                    "summary": "Python 3.14 and something else",
+                    "changes": ["deprecated python2 feature.",
+                                "changed to scikit-packaged standard.",
+                                "Add some functionality.",
+                                "Modify existing function to make convenient."
+                    ],
+                    "release_id": "3.1.0"
+                }
+            ]
+        },
+        {
+            "_id": "diffpy.srxplanar",
+            "groups": ["billingegroup"],
+            "active": true,
+            "author": ["Xiaohao Yang", "Rundong Hua","Zhiming Xu", "Simon Billinge"],
+            "org_name": "diffpy",
+            "repo_name": "diffpy.srxplanar",
+            "platform_name": "Github",
+            "grants": ["NSF Funding"],
+            "release": [
+                {
+                    "major": 0,
+                    "minor": 0,
+                    "patch": 1,
+                    "release_type": "patch",
+                    "release_date": "2025-10-26",
+                    "summary": "Python 3.14 and something else",
+                    "changes": [],
+                    "release_id": "1.0.0"
+                },
+                {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 1,
+                    "release_type": "pre-release",
+                    "pre_release": 2,
+                    "release_date": "2025-10-20",
+                    "summary": "Package pre-release",
+                    "changes": ["change package to scikit-package level-5 standard."],
+                    "release_id": "0.1.1-rc.2"
+                }
+            ]
+        },
+        {
+            "_id": "diffpy.distanceprinter",
+            "groups": ["billingegroup"],
+            "active": false,
+            "org_name": "diffpy",
+            "repo_name": "diffpy.distanceprinter",
+            "platform_name": "Github",
+            "grants": ["NSF Funding"],
+            "author": ["Xiaohao Yang", "Dasun Abeykoon", "Simon Billinge"],
+            "release": [
+                {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 0,
+                    "release_type": "minor",
+                    "release_date": "2025-10-26",
+                    "summary": "Python 3.14 and something else",
+                    "changes": [],
+                    "release_id": "1.0.0"
+                }
+            ]
+        }
+    ],
     "todos": [
         {"_id": "ascopatz"},
         {
