@@ -2961,51 +2961,54 @@
             "required": true,
             "type": "list",
             "schema": {
-                "major": {
-                    "description": "The major release number of the software at the release.",
-                    "required": true,
-                    "type": "integer"
-                },
-                "minor": {
-                    "description": "The minor release number of the software at the release.",
-                    "required": true,
-                    "type": "integer"
-                },
-                "patch": {
-                    "description": "The patch number of the software at the release.",
-                    "required": true,
-                    "type": "integer"
-                },
-                "release_type": {
-                    "description": "The type of release: 'major', 'minor', 'patch', or 'pre-release'.",
-                    "required": true,
-                    "type": "string",
-                    "allowed": ["major", "minor", "patch", "pre-release"]
-                },
-                "pre_release": {
-                    "description": "The number of the release candidate when the release_type is 'pre-release'. Pattern follows major.minor.patch-rc.pre_release.",
-                    "required": false,
-                    "type": "integer"
-                },
-                "release_date": {
-                    "description": "The date of release of the software.",
-                    "required": true,
-                    "type": "date"
-                },
-                "summary": {
-                    "description": "The summary of main updates in the release.",
-                    "required": true,
-                    "type": "string"
-                },
-                "changes": {
-                    "description": "Brief list of changes in the release.",
-                    "required": false,
-                    "type": "list"
-                },
-                "release_id": {
-                    "description": "The id of the release in the GH page of the released software, which is used to build the url pointing to the release given the 'org_name' and 'repo_name'.",
-                    "required": true,
-                    "type": "string"
+                "type": "dict",
+                "schema": {
+                    "major": {
+                        "description": "The major release number of the software at the release.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    "minor": {
+                        "description": "The minor release number of the software at the release.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    "patch": {
+                        "description": "The patch number of the software at the release.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    "release_type": {
+                        "description": "The type of release: 'major', 'minor', 'patch', or 'pre-release'.",
+                        "required": true,
+                        "type": "string",
+                        "eallowed": "RELEASE_TYPES"
+                    },
+                    "pre_release": {
+                        "description": "The number of the release candidate when the release_type is 'pre-release'. Pattern follows major.minor.patch-rc.pre_release.",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    "release_date": {
+                        "description": "The date of release of the software.",
+                        "required": true,
+                        "anyof_type": ["string", "date"]
+                    },
+                    "summary": {
+                        "description": "The summary of main updates in the release.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    "changes": {
+                        "description": "Brief list of changes in the release.",
+                        "required": false,
+                        "type": "list"
+                    },
+                    "release_id": {
+                        "description": "The id of the release in the GH page of the released software, which is used to build the url pointing to the release given the 'org_name' and 'repo_name'.",
+                        "required": true,
+                        "type": "string"
+                    }
                 }
             }
         },
