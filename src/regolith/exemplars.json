@@ -2193,8 +2193,8 @@
                     "release_type": "major",
                     "release_date": "2025-10-25",
                     "summary": "Python 3.14 and something else",
-                    "changes": ["deprecated python2 feature.",
-                                "changed to scikit-packaged standard.",
+                    "changes": ["Deprecated python2 feature.",
+                                "Changed to scikit-packaged standard.",
                                 "Add some functionality.",
                                 "Modify existing function to make convenient."
                     ],
@@ -2230,7 +2230,7 @@
                     "pre_release": 2,
                     "release_date": "2025-10-20",
                     "summary": "Package pre-release",
-                    "changes": ["change package to scikit-package level-5 standard."],
+                    "changes": ["Change package to scikit-package level-5 standard."],
                     "release_id": "0.1.1-rc.2"
                 }
             ]
@@ -2252,7 +2252,7 @@
                     "release_type": "minor",
                     "release_date": "2025-10-26",
                     "summary": "Python 3.14 and something else",
-                    "changes": [],
+                    "changes": ["Change package to scikit-package level-5 standard."],
                     "release_id": "0.1.0"
                 }
             ]
