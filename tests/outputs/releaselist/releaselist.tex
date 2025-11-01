@@ -1,0 +1,68 @@
+\documentclass[prl,tighten,amsmath,amssymb,floatfix]{revtex4-1}
+\usepackage{graphicx}
+\usepackage{times}
+\usepackage{booktabs,dcolumn}
+\usepackage{siunitx}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+
+\begin{document}
+
+\noindent
+\colorbox{gray!40}{%
+  \begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
+  \textbf{\Large Prof. Simon J.~L.~Billinge} & \textbf{\today} \\
+  Columbia University in the City of New York & sb2896@columbia.edu \\
+  \end{tabular*}%
+}\vspace{1em}
+
+\textbf{Software Releaselist}
+
+
+\begin{enumerate}
+  \item \textbf{\href{https://github.com/diffpy/diffpy.utils}{diffpy/diffpy.utils}:}\\
+  \hspace*{1em}General utilities for analyzing diffraction data\\
+  \hspace*{1em}\textit{Authors: Simon J.~L. Billinge, Sanjoon Bob Lee, Zhiming Xu, Tieqiong Zhang}\\
+  \hspace*{1em}\textbf{Releases:}\vspace{-0.5em}
+  \begin{itemize}[label={}]
+    \item \textbf{3.1.0:} 2025-10-25
+      \begin{itemize}[label={}, leftmargin=2em]
+        \item Deprecated Python 2 feature
+        \item Changed to scikit-packaged standard.
+        \item Add some functionality
+        \item Modify existing function to make convenient.
+      \end{itemize}
+  \end{itemize}
+
+  \item \textbf{\href{https://github.com/diffpy/diffpy.srxplanar}{diffpy/diffpy.srxplanar}:}\\
+  \hspace*{1em}2D diffraction image integration using non splitting pixel algorithm.\\
+  \hspace*{1em}\textit{Authors: Xiaohao Yang, Rundong Hua, Zhiming Xu, Simon J.~L.~Billinge}\\
+  \hspace*{1em}\textbf{Releases:}\vspace{-0.5em}
+  \begin{itemize}[label={}]
+      \item \textbf{1.0.1:} 2025-10-26
+      \begin{itemize}[label={}, leftmargin=2em]
+        \item Fix loadimage function correctly finds files when passed a relative path.
+      \end{itemize}
+      \item \textbf{0.1.1-rc.2:} 2025-10-20
+      \begin{itemize}[label={}, leftmargin=2em]
+        \item change package to scikit-package level-5 standard.
+      \end{itemize}
+  \end{itemize}
+
+  \item \textbf{\href{https://github.com/diffpy/diffpy.distanceprinter}{diffpy/diffpy.distanceprinter}:}\\
+  \hspace*{1em}Distance Printer, calculate the inter atomic distances. Part of xPDFsuite\\
+  \hspace*{1em}\textit{Authors: Xiaohao Yang, Rundong Hua, Zhiming Xu, Simon J.~L.~Billinge}\\
+  \hspace*{1em}\textbf{Releases:}\vspace{-0.5em}
+  \begin{itemize}[label={}]
+    \item \textbf{0.1.0:} 2025-10-26
+      \begin{itemize}[label={}, leftmargin=2em]
+        \item Python 3.14 and something else
+      \end{itemize}
+  \end{itemize}
+
+\end{enumerate}
+
+\end{document}
