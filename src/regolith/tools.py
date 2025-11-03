@@ -802,7 +802,7 @@ def filter_software(people, software, institutions, target, types=None, since=No
         pauthors = sof["authors"]
         if isinstance(pauthors, str):
             pauthors = [pauthors]
-        pres["authors"] = [
+        sof["authors"] = [
             (
                 author
                 if fuzzy_retrieval(
@@ -821,7 +821,7 @@ def filter_software(people, software, institutions, target, types=None, since=No
             )
             for author in pauthors
         ]
-        authorlist = ", ".join(pres["authors"])
+        authorlist = ", ".join(sof["authors"])
         sof["authors"] = authorlist
         if get_dates(sof).get("date"):
             presdate = get_dates(sof).get("date")
