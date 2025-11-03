@@ -711,10 +711,7 @@ def filter_presentations(
     return presclean
 
 
-
-def filter_software(
-    people, software, institutions, target, types=None, since=None, before=None, statuses=None
-):
+def filter_software(people, software, institutions, target, types=None, since=None, before=None, statuses=None):
     f"""
     filters presentations for different types and date ranges
 
@@ -736,7 +733,7 @@ def filter_software(
     before: date. Optional, default is None
         The end date to filter for.  None does not apply this filter
     statuses: list of str.  Optional. Default is active.
-      The list of statuses to filter for. 
+      The list of statuses to filter for.
 
     Returns
     -------
