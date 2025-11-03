@@ -735,7 +735,7 @@ def filter_software(people, software, institutions, target, types=None, since=No
 
     Returns
     -------
-    list of presentation documents
+    list of software documents
     """
     if not types:
         types = ["all"]
@@ -798,8 +798,8 @@ def filter_software(people, software, institutions, target, types=None, since=No
         presclean = fourthclean
 
     # build author list
-    for pres in presclean:
-        pauthors = pres["authors"]
+    for sof in presclean:
+        pauthors = sof["authors"]
         if isinstance(pauthors, str):
             pauthors = [pauthors]
         pres["authors"] = [
@@ -839,7 +839,7 @@ def filter_software(people, software, institutions, target, types=None, since=No
                 sof["{}day_suffix".format(day)] = number_suffix(get_dates(sof).get(f"{day}date").day)
             except AttributeError:
                 print(f"presentation {sof.get('_id')} has no {day}date")
-        if "institution" in pres:
+        if "institution" in sof:
             inst = {"institution": sof.get("institution"), "department": sof.get("department")}
             dereference_institution(inst, institutions)
             sof["institution"] = {
