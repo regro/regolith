@@ -712,8 +712,7 @@ def filter_presentations(
 
 
 def filter_software(people, software, institutions, target, types=None, since=None, before=None, statuses=None):
-    f"""
-    filters presentations for different types and date ranges
+    """Filters presentations for different types and date ranges.
 
     Parameters
     ----------
@@ -726,8 +725,7 @@ def filter_software(people, software, institutions, target, types=None, since=No
     target: str
       The id of the person you will build the list for
     types: list of strings.  Optional, default = all
-      The types to filter for.  Allowed types are
-      {*RELEASE_TYPES, }
+      The types to filter for.  Allowed types are release_types.
     since: date.  Optional, default is None
         The begin date to filter from
     before: date. Optional, default is None
@@ -738,13 +736,12 @@ def filter_software(people, software, institutions, target, types=None, since=No
     Returns
     -------
     list of presentation documents
-
     """
     if not types:
         types = ["all"]
     if not statuses:
         statuses = ["active"]
-    presentations = deepcopy(presentations)
+    software = deepcopy(software)
 
     firstclean = list()
     secondclean = list()
@@ -754,8 +751,8 @@ def filter_software(people, software, institutions, target, types=None, since=No
 
     # build the filtered collection
     # only list the talk if the group member is an author
-    for pres in presentations:
-        pauthors = pres["authors"]
+    for sof in software:
+        pauthors = sof["authors"]
         if isinstance(pauthors, str):
             pauthors = [pauthors]
         authors = [
@@ -769,34 +766,34 @@ def filter_software(people, software, institutions, target, types=None, since=No
         ]
         authorids = [author["_id"] if author is not None else author for author in authors]
         if target in authorids:
-            firstclean.append(pres)
+            firstclean.append(sof)
     # only list the presentation if it has status in statuses
-    for pres in firstclean:
-        if pres["status"] in statuses or "all" in statuses:
-            secondclean.append(pres)
+    for sof in firstclean:
+        if sof["status"] in statuses or "all" in statuses:
+            secondclean.append(sof)
     # only list the presentation if it has type in types
-    for pres in secondclean:
-        if pres["type"] in types or "all" in types:
-            thirdclean.append(pres)
+    for sof in secondclean:
+        if sof["type"] in types or "all" in types:
+            thirdclean.append(sof)
     # if specified, only list presentations in specified date ranges
     if since:
-        for pres in thirdclean:
-            if get_dates(pres).get("date"):
-                presdate = get_dates(pres).get("date")
+        for sof in thirdclean:
+            if get_dates(sof).get("date"):
+                presdate = get_dates(sof).get("date")
             else:
-                presdate = get_dates(pres).get("begin_date")
+                presdate = get_dates(sof).get("begin_date")
             if presdate > since:
-                fourthclean.append(pres)
+                fourthclean.append(sof)
     else:
         fourthclean = thirdclean
     if before:
-        for pres in fourthclean:
-            if get_dates(pres).get("date"):
-                presdate = get_dates(pres).get("date")
+        for sof in fourthclean:
+            if get_dates(sof).get("date"):
+                presdate = get_dates(sof).get("date")
             else:
-                presdate = get_dates(pres).get("begin_date")
+                presdate = get_dates(sof).get("begin_date")
             if presdate < before:
-                presclean.append(pres)
+                presclean.append(sof)
     else:
         presclean = fourthclean
 
@@ -825,33 +822,33 @@ def filter_software(people, software, institutions, target, types=None, since=No
             for author in pauthors
         ]
         authorlist = ", ".join(pres["authors"])
-        pres["authors"] = authorlist
-        if get_dates(pres).get("date"):
-            presdate = get_dates(pres).get("date")
+        sof["authors"] = authorlist
+        if get_dates(sof).get("date"):
+            presdate = get_dates(sof).get("date")
         else:
-            presdate = get_dates(pres).get("begin_date")
-        pres["begin_month"] = presdate.month
-        pres["begin_year"] = presdate.year
-        pres["begin_day"] = presdate.day
-        end_date = get_dates(pres).get("end_date")
+            presdate = get_dates(sof).get("begin_date")
+        sof["begin_month"] = presdate.month
+        sof["begin_year"] = presdate.year
+        sof["begin_day"] = presdate.day
+        end_date = get_dates(sof).get("end_date")
         if end_date:
-            pres["end_day"] = end_date.day
-        pres["date"] = presdate
+            sof["end_day"] = end_date.day
+        sof["date"] = presdate
         for day in ["begin_", "end_", ""]:
             try:
-                pres["{}day_suffix".format(day)] = number_suffix(get_dates(pres).get(f"{day}date").day)
+                sof["{}day_suffix".format(day)] = number_suffix(get_dates(sof).get(f"{day}date").day)
             except AttributeError:
-                print(f"presentation {pres.get('_id')} has no {day}date")
+                print(f"presentation {sof.get('_id')} has no {day}date")
         if "institution" in pres:
-            inst = {"institution": pres.get("institution"), "department": pres.get("department")}
+            inst = {"institution": sof.get("institution"), "department": sof.get("department")}
             dereference_institution(inst, institutions)
-            pres["institution"] = {
+            sof["institution"] = {
                 "name": inst.get("institution", ""),
                 "city": inst.get("city"),
                 "state": inst.get("state"),
                 "country": inst.get("country"),
             }
-            pres["department"] = {"name": inst.get("department")}
+            sof["department"] = {"name": inst.get("department")}
     if len(presclean) > 0:
         presclean = sorted(
             presclean,
