@@ -18,6 +18,7 @@ from regolith.builders.proposalreviewbuilder import PropRevBuilder
 from regolith.builders.publistbuilder import PubListBuilder
 from regolith.builders.readinglistsbuilder import ReadingListsBuilder
 from regolith.builders.reimbursementbuilder import ReimbursementBuilder
+from regolith.builders.releaselistbuilder import ReleaselistBuilder
 from regolith.builders.resumebuilder import ResumeBuilder
 
 BUILDERS = {
@@ -35,6 +36,7 @@ BUILDERS = {
     "postdocad": PostdocadBuilder,
     "preslist": PresListBuilder,
     "publist": PubListBuilder,
+    "releaselist": ReleaselistBUilder,
     "reading-lists": ReadingListsBuilder,
     "reimb": ReimbursementBuilder,
     "recent-collabs": RecentCollaboratorsBuilder,

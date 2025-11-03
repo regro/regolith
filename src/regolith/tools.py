@@ -711,6 +711,159 @@ def filter_presentations(
     return presclean
 
 
+
+def filter_software(
+    people, software, institutions, target, types=None, since=None, before=None, statuses=None
+):
+    f"""
+    filters presentations for different types and date ranges
+
+    Parameters
+    ----------
+    people: iterable of dicts
+      The people collection
+    software: iterable of dicts
+      The software collection
+    institutions: iterable of dicts
+      The institutions collection
+    target: str
+      The id of the person you will build the list for
+    types: list of strings.  Optional, default = all
+      The types to filter for.  Allowed types are
+      {*RELEASE_TYPES, }
+    since: date.  Optional, default is None
+        The begin date to filter from
+    before: date. Optional, default is None
+        The end date to filter for.  None does not apply this filter
+    statuses: list of str.  Optional. Default is active.
+      The list of statuses to filter for. 
+
+    Returns
+    -------
+    list of presentation documents
+
+    """
+    if not types:
+        types = ["all"]
+    if not statuses:
+        statuses = ["active"]
+    presentations = deepcopy(presentations)
+
+    firstclean = list()
+    secondclean = list()
+    thirdclean = list()
+    fourthclean = list()
+    presclean = list()
+
+    # build the filtered collection
+    # only list the talk if the group member is an author
+    for pres in presentations:
+        pauthors = pres["authors"]
+        if isinstance(pauthors, str):
+            pauthors = [pauthors]
+        authors = [
+            fuzzy_retrieval(
+                people,
+                ["aka", "name", "_id"],
+                author,
+                case_sensitive=False,
+            )
+            for author in pauthors
+        ]
+        authorids = [author["_id"] if author is not None else author for author in authors]
+        if target in authorids:
+            firstclean.append(pres)
+    # only list the presentation if it has status in statuses
+    for pres in firstclean:
+        if pres["status"] in statuses or "all" in statuses:
+            secondclean.append(pres)
+    # only list the presentation if it has type in types
+    for pres in secondclean:
+        if pres["type"] in types or "all" in types:
+            thirdclean.append(pres)
+    # if specified, only list presentations in specified date ranges
+    if since:
+        for pres in thirdclean:
+            if get_dates(pres).get("date"):
+                presdate = get_dates(pres).get("date")
+            else:
+                presdate = get_dates(pres).get("begin_date")
+            if presdate > since:
+                fourthclean.append(pres)
+    else:
+        fourthclean = thirdclean
+    if before:
+        for pres in fourthclean:
+            if get_dates(pres).get("date"):
+                presdate = get_dates(pres).get("date")
+            else:
+                presdate = get_dates(pres).get("begin_date")
+            if presdate < before:
+                presclean.append(pres)
+    else:
+        presclean = fourthclean
+
+    # build author list
+    for pres in presclean:
+        pauthors = pres["authors"]
+        if isinstance(pauthors, str):
+            pauthors = [pauthors]
+        pres["authors"] = [
+            (
+                author
+                if fuzzy_retrieval(
+                    people,
+                    ["aka", "name", "_id"],
+                    author,
+                    case_sensitive=False,
+                )
+                is None
+                else fuzzy_retrieval(
+                    people,
+                    ["aka", "name", "_id"],
+                    author,
+                    case_sensitive=False,
+                )["name"]
+            )
+            for author in pauthors
+        ]
+        authorlist = ", ".join(pres["authors"])
+        pres["authors"] = authorlist
+        if get_dates(pres).get("date"):
+            presdate = get_dates(pres).get("date")
+        else:
+            presdate = get_dates(pres).get("begin_date")
+        pres["begin_month"] = presdate.month
+        pres["begin_year"] = presdate.year
+        pres["begin_day"] = presdate.day
+        end_date = get_dates(pres).get("end_date")
+        if end_date:
+            pres["end_day"] = end_date.day
+        pres["date"] = presdate
+        for day in ["begin_", "end_", ""]:
+            try:
+                pres["{}day_suffix".format(day)] = number_suffix(get_dates(pres).get(f"{day}date").day)
+            except AttributeError:
+                print(f"presentation {pres.get('_id')} has no {day}date")
+        if "institution" in pres:
+            inst = {"institution": pres.get("institution"), "department": pres.get("department")}
+            dereference_institution(inst, institutions)
+            pres["institution"] = {
+                "name": inst.get("institution", ""),
+                "city": inst.get("city"),
+                "state": inst.get("state"),
+                "country": inst.get("country"),
+            }
+            pres["department"] = {"name": inst.get("department")}
+    if len(presclean) > 0:
+        presclean = sorted(
+            presclean,
+            key=lambda k: k.get("date", None),
+            reverse=True,
+        )
+    return presclean
+
+
 def awards_grants_honors(person, target_name, funding=True, service_types=None):
     """Make sorted awards grants and honors list.
 

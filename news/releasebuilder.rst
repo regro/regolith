@@ -1,6 +1,6 @@
 **Added:**
 
-* Add releasebuilder functionality.
+* Add Releaselistbuilder functionality.
 
 **Changed:**
 

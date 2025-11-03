@@ -7,7 +7,7 @@ from regolith.stylers import month_fullnames, sentencecase
 from regolith.tools import all_docs_from_collection, filter_software, group_member_ids
 
 
-class ReleaselistBUilder(LatexBuilderBase):
+class ReleaselistBuilder(LatexBuilderBase):
     """Build list of released software from database entries."""
 
     btype = "releaselist"
