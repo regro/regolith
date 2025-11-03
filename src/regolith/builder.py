@@ -36,7 +36,7 @@ BUILDERS = {
     "postdocad": PostdocadBuilder,
     "preslist": PresListBuilder,
     "publist": PubListBuilder,
-    "releaselist": ReleaselistBUilder,
+    "releaselist": ReleaselistBuilder,
     "reading-lists": ReadingListsBuilder,
     "reimb": ReimbursementBuilder,
     "recent-collabs": RecentCollaboratorsBuilder,
