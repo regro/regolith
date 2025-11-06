@@ -778,20 +778,16 @@ def filter_software(people, software, institutions, target, types=None, since=No
     # if specified, only list presentations in specified date ranges
     if since:
         for sof in thirdclean:
-            if get_dates(sof).get("date"):
-                presdate = get_dates(sof).get("date")
-            else:
-                presdate = get_dates(sof).get("begin_date")
+            if get_dates(sof).get("release").get("release_date"):
+                presdate = get_dates(sof).get("release").get("release_date")
             if presdate > since:
                 fourthclean.append(sof)
     else:
         fourthclean = thirdclean
     if before:
         for sof in fourthclean:
-            if get_dates(sof).get("date"):
-                presdate = get_dates(sof).get("date")
-            else:
-                presdate = get_dates(sof).get("begin_date")
+            if get_dates(sof).get("release").get("release_date"):
+                presdate = get_dates(sof).get("release").get("release_date")
             if presdate < before:
                 presclean.append(sof)
     else:
@@ -823,22 +819,14 @@ def filter_software(people, software, institutions, target, types=None, since=No
         ]
         authorlist = ", ".join(sof["authors"])
         sof["authors"] = authorlist
-        if get_dates(sof).get("date"):
-            presdate = get_dates(sof).get("date")
-        else:
-            presdate = get_dates(sof).get("begin_date")
-        sof["begin_month"] = presdate.month
-        sof["begin_year"] = presdate.year
-        sof["begin_day"] = presdate.day
-        end_date = get_dates(sof).get("end_date")
-        if end_date:
-            sof["end_day"] = end_date.day
-        sof["date"] = presdate
+        if get_dates(sof).get("release").get("release_date"):
+            presdate = get_dates(sof).get("release").get("release_date")
+        sof["release_date"] = presdate
         for day in ["begin_", "end_", ""]:
             try:
                 sof["{}day_suffix".format(day)] = number_suffix(get_dates(sof).get(f"{day}date").day)
             except AttributeError:
-                print(f"presentation {sof.get('_id')} has no {day}date")
+                print(f"software {sof.get('_id')} has no {day}date")
         if "institution" in sof:
             inst = {"institution": sof.get("institution"), "department": sof.get("department")}
             dereference_institution(inst, institutions)
