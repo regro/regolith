@@ -711,7 +711,7 @@ def filter_presentations(
     return presclean
 
 
-def filter_software(people, software,target, types=None, since=None, before=None, statuses=None):
+def filter_software(people, software, target, types=None, since=None, before=None, statuses=None):
     """Filters presentations for different types and date ranges.
 
     Parameters
