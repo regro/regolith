@@ -745,7 +745,7 @@ def filter_software(people, software, target, types=None, since=None, before=Non
     secondclean = list()
     thirdclean = list()
     fourthclean = list()
-    presclean = list()
+    progclean = list()
 
     # build the filtered collection
     # only list the talk if the group member is an author
