@@ -2177,6 +2177,7 @@
             "repo_name": "diffpy.utils",
             "platform_name": "Github",
             "grants": ["NSF Funding"],
+            "program_description": "General utilities for analyzing diffraction data",
             "author": ["Simon Billinge", "Sanjoon Bob Lee", "Zhiming Xu", "Tieqiong Zhang"],
             "release": [
                 {
@@ -2204,6 +2205,7 @@
             "repo_name": "diffpy.srxplanar",
             "platform_name": "Github",
             "grants": ["NSF Funding"],
+            "program_description": "2D diffraction image integration using non splitting pixel algorithm.",
             "release": [
                 {
                     "major": 0,
@@ -2236,6 +2238,7 @@
             "repo_name": "diffpy.distanceprinter",
             "platform_name": "Github",
             "grants": ["NSF Funding"],
+            "program_description": "Distance Printer, calculate the inter atomic distances. Part of xPDFsuite",
             "author": ["Xiaohao Yang", "Dasun Abeykoon", "Simon Billinge"],
             "release": [
                 {

@@ -711,7 +711,7 @@ def filter_presentations(
     return presclean
 
 
-def filter_software(people, software, institutions, target, types=None, since=None, before=None, statuses=None):
+def filter_software(people, software,target, types=None, since=None, before=None, statuses=None):
     """Filters presentations for different types and date ranges.
 
     Parameters
@@ -720,8 +720,6 @@ def filter_software(people, software, institutions, target, types=None, since=No
       The people collection
     software: iterable of dicts
       The software collection
-    institutions: iterable of dicts
-      The institutions collection
     target: str
       The id of the person you will build the list for
     types: list of strings.  Optional, default = all
@@ -751,8 +749,8 @@ def filter_software(people, software, institutions, target, types=None, since=No
 
     # build the filtered collection
     # only list the talk if the group member is an author
-    for sof in software:
-        pauthors = sof["authors"]
+    for program in software:
+        pauthors = program["authors"]
         if isinstance(pauthors, str):
             pauthors = [pauthors]
         authors = [
@@ -766,39 +764,39 @@ def filter_software(people, software, institutions, target, types=None, since=No
         ]
         authorids = [author["_id"] if author is not None else author for author in authors]
         if target in authorids:
-            firstclean.append(sof)
-    # only list the presentation if it has status in statuses
-    for sof in firstclean:
-        if sof["status"] in statuses or "all" in statuses:
-            secondclean.append(sof)
-    # only list the presentation if it has type in types
-    for sof in secondclean:
-        if sof["type"] in types or "all" in types:
-            thirdclean.append(sof)
-    # if specified, only list presentations in specified date ranges
+            firstclean.append(program)
+    # only list the program if it has status in statuses
+    for program in firstclean:
+        if program["status"] in statuses or "all" in statuses:
+            secondclean.append(program)
+    # only list the program if it has type in types
+    for program in secondclean:
+        if program["type"] in types or "all" in types:
+            thirdclean.append(program)
+    # if specified, only list program in specified date ranges
     if since:
-        for sof in thirdclean:
-            if get_dates(sof).get("release").get("release_date"):
-                presdate = get_dates(sof).get("release").get("release_date")
-            if presdate > since:
-                fourthclean.append(sof)
+        for program in thirdclean:
+            if get_dates(program).get("release").get("release_date"):
+                pregdate = get_dates(program).get("release").get("release_date")
+            if pregdate > since:
+                fourthclean.append(program)
     else:
         fourthclean = thirdclean
     if before:
-        for sof in fourthclean:
-            if get_dates(sof).get("release").get("release_date"):
-                presdate = get_dates(sof).get("release").get("release_date")
-            if presdate < before:
-                presclean.append(sof)
+        for program in fourthclean:
+            if get_dates(program).get("release").get("release_date"):
+                pregdate = get_dates(program).get("release").get("release_date")
+            if pregdate < before:
+                progclean.append(program)
     else:
-        presclean = fourthclean
+        progclean = fourthclean
 
     # build author list
-    for sof in presclean:
-        pauthors = sof["authors"]
+    for program in progclean:
+        pauthors = program["authors"]
         if isinstance(pauthors, str):
             pauthors = [pauthors]
-        sof["authors"] = [
+        program["authors"] = [
             (
                 author
                 if fuzzy_retrieval(
@@ -817,33 +815,23 @@ def filter_software(people, software, institutions, target, types=None, since=No
             )
             for author in pauthors
         ]
-        authorlist = ", ".join(sof["authors"])
-        sof["authors"] = authorlist
-        if get_dates(sof).get("release").get("release_date"):
-            presdate = get_dates(sof).get("release").get("release_date")
-        sof["release_date"] = presdate
+        authorlist = ", ".join(program["authors"])
+        program["authors"] = authorlist
+        if get_dates(program).get("release").get("release_date"):
+            pregdate = get_dates(program).get("release").get("release_date")
+        program["release_date"] = pregdate
         for day in ["begin_", "end_", ""]:
             try:
-                sof["{}day_suffix".format(day)] = number_suffix(get_dates(sof).get(f"{day}date").day)
+                program["{}day_suffix".format(day)] = number_suffix(get_dates(program).get(f"{day}date").day)
             except AttributeError:
-                print(f"software {sof.get('_id')} has no {day}date")
-        if "institution" in sof:
-            inst = {"institution": sof.get("institution"), "department": sof.get("department")}
-            dereference_institution(inst, institutions)
-            sof["institution"] = {
-                "name": inst.get("institution", ""),
-                "city": inst.get("city"),
-                "state": inst.get("state"),
-                "country": inst.get("country"),
-            }
-            sof["department"] = {"name": inst.get("department")}
-    if len(presclean) > 0:
-        presclean = sorted(
-            presclean,
+                print(f"software {program.get('_id')} has no {day}date")
+    if len(progclean) > 0:
+        progclean = sorted(
+            progclean,
             key=lambda k: k.get("date", None),
             reverse=True,
         )
-    return presclean
+    return progclean
 
 
 def awards_grants_honors(person, target_name, funding=True, service_types=None):

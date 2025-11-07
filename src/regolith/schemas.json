@@ -2956,6 +2956,11 @@
             "required": true,
             "type": "list"
         },
+        "program_description": {
+            "description": "The short description of the software.",
+            "required": true,
+            "type": "string"
+        },
         "release": {
             "description": "The release information of the software.",
             "required": true,
