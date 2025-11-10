@@ -770,8 +770,7 @@ def filter_software(people, software, target, types=None, since=None, before=Non
     for program in secondclean:
         releases = program.get("release")
         filtered_releases = [
-            release for release in releases
-            if "all" in types or release.get("release_type") in types
+            release for release in releases if "all" in types or release.get("release_type") in types
         ]
         if filtered_releases:
             program["release"] = filtered_releases
@@ -838,9 +837,11 @@ def filter_software(people, software, target, types=None, since=None, before=Non
         progclean = sorted(
             progclean,
             key=lambda k: max(
-                datetime.fromisoformat(rel["release_date"])
-                if isinstance(rel.get("release_date"), str)
-                else rel["release_date"]
+                (
+                    datetime.fromisoformat(rel["release_date"])
+                    if isinstance(rel.get("release_date"), str)
+                    else rel["release_date"]
+                )
                 for rel in k["release"]
             ),
             reverse=True,
