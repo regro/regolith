@@ -711,7 +711,7 @@ def filter_presentations(
     return presclean
 
 
-def filter_software(people, software, target, types=None, since=None, before=None, statuses=None):
+def filter_software(people, software, target, types=None, since=None, before=None, active=None):
     """Filters presentations for different types and date ranges.
 
     Parameters
@@ -730,27 +730,20 @@ def filter_software(people, software, target, types=None, since=None, before=Non
         The end date to filter for.  None does not apply this filter
     statuses: list of str.  Optional. Default is active.
       The list of statuses to filter for.
-
-    Returns
-    -------
-    list of software documents
     """
+
     if not types:
         types = ["all"]
-    if not statuses:
-        statuses = ["active"]
     software = deepcopy(software)
 
-    firstclean = list()
-    secondclean = list()
-    thirdclean = list()
-    fourthclean = list()
-    progclean = list()
+    firstclean = []
+    secondclean = []
+    thirdclean = []
+    fourthclean = []
+    progclean = []
 
-    # build the filtered collection
-    # only list the talk if the group member is an author
     for program in software:
-        pauthors = program["authors"]
+        pauthors = program.get("author", [])
         if isinstance(pauthors, str):
             pauthors = [pauthors]
         authors = [
@@ -765,35 +758,53 @@ def filter_software(people, software, target, types=None, since=None, before=Non
         authorids = [author["_id"] if author is not None else author for author in authors]
         if target in authorids:
             firstclean.append(program)
-    # only list the program if it has status in statuses
-    for program in firstclean:
-        if program["status"] in statuses or "all" in statuses:
+
+    if active is True:
+        for program in firstclean:
+            if program.get("active") is True:
+                secondclean.append(program)
+    else:
+        for program in firstclean:
             secondclean.append(program)
-    # only list the program if it has type in types
+
     for program in secondclean:
-        if program["type"] in types or "all" in types:
+        releases = program.get("release")
+        filtered_releases = [
+            release for release in releases
+            if "all" in types or release.get("release_type") in types
+        ]
+        if filtered_releases:
+            program["release"] = filtered_releases
             thirdclean.append(program)
-    # if specified, only list program in specified date ranges
+
     if since:
         for program in thirdclean:
-            if get_dates(program).get("release").get("release_date"):
-                pregdate = get_dates(program).get("release").get("release_date")
-            if pregdate > since:
+            filtered_releases = []
+            for release in program.get("release", []):
+                releasedate = release.get("release_date")
+                if releasedate >= since:
+                    filtered_releases.append(release)
+            if filtered_releases:
+                program["release"] = filtered_releases
                 fourthclean.append(program)
     else:
         fourthclean = thirdclean
+
     if before:
         for program in fourthclean:
-            if get_dates(program).get("release").get("release_date"):
-                pregdate = get_dates(program).get("release").get("release_date")
-            if pregdate < before:
+            filtered_releases = []
+            for release in program.get("release", []):
+                releasedate = release.get("release_date")
+                if releasedate <= before:
+                    filtered_releases.append(release)
+            if filtered_releases:
+                program["release"] = filtered_releases
                 progclean.append(program)
     else:
         progclean = fourthclean
 
-    # build author list
     for program in progclean:
-        pauthors = program["authors"]
+        pauthors = program["author"]
         if isinstance(pauthors, str):
             pauthors = [pauthors]
         program["authors"] = [
@@ -815,20 +826,23 @@ def filter_software(people, software, target, types=None, since=None, before=Non
             )
             for author in pauthors
         ]
-        authorlist = ", ".join(program["authors"])
+        authorlist = ", ".join(program["author"])
         program["authors"] = authorlist
-        if get_dates(program).get("release").get("release_date"):
-            pregdate = get_dates(program).get("release").get("release_date")
-        program["release_date"] = pregdate
-        for day in ["begin_", "end_", ""]:
-            try:
-                program["{}day_suffix".format(day)] = number_suffix(get_dates(program).get(f"{day}date").day)
-            except AttributeError:
-                print(f"software {program.get('_id')} has no {day}date")
+
+        for release in program.get("release", []):
+            releasedate = release.get("release_date")
+            if isinstance(releasedate, str):
+                release["release_date"] = releasedate
+
     if len(progclean) > 0:
         progclean = sorted(
             progclean,
-            key=lambda k: k.get("date", None),
+            key=lambda k: max(
+                datetime.fromisoformat(rel["release_date"])
+                if isinstance(rel.get("release_date"), str)
+                else rel["release_date"]
+                for rel in k["release"]
+            ),
             reverse=True,
         )
     return progclean

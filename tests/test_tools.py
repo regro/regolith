@@ -44,6 +44,7 @@ from regolith.tools import (
     search_collection,
     update_schemas,
     validate_meeting,
+    filter_software
 )
 
 PEOPLE_COLL = [
@@ -2999,6 +3000,221 @@ def test_filter_presentations(args, kwargs, expected):
     actual = filter_presentations(*args, **kwargs)
     assert actual == expected
 
+person3 = {"_id": "sbillinge", "aka": "Simon", "name": "Simon Billinge"}
+person4 = {"_id": "stevenhua0320", "aka": "Steven hua", "name": "Rundong Hua"}
+PEOPLE = [person3, person4]
+software1 = {
+            "_id": "diffpy.utils",
+            "groups": ["xrd"],
+            "active": True,
+            "org_name": "diffpy",
+            "repo_name": "diffpy.utils",
+            "platform_name": "Github",
+            "grants": ["NSF Funding"],
+            "program_description": "General utilities for analyzing diffraction data",
+            "author": ["Simon Billinge", "Sanjoon Bob Lee", "Zhiming Xu", "Tieqiong Zhang"],
+            "release": [
+                {
+                    "major": 3,
+                    "minor": 1,
+                    "patch": 0,
+                    "release_type": "major",
+                    "release_date": "2025-10-25",
+                    "summary": "Python 3.14 and something else",
+                    "changes": ["deprecated python2 feature.",
+                                "changed to scikit-packaged standard.",
+                                "Add some functionality.",
+                                "Modify existing function to make convenient."
+                    ],
+                    "release_id": "3.1.0"
+                }
+            ]
+        }
+software2 = {
+            "_id": "diffpy.srxplanar",
+            "groups": ["billingegroup"],
+            "active": True,
+            "author": ["Xiaohao Yang", "Rundong Hua","Zhiming Xu", "Simon Billinge"],
+            "org_name": "diffpy",
+            "repo_name": "diffpy.srxplanar",
+            "platform_name": "Github",
+            "grants": ["NSF Funding"],
+            "program_description": "2D diffraction image integration using non splitting pixel algorithm.",
+            "release": [
+                {
+                    "major": 1,
+                    "minor": 0,
+                    "patch": 1,
+                    "release_type": "major",
+                    "release_date": "2025-10-26",
+                    "summary": "Python 3.14 and something else",
+                    "changes": [],
+                    "release_id": "1.0.0"
+                },
+                {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 1,
+                    "release_type": "pre-release",
+                    "pre_release": 2,
+                    "release_date": "2025-10-20",
+                    "summary": "Package pre-release",
+                    "changes": ["change package to scikit-package level-5 standard."],
+                    "release_id": "0.1.1-rc.2"
+                }
+            ]
+        }
+software3 = {
+            "_id": "diffpy.distanceprinter",
+            "groups": ["billingegroup"],
+            "active": False,
+            "org_name": "diffpy",
+            "repo_name": "diffpy.distanceprinter",
+            "platform_name": "Github",
+            "grants": ["NSF Funding"],
+            "program_description": "Distance Printer, calculate the inter atomic distances. Part of xPDFsuite",
+            "author": ["Xiaohao Yang", "Dasun Abeykoon", "Simon Billinge"],
+            "release": [
+                {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 0,
+                    "release_type": "minor",
+                    "release_date": "2025-10-26",
+                    "summary": "Python 3.14 and something else",
+                    "changes": [],
+                    "release_id": "1.0.0"
+                }
+            ]
+        }
+SOFTWARE = [software1, software2, software3]
+
+expected4 = {
+  '_id': 'diffpy.srxplanar',
+  'active': True,
+  'author': ['Xiaohao Yang', 'Rundong Hua', 'Zhiming Xu', 'Simon Billinge'],
+  'authors': 'Xiaohao Yang, Rundong Hua, Zhiming Xu, Simon Billinge',
+  'grants': ['NSF Funding'],
+  'groups': ['billingegroup'],
+  'org_name': 'diffpy',
+  'platform_name': 'Github',
+  'program_description': '2D diffraction image integration using non splitting '
+                         'pixel algorithm.',
+  'release': [{'changes': [],
+               'major': 1,
+               'minor': 0,
+               'patch': 1,
+               'release_date': "2025-10-26",
+               'release_id': '1.0.0',
+               'release_type': 'major',
+               'summary': 'Python 3.14 and something else'},
+              {'changes': ['change package to scikit-package level-5 '
+                           'standard.'],
+               'major': 0,
+               'minor': 1,
+               'patch': 1,
+               'pre_release': 2,
+               'release_date': "2025-10-20",
+               'release_id': '0.1.1-rc.2',
+               'release_type': 'pre-release',
+               'summary': 'Package pre-release'}],
+               'repo_name': 'diffpy.srxplanar'}
+
+expected5 =  {
+  '_id': 'diffpy.distanceprinter',
+  'active': False,
+  'author': ['Xiaohao Yang', 'Dasun Abeykoon', 'Simon Billinge'],
+  'authors': 'Xiaohao Yang, Dasun Abeykoon, Simon Billinge',
+  'grants': ['NSF Funding'],
+  'groups': ['billingegroup'],
+  'org_name': 'diffpy',
+  'platform_name': 'Github',
+  'program_description': 'Distance Printer, calculate the inter atomic '
+                         'distances. Part of xPDFsuite',
+  'release': [{'changes': [],
+               'major': 0,
+               'minor': 1,
+               'patch': 0,
+               'release_date':"2025-10-26",
+               'release_id': '1.0.0',
+               'release_type': 'minor',
+               'summary': 'Python 3.14 and something else'}],
+  'repo_name': 'diffpy.distanceprinter'}
+
+expected6 = {'_id': 'diffpy.utils',
+  'active': True,
+  'author': ['Simon Billinge',
+             'Sanjoon Bob Lee',
+             'Zhiming Xu',
+             'Tieqiong Zhang'],
+  'authors': 'Simon Billinge, Sanjoon Bob Lee, Zhiming Xu, Tieqiong Zhang',
+  'grants': ['NSF Funding'],
+  'groups': ['xrd'],
+  'org_name': 'diffpy',
+  'platform_name': 'Github',
+  'program_description': 'General utilities for analyzing diffraction data',
+  'release': [{'changes': ['deprecated python2 feature.',
+                           'changed to scikit-packaged standard.',
+                           'Add some functionality.',
+                           'Modify existing function to make convenient.'],
+               'major': 3,
+               'minor': 1,
+               'patch': 0,
+               'release_date': "2025-10-25",
+               'release_id': '3.1.0',
+               'release_type': 'major',
+               'summary': 'Python 3.14 and something else'}],
+  'repo_name': 'diffpy.utils'}
+
+expected7 = {
+  '_id': 'diffpy.srxplanar',
+  'active': True,
+  'author': ['Xiaohao Yang', 'Rundong Hua', 'Zhiming Xu', 'Simon Billinge'],
+  'authors': 'Xiaohao Yang, Rundong Hua, Zhiming Xu, Simon Billinge',
+  'grants': ['NSF Funding'],
+  'groups': ['billingegroup'],
+  'org_name': 'diffpy',
+  'platform_name': 'Github',
+  'program_description': '2D diffraction image integration using non splitting '
+                         'pixel algorithm.',
+  'release': [{'changes': [],
+               'major': 1,
+               'minor': 0,
+               'patch': 1,
+               'release_date': "2025-10-26",
+               'release_id': '1.0.0',
+               'release_type': 'major',
+               'summary': 'Python 3.14 and something else'},
+              ],
+               'repo_name': 'diffpy.srxplanar'}
+
+@pytest.mark.parametrize(
+    "args, kwargs, expected",
+    [
+        # this tests no kwargs
+        ([PEOPLE, SOFTWARE, "sbillinge"], {}, [expected4, expected5, expected6]),
+        # this tests 'statuses' kwarg
+        ([PEOPLE, SOFTWARE, "sbillinge"], {"active": True}, [expected4, expected6]),
+        # this tests 'active' and 'types' kwargs together
+        ([PEOPLE, SOFTWARE, "stevenhua0320"], {"active": True, "types": ["major"]}, [expected7]),
+        # this tests 'active' and 'since' kwargs together
+        (
+            [PEOPLE, SOFTWARE, "sbillinge"],
+            {"active": True, "since": "2025-10-21"},
+            [expected7, expected6],
+        ),
+        # this tests the 'active' and 'before' kwargs together
+        (
+            [PEOPLE, SOFTWARE, "sbillinge"],
+            {"active": True, "before": "2025-10-30"},
+            [expected4, expected6],
+        ),
+    ],
+)
+
+def test_filter_software(args, kwargs, expected):
+    actual = filter_software(*args, **kwargs)
+    assert actual == expected
 
 @pytest.mark.parametrize(
     "coll, expected",
