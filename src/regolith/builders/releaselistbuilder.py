@@ -46,9 +46,7 @@ class ReleaseListBuilder(LatexBuilderBase):
                     if self.rc.people:
                         if member not in self.rc.people:
                             continue
-                    progclean = filter_software(
-                        everybody, self.gtx["software"], member, active=True
-                    )
+                    progclean = filter_software(everybody, self.gtx["software"], member, active=True)
 
                     if len(presclean) > 0:
                         progclean = sorted(
