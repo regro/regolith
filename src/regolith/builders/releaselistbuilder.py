@@ -11,7 +11,7 @@ class ReleaseListBuilder(LatexBuilderBase):
     """Build list of released software from database entries."""
 
     btype = "releaselist"
-    needed_colls = ["groups", "institutions", "people", "grants", "software", "contacts"]
+    needed_colls = ["groups", "people", "grants", "software", "contacts"]
 
     def construct_global_ctx(self):
         """Constructs the global context."""
@@ -31,7 +31,6 @@ class ReleaseListBuilder(LatexBuilderBase):
         gtx["grants"] = sorted(all_docs_from_collection(rc.client, "grants"), key=_id_key)
         gtx["groups"] = sorted(all_docs_from_collection(rc.client, "groups"), key=_id_key)
         gtx["software"] = sorted(all_docs_from_collection(rc.client, "software"), key=_id_key)
-        gtx["institutions"] = sorted(all_docs_from_collection(rc.client, "institutions"), key=_id_key)
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -47,13 +46,13 @@ class ReleaseListBuilder(LatexBuilderBase):
                     if self.rc.people:
                         if member not in self.rc.people:
                             continue
-                    presclean = filter_software(
-                        everybody, self.gtx["software"], self.gtx["institutions"], member, statuses=["active"]
+                    progclean = filter_software(
+                        everybody, self.gtx["software"], member, active=True
                     )
 
                     if len(presclean) > 0:
-                        presclean = sorted(
-                            presclean,
+                        progclean = sorted(
+                            progclean,
                             key=lambda k: k.get("date", None),
                             reverse=True,
                         )
@@ -63,7 +62,7 @@ class ReleaseListBuilder(LatexBuilderBase):
                             "releaselist.tex",
                             outfile + ".tex",
                             pi=pi,
-                            presentations=presclean,
+                            presentations=progclean,
                             sentencecase=sentencecase,
                             monthstyle=month_fullnames,
                         )
@@ -73,7 +72,7 @@ class ReleaseListBuilder(LatexBuilderBase):
                             "releaselist.txt",
                             outfile + ".txt",
                             pi=pi,
-                            presentations=presclean,
+                            presentations=progclean,
                             sentencecase=sentencecase,
                             monthstyle=month_fullnames,
                         )
