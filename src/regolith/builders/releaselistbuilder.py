@@ -36,42 +36,42 @@ class ReleaseListBuilder(LatexBuilderBase):
         gtx["str"] = str
         gtx["zip"] = zip
 
-        def latex(self):
-            """Render latex template."""
-            everybody = self.gtx["people"] + self.gtx["contacts"]
-            for group in self.gtx["groups"]:
-                grp = group["_id"]
-                grpmember_ids = group_member_ids(self.gtx["people"], grp)
-                for member in grpmember_ids:
-                    if self.rc.people:
-                        if member not in self.rc.people:
-                            continue
-                    progclean = filter_software(everybody, self.gtx["software"], member, active=True)
+    def latex(self):
+        """Render latex template."""
+        everybody = self.gtx["people"] + self.gtx["contacts"]
+        for group in self.gtx["groups"]:
+            grp = group["_id"]
+            grpmember_ids = group_member_ids(self.gtx["people"], grp)
+            for member in grpmember_ids:
+                if self.rc.people:
+                    if member not in self.rc.people:
+                        continue
+                progclean = filter_software(everybody, self.gtx["software"], member, active=True)
 
-                    if len(presclean) > 0:
-                        progclean = sorted(
-                            progclean,
-                            key=lambda k: k.get("date", None),
-                            reverse=True,
-                        )
-                        outfile = "software-" + grp + "-" + member
-                        pi = [person for person in self.gtx["people"] if person["_id"] is member][0]
-                        self.render(
-                            "releaselist.tex",
-                            outfile + ".tex",
-                            pi=pi,
-                            presentations=progclean,
-                            sentencecase=sentencecase,
-                            monthstyle=month_fullnames,
-                        )
-                        self.env.trim_blocks = True
-                        self.env.lstrip_blocks = True
-                        self.render(
-                            "releaselist.txt",
-                            outfile + ".txt",
-                            pi=pi,
-                            presentations=progclean,
-                            sentencecase=sentencecase,
-                            monthstyle=month_fullnames,
-                        )
-                        self.pdf(outfile)
+                if len(progclean) > 0:
+                    progclean = sorted(
+                        progclean,
+                        key=lambda k: k.get("date", None),
+                        reverse=True,
+                    )
+                    outfile = "software-" + grp + "-" + member
+                    pi = [person for person in self.gtx["people"] if person["_id"] is member][0]
+                    self.render(
+                        "releaselist.tex",
+                        outfile + ".tex",
+                        pi=pi,
+                        presentations=progclean,
+                        sentencecase=sentencecase,
+                        monthstyle=month_fullnames,
+                    )
+                    self.env.trim_blocks = True
+                    self.env.lstrip_blocks = True
+                    self.render(
+                        "releaselist.txt",
+                        outfile + ".txt",
+                        pi=pi,
+                        presentations=progclean,
+                        sentencecase=sentencecase,
+                        monthstyle=month_fullnames,
+                    )
+                    self.pdf(outfile)

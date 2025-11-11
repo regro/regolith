@@ -24,6 +24,7 @@ builder_map = [
     "internalhtml",
     "preslist",
     "publist",
+    "releaselist",
     "recent-collabs",
     "grant-report",
     "resume",
