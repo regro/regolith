@@ -2178,7 +2178,7 @@
             "platform_name": "Github",
             "grants": ["NSF Funding"],
             "program_description": "General utilities for analyzing diffraction data",
-            "author": ["Simon Billinge", "Sanjoon Bob Lee", "Zhiming Xu", "Tieqiong Zhang", "aeinstein"],
+            "author": ["Sanjoon Bob Lee", "Zhiming Xu", "Tieqiong Zhang", "ANTHONY SCOPATZ"],
             "release": [
                 {
                     "major": 3,
@@ -2187,10 +2187,10 @@
                     "release_type": "major",
                     "release_date": "2025-10-25",
                     "summary": "Python 3.14 and something else",
-                    "changes": ["deprecated python2 feature.",
-                                "changed to scikit-packaged standard.",
-                                "Add some functionality.",
-                                "Modify existing function to make convenient."
+                    "changes": ["Deprecated Python 2 feature",
+                                "Changed to scikit-packaged standard",
+                                "Add some functionality",
+                                "Modify existing function to make convenient"
                     ],
                     "release_id": "3.1.0"
                 }
@@ -2200,7 +2200,7 @@
             "_id": "diffpy.srxplanar",
             "groups": ["aeinstein_grp"],
             "active": true,
-            "author": ["Xiaohao Yang", "Rundong Hua","Zhiming Xu", "Simon Billinge", "aeinstein"],
+            "author": ["Xiaohao Yang", "Rundong Hua", "Zhiming Xu", "ANTHONY SCOPATZ"],
             "org_name": "diffpy",
             "repo_name": "diffpy.srxplanar",
             "platform_name": "Github",
@@ -2208,14 +2208,14 @@
             "program_description": "2D diffraction image integration using non splitting pixel algorithm.",
             "release": [
                 {
-                    "major": 0,
+                    "major": 1,
                     "minor": 0,
                     "patch": 1,
                     "release_type": "patch",
                     "release_date": "2025-10-26",
                     "summary": "Python 3.14 and something else",
-                    "changes": [],
-                    "release_id": "1.0.0"
+                    "changes": ["Fix loadimage function correctly finds files when passed a relative path."],
+                    "release_id": "1.0.1"
                 },
                 {
                     "major": 0,
@@ -2232,14 +2232,22 @@
         },
         {
             "_id": "diffpy.distanceprinter",
-            "groups": ["aeinstein_grp"],
+            "groups": [
+                "aeinstein_grp"
+            ],
             "active": false,
             "org_name": "diffpy",
             "repo_name": "diffpy.distanceprinter",
             "platform_name": "Github",
-            "grants": ["NSF Funding"],
+            "grants": [
+                "NSF Funding"
+            ],
             "program_description": "Distance Printer, calculate the inter atomic distances. Part of xPDFsuite",
-            "author": ["Xiaohao Yang", "Dasun Abeykoon", "Simon Billinge", "aeinstein"],
+            "author": [
+                "Xiaohao Yang",
+                "Dasun Abeykoon",
+                "ANTHONY SCOPATZ"
+            ],
             "release": [
                 {
                     "major": 0,
@@ -2248,7 +2256,7 @@
                     "release_type": "minor",
                     "release_date": "2025-10-26",
                     "summary": "Python 3.14 and something else",
-                    "changes": [],
+                    "changes": ["Python 3.14 and something else"],
                     "release_id": "1.0.0"
                 }
             ]

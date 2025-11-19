@@ -54,7 +54,7 @@ class ReleaseListBuilder(LatexBuilderBase):
                         key=lambda k: max(release["release_date"] for release in k["release"]),
                         reverse=True,
                     )
-                outfile = "software-report"
+                outfile = "software-report-" + member
                 pi = [person for person in self.gtx["people"] if person["_id"] == member][0]
                 self.render(
                     "releaselist.tex",

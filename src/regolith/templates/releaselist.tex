@@ -26,17 +26,16 @@
 
 \begin{enumerate}
 {% for program in software %}
-  \item \textbf{\href{https://github.com/{{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }}}{ {{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }} }}:\\
+  \item \textbf{\href{https://github.com/{{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }}}{ {{- latex_safe(program['org_name']) -}}/{{- latex_safe(program['repo_name']) -}}}:}\\
   \hspace*{1em}{{ latex_safe(program['program_description']) }}\\
   \hspace*{1em}\textit{Authors: {{ latex_safe(', '.join(program.get('author', []))) }}}\\
   \hspace*{1em}Url: https://github.com/{{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }}\\
   \hspace*{1em}\textbf{Releases:}\vspace{-0.5em}
-  \begin{itemize}[label={}, leftmargin=2em]
+  \begin{itemize}[label={}]
   {% for release in program['release'] %}
-    \item \textbf{ {{ latex_safe(release['release_id']) }} }: {{ latex_safe(release['release_date']) }}
-    {% if release.get('summary') %}
-      \begin{itemize}[label={}, leftmargin=1em]
-        \item { {{ latex_safe(release['summary']) }} }
+    \item \textbf{ {{- latex_safe(release['release_id']) -}}:} {{ latex_safe(release['release_date']) }}
+    \begin{itemize}[label={}, leftmargin=2em]
+    {% if release.get('changes') %}
       {% for change in release.get('changes', []) %}
         \item {{ latex_safe(change) }}
       {% endfor %}
