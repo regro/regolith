@@ -1,6 +1,6 @@
 **Added:**
 
-* Add `ReleaseListBuilder` functionality
+* Add `ReleaseListBuilder` functionality, filter criteria
 
 **Changed:**
 
