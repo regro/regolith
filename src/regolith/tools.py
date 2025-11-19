@@ -830,20 +830,13 @@ def filter_software(people, software, target, types=None, since=None, before=Non
 
         for release in program.get("release", []):
             releasedate = release.get("release_date")
-            if isinstance(releasedate, str):
-                release["release_date"] = releasedate
+            if isinstance(releasedate, date):
+                release["release_date"] = releasedate.isoformat()
 
     if len(progclean) > 0:
         progclean = sorted(
             progclean,
-            key=lambda k: max(
-                (
-                    datetime.fromisoformat(rel["release_date"])
-                    if isinstance(rel.get("release_date"), str)
-                    else rel["release_date"]
-                )
-                for rel in k["release"]
-            ),
+            key=lambda k: max(release["release_date"] for release in k["release"]),
             reverse=True,
         )
     return progclean

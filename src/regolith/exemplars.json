@@ -2171,14 +2171,14 @@
     "software": [
         {
             "_id": "diffpy.utils",
-            "groups": ["xrd"],
+            "groups": ["aeinstein_grp"],
             "active": true,
             "org_name": "diffpy",
             "repo_name": "diffpy.utils",
             "platform_name": "Github",
             "grants": ["NSF Funding"],
             "program_description": "General utilities for analyzing diffraction data",
-            "author": ["Simon Billinge", "Sanjoon Bob Lee", "Zhiming Xu", "Tieqiong Zhang"],
+            "author": ["Simon Billinge", "Sanjoon Bob Lee", "Zhiming Xu", "Tieqiong Zhang", "aeinstein"],
             "release": [
                 {
                     "major": 3,
@@ -2198,9 +2198,9 @@
         },
         {
             "_id": "diffpy.srxplanar",
-            "groups": ["billingegroup"],
+            "groups": ["aeinstein_grp"],
             "active": true,
-            "author": ["Xiaohao Yang", "Rundong Hua","Zhiming Xu", "Simon Billinge"],
+            "author": ["Xiaohao Yang", "Rundong Hua","Zhiming Xu", "Simon Billinge", "aeinstein"],
             "org_name": "diffpy",
             "repo_name": "diffpy.srxplanar",
             "platform_name": "Github",
@@ -2232,14 +2232,14 @@
         },
         {
             "_id": "diffpy.distanceprinter",
-            "groups": ["billingegroup"],
+            "groups": ["aeinstein_grp"],
             "active": false,
             "org_name": "diffpy",
             "repo_name": "diffpy.distanceprinter",
             "platform_name": "Github",
             "grants": ["NSF Funding"],
             "program_description": "Distance Printer, calculate the inter atomic distances. Part of xPDFsuite",
-            "author": ["Xiaohao Yang", "Dasun Abeykoon", "Simon Billinge"],
+            "author": ["Xiaohao Yang", "Dasun Abeykoon", "Simon Billinge", "aeinstein"],
             "release": [
                 {
                     "major": 0,

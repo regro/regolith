@@ -24,13 +24,13 @@ builder_map = [
     "internalhtml",
     "preslist",
     "publist",
-    "releaselist",
     "recent-collabs",
     "grant-report",
     "resume",
     "review-man",
     # reading-lists    need tests for this
     "reimb",
+    "releaselist",
 ]
 db_srcs = ["mongo", "fs"]
 

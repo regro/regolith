@@ -10,34 +10,38 @@
 
 \begin{document}
 
+{% raw %}
 \noindent
 \colorbox{gray!40}{%
   \begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
-  \textbf{\Large {{- latex_safe(pi['name']).upper() -}}} & \textbf{\today} \\
-  {{- latex_safe(pi['institution']) -}} & {{- latex_safe(pi['email']) -}}\\
+{% endraw %}
+    \textbf{\Large {{ latex_safe(pi['name']).upper() }}} & \textbf{\today} \\
+    {{ latex_safe(pi['institution']) }} & {{ latex_safe(pi['email']) }} \\
+{% raw %}
   \end{tabular*}%
 }\vspace{1em}
+{% endraw %}
 
 \textbf{Software Releaselist}
 
 \begin{enumerate}
 {% for program in software %}
-  \item \textbf{\href{https://github.com/{{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }}}{ {{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }} }:}\\
+  \item \textbf{\href{https://github.com/{{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }}}{ {{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }} }}:\\
   \hspace*{1em}{{ latex_safe(program['program_description']) }}\\
   \hspace*{1em}\textit{Authors: {{ latex_safe(', '.join(program.get('author', []))) }}}\\
   \hspace*{1em}Url: https://github.com/{{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }}\\
   \hspace*{1em}\textbf{Releases:}\vspace{-0.5em}
-  \begin{itemize}[label={}]
+  \begin{itemize}[label={}, leftmargin=2em]
   {% for release in program['release'] %}
     \item \textbf{ {{ latex_safe(release['release_id']) }} }: {{ latex_safe(release['release_date']) }}
-      \begin{itemize}[label={}, leftmargin=2em]
-      {% if release.get('summary') %}
-        \item \textit{ {{ latex_safe(release['summary']) }} }
-      {% endif %}
+    {% if release.get('summary') %}
+      \begin{itemize}[label={}, leftmargin=1em]
+        \item { {{ latex_safe(release['summary']) }} }
       {% for change in release.get('changes', []) %}
         \item {{ latex_safe(change) }}
       {% endfor %}
       \end{itemize}
+    {% endif %}
   {% endfor %}
   \end{itemize}
 {% endfor %}

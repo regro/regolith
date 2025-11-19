@@ -46,32 +46,32 @@ class ReleaseListBuilder(LatexBuilderBase):
                 if self.rc.people:
                     if member not in self.rc.people:
                         continue
-                progclean = filter_software(everybody, self.gtx["software"], member, active=True)
+                progclean = filter_software(everybody, self.gtx["software"], member)
 
                 if len(progclean) > 0:
                     progclean = sorted(
                         progclean,
-                        key=lambda k: k.get("date", None),
+                        key=lambda k: max(release["release_date"] for release in k["release"]),
                         reverse=True,
                     )
-                    outfile = "software-" + grp + "-" + member
-                    pi = [person for person in self.gtx["people"] if person["_id"] is member][0]
-                    self.render(
-                        "releaselist.tex",
-                        outfile + ".tex",
-                        pi=pi,
-                        presentations=progclean,
-                        sentencecase=sentencecase,
-                        monthstyle=month_fullnames,
-                    )
-                    self.env.trim_blocks = True
-                    self.env.lstrip_blocks = True
-                    self.render(
-                        "releaselist.txt",
-                        outfile + ".txt",
-                        pi=pi,
-                        presentations=progclean,
-                        sentencecase=sentencecase,
-                        monthstyle=month_fullnames,
-                    )
-                    self.pdf(outfile)
+                outfile = "software-report"
+                pi = [person for person in self.gtx["people"] if person["_id"] == member][0]
+                self.render(
+                    "releaselist.tex",
+                    outfile + ".tex",
+                    pi=pi,
+                    software=progclean,
+                    sentencecase=sentencecase,
+                    monthstyle=month_fullnames,
+                )
+                self.env.trim_blocks = True
+                self.env.lstrip_blocks = True
+                # self.render(
+                # "releaselist.txt",
+                # outfile + ".txt",
+                # pi=pi,
+                # software=progclean,
+                #  sentencecase=sentencecase,
+                #  monthstyle=month_fullnames,
+            # )
+            # self.pdf(outfile)
