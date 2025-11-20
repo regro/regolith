@@ -806,7 +806,7 @@ def filter_software(people, software, target, types=None, since=None, before=Non
         pauthors = program["author"]
         if isinstance(pauthors, str):
             pauthors = [pauthors]
-        program["authors"] = [
+        get_authors = [
             (
                 author
                 if fuzzy_retrieval(
@@ -825,7 +825,7 @@ def filter_software(people, software, target, types=None, since=None, before=Non
             )
             for author in pauthors
         ]
-        authorlist = ", ".join(program["author"])
+        authorlist = ", ".join(get_authors)
         program["authors"] = authorlist
 
         for release in program.get("release", []):

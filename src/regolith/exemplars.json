@@ -2171,14 +2171,13 @@
     "software": [
         {
             "_id": "diffpy.utils",
-            "groups": ["aeinstein_grp"],
             "active": true,
             "org_name": "diffpy",
             "repo_name": "diffpy.utils",
             "platform_name": "Github",
-            "grants": ["NSF Funding"],
+            "grants": ["dmref15"],
             "program_description": "General utilities for analyzing diffraction data",
-            "author": ["Sanjoon Bob Lee", "Zhiming Xu", "Tieqiong Zhang", "ANTHONY SCOPATZ"],
+            "author": ["Sanjoon Bob Lee", "Zhiming Xu", "Tieqiong Zhang", "scopatz"],
             "release": [
                 {
                     "major": 3,
@@ -2198,9 +2197,8 @@
         },
         {
             "_id": "diffpy.srxplanar",
-            "groups": ["aeinstein_grp"],
             "active": true,
-            "author": ["Xiaohao Yang", "Rundong Hua", "Zhiming Xu", "ANTHONY SCOPATZ"],
+            "author": ["Xiaohao Yang", "Rundong Hua", "Zhiming Xu", "scopatz"],
             "org_name": "diffpy",
             "repo_name": "diffpy.srxplanar",
             "platform_name": "Github",
@@ -2232,9 +2230,6 @@
         },
         {
             "_id": "diffpy.distanceprinter",
-            "groups": [
-                "aeinstein_grp"
-            ],
             "active": false,
             "org_name": "diffpy",
             "repo_name": "diffpy.distanceprinter",
@@ -2246,7 +2241,7 @@
             "author": [
                 "Xiaohao Yang",
                 "Dasun Abeykoon",
-                "ANTHONY SCOPATZ"
+                "Scopatz, A"
             ],
             "release": [
                 {
