@@ -22,13 +22,13 @@
 }\vspace{1em}
 {% endraw %}
 
-\textbf{Software Releaselist}
+\textbf{Software Packages}
 
 \begin{enumerate}
 {% for program in software %}
   \item \textbf{\href{https://github.com/{{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }}}{ {{- latex_safe(program['org_name']) -}}/{{- latex_safe(program['repo_name']) -}}}:}\\
   \hspace*{1em}{{ latex_safe(program['program_description']) }}\\
-  \hspace*{1em}\textit{Authors: {{ latex_safe(', '.join(program.get('author', []))) }}}\\
+  \hspace*{1em}\textit{Authors: {{ latex_safe(program.get('authors', '')) }} }\\
   \hspace*{1em}Url: https://github.com/{{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }}\\
   \hspace*{1em}\textbf{Releases:}\vspace{-0.5em}
   \begin{itemize}[label={}]

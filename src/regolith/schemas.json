@@ -3021,13 +3021,7 @@
             "description": "grant(s) that supported package development/maintenance",
             "required": true,
             "type": "list"
-        },
-        "groups": {
-            "description": "research group(s) that develop the package.",
-            "required": true,
-            "type": "list"
         }
-
     },
     "students": {
         "_description": {
