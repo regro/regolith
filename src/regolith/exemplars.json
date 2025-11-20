@@ -61,13 +61,6 @@
         "title": "My Vision",
         "year": 2015
     },
-    "software": {
-        "_id": "unique-package-id",
-        "active": true,
-        "url": "https://github.com/diffpy/diffpy.utils",
-        "grants": ["dmref15", "SymPy-1.1"],
-        "groups": ["ergs"]
-    },
     "citations": [
         {
             "_id": "meurer2016sympy",
@@ -2178,13 +2171,14 @@
     "software": [
         {
             "_id": "diffpy.utils",
-            "groups": ["xrd"],
+            "groups": ["aeinstein_grp"],
             "active": true,
             "org_name": "diffpy",
             "repo_name": "diffpy.utils",
             "platform_name": "Github",
             "grants": ["NSF Funding"],
-            "author": ["Simon Billinge", "Sanjoon Bob Lee", "Zhiming Xu", "Tieqiong Zhang"],
+            "program_description": "General utilities for analyzing diffraction data",
+            "author": ["Sanjoon Bob Lee", "Zhiming Xu", "Tieqiong Zhang", "ANTHONY SCOPATZ"],
             "release": [
                 {
                     "major": 3,
@@ -2193,10 +2187,10 @@
                     "release_type": "major",
                     "release_date": "2025-10-25",
                     "summary": "Python 3.14 and something else",
-                    "changes": ["Deprecated python2 feature.",
-                                "Changed to scikit-packaged standard.",
-                                "Add some functionality.",
-                                "Modify existing function to make convenient."
+                    "changes": ["Deprecated Python 2 feature",
+                                "Changed to scikit-packaged standard",
+                                "Add some functionality",
+                                "Modify existing function to make convenient"
                     ],
                     "release_id": "3.1.0"
                 }
@@ -2204,13 +2198,14 @@
         },
         {
             "_id": "diffpy.srxplanar",
-            "groups": ["billingegroup"],
+            "groups": ["aeinstein_grp"],
             "active": true,
-            "author": ["Xiaohao Yang", "Rundong Hua","Zhiming Xu", "Simon Billinge"],
+            "author": ["Xiaohao Yang", "Rundong Hua", "Zhiming Xu", "ANTHONY SCOPATZ"],
             "org_name": "diffpy",
             "repo_name": "diffpy.srxplanar",
             "platform_name": "Github",
             "grants": ["NSF Funding"],
+            "program_description": "2D diffraction image integration using non splitting pixel algorithm.",
             "release": [
                 {
                     "major": 1,
@@ -2237,13 +2232,22 @@
         },
         {
             "_id": "diffpy.distanceprinter",
-            "groups": ["billingegroup"],
+            "groups": [
+                "aeinstein_grp"
+            ],
             "active": false,
             "org_name": "diffpy",
             "repo_name": "diffpy.distanceprinter",
             "platform_name": "Github",
-            "grants": ["NSF Funding"],
-            "author": ["Xiaohao Yang", "Dasun Abeykoon", "Simon Billinge"],
+            "grants": [
+                "NSF Funding"
+            ],
+            "program_description": "Distance Printer, calculate the inter atomic distances. Part of xPDFsuite",
+            "author": [
+                "Xiaohao Yang",
+                "Dasun Abeykoon",
+                "ANTHONY SCOPATZ"
+            ],
             "release": [
                 {
                     "major": 0,
@@ -2252,8 +2256,8 @@
                     "release_type": "minor",
                     "release_date": "2025-10-26",
                     "summary": "Python 3.14 and something else",
-                    "changes": ["Change package to scikit-package level-5 standard."],
-                    "release_id": "0.1.0"
+                    "changes": ["Python 3.14 and something else"],
+                    "release_id": "1.0.0"
                 }
             ]
         }

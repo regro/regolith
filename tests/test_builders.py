@@ -30,6 +30,7 @@ builder_map = [
     "review-man",
     # reading-lists    need tests for this
     "reimb",
+    "releaselist",
 ]
 db_srcs = ["mongo", "fs"]
 

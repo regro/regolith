@@ -1,0 +1,49 @@
+\documentclass[prl,tighten,amsmath,amssymb,floatfix]{revtex4-1}
+\usepackage{graphicx}
+\usepackage{times}
+\usepackage{booktabs,dcolumn}
+\usepackage{siunitx}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\begin{document}
+
+{% raw %}
+\noindent
+\colorbox{gray!40}{%
+  \begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
+{% endraw %}
+    \textbf{\Large {{ latex_safe(pi['name']).upper() }}} & \textbf{\today} \\
+    {{ latex_safe(pi['institution']) }} & {{ latex_safe(pi['email']) }} \\
+{% raw %}
+  \end{tabular*}%
+}\vspace{1em}
+{% endraw %}
+
+\textbf{Software Releaselist}
+
+\begin{enumerate}
+{% for program in software %}
+  \item \textbf{\href{https://github.com/{{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }}}{ {{- latex_safe(program['org_name']) -}}/{{- latex_safe(program['repo_name']) -}}}:}\\
+  \hspace*{1em}{{ latex_safe(program['program_description']) }}\\
+  \hspace*{1em}\textit{Authors: {{ latex_safe(', '.join(program.get('author', []))) }}}\\
+  \hspace*{1em}Url: https://github.com/{{ latex_safe(program['org_name']) }}/{{ latex_safe(program['repo_name']) }}\\
+  \hspace*{1em}\textbf{Releases:}\vspace{-0.5em}
+  \begin{itemize}[label={}]
+  {% for release in program['release'] %}
+    \item \textbf{ {{- latex_safe(release['release_id']) -}}:} {{ latex_safe(release['release_date']) }}
+    \begin{itemize}[label={}, leftmargin=2em]
+    {% if release.get('changes') %}
+      {% for change in release.get('changes', []) %}
+        \item {{ latex_safe(change) }}
+      {% endfor %}
+      \end{itemize}
+    {% endif %}
+  {% endfor %}
+  \end{itemize}
+{% endfor %}
+\end{enumerate}
+
+\end{document}

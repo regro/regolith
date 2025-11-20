@@ -711,6 +711,137 @@ def filter_presentations(
     return presclean
 
 
+def filter_software(people, software, target, types=None, since=None, before=None, active=None):
+    """Filters presentations for different types and date ranges.
+
+    Parameters
+    ----------
+    people: iterable of dicts
+      The people collection
+    software: iterable of dicts
+      The software collection
+    target: str
+      The id of the person you will build the list for
+    types: list of strings.  Optional, default = all
+      The types to filter for.  Allowed types are release_types.
+    since: date.  Optional, default is None
+        The begin date to filter from
+    before: date. Optional, default is None
+        The end date to filter for.  None does not apply this filter
+    statuses: list of str.  Optional. Default is active.
+      The list of statuses to filter for.
+    """
+
+    if not types:
+        types = ["all"]
+    software = deepcopy(software)
+
+    firstclean = []
+    secondclean = []
+    thirdclean = []
+    fourthclean = []
+    progclean = []
+
+    for program in software:
+        pauthors = program.get("author", [])
+        if isinstance(pauthors, str):
+            pauthors = [pauthors]
+        authors = [
+            fuzzy_retrieval(
+                people,
+                ["aka", "name", "_id"],
+                author,
+                case_sensitive=False,
+            )
+            for author in pauthors
+        ]
+        authorids = [author["_id"] if author is not None else author for author in authors]
+        if target in authorids:
+            firstclean.append(program)
+
+    if active is True:
+        for program in firstclean:
+            if program.get("active") is True:
+                secondclean.append(program)
+    else:
+        for program in firstclean:
+            secondclean.append(program)
+
+    for program in secondclean:
+        releases = program.get("release")
+        filtered_releases = [
+            release for release in releases if "all" in types or release.get("release_type") in types
+        ]
+        if filtered_releases:
+            program["release"] = filtered_releases
+            thirdclean.append(program)
+
+    if since:
+        for program in thirdclean:
+            filtered_releases = []
+            for release in program.get("release", []):
+                releasedate = release.get("release_date")
+                if releasedate >= since:
+                    filtered_releases.append(release)
+            if filtered_releases:
+                program["release"] = filtered_releases
+                fourthclean.append(program)
+    else:
+        fourthclean = thirdclean
+
+    if before:
+        for program in fourthclean:
+            filtered_releases = []
+            for release in program.get("release", []):
+                releasedate = release.get("release_date")
+                if releasedate <= before:
+                    filtered_releases.append(release)
+            if filtered_releases:
+                program["release"] = filtered_releases
+                progclean.append(program)
+    else:
+        progclean = fourthclean
+
+    for program in progclean:
+        pauthors = program["author"]
+        if isinstance(pauthors, str):
+            pauthors = [pauthors]
+        program["authors"] = [
+            (
+                author
+                if fuzzy_retrieval(
+                    people,
+                    ["aka", "name", "_id"],
+                    author,
+                    case_sensitive=False,
+                )
+                is None
+                else fuzzy_retrieval(
+                    people,
+                    ["aka", "name", "_id"],
+                    author,
+                    case_sensitive=False,
+                )["name"]
+            )
+            for author in pauthors
+        ]
+        authorlist = ", ".join(program["author"])
+        program["authors"] = authorlist
+
+        for release in program.get("release", []):
+            releasedate = release.get("release_date")
+            if isinstance(releasedate, date):
+                release["release_date"] = releasedate.isoformat()
+
+    if len(progclean) > 0:
+        progclean = sorted(
+            progclean,
+            key=lambda k: max(release["release_date"] for release in k["release"]),
+            reverse=True,
+        )
+    return progclean
+
+
 def awards_grants_honors(person, target_name, funding=True, service_types=None):
     """Make sorted awards grants and honors list.
 
