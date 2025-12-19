@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
+import base64
 import os
 import re
-import base64
-import requests
 import tomllib
-from datetime import datetime
+from datetime import datetime  # noqa
 from typing import Any, Dict, List, Optional
+
+import requests
 
 GITHUB_API = "https://api.github.com"
 
@@ -15,10 +16,9 @@ class GitHubRepoExtractor:
         self.owner = owner
         self.repo = repo
         self.session = requests.Session()
-        self.session.headers.update({
-            "Accept": "application/vnd.github+json",
-            "User-Agent": "github-repo-extractor"
-        })
+        self.session.headers.update(
+            {"Accept": "application/vnd.github+json", "User-Agent": "github-repo-extractor"}
+        )
         if token:
             self.session.headers["Authorization"] = f"Bearer {token}"
 
@@ -54,16 +54,11 @@ class GitHubRepoExtractor:
         if not match:
             return None
 
-        major, minor, patch, rc = m.groups()
+        major, minor, patch, rc = match.groups()
         major, minor, patch = int(major), int(minor), int(patch)
 
         prerelease = rc is not None
-        release_type = (
-            "pre-release" if prerelease
-            else "patch" if patch > 0
-            else "minor" if minor > 0
-            else "major"
-        )
+        release_type = "pre-release" if prerelease else "patch" if patch > 0 else "minor" if minor > 0 else "major"
 
         return {
             "major": major,
@@ -79,15 +74,11 @@ class GitHubRepoExtractor:
             return None
 
         body = release.get("body") or ""
-        changes = [
-            line.lstrip("- ").strip()
-            for line in body.splitlines()
-            if line.strip().startswith("-")
-        ]
+        changes = [line.lstrip("- ").strip() for line in body.splitlines() if line.strip().startswith("-")]
 
         return {
             **{k: v for k, v in version.items() if v is not None},
-            "release_date": r["published_at"][:10],
+            "release_date": release["published_at"][:10],
             "summary": release.get("name") or "",
             "changes": changes,
             "release_id": release["tag_name"],
@@ -118,13 +109,13 @@ class GitHubRepoExtractor:
             "repo_name": repo["name"],
             "platform_name": "Github",
             "program_description": (
-                tomllib.loads(pyproject)["project"]["description"]
-                if pyproject else repo.get("description")
+                tomllib.loads(pyproject)["project"]["description"] if pyproject else repo.get("description")
             ),
             "release": self.extract_releases(),
         }
 
         return data
+
 
 def main():
     import argparse
