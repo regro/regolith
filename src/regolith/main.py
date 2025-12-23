@@ -254,6 +254,16 @@ def create_parser():
         default=None,
     )
 
+    # GitHub extractor subparser
+    ghe = subp.add_parser(
+        "gh-extractor",
+        help="Extract GitHub repository metadata and write software YAML",
+    )
+    ghe.add_argument("owner", help="GitHub owner or organization")
+    ghe.add_argument("--repo", help="Single repository name")
+    ghe.add_argument("--all", action="store_true", help="Extract all active repositories")
+    ghe.add_argument("--token", help="GitHub token (or set GITHUB_TOKEN)")
+
     # Validator
     val = subp.add_parser("validate", help="Validates db")
     val.add_argument(
