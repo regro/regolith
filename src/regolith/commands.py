@@ -7,7 +7,7 @@ import sys
 from copy import copy
 from pprint import pprint
 
-import yaml
+from ruamel.yaml import YAML
 
 from regolith import storage
 from regolith.builder import BUILDERS, builder
@@ -275,8 +275,12 @@ def ghextractor(rc):
     )
     yaml_dict = to_software_yaml(data)
     output = getattr(rc, "output", "software.yml")
+    yaml = YAML()
+    yaml.default_flow_style = False
+    yaml.indent(mapping=2, sequence=4, offset=2)
+    yaml.allow_unicode = True
     with open(output, "w", encoding="utf-8") as f:
-        yaml.safe_dump(yaml_dict, f, sort_keys=False)
+        yaml.dump(yaml_dict, f)
     print(f"Wrote {output}")
 
 
