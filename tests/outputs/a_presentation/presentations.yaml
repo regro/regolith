@@ -51,6 +51,7 @@
   begin_month: 5
   begin_year: 2018
   department: apam
+  hide: false
   institution: columbiau
   location: Upton NY
   meeting_name: Meeting to check flexibility on dates
@@ -77,8 +78,10 @@
     - This is to test Case C.2 where user wants an expense added and passed the 
       force option without specifying an expense db when default is public
   presentation_url: http://drive.google.com/SEV356DV
+  presenter: nasker
   project:
     - all
   status: in-prep
+  talk_id: tbd
   title: Testing Case C.2
   type: contributed_oral

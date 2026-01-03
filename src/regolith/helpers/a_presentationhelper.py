@@ -39,6 +39,9 @@ def subparser(subpi):
     )
     subpi.add_argument("begin_date", help="Input begin date for this presentation ", **date_kwargs)
     subpi.add_argument("end_date", help="Input end date for this presentation", **date_kwargs)
+    subpi.add_argument(
+        "--regolith-talk-id", help="the id of the talk in your regolith talks collection, if known", default="tbd"
+    )
     subpi.add_argument("-t", "--title", help="the title of the presentation, default is tbd", default="tbd")
     subpi.add_argument("-a", "--abstract", help="abstract of the presentation, defaults to tbd", default="tbd")
     subpi.add_argument(
@@ -268,8 +271,10 @@ class PresentationAdderHelper(DbHelperBase):
         pdoc.update(
             {
                 "project": ["all"],
+                "presenter": rc.person,
                 "status": rc.status,
                 "title": rc.title,
+                "talk_id": rc.regolith_talk_id,
                 "type": rc.type,
             }
         )

@@ -1951,6 +1951,11 @@
             "anyof_type": ["string", "integer"]
         },
         "end_day": {"required": false, "type": "integer"},
+        "hide": {
+            "description": "Whether the presentation should be hidden in the presentation list",
+            "required": false,
+            "type": "boolean"
+        },
         "institution": {
             "description": "institution where thepresentation will be made, if applicable.",
             "required": false,
