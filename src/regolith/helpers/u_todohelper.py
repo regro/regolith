@@ -16,6 +16,7 @@ from regolith.tools import (
     get_pi_id,
     key_value_pair_filter,
     print_task,
+    strip_str,
 )
 
 TARGET_COLL = "todos"
@@ -49,6 +50,7 @@ def subparser(subpi):
     subpi.add_argument(
         "-s",
         "--stati",
+        type=strip_str,
         nargs="+",
         help='Update tasks with specific stati"',
         default=["started"],
@@ -57,6 +59,7 @@ def subparser(subpi):
     subpi.add_argument(
         "-f",
         "--filter",
+        type=strip_str,
         nargs="+",
         help="Search this collection by giving key element pairs. "
         "'-f description paper' will return tasks with description containing 'paper' ",
@@ -65,10 +68,11 @@ def subparser(subpi):
     subpi.add_argument(
         "-d",
         "--description",
+        type=strip_str,
         help=" Change the description of the to_do task. If the description has more than one "
         "word, please enclose it in quotation marks.",
     )
-    subpi.add_argument("-u", "--due-date", help="Change the due date of the task.", **date_kwargs)
+    subpi.add_argument("-u", "--due-date", type=strip_str, help="Change the due date of the task.", **date_kwargs)
     subpi.add_argument(
         "-e",
         "--estimated-duration",
@@ -77,36 +81,47 @@ def subparser(subpi):
         **deci_kwargs,
     )
     subpi.add_argument(
-        "--deadline", help="give value 't' if due_date is a hard deadline, else 'f' if not", choices=["t", "f"]
+        "--deadline",
+        type=strip_str,
+        help="give value 't' if due_date is a hard deadline, else 'f' if not",
+        choices=["t", "f"],
     )
     subpi.add_argument(
-        "-m", "--importance", choices=ALLOWED_IMPORTANCE, help="Change the importance of the task.", type=int
+        "-m",
+        "--importance",
+        type=int,
+        choices=ALLOWED_IMPORTANCE,
+        help="Change the importance of the task.",
     )
-    subpi.add_argument("--status", choices=TODO_STATI, help="Change the status of the task.")
+    subpi.add_argument("--status", type=strip_str, choices=TODO_STATI, help="Change the status of the task.")
     subpi.add_argument(
         "-n",
         "--notes",
+        type=strip_str,
         nargs="+",
         help="The new notes for this task. Each note should be enclosed " "in quotation marks.",
         **notes_kwargs,
     )
-    subpi.add_argument("-t", "--tags", nargs="+", help="The new tags to add for this task.")
-    subpi.add_argument("--begin-date", help="Change the begin date of the task.", **date_kwargs)
-    subpi.add_argument("--end-date", help="Change the end date of the task.", **date_kwargs)
+    subpi.add_argument("-t", "--tags", type=strip_str, nargs="+", help="The new tags to add for this task.")
+    subpi.add_argument("--begin-date", type=strip_str, help="Change the begin date of the task.", **date_kwargs)
+    subpi.add_argument("--end-date", type=strip_str, help="Change the end date of the task.", **date_kwargs)
     subpi.add_argument(
         "-a",
         "--assigned-to",
+        type=strip_str,
         help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ",
     )
     subpi.add_argument(
         "-b",
         "--assigned-by",
+        type=strip_str,
         nargs="?",
         const="default_id",
         help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ",
     )
     subpi.add_argument(
         "--date",
+        type=strip_str,
         help="Enter a date such that the helper can calculate how many days are left "
         "from that date to the due date. Default is today.",
         **date_kwargs,
