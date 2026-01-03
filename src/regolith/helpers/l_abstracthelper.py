@@ -5,7 +5,13 @@ from gooey import GooeyParser
 from regolith.dates import get_dates
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.tools import all_docs_from_collection, dereference_institution, get_person_contact, get_pi_id
+from regolith.tools import (
+    all_docs_from_collection,
+    dereference_institution,
+    get_person_contact,
+    get_pi_id,
+    strip_str,
+)
 
 TARGET_COLL = "presentations"
 HELPER_TARGET = "l_abstract"
@@ -17,8 +23,10 @@ def subparser(subpi):
         int_kwargs["widget"] = "IntegerField"
         int_kwargs["gooey_options"] = {"min": 2000, "max": 2100}
 
-    subpi.add_argument("-a", "--author", help="Filter abstracts or this author ID (e.g., sbillinge).")
-    subpi.add_argument("-y", "--year", help="Get presentations since this year")
+    subpi.add_argument(
+        "-a", "--author", help="Filter abstracts or this author ID (e.g., sbillinge).", type=strip_str
+    )
+    subpi.add_argument("-y", "--year", help="Get presentations since this year", type=strip_str)
     subpi.add_argument(
         "-l",
         "--loc-inst",
@@ -26,9 +34,13 @@ def subparser(subpi):
         "country, city, state, or university. If an institution is entered,"
         "the search will be for seminars or colloquiums, otherwise the "
         "search will be for all other meetings",
+        type=strip_str,
     )
     subpi.add_argument(
-        "-t", "--title", help="fragment of the title of the abstract or talk to use to " "filter presentations"
+        "-t",
+        "--title",
+        type=strip_str,
+        help="fragment of the title of the abstract or talk to use to " "filter presentations",
     )
     return subpi
 
