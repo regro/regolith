@@ -1,4 +1,5 @@
 ruamel.yaml
+ruamel.yaml.clib
 bibtexparser
 docutils
 jinja2
@@ -14,4 +15,3 @@ matplotlib-base
 habanero
 google-api-python-client
 google-auth-oauthlib
-wxpython

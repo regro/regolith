@@ -602,6 +602,9 @@ def filter_presentations(
     fourthclean = list()
     presclean = list()
 
+    # remove presentations that have hide: True
+    presentations = [pres for pres in presentations if not pres.get("hide", False)]
+
     # build the filtered collection
     # only list the talk if the group member is an author
     for pres in presentations:
