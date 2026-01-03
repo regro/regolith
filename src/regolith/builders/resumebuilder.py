@@ -17,13 +17,13 @@ from regolith.tools import (
 
 
 class ResumeBuilder(LatexBuilderBase):
-    """Build resume from database entries"""
+    """Build resume from database entries."""
 
     btype = "resume"
     needed_colls = ["institutions", "people", "grants", "citations", "projects", "proposals"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -37,7 +37,7 @@ class ResumeBuilder(LatexBuilderBase):
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
         rc = self.rc
         if rc.people:
             people = [fuzzy_retrieval(self.gtx["people"], ["aka", "_id", "name"], rc.people[0])]
@@ -59,7 +59,8 @@ class ResumeBuilder(LatexBuilderBase):
             emp.sort(key=ene_date_key, reverse=True)
             edu = p.get("education", [])
             edu.sort(key=ene_date_key, reverse=True)
-            projs = filter_projects(all_docs_from_collection(rc.client, "projects"), names)
+            current_projects = filter_projects(all_docs_from_collection(rc.client, "projects"), names, active=True)
+            past_projects = filter_projects(all_docs_from_collection(rc.client, "projects"), names, active=False)
             grants = list(all_docs_from_collection(rc.client, "grants"))
             proposals = list(all_docs_from_collection(rc.client, "proposals"))
             grants = merge_collections_superior(proposals, grants, "proposal_id")
@@ -77,7 +78,8 @@ class ResumeBuilder(LatexBuilderBase):
                 bibfile=bibfile,
                 education=edu,
                 employment=emp,
-                projects=projs,
+                current_projects=current_projects,
+                past_projects=past_projects,
                 pi_grants=pi_grants,
                 pi_amount=pi_amount,
                 coi_grants=coi_grants,

@@ -1,4 +1,4 @@
-"""The main CLI for regolith"""
+"""The main CLI for regolith."""
 
 from __future__ import print_function
 

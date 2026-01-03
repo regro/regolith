@@ -1,6 +1,4 @@
-"""
-Loads the dbs for interactive sessions
-"""
+"""Loads the dbs for interactive sessions."""
 
 from regolith.runcontrol import DEFAULT_RC, connect_db, filter_databases, load_rcfile
 

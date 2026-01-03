@@ -1,22 +1,24 @@
 """Builder for Lists of Presentations.
 
-This builder will build a presentation list for each group-member in each group
-listed in groups.yml.  Group members are indicated in the employment and
-education sections of the individual in people.yml.
+This builder will build a presentation list for each group-member in
+each group listed in groups.yml.  Group members are indicated in the
+employment and education sections of the individual in people.yml.
 
-There are a number of filtering options, i.e., for presentation-type (invited,
-colloquium, seminar, poster, contributed_oral) and for whether the invitation
-was accepted or declined.  As of now, these filters can only be updated by
-editing this file but may appear as command-line options later.  It will also
-get institution and department information from institutions.yml if they are
-there.
+There are a number of filtering options, i.e., for presentation-type
+(invited, colloquium, seminar, poster, contributed_oral) and for whether
+the invitation was accepted or declined.  As of now, these filters can
+only be updated by editing this file but may appear as command-line
+options later.  It will also get institution and department information
+from institutions.yml if they are there.
 
-The author list is built from information in people.yml where possible and
-contacts.yml as a fallback.  The author list is built by first performing a
-fuzzy search for the person in people.yml, followed by a fuzzy search through
-contacts.yml (if the person was not found in people.yml), but if the person is
-absent both database files, it will still build but using the string name given
-in the presentations.yml. The presentations are output in a ./_build directory."""
+The author list is built from information in people.yml where possible
+and contacts.yml as a fallback.  The author list is built by first
+performing a fuzzy search for the person in people.yml, followed by a
+fuzzy search through contacts.yml (if the person was not found in
+people.yml), but if the person is absent both database files, it will
+still build but using the string name given in the presentations.yml.
+The presentations are output in a ./_build directory.
+"""
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
@@ -26,13 +28,14 @@ from regolith.tools import all_docs_from_collection, filter_presentations, group
 
 
 class PresListBuilder(LatexBuilderBase):
-    """Build list of talks and posters (presentations) from database entries"""
+    """Build list of talks and posters (presentations) from database
+    entries."""
 
     btype = "preslist"
     needed_colls = ["groups", "institutions", "people", "grants", "presentations", "contacts"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -56,7 +59,7 @@ class PresListBuilder(LatexBuilderBase):
         gtx["zip"] = zip
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
         everybody = self.gtx["people"] + self.gtx["contacts"]
         for group in self.gtx["groups"]:
             grp = group["_id"]

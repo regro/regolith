@@ -1,6 +1,4 @@
-"""
-Helper to add expenses.
-"""
+"""Helper to add expenses."""
 
 import datetime as dt
 
@@ -19,8 +17,7 @@ EXPENSES_TYPES = alloweds.get("EXPENSES_TYPES")
 
 
 def expense_constructor(key, begin_date, end_date, rc):
-    """
-    constructs a document with default fields for an expense
+    """Constructs a document with default fields for an expense.
 
     Parameters
     ----------
@@ -48,7 +45,6 @@ def expense_constructor(key, begin_date, end_date, rc):
     Returns
     -------
     The constructed expense document
-
     """
     pdoc = {}
     pdoc.update(
@@ -255,7 +251,7 @@ class ExpenseAdderHelper(DbHelperBase):
     needed_colls = [f"{TARGET_COLL}", "people", "groups"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

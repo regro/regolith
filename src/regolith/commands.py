@@ -7,10 +7,13 @@ import sys
 from copy import copy
 from pprint import pprint
 
+from ruamel.yaml import YAML
+
 from regolith import storage
 from regolith.builder import BUILDERS, builder
 from regolith.deploy import deploy as dploy
 from regolith.emailer import emailer
+from regolith.GHextractor import extract_github, to_software_yaml
 from regolith.helper import FAST_UPDATER_WHITELIST, HELPERS, UPDATER_HELPERS, helpr
 from regolith.runcontrol import RunControl
 from regolith.tools import string_types
@@ -90,21 +93,21 @@ def _run_app(app, rc):
 
 
 def app(rc):
-    """Runs flask app"""
+    """Runs flask app."""
     from regolith.app import app
 
     _run_app(app, rc)
 
 
 def grade(rc):
-    """Runs flask grading app"""
+    """Runs flask grading app."""
     from regolith.grader import app
 
     _run_app(app, rc)
 
 
 def build_db_check(rc):
-    """Checks which DBs a builder needs"""
+    """Checks which DBs a builder needs."""
     dbs = set()
     for t in rc.build_targets:
         bldr = BUILDERS[t]
@@ -118,7 +121,7 @@ def build_db_check(rc):
 
 
 def helper_db_check(rc):
-    """Checks which DBs a builder needs"""
+    """Checks which DBs a builder needs."""
     # if the helper is an fast_updater, only open the database from rc.database
     rc.fast_updater = False
     for helperkey in UPDATER_HELPERS.keys():
@@ -142,14 +145,14 @@ def helper_db_check(rc):
 
 
 def build(rc):
-    """Builds all of the build targets"""
+    """Builds all of the build targets."""
     for t in rc.build_targets:
         bldr = builder(t, rc)
         bldr.build()
 
 
 def helper(rc):
-    """Runs the helper targets"""
+    """Runs the helper targets."""
     hlpr = helpr(rc.helper_target, rc)
     hlpr.hlp()
 
@@ -170,7 +173,7 @@ def classlist(rc):
 
 
 def json_to_yaml(rc):
-    """Converts JSON to YAML"""
+    """Converts JSON to YAML."""
     from regolith import fsclient
 
     for inp in rc.files:
@@ -180,7 +183,7 @@ def json_to_yaml(rc):
 
 
 def yaml_to_json(rc):
-    """Converts YAML to JSON"""
+    """Converts YAML to JSON."""
     from regolith import fsclient
 
     for inp in rc.files:
@@ -223,7 +226,7 @@ def mongo_to_fs(rc: RunControl) -> None:
 
 
 def validate(rc):
-    """Validate the combined database against the schemas"""
+    """Validate the combined database against the schemas."""
     from regolith.schemas import validate
 
     print("=" * 10 + "\nVALIDATING\n")
@@ -258,12 +261,36 @@ def validate(rc):
         # sys.exit(f"Validation failed on some records")
 
 
+def ghextractor(rc):
+    """Extract GitHub repository metadata and write software YAML."""
+    owner = rc.owner
+    repo = getattr(rc, "repo", None)
+    all_repos = getattr(rc, "all", False)
+    token = getattr(rc, "token", None) or os.getenv("GITHUB_TOKEN")
+    data = extract_github(
+        owner,
+        repo=repo,
+        all_repos=all_repos,
+        token=token,
+    )
+    yaml_dict = to_software_yaml(data)
+    output = getattr(rc, "output", "software.yml")
+    yaml = YAML()
+    yaml.default_flow_style = False
+    yaml.indent(mapping=2, sequence=4, offset=2)
+    yaml.allow_unicode = True
+    with open(output, "w", encoding="utf-8") as f:
+        yaml.dump(yaml_dict, f)
+    print(f"Wrote {output}")
+
+
 DISCONNECTED_COMMANDS = {
     "rc": lambda rc: print(rc._pformat()),
     "deploy": deploy,
     "store": storage.main,
     "json-to-yaml": json_to_yaml,
     "yaml-to-json": yaml_to_json,
+    "gh-extractor": ghextractor,
 }
 
 CONNECTED_COMMANDS = {

@@ -1,4 +1,7 @@
-"""Misc. regolith tools."""
+"""Misc.
+
+regolith tools.
+"""
 
 import email.utils
 import os
@@ -72,8 +75,8 @@ def dbpathname(db, rc):
 
 
 def fallback(cond, backup):
-    """Decorator for returning the object if cond is true and a backup if
-    cond is false."""
+    """Decorator for returning the object if cond is true and a backup
+    if cond is false."""
 
     def dec(obj):
         return obj if cond else backup
@@ -226,7 +229,7 @@ def filter_publications(
     return pubs
 
 
-def filter_projects(projects, people, reverse=False, active_only=False, group=None, ptype=None):
+def filter_projects(projects, people, reverse=False, active=True, group=None, ptype=None):
     """Filter projects by the author(s)
 
     Parameters
@@ -243,9 +246,10 @@ def filter_projects(projects, people, reverse=False, active_only=False, group=No
     before : date, optional
         The date before which a highlight must be for a project to be returned,
         defaults to None
-    active_only : bool, optional
-        Only active projects will be returned if True,
-        defaults to False
+    active : bool, optional
+        Only active projects will be returned if True. Only non-active projects
+        will be returned if False.  Run twice with trae and false to get all
+        projects.  defaults to True
     group : str, optional
         Only projects from this group will be returned if specified, otherwise
         projects from all groups will be returned, defaults to None
@@ -259,8 +263,11 @@ def filter_projects(projects, people, reverse=False, active_only=False, group=No
         team_names = set(gets(proj["team"], "name"))
         if len(team_names & people) == 0:
             continue
-        if active_only:
+        if active:
             if not proj.get("active"):
+                continue
+        else:
+            if proj.get("active"):
                 continue
         if group:
             if proj.get("group") != group:
@@ -275,7 +282,7 @@ def filter_projects(projects, people, reverse=False, active_only=False, group=No
 
 
 def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
-    """Filter grants by those involved
+    """Filter grants by those involved.
 
     Parameters
     ----------
@@ -327,7 +334,7 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
 
 
 def filter_employment_for_advisees(peoplecoll, begin_period, status, advisor, now=None):
-    """Filter people to get advisees since begin_period
+    """Filter people to get advisees since begin_period.
 
     Parameters
     ----------
@@ -595,6 +602,9 @@ def filter_presentations(
     fourthclean = list()
     presclean = list()
 
+    # remove presentations that have hide: True
+    presentations = [pres for pres in presentations if not pres.get("hide", False)]
+
     # build the filtered collection
     # only list the talk if the group member is an author
     for pres in presentations:
@@ -704,6 +714,137 @@ def filter_presentations(
     return presclean
 
 
+def filter_software(people, software, target, types=None, since=None, before=None, active=None):
+    """Filters presentations for different types and date ranges.
+
+    Parameters
+    ----------
+    people: iterable of dicts
+      The people collection
+    software: iterable of dicts
+      The software collection
+    target: str
+      The id of the person you will build the list for
+    types: list of strings.  Optional, default = all
+      The types to filter for.  Allowed types are release_types.
+    since: date.  Optional, default is None
+        The begin date to filter from
+    before: date. Optional, default is None
+        The end date to filter for.  None does not apply this filter
+    statuses: list of str.  Optional. Default is active.
+      The list of statuses to filter for.
+    """
+
+    if not types:
+        types = ["all"]
+    software = deepcopy(software)
+
+    firstclean = []
+    secondclean = []
+    thirdclean = []
+    fourthclean = []
+    progclean = []
+
+    for program in software:
+        pauthors = program.get("author", [])
+        if isinstance(pauthors, str):
+            pauthors = [pauthors]
+        authors = [
+            fuzzy_retrieval(
+                people,
+                ["aka", "name", "_id"],
+                author,
+                case_sensitive=False,
+            )
+            for author in pauthors
+        ]
+        authorids = [author["_id"] if author is not None else author for author in authors]
+        if target in authorids:
+            firstclean.append(program)
+
+    if active is True:
+        for program in firstclean:
+            if program.get("active") is True:
+                secondclean.append(program)
+    else:
+        for program in firstclean:
+            secondclean.append(program)
+
+    for program in secondclean:
+        releases = program.get("release")
+        filtered_releases = [
+            release for release in releases if "all" in types or release.get("release_type") in types
+        ]
+        if filtered_releases:
+            program["release"] = filtered_releases
+            thirdclean.append(program)
+
+    if since:
+        for program in thirdclean:
+            filtered_releases = []
+            for release in program.get("release", []):
+                releasedate = release.get("release_date")
+                if releasedate >= since:
+                    filtered_releases.append(release)
+            if filtered_releases:
+                program["release"] = filtered_releases
+                fourthclean.append(program)
+    else:
+        fourthclean = thirdclean
+
+    if before:
+        for program in fourthclean:
+            filtered_releases = []
+            for release in program.get("release", []):
+                releasedate = release.get("release_date")
+                if releasedate <= before:
+                    filtered_releases.append(release)
+            if filtered_releases:
+                program["release"] = filtered_releases
+                progclean.append(program)
+    else:
+        progclean = fourthclean
+
+    for program in progclean:
+        pauthors = program["author"]
+        if isinstance(pauthors, str):
+            pauthors = [pauthors]
+        get_authors = [
+            (
+                author
+                if fuzzy_retrieval(
+                    people,
+                    ["aka", "name", "_id"],
+                    author,
+                    case_sensitive=False,
+                )
+                is None
+                else fuzzy_retrieval(
+                    people,
+                    ["aka", "name", "_id"],
+                    author,
+                    case_sensitive=False,
+                )["name"]
+            )
+            for author in pauthors
+        ]
+        authorlist = ", ".join(get_authors)
+        program["authors"] = authorlist
+
+        for release in program.get("release", []):
+            releasedate = release.get("release_date")
+            if isinstance(releasedate, date):
+                release["release_date"] = releasedate.isoformat()
+
+    if len(progclean) > 0:
+        progclean = sorted(
+            progclean,
+            key=lambda k: max(release["release_date"] for release in k["release"]),
+            reverse=True,
+        )
+    return progclean
+
+
 def awards_grants_honors(person, target_name, funding=True, service_types=None):
     """Make sorted awards grants and honors list.
 
@@ -767,7 +908,7 @@ def awards(
     since=None,
     before=None,
 ):
-    """Make sorted awards and honors
+    """Make sorted awards and honors.
 
     Parameters
     ----------
@@ -777,7 +918,6 @@ def awards(
         The begin date to filter from
     before : date. Optional, default is None
         The end date to filter for.  None does not apply this filter
-
     """
     if not since:
         since = date(1500, 1, 1)
@@ -822,7 +962,7 @@ def latex_safe_url(s):
 
 
 def latex_safe(s, url_check=True, wrapper="url"):
-    """Make string latex safe
+    """Make string latex safe.
 
     Parameters
     ----------
@@ -850,7 +990,7 @@ def latex_safe(s, url_check=True, wrapper="url"):
 
 
 def make_bibtex_file(pubs, pid, person_dir="."):
-    """Make a bibtex file given the publications
+    """Make a bibtex file given the publications.
 
     Parameters
     ----------
@@ -896,7 +1036,7 @@ def make_bibtex_file(pubs, pid, person_dir="."):
 
 
 def document_by_value(documents, address, value):
-    """Get a specific document by one of its values
+    """Get a specific document by one of its values.
 
     Parameters
     ----------
@@ -923,8 +1063,8 @@ def document_by_value(documents, address, value):
 
 
 def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
-    """Retrieve a document from the documents where value is compared against
-    multiple potential sources
+    """Retrieve a document from the documents where value is compared
+    against multiple potential sources.
 
     Parameters
     ----------
@@ -948,7 +1088,6 @@ def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
 
     This would get the person entry for which either the alias or the name was
     ``pi_name``.
-
     """
     for doc in documents:
         returns = []
@@ -968,7 +1107,7 @@ def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
 
 
 def number_suffix(number):
-    """returns the suffix that adjectivises a number (st, nd, rd, th)
+    """Returns the suffix that adjectivises a number (st, nd, rd, th)
 
     Parameters
     ---------
@@ -991,7 +1130,7 @@ def number_suffix(number):
 
 def dereference_institution(input_record, institutions, verbose=False):
     """Tool for replacing placeholders for institutions with the actual
-    institution data. Note that the replacement is done inplace
+    institution data. Note that the replacement is done inplace.
 
     Parameters
     ----------
@@ -1068,8 +1207,7 @@ def dereference_institution(input_record, institutions, verbose=False):
 
 
 def merge_collections_all(a, b, target_id):
-    """
-    merge two collections into a single merged collection
+    """Merge two collections into a single merged collection.
 
     for keys that are in both collections, the value in b will be kept
 
@@ -1111,8 +1249,7 @@ def merge_collections_all(a, b, target_id):
 
 
 def merge_collections_superior(a, b, target_id):
-    """
-    merge two collections into a single merged collection
+    """Merge two collections into a single merged collection.
 
     for keys that are in both collections, the value in b will be kept
 
@@ -1151,8 +1288,8 @@ def merge_collections_superior(a, b, target_id):
 
 
 def get_person_contact(name, people_coll, contacts_coll):
-    """
-    Return a person document if found in either people or contacts collections
+    """Return a person document if found in either people or contacts
+    collections.
 
     If the person is found in the people collection this person is returned.  If
     not found in people but found in contacts, the person found in contacts is
@@ -1171,7 +1308,6 @@ def get_person_contact(name, people_coll, contacts_coll):
     -------
     person: dict
       The found person document
-
     """
     people_person = fuzzy_retrieval(
         people_coll,
@@ -1194,8 +1330,8 @@ def get_person_contact(name, people_coll, contacts_coll):
 
 
 def merge_collections_intersect(a, b, target_id):
-    """
-    merge two collections such that just the intersection is returned
+    """Merge two collections such that just the intersection is
+    returned.
 
     for shared keys that are in both collections, the value in b will be kept
 
@@ -1227,10 +1363,9 @@ def merge_collections_intersect(a, b, target_id):
 
 
 def update_schemas(default_schema, user_schema):
-    """
-    Merging the user schema into the default schema recursively and return the
-    merged schema. The default schema and user schema will not be modified
-    during the merging.
+    """Merging the user schema into the default schema recursively and
+    return the merged schema. The default schema and user schema will
+    not be modified during the merging.
 
     Parameters
     ----------
@@ -1275,8 +1410,8 @@ def get_person(person_id, rc):
 
 
 def group(db, by):
-    """
-    Group the document in the database according to the value of the doc[by] in db.
+    """Group the document in the database according to the value of the
+    doc[by] in db.
 
     Parameters
     ----------
@@ -1313,8 +1448,7 @@ def group(db, by):
 
 
 def get_pi_id(rc):
-    """
-    Gets the database id of the group PI
+    """Gets the database id of the group PI.
 
     Parameters
     ----------
@@ -1325,7 +1459,6 @@ def get_pi_id(rc):
     Returns
     -------
     The database '_id' of the group PI
-
     """
     groupiter = list(all_docs_from_collection(rc.client, "groups"))
     peoplecoll = all_docs_from_collection(rc.client, "people")
@@ -1335,7 +1468,7 @@ def get_pi_id(rc):
 
 
 def group_member_ids(ppl_coll, grpname):
-    """Get a list of all group member ids
+    """Get a list of all group member ids.
 
     Parameters
     ----------
@@ -1371,8 +1504,7 @@ def group_member_ids(ppl_coll, grpname):
 
 
 def group_member_employment_start_end(person, grpname):
-    """
-    Get start and end dates of group member employment
+    """Get start and end dates of group member employment.
 
     Parameters
     ----------
@@ -1385,7 +1517,6 @@ def group_member_employment_start_end(person, grpname):
     -------
     list of dicts
        The employment periods, with person id, begin and end dates
-
     """
     grpmember = []
     for k in ["employment"]:
@@ -1411,8 +1542,8 @@ def group_member_employment_start_end(person, grpname):
 
 
 def compound_dict(doc, li):
-    """
-    Recursive function that collects all the strings from a document that is a dictionary
+    """Recursive function that collects all the strings from a document
+    that is a dictionary.
 
     Parameters
     ----------
@@ -1425,7 +1556,6 @@ def compound_dict(doc, li):
     -------
     list of strings
        The strings that make up the nested attributes of this object
-
     """
     for key in doc:
         res = doc.get(key)
@@ -1439,8 +1569,8 @@ def compound_dict(doc, li):
 
 
 def compound_list(doc, li):
-    """
-    Recursive function that collects all the strings from a document that is a list
+    """Recursive function that collects all the strings from a document
+    that is a list.
 
     Parameters
     ----------
@@ -1453,7 +1583,6 @@ def compound_list(doc, li):
     -------
     list of strings
        The strings that make up the nested attributes of this list
-
     """
     for item in doc:
         if isinstance(item, dict):
@@ -1466,8 +1595,8 @@ def compound_list(doc, li):
 
 
 def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
-    """Retrieves a list of all documents from the collection where the fragment
-    appears in any one of the given fields
+    """Retrieves a list of all documents from the collection where the
+    fragment appears in any one of the given fields.
 
     Parameters
     ----------
@@ -1491,7 +1620,6 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
 
     This would get all people for which either the alias or the name included
     the substring ``pi_name``.
-
     """
 
     ret_list = []
@@ -1504,6 +1632,8 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
                     ret = compound_list(ret, [])
                 elif isinstance(ret, dict):
                     ret = compound_dict(ret, [])
+                elif isinstance(ret, bool):
+                    ret = [str(ret)]
                 else:
                     ret = [ret]
 
@@ -1534,8 +1664,8 @@ def get_id_from_name(coll, name):
 
 
 def is_fully_appointed(person, begin_date, end_date):
-    """Checks if a collection of appointments for a person is valid and fully loaded
-        for a given interval of time
+    """Checks if a collection of appointments for a person is valid and
+    fully loaded for a given interval of time.
 
         Parameters
         ----------
@@ -1562,7 +1692,7 @@ def is_fully_appointed(person, begin_date, end_date):
 
         In this case, we have an invalid loading from 2017-06-16 to 2017-06-19 hence it would return False and
         print "appointment gap for aejaz from 2017-06-16 to 2017-06-19".
-        """
+    """
 
     if not person.get("appointments"):
         print("No appointments defined for this person")
@@ -1609,8 +1739,8 @@ def is_fully_appointed(person, begin_date, end_date):
 
 
 def key_value_pair_filter(collection, arguments):
-    """Retrieves a list of all documents from the collection where the fragment
-    appears in any one of the given fields
+    """Retrieves a list of all documents from the collection where the
+    fragment appears in any one of the given fields.
 
     Parameters
     ----------
@@ -1630,7 +1760,6 @@ def key_value_pair_filter(collection, arguments):
 
     This would get all people for which their name contains the string 'ab'
     and whose position is professor and return them
-
     """
 
     if len(arguments) % 2 != 0:
@@ -1642,8 +1771,8 @@ def key_value_pair_filter(collection, arguments):
 
 
 def collection_str(collection, keys=None):
-    """Retrieves a list of all documents from the collection where the fragment
-    appears in any one of the given fields
+    """Retrieves a list of all documents from the collection where the
+    fragment appears in any one of the given fields.
 
     Parameters
     ----------
@@ -1673,8 +1802,8 @@ def collection_str(collection, keys=None):
 
 
 def search_collection(collection, arguments, keys=None):
-    """Retrieves a list of all documents from the collection where the fragment
-    appears in any one of the given fields
+    """Retrieves a list of all documents from the collection where the
+    fragment appears in any one of the given fields.
 
     Parameters
     ----------
@@ -1697,16 +1826,15 @@ def search_collection(collection, arguments, keys=None):
     This would get all people for which their name contains the string 'ab'
     and whose position is professor. It would return the name and id of the
     valid entries
-
     """
     collection = key_value_pair_filter(collection, arguments)
     return collection_str(collection, keys)
 
 
 def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None, end_date=None):
-    """
-    Retrieves a list of all the appointments on the given grant(s) in the given interval of time
-    for each person in the given people collection.
+    """Retrieves a list of all the appointments on the given grant(s) in
+    the given interval of time for each person in the given people
+    collection.
 
     Parameters
     ----------
@@ -1788,9 +1916,8 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
 
 
 def grant_burn(grant, appts, begin_date=None, end_date=None):
-    """
-    Retrieves the total burn of a grant over an interval of time by integrating over all appointments
-    made on the grant.
+    """Retrieves the total burn of a grant over an interval of time by
+    integrating over all appointments made on the grant.
 
     Parameters
     ----------
@@ -1864,9 +1991,10 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
 
 
 def validate_meeting(meeting, date):
-    """
-    Validates a meeting by checking is it has a journal club doi, a presentation link, and a presentation
-    title. This function will return nothing is the meeting is valid, otherwise it will raise a ValueError.
+    """Validates a meeting by checking is it has a journal club doi, a
+    presentation link, and a presentation title. This function will
+    return nothing is the meeting is valid, otherwise it will raise a
+    ValueError.
 
     Parameters
     ----------
@@ -1874,7 +2002,6 @@ def validate_meeting(meeting, date):
         The meeting object that needs to be validated
     date: datetime object
         The date we want to use to see if a meeting has happened or not
-
     """
     meeting_date = date_parser.parse(meeting.get("_id")[3:]).date()
     if meeting.get("journal_club") and meeting_date < date:
@@ -1887,26 +2014,28 @@ def validate_meeting(meeting, date):
 
 
 def print_task(task_list, stati, index=True):
-    """
-    Print tasks in a nice format.
+    """Print tasks in a nice format.
 
     Parameters
     ----------
-    task_list: list
-        A list of tasks that will be printed.
-    stati: list
-        Filter status of the task
-
+    task_list : list
+      The list of tasks that will be printed.
+    stati : list
+      The list of task stati that will be printed
+    index : bool Optional  Default is True
+      The bool that can suppress printing the preamble of importance, days to due and index
     """
     for status in stati:
         if f"'status': '{status}'" in str(task_list):
             print(f"{status}:")
         for task in task_list:
-            if index:
+            if index and task.get("status") != "finished":
                 task["preamble"] = (
                     f"({task.get('importance')})({task.get('days_to_due')} days): "
                     f"({task.get('running_index', 0)}) "
                 )
+            elif index and task.get("status") == "finished":
+                task["preamble"] = f"({task.get('end_date')}): " f"({task.get('running_index', 0)}) "
             else:
                 task["preamble"] = ""
             if task.get("status") == status:
@@ -1919,27 +2048,31 @@ def print_task(task_list, stati, index=True):
                     for note in task.get("notes"):
                         print(f"     - {note}")
     print("-" * 76)
-    print("(importance)(days to due): (Task number) Task (decreasing priority going up)")
+    if stati == ["finished"]:
+        print("(Completion Date): (Task number) Task (decreasing priority going up)")
+    else:
+        print("(importance)(days to due): (Task number) Task (decreasing priority going up)")
     print("-" * 76)
-    deadline_list = [task for task in task_list if task.get("deadline") and task.get("status") in stati]
-    deadline_list.sort(key=lambda x: x.get("due_date"), reverse=True)
-    for task in deadline_list:
-        print(
-            f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index', 0)}) "
-            f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|"
-            f"{str(task.get('duration'))}|{','.join(task.get('tags', []))}"
-            f"|{task.get('assigned_by')}|{task.get('uuid')[:6]})"
-        )
-        if task.get("notes"):
-            for note in task.get("notes"):
-                print(f"     - {note}")
-    print(f"{'-' * 30}\nDeadlines:\n{'-' * 30}")
+    if stati != ["finished"]:
+        deadline_list = [task for task in task_list if task.get("deadline") and task.get("status") in stati]
+        deadline_list.sort(key=lambda x: x.get("due_date"), reverse=True)
+        for task in deadline_list:
+            print(
+                f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index', 0)}) "
+                f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|"
+                f"{str(task.get('duration'))}|{','.join(task.get('tags', []))}"
+                f"|{task.get('assigned_by')}|{task.get('uuid')[:6]})"
+            )
+            if task.get("notes"):
+                for note in task.get("notes"):
+                    print(f"     - {note}")
+        print(f"{'-' * 30}\nDeadlines:\n{'-' * 30}")
     return
 
 
 def get_formatted_crossref_reference(doi):
-    """
-    given a doi, return the full reference and the date of the reference from Crossref REST-API
+    """Given a doi, return the full reference and the date of the
+    reference from Crossref REST-API.
 
     parameters
     ----------
@@ -1953,7 +2086,6 @@ def get_formatted_crossref_reference(doi):
     ref_date datetime.date
       the date of the reference
     returns None None in the article cannot be found given the doi
-
     """
 
     cr = Crossref()
@@ -2012,8 +2144,8 @@ def get_formatted_crossref_reference(doi):
 
 
 def remove_duplicate_docs(coll, key):
-    """
-    find all docs where the target key has the same value and remove duplicates
+    """Find all docs where the target key has the same value and remove
+    duplicates.
 
     The doc found first will be kept and subsequent docs will be removed
 
@@ -2027,7 +2159,6 @@ def remove_duplicate_docs(coll, key):
     return
     ------
     The list of docs with duplicates (as described above) removed
-
     """
     values, newcoll = [], []
     for doc in coll:
@@ -2059,7 +2190,8 @@ def validate_doc(collection_name, doc, rc):
 
 
 def add_to_google_calendar(event):
-    """Takes a newly created event, and adds it to the user's google calendar
+    """Takes a newly created event, and adds it to the user's google
+    calendar.
 
     Parameters:
         event - a dictionary containing the event details to be added to google calendar
@@ -2103,8 +2235,9 @@ def add_to_google_calendar(event):
 
 
 def google_cal_auth_flow():
-    """First time authentication, this function opens a window to request user consent to use google calendar API,
-    and then returns a token"""
+    """First time authentication, this function opens a window to
+    request user consent to use google calendar API, and then returns a
+    token."""
     tokendir = os.path.expanduser("~/.config/regolith/tokens/google_calendar_api")
     os.makedirs(tokendir, exist_ok=True)
     tokenfile = os.path.join(tokendir, "token.json")
@@ -2119,7 +2252,7 @@ def google_cal_auth_flow():
 
 
 def get_target_repo_info(target_repo_id, repos):
-    """checks if repo information is defined and valid in rc
+    """Checks if repo information is defined and valid in rc.
 
     Parameters:
       target_repo_id - string
@@ -2182,7 +2315,7 @@ def get_target_repo_info(target_repo_id, repos):
 
 
 def get_target_token(target_token_id, tokens):
-    """Checks if API authentication token is defined and valid in rc
+    """Checks if API authentication token is defined and valid in rc.
 
     Parameters:
         target_token_id - string
@@ -2211,7 +2344,7 @@ def get_target_token(target_token_id, tokens):
 
 
 def create_repo(destination_id, token_info_id, rc):
-    """Creates a repo at the target destination
+    """Creates a repo at the target destination.
 
     tries to fail gracefully if repo information and token is not defined
 
@@ -2262,8 +2395,8 @@ def create_repo(destination_id, token_info_id, rc):
 
 
 def get_tags(coll):
-    """
-    Given a collection with a tags field, returns the set of tags as a list
+    """Given a collection with a tags field, returns the set of tags as
+    a list.
 
     The tags field is expected to be a string with comma or space separated tags.
     get_tags splits the tags and returns the set of unique tags as a list of
@@ -2277,7 +2410,6 @@ def get_tags(coll):
     Returns
     -------
     the set of all tags as a list
-
     """
 
     all_tags = []
@@ -2295,15 +2427,12 @@ def get_tags(coll):
 
 
 def get_uuid():
-    """
-    returns a uuid.uuid4 string
-    """
+    """Returns a uuid.uuid4 string."""
     return str(uuid.uuid4())
 
 
 def get_appointments(person, appointments, target_grant=None):
-    """
-    get appointments from a person from the people collection
+    """Get appointments from a person from the people collection.
 
     Parameters
     ----------
@@ -2321,7 +2450,6 @@ def get_appointments(person, appointments, target_grant=None):
     Returns
     -------
     updated appointments list
-
     """
     for appt_id, appt in person.get("appointments").items():
         if target_grant is None or appt.get("grant", "no_grant") == target_grant:

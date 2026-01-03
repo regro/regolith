@@ -5,13 +5,13 @@
 
 .. raw:: html
 
-    <link href="_static/unicodetiles.css" rel="stylesheet" type="text/css" />
-    <script src="_static/unicodetiles.min.js"></script>
-    <script src="_static/rg-dungeon.js"></script>
-    <div style="text-align:center;">
-        <div id="game"><h1>welcome to the regolith docs</h1></div>
-    </div>
-    <script type="text/javascript">initRgDungeon();</script>
+   <link href="_static/unicodetiles.css" rel="stylesheet" type="text/css" />
+   <script src="_static/unicodetiles.min.js"></script>
+   <script src="_static/rg-dungeon.js"></script>
+   <div style="text-align:center;">
+      <div id="game"><h1>welcome to the regolith docs</h1></div>
+   </div>
+   <script type="text/javascript">initRgDungeon();</script>
 
 #######
 |title|
@@ -32,7 +32,7 @@ Databases may be file-based (JSON and YAML) or MongoDB-based.
 
 Regolith is developed as a `regro project <https://regro.github.io/>`_
 
-| Software version |release|.
+| Software version |release|
 | Last updated |today|.
 
 =======
@@ -673,7 +673,11 @@ add tutorials below explaining some of these things, so check back
 from time to time.  And remember join and to ask questions at the `regolith-users <https://groups.google.com/u/1/g/regolith-users>`_
 Google group.  They will get answered.
 
+================
+Acknowledgements
+================
 
+``regolith`` is built and maintained with `scikit-package <https://scikit-package.github.io/scikit-package/>`_.
 
 Tutorials
 =========

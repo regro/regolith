@@ -23,24 +23,11 @@ ly_newprojectum:
     - afriend
   deliverable:
     due_date: 2021-01-01
-    audience:
-      - Who will use the software or read the paper? Your target audience. e.g., beginning
-        grad in chemistry
-    success_def: audience is happy
-    scope:
-      - If this is a software release, list any use-cases that are in scope. These
-        may be located in the Gdoc associated with the prum.  Otherwise include some
-        other kind of scope description of what is in and what is not
-      - 'If this is a science paper summarize: '
-      - the scientific question that is being answered
-      - any hypotheses that will be tested to answer it
-      - the approach that will be taken
-    platform: description of how and where the audience will access the deliverable.  The
-      journal where it will be submitted if it is a paper. Whether it is a web-app,
-      or which operating systems will be supported, for software
-    roll_out:
-      - steps that the audience will take to access and interact with the deliverable
-      - leave as empty list for paper submissions
+    audience: []
+    success_def: ''
+    scope: []
+    platform: ''
+    roll_out: []
     status: proposed
   description: more work
   grants:
@@ -49,33 +36,17 @@ ly_newprojectum:
     - ascopatz
   kickoff:
     due_date: 2020-05-06
+    end_date: 2020-05-06
     audience:
       - lead
       - pi
       - group_members
     name: Kick off meeting
     objective: introduce project to the lead
-    status: converged
+    status: finished
   lead: lyang
   log_url: ''
-  milestones:
-    - due_date: 2020-05-20
-      name: Kickoff meeting
-      objective: Prum Lead understands the project deliverables and goals
-      audience:
-        - lead
-        - pi
-        - group_members
-      status: converged
-      notes:
-        - () Schedule the meeting
-        - () Have the meeting, take good notes
-        - () Update the prum milestones with plan
-      progress:
-        text: ''
-        slides_urls: []
-      type: meeting
-      uuid: test-uuid
+  milestones: []
   name: New projectum
   notes:
     - new note
@@ -144,10 +115,11 @@ sb_firstprojectum:
     scope:
       - UCs that are supported or some other scope description if it is software
       - sketch of science story if it is paper
-    platform: description of how and where the audience will access the deliverable.  Journal
-      if it is a paper
+    platform: description of how and where the audience will access the 
+      deliverable.  Journal if it is a paper
     roll_out:
-      - steps that the audience will take to access and interact with the deliverable
+      - steps that the audience will take to access and interact with the 
+        deliverable
       - not needed for paper submissions
     notes:
       - deliverable note
@@ -184,11 +156,11 @@ sb_firstprojectum:
         - lead
         - pi
         - group_members
-      status: proposed
+      status: started
       type: meeting
       progress:
-        text: The samples have been synthesized and places in the sample cupboard.
-          They turned out well and are blue as expected
+        text: The samples have been synthesized and places in the sample 
+          cupboard. They turned out well and are blue as expected
         figure:
           - token that dereferences a figure or image in group local storage db
         slides_urls:

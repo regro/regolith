@@ -1,6 +1,9 @@
 """Client interface for MongoDB.
-Maintained such that only pymongo is necessary when using helper/builders, and additional command-line tools
-are necessary to install for maintenance tasks, such as fs-to-mongo."""
+
+Maintained such that only pymongo is necessary when using
+helper/builders, and additional command-line tools are necessary to
+install for maintenance tasks, such as fs-to-mongo.
+"""
 
 import datetime
 import itertools
@@ -176,10 +179,10 @@ def doc_cleanup(doc: dict):
 
 
 def bson_cleanup(doc: dict):
-    """
-    This method should be used prior to updating or adding a document to a collection in mongo. Specifically, this
-    replaces all periods in keys and _id value with a blank, and changes datetime.date to an iso string. It does so
-    recursively for nested dictionaries.
+    """This method should be used prior to updating or adding a document
+    to a collection in mongo. Specifically, this replaces all periods in
+    keys and _id value with a blank, and changes datetime.date to an iso
+    string. It does so recursively for nested dictionaries.
 
     Parameters
     ----------
@@ -188,13 +191,11 @@ def bson_cleanup(doc: dict):
     Returns
     -------
     doc
-
     """
 
     def change_keys_id_and_date(obj, convert):
-        """
-        Recursively goes through the dictionary obj and replaces keys with the convert function.
-        """
+        """Recursively goes through the dictionary obj and replaces keys
+        with the convert function."""
         if isinstance(obj, datetime.date):
             # Mongo cannot handle datetime.date format,
             # but we have infrastructure to handle iso date strings present
@@ -270,8 +271,7 @@ class MongoClient:
 
     def is_alive(self):
         """Returns whether or not the client is alive and available to
-        send/receive data.
-        """
+        send/receive data."""
         if self.client is None:
             return False
         elif ON_PYMONGO_V2:
@@ -301,7 +301,7 @@ class MongoClient:
             return False
 
     def open(self):
-        """Opens the database client"""
+        """Opens the database client."""
         if self.closed:
             rc = self.rc
             mongo_dbs_filter = filter(
@@ -523,7 +523,7 @@ class MongoClient:
             return coll.insert_many(docs)
 
     def delete_one(self, dbname, collname, doc):
-        """Removes a single document from a collection"""
+        """Removes a single document from a collection."""
         coll = self.client[dbname][collname]
         doc = doc_cleanup(doc)
         if ON_PYMONGO_V2:

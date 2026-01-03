@@ -11,13 +11,14 @@ getting_started_with_pdf:
     - doi: 10.1107/97809553602060000935
       text: Very basic, but brief, intro to powder diffraction in general
     - doi: 10.1039/9781847558237-00464
-      text: Lightest weight overview of PDF analysis around.  Good starting point
+      text: Lightest weight overview of PDF analysis around.  Good starting 
+        point
     - url: http://www.diffpy.org
-      text: Download and install PDFgui software and run through the step by step
-        tutorial under the help tab
+      text: Download and install PDFgui software and run through the step by 
+        step tutorial under the help tab
   purpose: Beginning reading about PDF
-  title: A step-by-step pathway towards PDF understanding.  It is recommended to read
-    the papers in the order they are listed here.
+  title: A step-by-step pathway towards PDF understanding.  It is recommended to
+    read the papers in the order they are listed here.
   year: 2019
 pdf:
   date: 2021-04-01

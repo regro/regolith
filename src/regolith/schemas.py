@@ -1,4 +1,4 @@
-"""Database schemas, examples, and tools"""
+"""Database schemas, examples, and tools."""
 
 import copy
 import json
@@ -95,6 +95,7 @@ alloweds = {
     "PROJECTUM_STATI": PROJECTUM_STATI,
     "PROPOSAL_STATI": ["pending", "declined", "accepted", "inprep", "submitted"],
     "PUBLICITY_TYPES": ["online", "article"],
+    "RELEASE_TYPES": ["major", "minor", "patch", "pre-release"],
     "REVIEW_STATI": [
         "invited",
         "accepted",
@@ -170,17 +171,19 @@ for s in SCHEMAS:
 
 class NoDescriptionValidator(Validator):
     def _validate_description(self, description, field, value):
-        """Don't validate descriptions
+        """Don't validate descriptions.
 
-        The rule's arguments are validated against this schema:
-        {'type': 'string'}"""
+        The rule's arguments are validated against this schema: {'type':
+        'string'}
+        """
         if False:
             pass
 
     def _validate_eallowed(self, eallowed, field, value):
-        """Test if value is in list
-        The rule's arguments are validated against this schema:
-        {'type': 'list'}
+        """Test if value is in list.
+
+        The rule's arguments are validated against this schema: {'type':
+        'list'}
         """
         if value not in eallowed:
             warn(
@@ -191,7 +194,7 @@ class NoDescriptionValidator(Validator):
 
 
 def validate(coll, record, schemas):
-    """Validate a record for a given db
+    """Validate a record for a given db.
 
     Parameters
     ----------
@@ -208,7 +211,6 @@ def validate(coll, record, schemas):
         True is valid
     errors: dict
         The errors encountered (if any)
-
     """
     if coll in schemas:
         schema = copy.deepcopy(schemas[coll])

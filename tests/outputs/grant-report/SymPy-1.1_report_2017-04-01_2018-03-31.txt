@@ -12,18 +12,20 @@ at least one of the 4 categories below)?
 ------------------------------------------------------------------------------
 - Major Activities (currently worked on projecta):
 ------------------------------------------------------------------------------
-    sb_firstprojectum| First Projectum| ascopatz
-    My first projectum
-        
-        lead presents background reading and initial project plan
-        meeting | proposed 
-        
-        develop a detailed plan with dates
-        mergedpr | proposed 
-        - Specific Objectives:
+------------
+    Project: First Projectum
+    -------------------------------
+    Objective: My first projectum
+    Activities:
+      - Project lead presentation:
+          Objective: lead presents background reading and initial project plan
+          Outcomes: The samples have been synthesized and places in the sample cupboard. They turned out well and are blue as expected
 
+==========================================
+- Significant Results (finished projecta):
+==========================================
 
-- Significant Results (finished projecta):Key outcomes or Other achievements:
+Key outcomes or Other achievements:
 ------------------------------------------------------------------------------
 * What opportunities for training and professional development has the project provided?
 ------------------------------------------------------------------------------
@@ -38,13 +40,11 @@ at least one of the 4 categories below)?
 ------------------------------------------------------------------------------
 * What do you plan to do during the next reporting period to accomplish the goals?
 ------------------------------------------------------------------------------
-#############################################################
-##                                                         ##
-##                                                         ##
-##      FILL THIS PART IN !!! FILL THIS PART IN !!!        ##
-##                                                         ##
-##                                                         ##
-#############################################################
+    Project: First Projectum
+    Objective: My first projectum
+    Plans:
+      - planning meeting
+        Objective: develop a detailed plan with dates
 
 ------------------------------------------------------------------------------
 Products
@@ -83,3 +83,21 @@ Significant changes in use or care of human subjects
 Significant changes in use or care of vertebrate animals
 
 Significant changes in use or care of biohazards
+
+
+
+Prior Support:
+NF-1234, $3000.0, 2017-04-01 to 2018-03-31.
+SymPy 1.1 Release Support
+
+the work resulted in 0 publications:
+\cite{}
+
+
+Introduction: A general overview of the project
+
+Intellectual Merit: Open source software got much better
+
+Broader Impact: all of science became higher quality
+
+Products: all of science became higher quality

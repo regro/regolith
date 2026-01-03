@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# regolith documentation build configuration file, created by
+# regolith documentation build configuration file, created by  # noqa: E501
 # sphinx-quickstart on Thu Jan 30 15:49:41 2014.
 #
 # This file is execfile()d with the current directory set to its
@@ -27,9 +27,15 @@ from regolith.fsclient import _id_key, dump_json, json_to_yaml
 from regolith.main import CONNECTED_COMMANDS, DISCONNECTED_COMMANDS
 from regolith.schemas import EXEMPLARS, SCHEMAS
 
+# Attempt to import the version dynamically from GitHub tag.
+try:
+    fullversion = version("regolith")
+except Exception:
+    fullversion = "No version found. The correct version will appear in the released version."  # noqa: E501
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
-# documentation root, use Path().resolve() to make it absolute, like shown here.
+# documentation root, use Path().resolve() to make it absolute, like shown here.  # noqa: E501
 # sys.path.insert(0, str(Path(".").resolve()))
 sys.path.insert(0, str(Path("../..").resolve()))
 sys.path.insert(0, str(Path("../../src").resolve()))
@@ -53,12 +59,13 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
     "sphinx_rtd_theme",
+    "sphinx_copybutton",
     "m2r",
 ]
 
-napoleon_google_docstring = False
-napoleon_use_param = False
-napoleon_use_ivar = True
+# napoleon_google_docstring = False
+# napoleon_use_param = False
+# napoleon_use_ivar = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -82,7 +89,6 @@ copyright = "2015-2017 Anthony Scopatz, 2018-%Y The Trustees of Columbia Univers
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 
-fullversion = version(project)
 # The short X.Y version.
 version = "".join(fullversion.split(".post")[:1])
 # The full version, including alpha/beta/rc tags.
@@ -101,6 +107,11 @@ year = today.split()[-1]
 # today_fmt = '%B %d, %Y'
 # substitute YEAR in the copyright string
 copyright = copyright.replace("%Y", year)
+
+# For sphinx_copybutton extension.
+# Do not copy "$" for shell commands in code-blocks.
+copybutton_prompt_text = r"^\$ "
+copybutton_prompt_is_regexp = True
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -137,19 +148,24 @@ nitpicky = True
 #
 html_theme = "sphinx_rtd_theme"
 
+html_context = {
+    "display_github": True,
+    "github_user": "regro",
+    "github_repo": "regolith",
+    "github_version": "main",
+    "conf_py_path": "/docs/source/",
+}
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
 html_theme_options = {
-    "roottarget": "index",
     "navigation_with_keys": "true",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
-# html_theme_path = [csp.get_theme_dir()]
-# html_theme_path = ["_themes", csp.get_theme_dir()]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -170,7 +186,12 @@ html_favicon = "_static/regolith-logo.ico"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+# html_static_path = ["_static"]
+
+# Add any extra paths that contain custom files (such as robots.txt or
+# .htaccess) here, relative to this directory. These files are copied
+# directly to the root of the documentation.
+# html_extra_path = []
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -240,7 +261,7 @@ latex_documents = [
         "Regolith Documentation",
         ab_authors,
         "manual",
-    )
+    ),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -268,7 +289,15 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [("index", "regolith", "regolith Documentation", ab_authors, 1)]
+man_pages = [
+    (
+        "index",
+        "regolith",
+        "regolith Documentation",
+        ab_authors,
+        1,
+    )
+]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -299,6 +328,9 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
+
+# If true, do not generate a @detailmenu in the "Top" node's menu.
+# texinfo_no_detailmenu = False
 
 
 def format_key(schema, key, indent_str=""):
@@ -410,8 +442,8 @@ def build_cli_doc(cli):
     s += indent(out, "\t") + "\n"
     if cli == "validate":
         s += """Misc
-----
 
+----
 This can also be added as a git hook by adding the following to
 ``.git/hooks/pre-commit``
 
@@ -449,3 +481,6 @@ with open("commands/index.rst", "w") as f:
     s = ".. code-block:: bash\n\n"
     s += indent(out, "\t") + "\n"
     f.write(cli_index.format(s))
+
+# Example configuration for intersphinx: refer to the Python standard library.
+# intersphinx_mapping = {'http://docs.python.org/': None}

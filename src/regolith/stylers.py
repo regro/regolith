@@ -1,4 +1,4 @@
-"""A collection of python stylers"""
+"""A collection of python stylers."""
 
 import re
 
@@ -33,7 +33,8 @@ month_threelets = {
 
 
 def sentencecase(sentence):
-    """returns a sentence in sentencecase but with text in braces preserved
+    """Returns a sentence in sentencecase but with text in braces
+    preserved.
 
     Parameters
     ----------

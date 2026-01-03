@@ -78,7 +78,7 @@ class ContactUpdaterHelper(DbHelperBase):
     needed_colls = [f"{TARGET_COLL}"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

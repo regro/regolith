@@ -1,6 +1,5 @@
-"""Helper for updating a projectum's log_url
-Log_urls are the google doc links to a projectum's Projectum Agenda Log
-"""
+"""Helper for updating a projectum's log_url Log_urls are the google doc
+links to a projectum's Projectum Agenda Log."""
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
@@ -31,16 +30,15 @@ def subparser(subpi):
 
 
 class LogUrlUpdaterHelper(DbHelperBase):
-    """
-    Update a projectum's Log_url, will add a new Log_URL if one doesn't yet exist
-    """
+    """Update a projectum's Log_url, will add a new Log_URL if one
+    doesn't yet exist."""
 
     # btype must be the same as helper target in helper.py
     btype = "u_logurl"
     needed_colls = [f"{TARGET_COLL}"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

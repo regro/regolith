@@ -777,6 +777,34 @@
             "required": false,
             "anyof_type": ["integer", "float"]
         },
+        "prior_support": {
+            "description": "everything we need to generate a prior support section in the proposal",
+            "required": false,
+            "type": "dict",
+            "schema": {
+                "introduction": {
+                    "description": "text for the intellectual merit section",
+                    "type": "string",
+                    "required": false
+                },
+                "intellectual_merit": {
+                    "description": "text for the intellectual merit section",
+                    "type": "string",
+                    "required": false
+                },
+                "broader_impact": {
+                    "description": "text for the broader impacts section",
+                    "type": "string",
+                    "required": false
+                },
+                "products": {
+                    "description": "text describing non-publication products",
+                    "type": "string",
+                    "required": false
+                }
+              }
+            },
+
         "program": {
             "description": "the program the work was funded under",
             "required": false,
@@ -1923,6 +1951,11 @@
             "anyof_type": ["string", "integer"]
         },
         "end_day": {"required": false, "type": "integer"},
+        "hide": {
+            "description": "Whether the presentation should be hidden in the presentation list",
+            "required": false,
+            "type": "boolean"
+        },
         "institution": {
             "description": "institution where thepresentation will be made, if applicable.",
             "required": false,
@@ -1930,6 +1963,11 @@
         },
         "meeting_name": {
             "description": "full name of the conference or meeting.  If it is a departmental seminar or colloquium, write Seminaror Colloquium and fill in department and institution fields",
+            "required": false,
+            "type": "string"
+        },
+        "presenter": {
+            "description": "The _id or name of the person making the presentation",
             "required": false,
             "type": "string"
         },
@@ -1961,6 +1999,11 @@
         },
         "subtitle": {
             "description": "subtitle of the presentation",
+            "required": false,
+            "type": "string"
+        },
+        "talk_id": {
+            "description": "The id of the talk that will be presented",
             "required": false,
             "type": "string"
         },
@@ -2898,22 +2941,92 @@
             "required": true,
             "type": "boolean"
         },
-        "url": {
-            "description": "url to the package on GitHub or GitLab, etc.",
+        "org_name": {
+            "description": "The organization name of the released software.",
             "required": true,
             "type": "string"
+        },
+        "repo_name": {
+            "description": "The repository name of the released software.",
+            "required": true,
+            "type": "string"
+        },
+        "platform_name": {
+            "description": "The platform that the software releases.",
+            "required": true,
+            "type": "string"
+        },
+        "author": {
+            "description": "The authors that contribute to the software.",
+            "required": true,
+            "type": "list"
+        },
+        "program_description": {
+            "description": "The short description of the software.",
+            "required": true,
+            "type": "string"
+        },
+        "release": {
+            "description": "The release information of the software.",
+            "required": true,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "major": {
+                        "description": "The major release number of the software at the release.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    "minor": {
+                        "description": "The minor release number of the software at the release.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    "patch": {
+                        "description": "The patch number of the software at the release.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    "release_type": {
+                        "description": "The type of release: 'major', 'minor', 'patch', or 'pre-release'.",
+                        "required": true,
+                        "type": "string",
+                        "eallowed": "RELEASE_TYPES"
+                    },
+                    "pre_release": {
+                        "description": "The number of the release candidate when the release_type is 'pre-release'. Pattern follows major.minor.patch-rc.pre_release.",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    "release_date": {
+                        "description": "The date of release of the software.",
+                        "required": true,
+                        "anyof_type": ["string", "date"]
+                    },
+                    "summary": {
+                        "description": "The summary of main updates in the release.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    "changes": {
+                        "description": "Brief list of changes in the release.",
+                        "required": false,
+                        "type": "list"
+                    },
+                    "release_id": {
+                        "description": "The id of the release in the GH page of the released software, which is used to build the url pointing to the release given the 'org_name' and 'repo_name'.",
+                        "required": true,
+                        "type": "string"
+                    }
+                }
+            }
         },
         "grants": {
             "description": "grant(s) that supported package development/maintenance",
             "required": true,
             "type": "list"
-        },
-        "groups": {
-            "description": "research group(s) that develop the package.",
-            "required": true,
-            "type": "list"
         }
-
     },
     "students": {
         "_description": {

@@ -1,6 +1,8 @@
 """Helper for listing the to-do tasks.
 
-Tasks are gathered from people.yml, milestones, and group meeting actions."""
+Tasks are gathered from people.yml, milestones, and group meeting
+actions.
+"""
 
 import datetime as dt
 import math
@@ -101,14 +103,16 @@ def subparser(subpi):
 class TodoListerHelper(SoutHelperBase):
     """Helper for listing the to-do tasks.
 
-    Tasks are gathered from people.yml, milestones, and group meeting actions."""
+    Tasks are gathered from people.yml, milestones, and group meeting
+    actions.
+    """
 
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
     needed_colls = [f"{TARGET_COLL}", "refereeReports", "proposalReviews"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -168,22 +172,35 @@ class TodoListerHelper(SoutHelperBase):
             for todo in gather_todos[::-1]:
                 if todo.get("assigned_by") != rc.assigned_by:
                     gather_todos.remove(todo)
-        len_of_started_tasks = 0
+        len_of_started_tasks, len_of_backburner_tasks, len_of_cancelled_tasks, len_of_finished_tasks = 0, 0, 0, 0
         milestones = 0
         for todo in gather_todos:
             if "milestone: " in todo["description"]:
                 milestones += 1
             elif todo["status"] == "started":
                 len_of_started_tasks += 1
+            elif todo["status"] == "backburner":
+                len_of_backburner_tasks += 1
+            elif todo["status"] == "cancelled":
+                len_of_cancelled_tasks += 1
+            elif todo["status"] == "finished":
+                len_of_finished_tasks += 1
+            else:
+                print(
+                    f" item with invalid status: {todo.get('description')} ({todo.get('running_index')}), "
+                    f"status: {todo.get('status')}"
+                )
+        finished_start = len_of_backburner_tasks + len_of_cancelled_tasks
+        finished_end = finished_start + len_of_finished_tasks
         len_of_tasks = len(gather_todos)  # - milestones
         for todo in gather_todos:
             _format_todos(todo, today)
-        gather_todos[:len_of_tasks] = sorted(
-            gather_todos[:len_of_tasks],
+        gather_todos[:] = sorted(
+            gather_todos[:],
             key=lambda k: (k["status"], k["importance"], k["order"], -k.get("duration", 10000)),
         )
-        gather_todos[len_of_started_tasks:len_of_tasks] = sorted(
-            gather_todos[len_of_started_tasks:len_of_tasks], key=lambda k: (-k["sort_finished"])
+        gather_todos[finished_start:finished_end] = sorted(
+            gather_todos[finished_start:finished_end], key=lambda k: (k["sort_finished"])
         )
         gather_todos[len_of_tasks:] = sorted(
             gather_todos[len_of_tasks:], key=lambda k: (k["status"], k["order"], -k.get("duration", 10000))
@@ -242,7 +259,7 @@ class TodoListerHelper(SoutHelperBase):
 
 
 def _format_todos(todo, today):
-    """datify dates, set orders etc and update to-do items in place
+    """Datify dates, set orders etc and update to-do items in place.
 
     Parameters
     ----------
@@ -252,7 +269,6 @@ def _format_todos(todo, today):
     Returns
     -------
     nothing
-
     """
     if isinstance(todo["due_date"], str):
         todo["due_date"] = date_parser.parse(todo["due_date"]).date()

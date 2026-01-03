@@ -1,4 +1,4 @@
-"""Builder Base Classes"""
+"""Builder Base Classes."""
 
 import os
 from glob import glob
@@ -20,7 +20,7 @@ from regolith.tools import LATEX_OPTS, date_to_rfc822, gets, latex_safe, latex_s
 
 
 class BuilderBase(object):
-    """Base class for builders"""
+    """Base class for builders."""
 
     def __init__(self, rc):
         self.rc = rc
@@ -43,7 +43,7 @@ class BuilderBase(object):
         self.cmds = []
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         gtx = self.gtx
         gtx["len"] = len
         gtx["True"] = True
@@ -60,7 +60,8 @@ class BuilderBase(object):
         gtx["date_to_rfc822"] = date_to_rfc822
 
     def render(self, tname, fname, **kwargs):
-        """Render the template into a file using the kwargs and global context
+        """Render the template into a file using the kwargs and global
+        context.
 
         Parameters
         ----------
@@ -82,15 +83,15 @@ class BuilderBase(object):
             f.write(result)
 
     def build(self):
-        """Build the thing that is being built, note this runs all commands
-        listed in ``self.cmds``"""
+        """Build the thing that is being built, note this runs all
+        commands listed in ``self.cmds``"""
         os.makedirs(self.bldir, exist_ok=True)
         for cmd in self.cmds:
             getattr(self, cmd)()
 
 
 class LatexBuilderBase(BuilderBase):
-    """Base class for Latex builders"""
+    """Base class for Latex builders."""
 
     def __init__(self, rc):
         super().__init__(rc)
@@ -107,11 +108,11 @@ class LatexBuilderBase(BuilderBase):
         gtx["latex_safe_url"] = latex_safe_url
 
     def run(self, cmd):
-        """Run command in build dir"""
+        """Run command in build dir."""
         subprocess.run(cmd, cwd=self.bldir, check=True)
 
     def pdf(self, base):
-        """Compiles latex files to PDF"""
+        """Compiles latex files to PDF."""
         if self.rc.pdf:
             if os.name == "nt":
                 self.run(["pdflatex"] + LATEX_OPTS + [base + ".tex"])
@@ -120,7 +121,7 @@ class LatexBuilderBase(BuilderBase):
                 self.run(["dvipdf", base])
 
     def clean(self):
-        """Remove files created by latex"""
+        """Remove files created by latex."""
         postfixes = [
             "*.dvi",
             "*.toc",

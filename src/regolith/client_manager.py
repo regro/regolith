@@ -13,9 +13,8 @@ CLIENTS = {
 
 
 class ClientManager:
-    """
-    Client wrapper that allows for multiple backend clients to be used in parallel with one chained DB
-    """
+    """Client wrapper that allows for multiple backend clients to be
+    used in parallel with one chained DB."""
 
     def __init__(self, databases, rc):
         client_tuple = tuple()
@@ -55,7 +54,7 @@ class ClientManager:
                 return client[key]
 
     def open(self):
-        """Opens the database connections"""
+        """Opens the database connections."""
         for client in self.clients:
             client.open()
 
@@ -121,7 +120,7 @@ class ClientManager:
                 client.insert_many(dbname, collname, docs)
 
     def delete_one(self, dbname, collname, doc):
-        """Removes a single document from a collection"""
+        """Removes a single document from a collection."""
         for client in self.clients:
             if dbname in client.keys():
                 client.delete_one(dbname, collname, doc)

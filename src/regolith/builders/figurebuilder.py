@@ -10,7 +10,7 @@ from regolith.tools import fuzzy_retrieval
 
 
 class FigureBuilder(LatexBuilderBase):
-    """Build resume from database entries"""
+    """Build resume from database entries."""
 
     btype = "figure"
 
@@ -27,7 +27,7 @@ class FigureBuilder(LatexBuilderBase):
         gtx["fuzzy_retrieval"] = fuzzy_retrieval
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
         for f in [ff for ff in os.listdir(".") if ff.endswith(".tex")]:
             fn, ext = os.path.splitext(f)
             self.render(f, fn + "_rend" + ext)

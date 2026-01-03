@@ -211,11 +211,35 @@
 \end{itemize}
 {% endif %}
 
-{% if len(projects) > 0 %}
+{% if len(current_projects) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Projects}
+\resheading{Current Projects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{% for proj in projects %}
+{% for proj in current_projects %}
+{% set me = proj['team'][0] %}
+\ressubheadingitemslongtitle{ {{-proj['name']-}} }
+    { {{-me['position']-}} }
+    { {{-proj['description']-}} }
+    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} -
+      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} }
+    {
+      {% for o in proj['other'] %}
+        \resitem{ {{-latex_safe(o)-}} }
+      {% endfor %}
+      {% if proj['website'] and len(proj['website']) > 0 %}
+      \resitem{Website: \url{ {{-latex_safe(proj['website'], url_check=False)-}} } }
+      {% endif %}
+      }
+\vspace{0.5em}
+{% endfor %}
+{% endif %}
+
+
+{% if len(past_projects) > 0 %}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Past Projects}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for proj in past_projects %}
 {% set me = proj['team'][0] %}
 \ressubheadingitemslongtitle{ {{-proj['name']-}} }
     { {{-me['position']-}} }

@@ -29,7 +29,7 @@ from regolith.tools import (
 
 
 class AppraisalBuilder(LatexBuilderBase):
-    """Build CV from database entries"""
+    """Build CV from database entries."""
 
     btype = "annual-activity"
     needed_colls = [
@@ -45,7 +45,7 @@ class AppraisalBuilder(LatexBuilderBase):
     ]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -66,7 +66,7 @@ class AppraisalBuilder(LatexBuilderBase):
         gtx["zip"] = zip
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
         rc = self.rc
         if not rc.people:
             raise RuntimeError("ERROR: please rerun specifying --people name")

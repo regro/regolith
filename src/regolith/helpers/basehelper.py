@@ -1,4 +1,4 @@
-"""Builder Base Classes"""
+"""Builder Base Classes."""
 
 import os
 from glob import glob
@@ -12,7 +12,7 @@ from regolith.tools import LATEX_OPTS, date_to_rfc822, gets, latex_safe, latex_s
 
 
 class HelperBase(object):
-    """Base class for helpers"""
+    """Base class for helpers."""
 
     def __init__(self, rc):
         self.rc = rc
@@ -35,7 +35,7 @@ class HelperBase(object):
         self.cmds = []
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         gtx = self.gtx
         gtx["len"] = len
         gtx["True"] = True
@@ -52,7 +52,8 @@ class HelperBase(object):
         gtx["date_to_rfc822"] = date_to_rfc822
 
     def render(self, tname, fname, **kwargs):
-        """Render the template into a file using the kwargs and global context
+        """Render the template into a file using the kwargs and global
+        context.
 
         Parameters
         ----------
@@ -74,14 +75,14 @@ class HelperBase(object):
             f.write(result)
 
     def hlp(self):
-        """run the helper, note this runs any of the commands
-        listed in ``self.cmds``"""
+        """Run the helper, note this runs any of the commands listed in
+        ``self.cmds``"""
         for cmd in self.cmds:
             getattr(self, cmd)()
 
 
 class SoutHelperBase(HelperBase):
-    """Base class for builders that just print to sout"""
+    """Base class for builders that just print to sout."""
 
     def __init__(self, rc):
         super().__init__(rc)
@@ -89,7 +90,7 @@ class SoutHelperBase(HelperBase):
 
 
 class DbHelperBase(HelperBase):
-    """Base class for builders that update databases"""
+    """Base class for builders that update databases."""
 
     def __init__(self, rc):
         super().__init__(rc)
@@ -97,7 +98,7 @@ class DbHelperBase(HelperBase):
 
 
 class LatexHelperBase(HelperBase):
-    """Base class for Latex builders"""
+    """Base class for Latex builders."""
 
     def __init__(self, rc):
         super().__init__(rc)
@@ -115,11 +116,11 @@ class LatexHelperBase(HelperBase):
         gtx["latex_safe_url"] = latex_safe_url
 
     def run(self, cmd):
-        """Run command in build dir"""
+        """Run command in build dir."""
         subprocess.run(cmd, cwd=self.bldir, check=True)
 
     def pdf(self, base):
-        """Compiles latex files to PDF"""
+        """Compiles latex files to PDF."""
         if self.rc.pdf:
             self.run(["latex"] + LATEX_OPTS + [base + ".tex"])
             self.run(["bibtex"] + [base + ".aux"])
@@ -131,7 +132,7 @@ class LatexHelperBase(HelperBase):
                 self.run(["dvipdf", base])
 
     def clean(self):
-        """Remove files created by latex"""
+        """Remove files created by latex."""
         postfixes = [
             "*.dvi",
             "*.toc",

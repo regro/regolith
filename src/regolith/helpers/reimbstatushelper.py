@@ -14,14 +14,14 @@ def subparser(subpi):
 
 
 class ReimbstatusHelper(SoutHelperBase):
-    """Helper for reimbstatus"""
+    """Helper for reimbstatus."""
 
     # btype must be the same as helper target in helper.py
     btype = "reimbstatus"
     needed_colls = [f"{TARGET_COLL}"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -93,8 +93,8 @@ class ReimbstatusHelper(SoutHelperBase):
                 )
                 grantstring = ", ".join(i.get("grants"))
                 print(
-                    f"   Requested: {unseg}, "
-                    f"Reimbursed: {j.get('amount')}, Date: "
+                    f"   Requested: {unseg:.2f}, "
+                    f"Reimbursed: {j.get('amount'):.2f}, Date: "
                     f"{reimb_dates.get('date', dt.date(1900, 1, 1).isoformat())}, "
                     f"Grants: {grantstring}"
                 )

@@ -1,4 +1,4 @@
-"""Helper for finishing prum in the projecta collection"""
+"""Helper for finishing prum in the projecta collection."""
 
 import datetime as dt
 
@@ -31,16 +31,14 @@ def subparser(subpi):
 
 
 class FinishprumUpdaterHelper(DbHelperBase):
-    """
-    Helper for finishing prum in the projecta collection
-    """
+    """Helper for finishing prum in the projecta collection."""
 
     # btype must be the same as helper target in helper.py
     btype = "f_prum"
     needed_colls = [f"{TARGET_COLL}"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

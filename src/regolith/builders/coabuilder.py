@@ -1,9 +1,9 @@
 """Builder for Recent Collaborators.
 
 For the specified person it returns the name and institution of all
-graduate student and post-doc advisors,
-all graduate student advisees, all post-doc advisees in the past 60 months
-and all coauthors in the past 48 months.
+graduate student and post-doc advisors, all graduate student advisees,
+all post-doc advisees in the past 60 months and all coauthors in the
+past 48 months.
 """
 
 import datetime as dt
@@ -25,7 +25,10 @@ NUM_POSTDOC_MONTHS = None
 
 
 def get_advisors_name_inst(advisee, rc):
-    """Get the advisee's advisor. Yield (last name, first name, institution name)."""
+    """Get the advisee's advisor.
+
+    Yield (last name, first name, institution name).
+    """
 
     phd_advisors = [
         {
@@ -52,7 +55,10 @@ def get_advisors_name_inst(advisee, rc):
 
 
 def get_advisees_name_inst(coll, advisor, rc):
-    """Get advisor's advisees. Yield (last name, first name, institutions)"""
+    """Get advisor's advisees.
+
+    Yield (last name, first name, institutions)
+    """
     advisor_names = advisor.get("aka", []) + [advisor.get("name"), advisor.get("_id")]
     advisees = []
     for person in coll:
@@ -118,7 +124,10 @@ def get_since_dates(rc):
 
 
 def get_coauthors_from_pubs(rc, pubs, not_person):
-    """Get co-authors' names from the publication. Not include the person itself."""
+    """Get co-authors' names from the publication.
+
+    Not include the person itself.
+    """
     not_person_akas = [not_person["_id"], not_person["name"]] + not_person["aka"]
     my_collabs = list()
     for pub in pubs:
@@ -313,7 +322,10 @@ def format_last_first_institution_names(rc, ppl_names, excluded_inst_name=None):
 
 
 def format_to_nsf(tups, type_str):
-    """Format the 3 tups to 2 tups. ('type_str', 'last, first', 'inst', ...)."""
+    """Format the 3 tups to 2 tups.
+
+    ('type_str', 'last, first', 'inst', ...).
+    """
     return [(type_str, "{}, {}".format(tup[0], tup[1])) + tup[2:] for tup in tups]
 
 
@@ -386,7 +398,10 @@ def get_person(person_id, rc):
 
 
 def find_coeditors(person, rc):
-    """Get the coeditors info of the person. Return (last, first, inst, journal)."""
+    """Get the coeditors info of the person.
+
+    Return (last, first, inst, journal).
+    """
     emps = person.get("employment")
     if emps is None:
         return set()
@@ -409,7 +424,7 @@ def find_coeditors(person, rc):
 
 
 class RecentCollaboratorsBuilder(BuilderBase):
-    """Build recent collaborators from database entries"""
+    """Build recent collaborators from database entries."""
 
     btype = "recent-collabs"
     needed_colls = ["citations", "people", "contacts", "institutions"]
@@ -449,7 +464,8 @@ class RecentCollaboratorsBuilder(BuilderBase):
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def query_ppl(self, target):
-        """Query the data base for the target's collaborators' information."""
+        """Query the data base for the target's collaborators'
+        information."""
         rc = self.rc
         gtx = self.gtx
         person = fuzzy_retrieval(
@@ -516,7 +532,8 @@ class RecentCollaboratorsBuilder(BuilderBase):
 
     @staticmethod
     def fill_in_tab(ws, ppl, start_row, template_cell_style=None, cols="ABCDE"):
-        """Add the information in person, institution pairs into the table 4 in nsf table."""
+        """Add the information in person, institution pairs into the
+        table 4 in nsf table."""
         nsf_mappings = {
             "co-author": "A:",
             "collaborator": "C:",

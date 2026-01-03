@@ -30,6 +30,7 @@ builder_map = [
     "review-man",
     # reading-lists    need tests for this
     "reimb",
+    "releaselist",
 ]
 db_srcs = ["mongo", "fs"]
 
@@ -38,8 +39,12 @@ recent_collabs_xlsx_check = ["A51", "B51", "C51"]
 
 
 def is_same(text0: str, text1: str, ignored: list):
-    """Compare the content of two text. If there are different words in text0 and text1 and the word in text0
-    does not contain ignored substring, return False. Else return True."""
+    """Compare the content of two text.
+
+    If there are different words in text0 and text1 and the word in
+    text0 does not contain ignored substring, return False. Else return
+    True.
+    """
 
     def should_ignore(word):
         for w in ignored:

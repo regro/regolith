@@ -31,13 +31,14 @@ def subparser(subpi):
 
 
 class GeneralListerHelper(SoutHelperBase):
-    """Helper for listing filtered data from collections in the database."""
+    """Helper for listing filtered data from collections in the
+    database."""
 
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -59,6 +60,11 @@ class GeneralListerHelper(SoutHelperBase):
         list_keys = []
         if rc.kv_filter:
             list_keys.extend([rc.kv_filter[n] for n in range(len(rc.kv_filter)) if n % 2 == 0])
+            for i, item in enumerate(rc.kv_filter):
+                if item.lower() == "true":
+                    print(f"Warning: value {item} interpreted as a bool")
+                if item.lower() == "false":
+                    print(f"Warning: value {item} interpreted as a bool")
         if rc.return_fields:
             list_keys.extend(rc.return_fields)
         for i in list_keys:

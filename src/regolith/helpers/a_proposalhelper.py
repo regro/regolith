@@ -106,8 +106,8 @@ def subparser(subpi):
 class ProposalAdderHelper(DbHelperBase):
     """Helper for adding a proposal to the proposals collection.
 
-    A proposal is a dictionary object describing a research or
-     project proposal submitted by the group.
+    A proposal is a dictionary object describing a research or  project
+    proposal submitted by the group.
     """
 
     # btype must be the same as helper target in helper.py
@@ -115,7 +115,7 @@ class ProposalAdderHelper(DbHelperBase):
     needed_colls = [f"{TARGET_COLL}", "people", "groups"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

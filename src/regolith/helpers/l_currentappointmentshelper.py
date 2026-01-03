@@ -27,14 +27,15 @@ def subparser(subpi):
 
 
 class CurrentAppointmentsListerHelper(SoutHelperBase):
-    """Helper for managing appointments on grants and studying the burn of grants over time."""
+    """Helper for managing appointments on grants and studying the burn
+    of grants over time."""
 
     # btype must be the same as helper target in helper.py
     btype = "currentappointments"
     needed_colls = ["people", "grants", "proposals"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

@@ -1,4 +1,4 @@
-"""Date based tools"""
+"""Date based tools."""
 
 import calendar
 import datetime
@@ -58,7 +58,8 @@ def month_to_int(m):
 
 
 def month_to_str_int(m):
-    """Converts a month to an int form, str type, with a leading zero"""
+    """Converts a month to an int form, str type, with a leading
+    zero."""
     mi = month_to_int(m)
     if mi < 10:
         ms = "0{}".format(mi)
@@ -68,7 +69,7 @@ def month_to_str_int(m):
 
 
 def day_to_str_int(d):
-    """Converts a day to an int form, str type, with a leading zero"""
+    """Converts a day to an int form, str type, with a leading zero."""
     if d < 10:
         ds = "0{}".format(d)
     else:
@@ -86,8 +87,8 @@ def date_to_float(y, m, d=0):
 
 
 def find_gaps_overlaps(dateslist, overlaps_ok=False):
-    """
-    Find whether there is a gap or an overlap in a list of date-ranges
+    """Find whether there is a gap or an overlap in a list of date-
+    ranges.
 
     Parameters
     ----------
@@ -99,7 +100,6 @@ def find_gaps_overlaps(dateslist, overlaps_ok=False):
     Returns
     -------
       True if there are no gaps or overlaps else False
-
     """
 
     status = True
@@ -113,8 +113,7 @@ def find_gaps_overlaps(dateslist, overlaps_ok=False):
 
 
 def last_day(year, month):
-    """
-    Returns the last day of the month for the month given
+    """Returns the last day of the month for the month given.
 
     Parameters
     ----------
@@ -126,16 +125,14 @@ def last_day(year, month):
     Returns
     -------
     The last day of that month
-
     """
     return calendar.monthrange(year, month_to_int(month))[1]
 
 
 def convert_doc_iso_to_date(doc):
     def convert_date(obj):
-        """
-        Recursively goes through the dictionary obj and converts date from iso to datetime.date
-        """
+        """Recursively goes through the dictionary obj and converts date
+        from iso to datetime.date."""
         if isinstance(obj, str):
             try:
                 date = datetime.datetime.strptime(obj, "%Y-%m-%d").date()
@@ -159,8 +156,7 @@ def convert_doc_iso_to_date(doc):
 
 
 def get_dates(thing, date_field_prefix=None):
-    """
-    given a dict like thing, return the date items
+    """Given a dict like thing, return the date items.
 
     Parameters
     ----------
@@ -348,10 +344,10 @@ def get_due_date(thing):
 
 
 def is_current(thing, now=None):
-    """
-    given a thing with dates, returns true if the thing is current
-    looks for begin_ and end_ date things (date, year, month, day), or just
-    the date things themselves. e.g., begin_date, end_month, month, and so on.
+    """Given a thing with dates, returns true if the thing is current
+    looks for begin_ and end_ date things (date, year, month, day), or
+    just the date things themselves. e.g., begin_date, end_month, month,
+    and so on.
 
     Parameters
     ----------
@@ -363,7 +359,6 @@ def is_current(thing, now=None):
     Returns
     -------
     True if the thing is current and false otherwise
-
     """
     if now is None:
         now = datetime.date.today()
@@ -380,8 +375,7 @@ def is_current(thing, now=None):
 
 
 def has_started(thing, now=None):
-    """
-    given a thing with dates, returns true if the thing has started
+    """Given a thing with dates, returns true if the thing has started.
 
     Parameters
     ----------
@@ -393,7 +387,6 @@ def has_started(thing, now=None):
     Returns
     -------
     True if the thing has started and false otherwise
-
     """
     if not now:
         now = datetime.date.today()
@@ -408,8 +401,7 @@ def has_started(thing, now=None):
 
 
 def has_finished(thing, now=None):
-    """
-    given a thing with dates, returns true if the thing has finished
+    """Given a thing with dates, returns true if the thing has finished.
 
     Parameters
     ----------
@@ -421,7 +413,6 @@ def has_finished(thing, now=None):
     Returns
     -------
     True if the thing has finished and false otherwise
-
     """
     if not now:
         now = datetime.date.today()
@@ -435,8 +426,8 @@ def has_finished(thing, now=None):
 
 
 def is_before(thing, now=None):
-    """
-    given a thing with a date, returns true if the thing is before the input date
+    """Given a thing with a date, returns true if the thing is before
+    the input date.
 
     Parameters
     ----------
@@ -448,7 +439,6 @@ def is_before(thing, now=None):
     Returns
     -------
     True if the thing is before the date
-
     """
     if not now:
         now = datetime.date.today()
@@ -463,8 +453,8 @@ def is_before(thing, now=None):
 
 
 def is_after(thing, now=None):
-    """
-    given a thing with a date, returns true if the thing is after the input date
+    """Given a thing with a date, returns true if the thing is after the
+    input date.
 
     Parameters
     ----------
@@ -476,7 +466,6 @@ def is_after(thing, now=None):
     Returns
     -------
     True if the thing is after the date
-
     """
     if not now:
         now = datetime.date.today()
@@ -491,8 +480,8 @@ def is_after(thing, now=None):
 
 
 def is_between(thing, start=None, end=None):
-    """
-    given a thing with a date, returns true if the thing is between the start and end date
+    """Given a thing with a date, returns true if the thing is between
+    the start and end date.
 
     Parameters
     ----------
@@ -506,7 +495,6 @@ def is_between(thing, start=None, end=None):
     Returns
     -------
     True if the thing is between the start and end
-
     """
     if not start:
         start = datetime.date.today()

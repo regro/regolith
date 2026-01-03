@@ -1,7 +1,7 @@
 """Helper for listing upcoming (and past) projectum milestones.
 
-Projecta are small bite-sized project quanta that typically will result in
-one manuscript.
+Projecta are small bite-sized project quanta that typically will result
+in one manuscript.
 """
 
 import datetime as dt
@@ -105,8 +105,8 @@ def subparser(subpi):
 class ProjectaListerHelper(SoutHelperBase):
     """Helper for listing upcoming (and past) projectum milestones.
 
-    Projecta are small bite-sized project quanta that typically will result in
-    one manuscript.
+    Projecta are small bite-sized project quanta that typically will
+    result in one manuscript.
     """
 
     # btype must be the same as helper target in helper.py
@@ -114,7 +114,7 @@ class ProjectaListerHelper(SoutHelperBase):
     needed_colls = [f"{TARGET_COLL}", "people"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

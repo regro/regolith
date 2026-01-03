@@ -14,8 +14,8 @@
     - what a week!
   project: 18kj_conservation
   status: accepted
-  title: Nanostructure challenges and successes from 16th Century warships to 21st
-    Century energy
+  title: Nanostructure challenges and successes from 16th Century warships to 
+    21st Century energy
   type: colloquium
   webinar: true
 18sb_nslsii:
@@ -35,8 +35,10 @@
   notes:
     - We hope the weather will be sunny
     - if the weather is nice we will go to the beach
+  presenter: sbillinge
   project: 18sob_clustermining
   status: accepted
+  talk_id: 30-graphite-rock
   title: 'ClusterMining: extracting core structures of metallic nanoparticles from
     the atomic pair distribution function'
   type: poster
@@ -49,6 +51,7 @@
   begin_month: 5
   begin_year: 2018
   department: apam
+  hide: false
   institution: columbiau
   location: Upton NY
   meeting_name: Meeting to check flexibility on dates
@@ -72,11 +75,13 @@
   location: Test C.2
   meeting_name: Test Case C.2
   notes:
-    - This is to test Case C.2 where user wants an expense added and passed the force
-      option without specifying an expense db when default is public
+    - This is to test Case C.2 where user wants an expense added and passed the 
+      force option without specifying an expense db when default is public
   presentation_url: http://drive.google.com/SEV356DV
+  presenter: nasker
   project:
     - all
   status: in-prep
+  talk_id: tbd
   title: Testing Case C.2
   type: contributed_oral

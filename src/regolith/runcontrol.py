@@ -1,4 +1,4 @@
-"""Run Control object for regolith"""
+"""Run Control object for regolith."""
 
 from __future__ import print_function
 
@@ -33,7 +33,8 @@ def ensuredirs(f):
 
 
 def touch(filename):
-    """Opens a file and updates the mtime, like the posix command of the same name."""
+    """Opens a file and updates the mtime, like the posix command of the
+    same name."""
     with io.open(filename, "a"):
         os.utime(filename, None)
 
@@ -51,8 +52,8 @@ def exec_file(filename, glb=None, loc=None):
 
 
 class NotSpecifiedType(object):
-    """A helper class singleton for run control meaning that a 'real' value
-    has not been given."""
+    """A helper class singleton for run control meaning that a 'real'
+    value has not been given."""
 
     def __repr__(self):
         return "NotSpecified"
@@ -60,14 +61,15 @@ class NotSpecifiedType(object):
 
 NotSpecified = NotSpecifiedType()
 """A helper class singleton for run control meaning that a 'real' value
-has not been given.
-"""
+has not been given."""
 
 
 class RunControl(object):
-    """A composable configuration class. Unlike argparse.Namespace,
-    this keeps the object dictionary (__dict__) separate from the run
-    control attributes dictionary (_dict).
+    """A composable configuration class.
+
+    Unlike argparse.Namespace, this keeps the object dictionary
+    (__dict__) separate from the run control attributes dictionary
+    (_dict).
     """
 
     def __init__(self, _updaters=None, _validators=None, **kwargs):
@@ -160,10 +162,12 @@ class RunControl(object):
         return type(self)(_updaters=self._updaters, _validators=self._validators, **self._dict)
 
     def _update(self, other):
-        """Updates the rc with values from another mapping.  If this rc has
-        if a key is in self, other, and self._updaters, then the updaters
-        value is called to perform the update.  This function should return
-        a copy to be safe and not update in-place.
+        """Updates the rc with values from another mapping.
+
+        If this rc has if a key is in self, other, and self._updaters,
+        then the updaters value is called to perform the update.  This
+        function should return a copy to be safe and not update in-
+        place.
         """
         if hasattr(other, "_dict"):
             other = other._dict
@@ -253,7 +257,8 @@ def load_rcfile(fname):
 
 
 def filter_databases(rc):
-    """Filters the databases list down to only the ones we need, in place."""
+    """Filters the databases list down to only the ones we need, in
+    place."""
     dbs = rc.databases
     public_only = rc._get("public_only", False)
     if public_only:
@@ -267,8 +272,7 @@ def filter_databases(rc):
 
 
 def connect_db(rc, colls=None):
-    """
-    Load up the db's
+    """Load up the db's.
 
     Parameters
     ----------

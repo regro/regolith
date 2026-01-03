@@ -1,4 +1,4 @@
-"""Classlist implementation"""
+"""Classlist implementation."""
 
 import csv
 import json
@@ -19,7 +19,8 @@ def load_json(filename):
 
 
 def load_csv(filename, format="columbia"):
-    """Returns students as a list of dicts from a csv from Columbia Courseworks"""
+    """Returns students as a list of dicts from a csv from Columbia
+    Courseworks."""
     with open(filename, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         students = []
@@ -123,9 +124,8 @@ class UscHtmlParser(HTMLParser):
 
 
 def load_usc(filename):
-    """Returns students as a list of dicts from an HTML file obtainted from the University of
-    South Carolina.
-    """
+    """Returns students as a list of dicts from an HTML file obtainted
+    from the University of South Carolina."""
     with open(filename, encoding="utf-8") as f:
         html = f.read()
     parser = UscHtmlParser()
@@ -143,7 +143,7 @@ def add_students_to_db(students, rc):
 
 
 def add_students_to_course(students, rc):
-    """Add students to the course listed"""
+    """Add students to the course listed."""
     course = rc.client.find_one(rc.db, "courses", {"_id": rc.course_id})
     if not course:
         raise ValueError(f"no course {rc.course_id} found in database")

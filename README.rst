@@ -8,7 +8,7 @@
         :target: https://regro.github.io/regolith
         :height: 100px
 
-|PyPi| |Forge| |PythonVersion| |PR|
+|PyPI| |Forge| |PythonVersion| |PR|
 
 |CI| |Codecov| |Black| |Tracking|
 
@@ -26,7 +26,7 @@
 
 .. |PR| image:: https://img.shields.io/badge/PR-Welcome-29ab47ff
 
-.. |PyPi| image:: https://img.shields.io/pypi/v/regolith
+.. |PyPI| image:: https://img.shields.io/pypi/v/regolith
         :target: https://pypi.org/project/regolith/
 
 .. |PythonVersion| image:: https://img.shields.io/pypi/pyversions/regolith
@@ -35,7 +35,7 @@
 .. |Tracking| image:: https://img.shields.io/badge/issue_tracking-github-blue
         :target: https://github.com/regro/regolith/issues
 
-A research group content management system
+Python package for research group content management system
 
 * LONGER DESCRIPTION HERE
 
@@ -64,10 +64,6 @@ The following creates and activates a new environment named ``regolith_env`` ::
 
         conda create -n regolith_env regolith
         conda activate regolith_env
-
-Then, to fully install ``regolith`` in our active environment, run ::
-
-        conda install regolith
 
 To confirm that the installation was successful, type ::
 
@@ -125,4 +121,9 @@ Before contributing, please read our `Code of Conduct <https://github.com/regro/
 Contact
 -------
 
-For more information on regolith please visit the project `web-page <https://regro.github.io/>`_ or email Prof. Simon Billinge at sb2896@columbia.edu.
+For more information on regolith please visit the project `web-page <https://regro.github.io/>`_ or email Simon J.L. Billinge group at sb2896@columbia.edu.
+
+Acknowledgements
+----------------
+
+``regolith`` is built and maintained with `scikit-package <https://scikit-package.github.io/scikit-package/>`_.

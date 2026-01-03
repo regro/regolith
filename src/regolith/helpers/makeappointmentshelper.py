@@ -128,14 +128,15 @@ def plotter(datearray, student=None, pd=None, ss=None, title=None):
 
 
 class MakeAppointmentsHelper(SoutHelperBase):
-    """Helper for managing appointments on grants and studying the burn of grants over time."""
+    """Helper for managing appointments on grants and studying the burn
+    of grants over time."""
 
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
     needed_colls = [f"{TARGET_COLL}", "grants", "proposals"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

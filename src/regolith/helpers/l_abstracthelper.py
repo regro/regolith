@@ -34,14 +34,15 @@ def subparser(subpi):
 
 
 class AbstractListerHelper(SoutHelperBase):
-    """Helper for finding and listing abstracts from the presentations.yml file"""
+    """Helper for finding and listing abstracts from the
+    presentations.yml file."""
 
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
     needed_colls = [f"{TARGET_COLL}", "people", "contacts", "institutions"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

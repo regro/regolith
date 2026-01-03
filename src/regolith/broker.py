@@ -1,4 +1,4 @@
-"""API for accessing the metadata and file storage"""
+"""API for accessing the metadata and file storage."""
 
 import copy
 
@@ -8,7 +8,7 @@ from regolith.storage import push, store_client
 
 
 def load_db(rc_file="regolithrc.json"):
-    """Create a Broker instance from an rc file"""
+    """Create a Broker instance from an rc file."""
     rc = copy.copy(DEFAULT_RC)
     rc._update(load_rcfile(rc_file))
     filter_databases(rc)
@@ -16,7 +16,7 @@ def load_db(rc_file="regolithrc.json"):
 
 
 class Broker:
-    """Interface to the database and file storage systems
+    """Interface to the database and file storage systems.
 
     Examples
     --------
@@ -63,12 +63,12 @@ class Broker:
 
     @classmethod
     def from_rc(cls, rc_file="regolithrc.json"):
-        """Return a Broker instance"""
+        """Return a Broker instance."""
         return load_db(rc_file)
 
     def get_file_path(self, document, name):
-        """Get a file from the file storage associated with the document and
-        name
+        """Get a file from the file storage associated with the document
+        and name.
 
         Parameters
         ----------

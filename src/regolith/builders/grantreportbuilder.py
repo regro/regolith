@@ -1,4 +1,4 @@
-"""Builder for Grant Reports"""
+"""Builder for Grant Reports."""
 
 from datetime import date
 
@@ -14,7 +14,7 @@ from regolith.tools import all_docs_from_collection, filter_presentations, fuzzy
 
 
 class GrantReportBuilder(LatexBuilderBase):
-    """Build a proposal review from database entries"""
+    """Build a proposal review from database entries."""
 
     btype = "grant-report"
     needed_dbs = [
@@ -33,7 +33,7 @@ class GrantReportBuilder(LatexBuilderBase):
     #        self.needed_dbs = needed_dbs
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -45,7 +45,7 @@ class GrantReportBuilder(LatexBuilderBase):
         gtx["zip"] = zip
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
         rc = self.rc
 
         if not rc.grants:
@@ -56,6 +56,8 @@ class GrantReportBuilder(LatexBuilderBase):
             raise RuntimeError("Error: more than one grant specified. Please rerun with" "only a single grant.")
         grant_id = rc.grants[0]
         grant = fuzzy_retrieval(self.gtx["grants"], ["_id", "alias", "name"], grant_id)
+        if grant is None:
+            raise NameError(f"Grant {grant_id} given but not found. Please check grant name")
         grant_dates = get_dates(grant)
 
         # Convert Date Strings to Datetime Objects
@@ -88,19 +90,10 @@ class GrantReportBuilder(LatexBuilderBase):
         grant_prums = [
             prum
             for prum in self.gtx["projecta"]
-            if grant_id in prum.get("grants", []) and "checklist" not in prum.get("deliverable").get("scope")
+            if grant_id in prum.get("grants", [])
+            and "checklist" not in prum.get("deliverable").get("scope")
+            and "cancelled" not in prum.get("status")
         ]
-        #        for prum in self.gtx['projecta']:
-        #            if grant_name in prum['grants']:
-        #                begin_date = get_dates(prum).get('begin_date')
-        #                due_date = get_due_date(prum['deliverable'])
-        #                # if projectum was finished during reporting period or is still current
-        #                # some projectum don't have an "end date", but all projecta have a deliverable
-        #                # due_date
-        #                if (rp_start_date <= due_date <= rp_end_date and \
-        #                prum['status'] is "finished") or is_current(prum):
-        #                   grant_prums.append(prum)
-        # Get people associated with grant
 
         grant_prums_finished_this_period = [
             prum for prum in grant_prums if is_current(report_dates, get_dates(prum).get("end_date"))
@@ -161,11 +154,13 @@ class GrantReportBuilder(LatexBuilderBase):
         #                                           since=rp_start_date,
         #                                          before=rp_end_date)
         publications = [publ for publ in self.gtx["citations"] if grant_id in publ.get("grant", "")]
-
+        publ_ids = []
         for publ in publications:
+            publ_ids.append(publ.get("_id"))
             formatted_authors = [f" {HumanName(name).full_name}" for name in publ.get("authors", [])]
             publ["authors"] = formatted_authors
         # Participants/Organizations
+        publication_id_string = ", ".join(publ_ids)
         participants = []
         for person in self.gtx["people"]:
             months_on_grant, months_left = self.months_on(grant_id, person, rp_start_date, rp_end_date)
@@ -217,6 +212,7 @@ class GrantReportBuilder(LatexBuilderBase):
             grantPeople=grant_people,
             participants=participants,
             collaborators=collaborators,
+            publication_id_string=publication_id_string,
             hline="------------------------------------------------------------------------------",
         )
 

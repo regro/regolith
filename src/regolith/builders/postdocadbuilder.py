@@ -6,13 +6,13 @@ from regolith.tools import all_docs_from_collection
 
 
 class PostdocadBuilder(LatexBuilderBase):
-    """Build current and pending report from database entries"""
+    """Build current and pending report from database entries."""
 
     btype = "postdocads"
     needed_colls = ["postdocads"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -23,7 +23,7 @@ class PostdocadBuilder(LatexBuilderBase):
         gtx["zip"] = zip
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
         for ads in self.gtx["postdocads"]:
             goals = ads["projectGoals"]
             positionOn = ads["positionOn"]

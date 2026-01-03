@@ -130,10 +130,9 @@ class GradeReportBuilder(LatexBuilderBase):
                 self.pdf(base)
 
     def makestats(self, course):
-        """Returns a dictionary of statistics for a course whose keys are
-        the assignments and whose values are a (mean-problem, std-problem,
-        mean-total, std-total) tuple.
-        """
+        """Returns a dictionary of statistics for a course whose keys
+        are the assignments and whose values are a (mean-problem, std-
+        problem, mean- total, std-total) tuple."""
         scores = {}
         course_id = course["_id"]
         for grade in self.gtx["grades"]:
@@ -212,7 +211,7 @@ class GradeReportBuilder(LatexBuilderBase):
         return sorted(totals), wtotal
 
     def plot_letter_grades(self, students_kwargs, scale):
-        """Plots the letter grades in a histogram"""
+        """Plots the letter grades in a histogram."""
         try:
             import matplotlib.pyplot as plt
         except ImportError:

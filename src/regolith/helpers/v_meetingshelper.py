@@ -1,4 +1,4 @@
-"""Validator for meetings"""
+"""Validator for meetings."""
 
 import datetime as dt
 
@@ -16,14 +16,14 @@ def subparser(subpi):
 
 
 class MeetingsValidatorHelper(SoutHelperBase):
-    """Helper for validating the entries of the meetings.yml file"""
+    """Helper for validating the entries of the meetings.yml file."""
 
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
     needed_colls = [f"{TARGET_COLL}", "institutions"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

@@ -55,14 +55,14 @@ def subparser(subpi):
 
 
 class AttestationsHelper(DbHelperBase):
-    """Helper for attestations"""
+    """Helper for attestations."""
 
     # btype must be the same as helper target in helper.py
     btype = "attestation"
     needed_colls = ["people", "grants", "proposals", "expenses"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

@@ -13,21 +13,37 @@ at least one of the 4 categories below)?
 - Major Activities (currently worked on projecta):
 {{ hline }}
 {%- for prum in majorActivities %}
-    {{ prum.get('_id') }}| {{ prum.get('name') }}| {{prum.get('lead')}}
-    {{ prum.get('description') }}
-        {% for milestone in prum.get('milestones') %}
-        {{ milestone.get("objective") }}
-        {{ milestone.get("type") }} | {{ milestone.get("status") }} {{ milestone.get("end_date", "") }}
-        {% endfor -%}
-{% endfor -%}
+------------
+    Project: {{ prum.get('name') }}
+    -------------------------------
+    Objective: {{ prum.get('description') }}
+    Activities:
+        {%- for milestone in prum.get('milestones', []) %}
+        {%- if milestone.get("status") != "proposed" %}
+      - {{ milestone.get("name") -}}:
+          Objective: {{ milestone.get("objective", "") }}
+          Outcomes: {{ milestone.get("progress", {}).get("text", "") }}
+        {%- endif -%}
+        {%- endfor -%}
+{%- endfor %}
 
-- Specific Objectives:
-
-
+==========================================
 - Significant Results (finished projecta):
+==========================================
 {%- for prum in significantResults %}
-    {{ prum.get('name') }}: {{ prum.get('description') }}
-{% endfor -%}
+------------
+    Project: {{ prum.get('name') }}
+    --------------------------------
+    Objective: {{ prum.get('description') }}
+    Activities:
+        {%- for milestone in prum.get('milestones', []) %}
+        {%- if milestone.get("status", "") != "proposed" %}
+      - {{ milestone.get("name") }}:
+        Objective: {{ milestone.get("objective", "") }}
+        Outcomes: {{ milestone.get("progress", {}).get("text", "") }}
+        {%- endif -%}
+        {%- endfor -%}
+{%- endfor %}
 
 Key outcomes or Other achievements:
 {{ hline }}
@@ -52,13 +68,17 @@ Key outcomes or Other achievements:
 {{ hline }}
 * What do you plan to do during the next reporting period to accomplish the goals?
 {{ hline }}
-#############################################################
-##                                                         ##
-##                                                         ##
-##      FILL THIS PART IN !!! FILL THIS PART IN !!!        ##
-##                                                         ##
-##                                                         ##
-#############################################################
+{%- for prum in majorActivities %}
+    Project: {{ prum.get('name') }}
+    Objective: {{ prum.get('description') }}
+    Plans:
+        {%- for milestone in prum.get('milestones') %}
+        {%- if milestone.get("status") == "proposed" %}
+      - {{ milestone.get("name") }}
+        Objective: {{ milestone.get("objective") }}
+        {%- endif -%}
+        {%- endfor -%}
+{%- endfor %}
 
 {{ hline }}
 Products
@@ -184,3 +204,32 @@ Significant changes in use or care of human subjects
 Significant changes in use or care of vertebrate animals
 
 Significant changes in use or care of biohazards{{ newline }}
+
+
+Prior Support:
+{{ grant.get('awardnr','') }}, ${{- grant.get('amount','') -}}, {{ begin_date }} to {{ end_date -}}.
+{{ grant.get('title', '') }}
+
+the work resulted in {{ len(products) }} publications:
+\cite{ {{- publication_id_string -}} }
+
+{% if grant.get('prior_support',{}).get('introduction','') | length > 0 %}
+Introduction: {{ grant.get('prior_support',{}).get('introduction','') }}
+{% endif -%}
+{% if grant.get('prior_support',{}).get('intellectual_merit','') | length > 0 %}
+Intellectual Merit: {{ grant.get('prior_support',{}).get('intellectual_merit','') }}
+{% endif -%}
+{% if grant.get('prior_support',{}).get('broader_impact','') | length > 0 %}
+Broader Impact: {{ grant.get('prior_support',{}).get('broader_impact','') }}
+{% endif -%}
+{% if grant.get('prior_support',{}).get('products','') | length > 0 %}
+Products: {{ grant.get('prior_support',{}).get('products','') }}
+{% endif %}
+{%- for publ in products %}
+    - {{ publ.get('title') }}
+      {{ publ.get('_id') }}
+      {% for person in publ.get('author') %}{{ person }}, {% endfor %}
+      {{ publ.get('journal') }}, {{ publ.get('volume') }}, pp. {{ publ.get('pages') }}
+      {{ publ.get('month') }}/{{ publ.get('year') }}
+      {{ publ.get('doi') }}
+{% endfor %}

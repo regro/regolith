@@ -1,7 +1,7 @@
 """Helper for adding a projectum to the projecta collection.
 
-Projecta are small bite-sized project quanta that typically will result in
-one manuscript.
+Projecta are small bite-sized project quanta that typically will result
+in one manuscript.
 """
 
 import datetime as dt
@@ -12,7 +12,7 @@ from gooey import GooeyParser
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.tools import all_docs_from_collection, get_pi_id, get_uuid
+from regolith.tools import all_docs_from_collection, get_pi_id
 
 # from regolith.schemas import MILESTONE_TYPES
 
@@ -68,8 +68,8 @@ def subparser(subpi):
 class ProjectumAdderHelper(DbHelperBase):
     """Helper for adding a projectum to the projecta collection.
 
-    Projecta are small bite-sized project quanta that typically will result in
-    one manuscript.
+    Projecta are small bite-sized project quanta that typically will
+    result in one manuscript.
     """
 
     # btype must be the same as helper target in helper.py
@@ -77,7 +77,7 @@ class ProjectumAdderHelper(DbHelperBase):
     needed_colls = [f"{TARGET_COLL}", "groups", "people"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -97,10 +97,6 @@ class ProjectumAdderHelper(DbHelperBase):
             now = dt.date.today()
         else:
             now = date_parser.parse(rc.date).date()
-        if not rc.due_date:
-            due_date = now + relativedelta(years=1)
-        else:
-            due_date = date_parser.parse(rc.due_date).date()
         key = f"{rc.lead[:2]}_{''.join(rc.name.casefold().split()).strip()}"
 
         coll = self.gtx[rc.coll]
@@ -160,67 +156,23 @@ class ProjectumAdderHelper(DbHelperBase):
             )
 
         pdoc.update({"_id": key})
-        pdoc.update(
-            {
-                "deliverable": {
-                    "due_date": due_date,
-                    "audience": [
-                        "Who will use the software or read the paper? "
-                        "Your target audience. e.g., beginning grad in chemistry"
-                    ],
-                    "success_def": "audience is happy",
-                    "scope": [
-                        "If this is a software release, list any use-cases that are in "
-                        "scope. These may be located in the Gdoc associated with the "
-                        "prum.  Otherwise include some other kind of scope description "
-                        "of what is in and what is not",
-                        "If this is a science paper summarize: ",
-                        "the scientific question that is being answered",
-                        "any hypotheses that will be tested to answer it",
-                        "the approach that will be taken",
-                    ],
-                    "platform": "description of how and where the audience will access "
-                    "the deliverable.  The journal where it will be submitted "
-                    "if it is a paper. Whether it is a web-app, or which "
-                    "operating systems will be supported, for software",
-                    "roll_out": [
-                        "steps that the audience will take to access and interact with the deliverable",
-                        "leave as empty list for paper submissions",
-                    ],
-                    "status": "proposed",
-                }
-            }
-        )
+        pdoc.update(_set_deliverable(rc.due_date))
         pdoc.update(
             {
                 "kickoff": {
                     "due_date": now + relativedelta(days=7),
+                    "end_date": now + relativedelta(days=7),
                     "audience": ["lead", "pi", "group_members"],
                     "name": "Kick off meeting",
                     "objective": "introduce project to the lead",
-                    "status": "converged",
+                    "status": "finished",
                 }
             }
         )
-        secondm = {
-            "due_date": now + relativedelta(days=21),
-            "name": "Kickoff meeting",
-            "objective": "Prum Lead understands the project deliverables " "and goals",
-            "audience": ["lead", "pi", "group_members"],
-            "status": "converged",
-            "notes": [
-                "() Schedule the meeting",
-                "() Have the meeting, take good notes",
-                "() Update the prum milestones with plan",
-            ],
-            "progress": {"text": "", "slides_urls": []},
-            "type": "meeting",
-            "uuid": get_uuid(),
-        }
-        pdoc.update({"milestones": [secondm]})
+        pdoc.update({"milestones": []})
 
         if rc.checklist:
-            pdoc = self.insert_checklists(pdoc, now)
+            pdoc = self._insert_checklists(pdoc, now)
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
@@ -228,7 +180,7 @@ class ProjectumAdderHelper(DbHelperBase):
 
         return
 
-    def insert_checklists(self, pdoc, now):
+    def _insert_checklists(self, pdoc, now):
         """Create manuscript checklist, one item as one milestone."""
         presubmission_checklist = [
             (
@@ -762,87 +714,151 @@ class ProjectumAdderHelper(DbHelperBase):
         )
         return pdoc
 
-        # secondm = {'due_date': now + relativedelta(days=21),
-        #            'name': 'Example milestone',
-        #            'objective': 'This acts as an example milestone. It shows how '
-        #                         'to construct your milestones.  It should be deleted '
-        #                         'before depositing the prum.',
-        #            'audience': ["update the audience as required, but it is "
-        #                         "often lead, pi and group_members (see below). "
-        #                         "these resolve to their values defined elsewhere.  "
-        #                         "If putting in people's names use their ids where "
-        #                         "possible and they will be looked for in the "
-        #                         "people and contacts collections.",
-        #                         'lead', 'pi', 'group_members'],
-        #            'status': 'proposed',
-        #            'notes': ["() get a clear picture of the deliverable and what "
-        #                      "needs to be done to get there.  Have discussions "
-        #                      "with group members to develop ideas.  Propose them "
-        #                      "even if you are not sure, you will get feedback. "
-        #                      "This is the process.",
-        #                      "() edit the template 'deliverable' to reflect that.",
-        #                      "() chart out milestones at a high level first working "
-        #                      "back from the deliverable.  'To deliver that "
-        #                      "(deliverable) I have to do this, this and this, and "
-        #                      "to deliver it by then I have to do these things by "
-        #                      "these dates.'",
-        #                      f"() then write the detailed milestones, turning each "
-        #                      f"one into a deliverable that is captured in the type "
-        #                      f"field.  Allowed values for milestone types are: "
-        #                      f"{*MILESTONE_TYPES,}.  If you are tempted to use 'other' "
-        #                      f"think more about the milestone objective, you "
-        #                      f"probably haven't defined it well enough in your head.",
-        #                      "() Think carefully about the deliverable date.  "
-        #                      "Can you hit it?  If not, change it so you can hit "
-        #                      "it.  You may have to adjust your final deliverable date "
-        #                      "but discuss this with the team, because scope could also "
-        #                      "be reduced rather than pushing off final deliverable.  "
-        #                      "When you are comfortable with the due date, and it has "
-        #                      "been reviewed, make the appoint on the calendar, for "
-        #                      "example, if it is a meeting or presentation, send "
-        #                      "schedule it now.",
-        #                      "() within each milestone, make a todo list (this "
-        #                      "is a todo-list) in the notes field.  A todo is a "
-        #                      "note prepended by () (no space in the middle).  These are the smaller "
-        #                      "tasks you will have to do to complete the milestone.  "
-        #                      "When you complete them turn () in to (x).",
-        #                      "() Iterate all these with your team/advisor maybe "
-        #                      "in a Google doc or on Slack to make sure you are "
-        #                      "on the right track.  To converge this shoot for "
-        #                      "multiple round-trips per day.",
-        #                      "() using u_milestones in helper_gui, or "
-        #                      "otherwise, get them entered into the prum and the "
-        #                      "prum deposited.",
-        #                      "() by the time the edited prum is submitted, set "
-        #                      "all the statuses to converged or started, and "
-        #                      "delete this example milestone.",
-        #                      "() later, when you finish a milestone use "
-        #                      "u_milestones or editing in the yaml "
-        #                      "file set status to finished and add an end_date, "
-        #                      "and fill in the progress section. This should be "
-        #                      "brief but just links to a brief text description "
-        #                      "of the outcome that would be suitable for a grant "
-        #                      "annual report, and any url links to "
-        #                      "presentations or related docs.  Link to specific "
-        #                      "files of relevance to this milestone not general docs and repos.",
-        #            ],
-        #            "progress": {'text': 'write text here capturing how the milestone '
-        #                                 'is progressing, but at the least when the milestone '
-        #                                 'closes.  The goal of this is that it will be '
-        #                                 'printed as a progress report for a grant '
-        #                                 'so write it as if it will be read by an external '
-        #                                 'person. It doesn't have to describe the whole prum '
-        #                                 'but clearly show the progress that has been made. '
-        #                                 'It can be multiple paragraphs or a short statement'
-        #                                 'depending on the situation',
-        #                         'slides_urls': ["<replace with a URL to, for example, "
-        #                                        "a Gslides slide deck "
-        #                                        "with useful figures in it, or a Gdoc "
-        #                                        "with more complicated info like tables "
-        #                                        "or something. This is for the PI to "
-        #                                        "be able to find quality content to augment "
-        #                                        "the report>","<replace with another URL if "
-        #                                                      "more than one is needed>"]},
-        #            'type': 'meeting',
-        #            'uuid': get_uuid()
-        # }
+
+def _set_deliverable(due_date_str, pattern=None):
+    due_date = dt.date.fromisoformat(due_date_str)
+    if pattern == "software":
+        pu_deliverable = {
+            "deliverable": {
+                "due_date": due_date,
+                "audience": [
+                    "Who will use the software or read the paper? "
+                    "Your target audience. e.g., beginning grad in chemistry"
+                ],
+                "success_def": "audience is happy",
+                "scope": [
+                    "If this is a software release, list any use-cases that are in "
+                    "scope. These may be located in the Gdoc associated with the "
+                    "prum.  Otherwise include some other kind of scope description "
+                    "of what is in and what is not",
+                    "If this is a science paper summarize: ",
+                    "the scientific question that is being answered",
+                    "any hypotheses that will be tested to answer it",
+                    "the approach that will be taken",
+                ],
+                "platform": "description of how and where the audience will access "
+                "the deliverable.  The journal where it will be submitted "
+                "if it is a paper. Whether it is a web-app, or which "
+                "operating systems will be supported, for software",
+                "roll_out": [
+                    "steps that the audience will take to access and interact with the deliverable",
+                    "leave as empty list for paper submissions",
+                ],
+                "status": "proposed",
+            }
+        }
+    else:
+        pu_deliverable = {
+            "deliverable": {
+                "due_date": due_date,
+                "audience": [],
+                "success_def": "",
+                "scope": [],
+                "platform": "",
+                "roll_out": [],
+                "status": "proposed",
+            }
+        }
+    return pu_deliverable
+
+
+# secondm = {'due_date': now + relativedelta(days=21),
+#            'name': 'Example milestone',
+#            'objective': 'This acts as an example milestone. It shows how '
+#                         'to construct your milestones.  It should be deleted '
+#                         'before depositing the prum.',
+#            'audience': ["update the audience as required, but it is "
+#                         "often lead, pi and group_members (see below). "
+#                         "these resolve to their values defined elsewhere.  "
+#                         "If putting in people's names use their ids where "
+#                         "possible and they will be looked for in the "
+#                         "people and contacts collections.",
+#                         'lead', 'pi', 'group_members'],
+#            'status': 'proposed',
+#            'notes': ["() get a clear picture of the deliverable and what "
+#                      "needs to be done to get there.  Have discussions "
+#                      "with group members to develop ideas.  Propose them "
+#                      "even if you are not sure, you will get feedback. "
+#                      "This is the process.",
+#                      "() edit the template 'deliverable' to reflect that.",
+#                      "() chart out milestones at a high level first working "
+#                      "back from the deliverable.  'To deliver that "
+#                      "(deliverable) I have to do this, this and this, and "
+#                      "to deliver it by then I have to do these things by "
+#                      "these dates.'",
+#                      f"() then write the detailed milestones, turning each "
+#                      f"one into a deliverable that is captured in the type "
+#                      f"field.  Allowed values for milestone types are: "
+#                      f"{*MILESTONE_TYPES,}.  If you are tempted to use 'other' "
+#                      f"think more about the milestone objective, you "
+#                      f"probably haven't defined it well enough in your head.",
+#                      "() Think carefully about the deliverable date.  "
+#                      "Can you hit it?  If not, change it so you can hit "
+#                      "it.  You may have to adjust your final deliverable date "
+#                      "but discuss this with the team, because scope could also "
+#                      "be reduced rather than pushing off final deliverable.  "
+#                      "When you are comfortable with the due date, and it has "
+#                      "been reviewed, make the appoint on the calendar, for "
+#                      "example, if it is a meeting or presentation, send "
+#                      "schedule it now.",
+#                      "() within each milestone, make a todo list (this "
+#                      "is a todo-list) in the notes field.  A todo is a "
+#                      "note prepended by () (no space in the middle).  These are the smaller "
+#                      "tasks you will have to do to complete the milestone.  "
+#                      "When you complete them turn () in to (x).",
+#                      "() Iterate all these with your team/advisor maybe "
+#                      "in a Google doc or on Slack to make sure you are "
+#                      "on the right track.  To converge this shoot for "
+#                      "multiple round-trips per day.",
+#                      "() using u_milestones in helper_gui, or "
+#                      "otherwise, get them entered into the prum and the "
+#                      "prum deposited.",
+#                      "() by the time the edited prum is submitted, set "
+#                      "all the statuses to converged or started, and "
+#                      "delete this example milestone.",
+#                      "() later, when you finish a milestone use "
+#                      "u_milestones or editing in the yaml "
+#                      "file set status to finished and add an end_date, "
+#                      "and fill in the progress section. This should be "
+#                      "brief but just links to a brief text description "
+#                      "of the outcome that would be suitable for a grant "
+#                      "annual report, and any url links to "
+#                      "presentations or related docs.  Link to specific "
+#                      "files of relevance to this milestone not general docs and repos.",
+#            ],
+#            "progress": {'text': 'write text here capturing how the milestone '
+#                                 'is progressing, but at the least when the milestone '
+#                                 'closes.  The goal of this is that it will be '
+#                                 'printed as a progress report for a grant '
+#                                 'so write it as if it will be read by an external '
+#                                 'person. It doesn't have to describe the whole prum '
+#                                 'but clearly show the progress that has been made. '
+#                                 'It can be multiple paragraphs or a short statement'
+#                                 'depending on the situation',
+#                         'slides_urls': ["<replace with a URL to, for example, "
+#                                        "a Gslides slide deck "
+#                                        "with useful figures in it, or a Gdoc "
+#                                        "with more complicated info like tables "
+#                                        "or something. This is for the PI to "
+#                                        "be able to find quality content to augment "
+#                                        "the report>","<replace with another URL if "
+#                                                      "more than one is needed>"]},
+#            'type': 'meeting',
+#            'uuid': get_uuid()
+# }
+#
+# secondm = {
+#     "due_date": now + relativedelta(days=21),
+#     "name": "Kickoff meeting",
+#     "objective": "Prum Lead understands the project deliverables " "and goals",
+#     "audience": ["lead", "pi", "group_members"],
+#     "status": "converged",
+#     "notes": [
+#         "() Schedule the meeting",
+#         "() Have the meeting, take good notes",
+#         "() Update the prum milestones with plan",
+#     ],
+#     "progress": {"text": "", "slides_urls": []},
+#     "type": "meeting",
+#     "uuid": get_uuid(),
+# }
