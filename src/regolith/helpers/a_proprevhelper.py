@@ -9,7 +9,7 @@ from gooey import GooeyParser
 from regolith.dates import month_to_str_int
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.tools import all_docs_from_collection
+from regolith.tools import all_docs_from_collection, strip_str
 
 ALLOWED_TYPES = ["nsf", "doe", "other"]
 ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress", "submitted", "cancelled"]
@@ -20,18 +20,21 @@ def subparser(subpi):
     if isinstance(subpi, GooeyParser):
         date_kwargs["widget"] = "DateChooser"
 
-    subpi.add_argument("name", help="pi first name space last name in quotes", default=None)
-    subpi.add_argument("type", choices=ALLOWED_TYPES, help="Report type", default=None)
-    subpi.add_argument("due_date", help="Due date", **date_kwargs)
+    subpi.add_argument("name", help="pi first name space last name in quotes", default=None, type=strip_str)
+    subpi.add_argument("type", choices=ALLOWED_TYPES, help="Report type", default=None, type=strip_str)
+    subpi.add_argument("due_date", help="Due date", type=strip_str, **date_kwargs)
     subpi.add_argument(
         "-d",
         "--database",
         help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
+        type=strip_str,
     )
-    subpi.add_argument("-q", "--requester", help="Name of the Program officer requesting")
-    subpi.add_argument("-r", "--reviewer", help="name of the reviewer.  Defaults to sbillinge")
-    subpi.add_argument("-s", "--status", choices=ALLOWED_STATI, help="Report status", default="accepted")
-    subpi.add_argument("-t", "--title", help="the title of the proposal")
+    subpi.add_argument("-q", "--requester", help="Name of the Program officer requesting", type=strip_str)
+    subpi.add_argument("-r", "--reviewer", help="name of the reviewer.  Defaults to sbillinge", type=strip_str)
+    subpi.add_argument(
+        "-s", "--status", choices=ALLOWED_STATI, help="Report status", default="accepted", type=strip_str
+    )
+    subpi.add_argument("-t", "--title", help="the title of the proposal", type=strip_str)
     return subpi
 
 

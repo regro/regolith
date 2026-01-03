@@ -9,7 +9,7 @@ from gooey import GooeyParser
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.tools import all_docs_from_collection, get_pi_id
+from regolith.tools import all_docs_from_collection, get_pi_id, strip_str
 
 TARGET_COLL = "proposals"
 
@@ -30,16 +30,12 @@ def subparser(subpi):
         int_kwargs["widget"] = "IntegerField"
 
     # Do not delete --database arg
+    subpi.add_argument("name", help="A short but unique name for the proposal", type=strip_str)
+    subpi.add_argument("amount", help="value of award", type=strip_str)
+    subpi.add_argument("title", help="Actual title of the proposal", type=strip_str)
     subpi.add_argument(
-        "name",
-        help="A short but unique name for the proposal",
+        "--begin-date", help="The begin date for the proposed grant ", type=strip_str, **date_kwargs
     )
-    subpi.add_argument(
-        "amount",
-        help="value of award",
-    )
-    subpi.add_argument("title", help="Actual title of the proposal")
-    subpi.add_argument("--begin-date", help="The begin date for the proposed grant ", **date_kwargs)
     subpi.add_argument(
         "--duration",
         help="The duration for the proposed grant in months. " "Please enter either an end date or a duration. ",
@@ -48,10 +44,11 @@ def subparser(subpi):
     subpi.add_argument(
         "--end-date",
         help="The end date for the proposed grant." " Please enter either an " "end date or a duration",
+        type=strip_str,
         **date_kwargs,
     )
-    subpi.add_argument("--due-date", help="The due date for the proposal", **date_kwargs)
-    subpi.add_argument("-a", "--authors", nargs="+", help="Other investigator names", default=[])
+    subpi.add_argument("--due-date", help="The due date for the proposal", type=strip_str, **date_kwargs)
+    subpi.add_argument("-a", "--authors", nargs="+", help="Other investigator names", default=[], type=strip_str)
     subpi.add_argument(
         "--not-cpp",
         action="store_true",
@@ -61,12 +58,20 @@ def subparser(subpi):
         "--other-agencies",
         help="Other agencies to which the proposal has been " "submitted. Defaults to None",
         default="None",
+        type=strip_str,
     )
     subpi.add_argument(
-        "-i", "--institution", help="The institution where the work will primarily " "be carried out", default=""
+        "-i",
+        "--institution",
+        help="The institution where the work will primarily " "be carried out",
+        default="",
+        type=strip_str,
     )
     subpi.add_argument(
-        "-p", "--pi", help="ID of principal investigator. Defaults to " "group pi id in regolithrc.json"
+        "-p",
+        "--pi",
+        help="ID of principal investigator. Defaults to " "group pi id in regolithrc.json",
+        type=strip_str,
     )
     subpi.add_argument(
         "--months-academic",
@@ -89,17 +94,27 @@ def subparser(subpi):
         "--scope",
         help="Scope of project and statement of any overlaps " "with other current and pending grants",
         default="",
+        type=strip_str,
     )
-    subpi.add_argument("-f", "--funder", help="Agency where the proposal is being submitted", default="")
-    subpi.add_argument("-n", "--notes", nargs="+", help="Anything to note", default=[], **notes_kwargs)
     subpi.add_argument(
-        "-c", "--currency", help="Currency in which amount is specified. Defaults to USD", default="USD"
+        "-f", "--funder", help="Agency where the proposal is being submitted", default="", type=strip_str
+    )
+    subpi.add_argument(
+        "-n", "--notes", nargs="+", help="Anything to note", default=[], type=strip_str, **notes_kwargs
+    )
+    subpi.add_argument(
+        "-c",
+        "--currency",
+        help="Currency in which amount is specified. Defaults to USD",
+        default="USD",
+        type=strip_str,
     )
     subpi.add_argument(
         "--database",
         help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
+        type=strip_str,
     )
-    subpi.add_argument("--date", help="The date that will be used for testing.", **date_kwargs)
+    subpi.add_argument("--date", help="The date that will be used for testing.", type=strip_str, **date_kwargs)
     return subpi
 
 

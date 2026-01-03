@@ -8,7 +8,7 @@ from gooey import GooeyParser
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.schemas import alloweds
-from regolith.tools import all_docs_from_collection, get_pi_id
+from regolith.tools import all_docs_from_collection, get_pi_id, strip_str
 
 TARGET_COLL = "expenses"
 
@@ -188,9 +188,12 @@ def subparser(subpi):
         notes_gooey_kwargs["widget"] = "Textarea"
         date_gooey_kwargs["widget"] = "DateChooser"
 
-    subpi.add_argument("name", help="A short name for the expense", default=None)
+    subpi.add_argument("name", help="A short name for the expense", default=None, type=strip_str)
     subpi.add_argument(
-        "purpose", help="A short description of the business " "purpose of the expense", default=None
+        "purpose",
+        help="A short description of the business " "purpose of the expense",
+        default=None,
+        type=strip_str,
     )
 
     subpi.add_argument(
@@ -207,12 +210,14 @@ def subparser(subpi):
         "--begin-date",
         help="Input begin date for this expense. " "Defaults to today's date",
         **date_gooey_kwargs,
+        type=strip_str,
     )
     subpi.add_argument(
         "-e,",
         "--end-date",
         help="Input end date for this expense. " "Defaults to today's date",
         **date_gooey_kwargs,
+        type=strip_str,
     )
     subpi.add_argument(
         "-g",
@@ -220,6 +225,7 @@ def subparser(subpi):
         nargs="+",
         help="grant, or list of grants that cover this expense. Defaults to tbd",
         default="tbd",
+        type=strip_str,
     )
     subpi.add_argument(
         "-s",
@@ -228,20 +234,23 @@ def subparser(subpi):
         help=f"status, from {EXPENSES_STATI}. Default is unsubmitted",
         default="unsubmitted",
     )
-    subpi.add_argument("-w", "--where", help="Where the expense has been submitted.", default="")
+    subpi.add_argument("-w", "--where", help="Where the expense has been submitted.", default="", type=strip_str)
     subpi.add_argument(
         "-n",
         "--notes",
         nargs="+",
         help="List of notes for the expense. Defaults to empty list",
         default=[],
-        **notes_gooey_kwargs,
+        type=strip_str**notes_gooey_kwargs,
     )
-    subpi.add_argument("-y", "--payee", help="payee of the expense. defaults to rc.default_user_id")
+    subpi.add_argument(
+        "-y", "--payee", help="payee of the expense. defaults to rc.default_user_id", type=strip_str
+    )
     # Do not delete --database arg
     subpi.add_argument(
         "--database",
         help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
+        type=strip_str,
     )
     return subpi
 
