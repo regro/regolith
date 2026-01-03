@@ -43,6 +43,7 @@ from regolith.tools import (
     number_suffix,
     remove_duplicate_docs,
     search_collection,
+    strip_str,
     update_schemas,
     validate_meeting,
 )
@@ -3483,4 +3484,14 @@ tga = [
 def test_get_appointments(tga):
     expected = tga[3]
     actual = get_appointments(tga[0], tga[1], tga[2])
+    assert expected == actual
+
+
+tstr = [("string", "string"), ("string ", "string"), (" string", "string")]
+
+
+@pytest.mark.parametrize("tstr", tstr)
+def test_strip_string(tstr):
+    expected = tstr[1]
+    actual = strip_str(tstr[0])
     assert expected == actual
