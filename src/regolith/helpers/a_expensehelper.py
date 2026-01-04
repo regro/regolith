@@ -241,7 +241,8 @@ def subparser(subpi):
         nargs="+",
         help="List of notes for the expense. Defaults to empty list",
         default=[],
-        type=strip_str**notes_gooey_kwargs,
+        type=strip_str,
+        **notes_gooey_kwargs,
     )
     subpi.add_argument(
         "-y", "--payee", help="payee of the expense. defaults to rc.default_user_id", type=strip_str
