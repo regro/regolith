@@ -12,7 +12,7 @@ from gooey import GooeyParser
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.tools import all_docs_from_collection, get_pi_id
+from regolith.tools import all_docs_from_collection, get_pi_id, strip_str
 
 # from regolith.schemas import MILESTONE_TYPES
 
@@ -25,14 +25,15 @@ def subparser(subpi):
     if isinstance(subpi, GooeyParser):
         date_kwargs["widget"] = "DateChooser"
 
-    subpi.add_argument("name", help="A short but unique name for the projectum", default=None)
-    subpi.add_argument("lead", help="id of the group lead or tbd", default=None)
-    subpi.add_argument("-n", "--notes", nargs="+", help="Anything to note", default=[])
-    subpi.add_argument("-d", "--description", help="Slightly longer description of the projectum")
+    subpi.add_argument("name", type=strip_str, help="A short but unique name for the projectum", default=None)
+    subpi.add_argument("lead", type=strip_str, help="id of the group lead or tbd", default=None)
+    subpi.add_argument("-n", "--notes", type=strip_str, nargs="+", help="Anything to note", default=[])
+    subpi.add_argument("-d", "--description", type=strip_str, help="Slightly longer description of the projectum")
     subpi.add_argument(
         "-c",
         "--collaborators",
         nargs="+",
+        type=strip_str,
         help="list of outside collaborator ids separated by spaces, "
         "'aeinstein efermi'.  Builders will get the full names "
         "from the contacts collection",
@@ -41,26 +42,37 @@ def subparser(subpi):
         "-m",
         "--group-members",
         nargs="+",
+        type=strip_str,
         help="list of group member ids, e.g., 'astudent acolleague'. "
         "Builders will get full names from people collection."
         "Do not add the lead or the group"
         "the pi who are added by default.",
     )
     subpi.add_argument(
-        "-g", "--grants", nargs="+", help="grant or (occasionally) list of grants that support this work"
+        "-g",
+        "--grants",
+        type=strip_str,
+        nargs="+",
+        help="grant or (occasionally) list of grants that support this work",
     )
-    subpi.add_argument("-u", "--due-date", help="proposed due date for the deliverable", **date_kwargs)
+    subpi.add_argument(
+        "-u", "--due-date", type=strip_str, help="proposed due date for the deliverable", **date_kwargs
+    )
     subpi.add_argument(
         "--checklist", action="store_true", help="Use this to turn the prum into a paper submission" "checklist."
     )
     # Do not delete --database arg
     subpi.add_argument(
         "--database",
+        type=strip_str,
         help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
     )
     # Do not delete --date arg
     subpi.add_argument(
-        "--date", help="The begin_date for the projectum  Defaults to " "today's date.", **date_kwargs
+        "--date",
+        type=strip_str,
+        help="The begin_date for the projectum  Defaults to " "today's date.",
+        **date_kwargs,
     )
     return subpi
 

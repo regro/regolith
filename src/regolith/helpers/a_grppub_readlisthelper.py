@@ -7,7 +7,7 @@ from gooey import GooeyParser
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.tools import all_docs_from_collection, get_tags
+from regolith.tools import all_docs_from_collection, get_tags, strip_str
 
 ALLOWED_TYPES = ["nsf", "doe", "other"]
 ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress", "submitted", "cancelled"]
@@ -20,6 +20,7 @@ def subparser(subpi):
 
     subpi.add_argument(
         "tags",
+        type=strip_str,
         help="list of tags, separated by spaces, to use "
         "to find papers in citations collection that "
         "will be added to the list. type 'all' if building"
@@ -34,6 +35,7 @@ def subparser(subpi):
     subpi.add_argument(
         "-t",
         "--title",
+        type=strip_str,
         help="A title for the list that will be "
         "rendered when the list is built. Required if "
         "this is new list.",
@@ -41,10 +43,12 @@ def subparser(subpi):
     subpi.add_argument(
         "-p",
         "--purpose",
+        type=strip_str,
         help="The purpose or intended use for the reading. This will " "not be rendered when the list is built",
     )
     subpi.add_argument(
         "--database",
+        type=strip_str,
         help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
     )
     subpi.add_argument("--date", help="The date that will be used for testing.", **date_kwargs)

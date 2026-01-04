@@ -14,6 +14,7 @@ from regolith.tools import (
     get_pi_id,
     key_value_pair_filter,
     print_task,
+    strip_str,
 )
 
 TARGET_COLL = "todos"
@@ -33,15 +34,19 @@ def subparser(subpi):
         help="Enter the index of a certain task in the enumerated list to mark as finished.",
         type=int,
     )
-    subpi.add_argument("--end-date", help="Add the end date of the task. Default is today.", **date_kwargs)
+    subpi.add_argument(
+        "--end-date", type=strip_str, help="Add the end date of the task. Default is today.", **date_kwargs
+    )
     subpi.add_argument(
         "-t",
         "--assigned-to",
+        type=strip_str,
         help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ",
     )
     subpi.add_argument(
         "-b",
         "--assigned-by",
+        type=strip_str,
         nargs="?",
         const="default_id",
         help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ",
@@ -49,12 +54,14 @@ def subparser(subpi):
     subpi.add_argument(
         "-f",
         "--filter",
+        type=strip_str,
         nargs="+",
         help="Search this collection by giving key element pairs. "
         "'-f description paper' will return tasks with description containing 'paper' ",
     )
     subpi.add_argument(
         "--date",
+        type=strip_str,
         help="Enter a date such that the helper can calculate how many days are left "
         "from that date to the due-date. Default is today.",
         **date_kwargs,

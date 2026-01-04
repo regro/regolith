@@ -14,7 +14,7 @@ from regolith.dates import get_due_date
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.schemas import alloweds
-from regolith.tools import all_docs_from_collection, fragment_retrieval, get_uuid
+from regolith.tools import all_docs_from_collection, fragment_retrieval, get_uuid, strip_str
 
 TARGET_COLL = "projecta"
 MILESTONE_TYPES = alloweds.get("MILESTONE_TYPES")
@@ -26,29 +26,42 @@ def subparser(subpi):
     if isinstance(subpi, GooeyParser):
         date_kwargs["widget"] = "DateChooser"
 
-    subpi.add_argument("-i", "--milestone_uuid", help="The uuid of a milestone. " "Takes a full or partial uuid.")
+    subpi.add_argument(
+        "-i", "--milestone_uuid", type=strip_str, help="The uuid of a milestone. " "Takes a full or partial uuid."
+    )
     subpi.add_argument(
         "-p",
         "--projectum_id",
+        type=strip_str,
         help="The id of the projectum. If you "
         "opt for this the program will assume "
         "you are adding a new milestone "
         "to the specified projectum.",
     )
     subpi.add_argument(
-        "-u", "--due-date", help="New due date of the milestone. " "Required for a new milestone.", **date_kwargs
+        "-u",
+        "--due-date",
+        type=strip_str,
+        help="New due date of the milestone. " "Required for a new milestone.",
+        **date_kwargs,
     )
     # Do not delete --database arg
     subpi.add_argument(
         "--database",
+        type=strip_str,
         help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
     )
     subpi.add_argument("-f", "--finish", action="store_true", help="Finish milestone. ")
-    subpi.add_argument("-n", "--name", help="Name of the milestone. " "Required for a new milestone.")
-    subpi.add_argument("-o", "--objective", help="Objective of the milestone. " "Required for a new milestone.")
+    subpi.add_argument(
+        "-n", "--name", type=strip_str, help="Name of the milestone. " "Required for a new milestone."
+    )
+    subpi.add_argument(
+        "-o", "--objective", type=strip_str, help="Objective of the milestone. " "Required for a new milestone."
+    )
     subpi.add_argument(
         "-s",
         "--status",
+        type=strip_str,
         help="Status of the milestone/deliverable: "
         f"{*PROJECTUM_STATI, }. "
         "Defaults to proposed for a new milestone.",
@@ -56,16 +69,18 @@ def subparser(subpi):
     subpi.add_argument(
         "-t",
         "--type",
+        type=strip_str,
         help="Type of the milestone: " f"{*MILESTONE_TYPES, } " "Defaults to meeting for a new milestone.",
     )
     subpi.add_argument(
         "-a",
         "--audience",
+        type=strip_str,
         nargs="+",
         help="Audience of the milestone. " "Defaults to ['lead', 'pi', 'group_members'] for a new milestone.",
     )
-    subpi.add_argument("--notes", nargs="+", help="Any notes you want to add to the milestone.")
-    subpi.add_argument("--date", help="The date that will be used for testing.", **date_kwargs)
+    subpi.add_argument("--notes", type=strip_str, nargs="+", help="Any notes you want to add to the milestone.")
+    subpi.add_argument("--date", type=strip_str, help="The date that will be used for testing.", **date_kwargs)
     return subpi
 
 

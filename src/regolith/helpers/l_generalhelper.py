@@ -2,16 +2,17 @@
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, search_collection
+from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, search_collection, strip_str
 
 HELPER_TARGET = "lister"
 
 
 def subparser(subpi):
-    subpi.add_argument("coll", help="Collection that the lister is going to list from.")
+    subpi.add_argument("coll", type=strip_str, help="Collection that the lister is going to list from.")
     subpi.add_argument(
         "-f",
         "--kv-filter",
+        type=strip_str,
         nargs="+",
         help="Search the given collection by key-value pairs. "
         "e.g. 'regolith helper lister -f name simon' will "
@@ -20,6 +21,7 @@ def subparser(subpi):
     subpi.add_argument(
         "-r",
         "--return-fields",
+        type=strip_str,
         nargs="+",
         help="Specify from which keys to print values. "
         "e.g. 'regolith helper lister people -r name status title' "

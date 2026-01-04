@@ -7,7 +7,7 @@ from gooey import GooeyParser
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.tools import all_docs_from_collection, fragment_retrieval
+from regolith.tools import all_docs_from_collection, fragment_retrieval, strip_str
 
 TARGET_COLL = "institutions"
 
@@ -19,6 +19,7 @@ def subparser(subpi):
 
     subpi.add_argument(
         "institution_id",
+        type=strip_str,
         help="id of the institution, e.g., columbiau. "
         "If an index is not specified, this will return "
         "a numbered list of all institutions that contain this id "
@@ -26,43 +27,59 @@ def subparser(subpi):
         "in the list. #1 is always used for a new institution.",
     )
     subpi.add_argument("-i", "--index", help="Index of the item in the enumerated list to update.", type=int)
-    subpi.add_argument("-n", "--name", help="Full name of the institution")
-    subpi.add_argument("--city", help="The city where the institution is. " "Required for a new institution.")
+    subpi.add_argument("-n", "--name", type=strip_str, help="Full name of the institution")
+    subpi.add_argument(
+        "--city", type=strip_str, help="The city where the institution is. " "Required for a new institution."
+    )
     subpi.add_argument(
         "--state",
+        type=strip_str,
         help="The state where the institution is. "
         "Required for a new institution if institution's country is US.",
     )
     subpi.add_argument(
         "--zip",
+        type=strip_str,
         help="zipcode of the institution. " "Required for a new institution if institution's country is US.",
     )
-    subpi.add_argument("--country", help="The country where the institution is. " "Required for a new institution")
     subpi.add_argument(
-        "-a", "--aka", nargs="+", help="List of all the different names this " "institution is known by."
+        "--country", type=strip_str, help="The country where the institution is. " "Required for a new institution"
     )
-    subpi.add_argument("--dept-id", help="dept_id, e.g. physics.")
+    subpi.add_argument(
+        "-a",
+        "--aka",
+        nargs="+",
+        type=strip_str,
+        help="List of all the different names this " "institution is known by.",
+    )
+    subpi.add_argument("--dept-id", type=strip_str, help="dept_id, e.g. physics.")
     subpi.add_argument(
         "--dept-name",
+        type=strip_str,
         help="Department canonical name, e.g., Department of Physics. "
         "Required if --dept-id supplied and it is a new department",
     )
-    subpi.add_argument("--dept-aka", nargs="+", help="Department aliases, e.g., Physics Dept.")
-    subpi.add_argument("--school-id", help="id for the school, e.g., SEAS.")
+    subpi.add_argument("--dept-aka", type=strip_str, nargs="+", help="Department aliases, e.g., Physics Dept.")
+    subpi.add_argument("--school-id", type=strip_str, help="id for the school, e.g., SEAS.")
     subpi.add_argument(
         "--school-name",
+        type=strip_str,
         help="Full canonical name, e.g., School of Engineering and Applied Science. "
         "Required if --school-id supplied and it is a new school",
     )
-    subpi.add_argument("--school-aka", nargs="+", help="School aliases.")
+    subpi.add_argument("--school-aka", type=strip_str, nargs="+", help="School aliases.")
     # Do not delete --database arg
     subpi.add_argument(
         "--database",
+        type=strip_str,
         help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
     )
     # Do not delete --date arg
     subpi.add_argument(
-        "--date", help="The date when the institution was created. " "Defaults to today's date.", **date_kwargs
+        "--date",
+        type=strip_str,
+        help="The date when the institution was created. " "Defaults to today's date.",
+        **date_kwargs,
     )
     return subpi
 

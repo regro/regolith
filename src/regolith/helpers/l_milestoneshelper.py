@@ -16,7 +16,7 @@ from regolith.schemas import (
     PROJECTUM_PAUSED_STATI,
     alloweds,
 )
-from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, key_value_pair_filter
+from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, key_value_pair_filter, strip_str
 
 PROJECTUM_STATI = alloweds.get("PROJECTUM_STATI")
 TARGET_COLL = "projecta"
@@ -48,12 +48,16 @@ def subparser(subpi):
         f"u_milestone to see those.",
     )
     subpi.add_argument(
-        "-l", "--lead", help="Filter milestones for this project lead specified as an ID, " "e.g., sbillinge"
+        "-l",
+        "--lead",
+        help="Filter milestones for this project lead specified as an ID, " "e.g., sbillinge",
+        type=strip_str,
     )
     subpi.add_argument(
         "-p",
         "--person",
         help="Filter milestones for this person whether lead or not, specified " "by id, e.g., sbillinge",
+        type=strip_str,
     )
     subpi.add_argument(
         "-c", "--current", action="store_true", help="Same behavior as default.  Here for consistency"
@@ -75,17 +79,21 @@ def subparser(subpi):
         help=f"Filter milestones for these stati from {*PROJECTUM_STATI, }. "
         f"Default is active projecta, i.e. {*PROJECTUM_ACTIVE_STATI, }",
         default=None,
+        type=strip_str,
         **listbox_kwargs,
     )
     subpi.add_argument("--all", action="store_true", help="Lists all milestones in general")
     # The --filter and --keys flags should be in every lister
-    subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs")
+    subpi.add_argument(
+        "-f", "--filter", nargs="+", help="Search this collection by giving key element pairs", type=strip_str
+    )
     subpi.add_argument(
         "-k",
         "--keys",
         nargs="+",
         help="Specify what keys to return values from when running "
         "--filter. If no argument is given the default is just the id.",
+        type=strip_str,
     )
     return subpi
 

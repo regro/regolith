@@ -3,7 +3,7 @@ links to a projectum's Projectum Agenda Log."""
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.tools import all_docs_from_collection, fragment_retrieval
+from regolith.tools import all_docs_from_collection, fragment_retrieval, strip_str
 
 TARGET_COLL = "projecta"
 
@@ -11,19 +11,22 @@ TARGET_COLL = "projecta"
 def subparser(subpi):
     subpi.add_argument(
         "projectum_id",
+        type=strip_str,
         help="the ID or fragment of the ID of the " "Projectum to be updated, e.g., " "vl_m.",
         default=None,
     )
-    subpi.add_argument("log_url", help="Google Doc url link to project's Projectum Agenda Log")
+    subpi.add_argument("log_url", type=strip_str, help="Google Doc url link to project's Projectum Agenda Log")
     subpi.add_argument(
         "-i",
         "--index",
+        type=strip_str,
         help="The index of the id you would like " "to update, from the returned list " "of projectum ids.",
     )
     # Do not delete --database arg
     subpi.add_argument(
         "-d",
         "--database",
+        type=strip_str,
         help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
     )
     return subpi

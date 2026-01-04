@@ -7,7 +7,7 @@ from gooey import GooeyParser
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.tools import all_docs_from_collection, fragment_retrieval
+from regolith.tools import all_docs_from_collection, fragment_retrieval, strip_str
 
 TARGET_COLL = "projecta"
 
@@ -18,13 +18,18 @@ def subparser(subpi):
         date_kwargs["widget"] = "DateChooser"
 
     subpi.add_argument(
-        "projectum_id", help="the ID or fragment of the ID of the projectum to be updated, e.g., 20sb"
+        "projectum_id",
+        type=strip_str,
+        help="the ID or fragment of the ID of the projectum to be updated, e.g., 20sb",
     )
-    subpi.add_argument("--end-date", help="End date of the projectum. " "Defaults to today.", **date_kwargs)
+    subpi.add_argument(
+        "--end-date", type=strip_str, help="End date of the projectum. " "Defaults to today.", **date_kwargs
+    )
     # Do not delete --database arg
     subpi.add_argument(
         "-d",
         "--database",
+        type=strip_str,
         help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
     )
     return subpi

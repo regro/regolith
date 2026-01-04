@@ -9,7 +9,13 @@ from regolith.dates import get_dates
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.sorters import position_key
-from regolith.tools import all_docs_from_collection, fuzzy_retrieval, get_appointments, merge_collections_superior
+from regolith.tools import (
+    all_docs_from_collection,
+    fuzzy_retrieval,
+    get_appointments,
+    merge_collections_superior,
+    strip_str,
+)
 
 # print([k for k,v in chained_db['people'].items()])
 
@@ -21,16 +27,20 @@ def daterange(date1, date2):
 
 
 def subparser(subpi):
-    subpi.add_argument("-g", "--grant", help="grant id for the grant you want to find appointments.")
+    subpi.add_argument(
+        "-g", "--grant", type=strip_str, help="grant id for the grant you want to find appointments."
+    )
     subpi.add_argument(
         "-b",
         "--begin-date",
+        type=strip_str,
         help="effort reporting period begins on this date, format YYYY-MM-DD. "
         "Attestations run from the beginning to the end of the grant.",
     )
     subpi.add_argument(
         "-e",
         "--end-date",
+        type=strip_str,
         help="effort reporting period ends on this date. "
         "Attestations run from the beginning to the end of the grant.",
     )

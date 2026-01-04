@@ -9,7 +9,7 @@ from gooey import GooeyParser
 from regolith.chained_db import _convert_to_dict
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.tools import all_docs_from_collection, fragment_retrieval, get_pi_id, get_uuid
+from regolith.tools import all_docs_from_collection, fragment_retrieval, get_pi_id, get_uuid, strip_str
 
 TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]
@@ -24,16 +24,19 @@ def subparser(subpi):
         int_kwargs["gooey_options"] = {"min": 0, "max": 10000}
     subpi.add_argument(
         "description",
+        type=strip_str,
         help="the description of the to_do task. If the description has more than one "
         "word, please enclose it in quotation marks.",
         default=None,
     )
     subpi.add_argument(
         "due_date",
+        type=strip_str,
         help="Due date of the task, in days from today (integer), or " "as a date in iso format (yyyy-mm-dd)",
     )
     subpi.add_argument(
         "duration",
+        type=int,
         help="The estimated duration the task will take in minutes (integer) "
         "e.g., 60 would be a duration of 1 hour.",
     )
@@ -56,6 +59,7 @@ def subparser(subpi):
     subpi.add_argument(
         "-t",
         "--tags",
+        type=strip_str,
         nargs="+",
         help="Tags to be associated with this task.  Enter as single words separated by spaces. "
         "The todo list can be filtered by these tags",
@@ -63,12 +67,14 @@ def subparser(subpi):
     subpi.add_argument(
         "-i",
         "--milestone_uuid",
+        type=strip_str,
         help="Add this todo as a task to the projectum milestone with this uuid"
         "Takes a full or partial milestone uuid.",
     )
     subpi.add_argument(
         "-n",
         "--notes",
+        type=strip_str,
         nargs="+",
         help="Additional notes for this task. Each note should be enclosed "
         "in quotation marks and different notes separated by spaces",
@@ -76,22 +82,28 @@ def subparser(subpi):
     subpi.add_argument(
         "-a",
         "--assigned-to",
+        type=strip_str,
         help="ID of the group member to whom the task is assigned. Default is the id saved in user.json. ",
     )
     subpi.add_argument(
         "-b",
         "--assigned-by",
+        type=strip_str,
         help="ID of the member that is assigning the task. Default is the id saved in user.json. ",
     )
-    subpi.add_argument("--begin-date", help="Begin date of the task. Default is today.", **date_kwargs)
+    subpi.add_argument(
+        "--begin-date", type=strip_str, help="Begin date of the task. Default is today.", **date_kwargs
+    )
     subpi.add_argument(
         "--database",
+        type=strip_str,
         help="The database in which the collection will be updated. "
         "Defaults to the first database in regolithrc.json if not "
         "specified.",
     )
     subpi.add_argument(
         "--date",
+        type=strip_str,
         help="Enter a date such that the helper can calculate how many days are left "
         "from that date to the deadline. Default is today.",
         **date_kwargs,

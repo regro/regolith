@@ -2460,3 +2460,9 @@ def get_appointments(person, appointments, target_grant=None):
                 (person.get("_id"), bd, ed, appt.get("loading"), round(weighted_duration, 2), appt.get("grant"))
             )
     return appointments
+
+
+def strip_str(s):
+    if isinstance(s, str):
+        return s.strip()
+    return s

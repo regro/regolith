@@ -20,6 +20,7 @@ from regolith.tools import (
     get_pi_id,
     key_value_pair_filter,
     print_task,
+    strip_str,
 )
 
 TARGET_COLL = "todos"
@@ -52,6 +53,7 @@ def subparser(subpi):
         "-t",
         "--tags",
         nargs="+",
+        type=strip_str,
         help="Filter tasks by tags. Items are returned if they contain any of the tags listed",
     )
     subpi.add_argument(
@@ -61,23 +63,27 @@ def subparser(subpi):
         choices=TODO_STATI,
         help="Filter tasks with specific stati",
         default=["started"],
+        type=strip_str,
         **listbox_kwargs,
     )
     subpi.add_argument("-o", "--outstandingreview", help="List outstanding reviews", action="store_true")
     subpi.add_argument(
         "-a",
         "--assigned-to",
+        type=strip_str,
         help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ",
     )
     subpi.add_argument(
         "-b",
         "--assigned-by",
         nargs="?",
+        type=strip_str,
         const="default_id",
         help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ",
     )
     subpi.add_argument(
         "--date",
+        type=strip_str,
         help="Enter a date such that the helper can calculate how many days are left "
         "from that date to the due-date. Default is today.",
         **date_kwargs,
@@ -86,6 +92,7 @@ def subparser(subpi):
         "-f",
         "--filter",
         nargs="+",
+        type=strip_str,
         help="Search this collection by giving key element pairs. '-f description paper' will return tasks "
         "with description containing 'paper' ",
     )

@@ -9,7 +9,7 @@ from nameparser import HumanName
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.tools import all_docs_from_collection, fragment_retrieval
+from regolith.tools import all_docs_from_collection, fragment_retrieval, strip_str
 
 TARGET_COLL = "contacts"
 
@@ -21,14 +21,17 @@ def subparser(subpi):
         date_kwargs["widget"] = "DateChooser"
         notes_kwargs["widget"] = "Textarea"
 
-    subpi.add_argument("fragmentname", help="Fragment of name, id, or aliases to search for contacts.")
+    subpi.add_argument(
+        "fragmentname", type=strip_str, help="Fragment of name, id, or aliases to search for contacts."
+    )
     subpi.add_argument(
         "-i", "--index", help="Index of the item in the enumerated list chosen to update.", type=int
     )
-    subpi.add_argument("-n", "--name", help="Full name. Required if new contact.")
+    subpi.add_argument("-n", "--name", type=strip_str, help="Full name. Required if new contact.")
     subpi.add_argument(
         "-o",
         "--institution",
+        type=strip_str,
         help="Person's institution. It can be "
         "institution id or anything in the "
         "aka or name from institutions collection. "
@@ -37,18 +40,22 @@ def subparser(subpi):
     subpi.add_argument(
         "-t",
         "--notes",
+        type=strip_str,
         nargs="+",
         help="Notes.  As many notes as you like, each one in "
         "quotes and separated by a space, such as where "
         "and when met, what discussed.",
         **notes_kwargs,
     )
-    subpi.add_argument("-d", "--department", help="Department at the institution.")
+    subpi.add_argument("-d", "--department", type=strip_str, help="Department at the institution.")
     subpi.add_argument(
-        "--id", help="id of the person, e.g., first letter first name " "plus last name, but unique."
+        "--id",
+        type=strip_str,
+        help="id of the person, e.g., first letter first name " "plus last name, but unique.",
     )
     subpi.add_argument(
         "--aliases",
+        type=strip_str,
         nargs="+",
         help="All the different ways that the person may "
         "be referred to as.  As many as you like, in "
@@ -56,11 +63,15 @@ def subparser(subpi):
     )
     # Do not delete --date arg
     subpi.add_argument(
-        "--date", help="The date when the contact was created. " "Defaults to today's date.", **date_kwargs
+        "--date",
+        type=strip_str,
+        help="The date when the contact was created. " "Defaults to today's date.",
+        **date_kwargs,
     )
     # Do not delete --database arg
     subpi.add_argument(
         "--database",
+        type=strip_str,
         help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
     )
     # FIXME

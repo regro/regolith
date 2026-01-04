@@ -9,7 +9,7 @@ from gooey import GooeyParser
 from regolith.dates import month_to_str_int
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.tools import all_docs_from_collection
+from regolith.tools import all_docs_from_collection, strip_str
 
 ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress", "submitted", "cancelled"]
 
@@ -21,18 +21,28 @@ def subparser(subpi):
 
     subpi.add_argument(
         "name",
+        type=strip_str,
         help="Full name, or last name, of the first author",
     )
-    subpi.add_argument("due_date", help="Due date", default="", **date_kwargs)
-    subpi.add_argument("journal", help="journal to be published in", default="")
-    subpi.add_argument("title", help="the title of the Manuscript", default="")
-    subpi.add_argument("-q", "--requester", help="name, or id in contacts, of the editor requesting the review")
-    subpi.add_argument("-s", "--status", choices=ALLOWED_STATI, help="Manuscript status", default="accepted")
-    subpi.add_argument("-d", "--submitted-date", help="Submitted date. Defaults " "to tbd", **date_kwargs)
-    subpi.add_argument("-r", "--reviewer", help="name of the reviewer. Defaults to the one saved in user.json. ")
+    subpi.add_argument("due_date", type=strip_str, help="Due date", default="", **date_kwargs)
+    subpi.add_argument("journal", type=strip_str, help="journal to be published in", default="")
+    subpi.add_argument("title", type=strip_str, help="the title of the Manuscript", default="")
+    subpi.add_argument(
+        "-q", "--requester", type=strip_str, help="name, or id in contacts, of the editor requesting the review"
+    )
+    subpi.add_argument(
+        "-s", "--status", type=strip_str, choices=ALLOWED_STATI, help="Manuscript status", default="accepted"
+    )
+    subpi.add_argument(
+        "-d", "--submitted-date", type=strip_str, help="Submitted date. Defaults " "to tbd", **date_kwargs
+    )
+    subpi.add_argument(
+        "-r", "--reviewer", type=strip_str, help="name of the reviewer. Defaults to the one saved in user.json. "
+    )
     subpi.add_argument(
         "-t",
         "--database",
+        type=strip_str,
         help="The database that will be updated. Defaults to " "first database in the regolithrc.json file.",
     )
     return subpi
