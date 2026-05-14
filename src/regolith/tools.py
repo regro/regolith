@@ -2100,6 +2100,11 @@ def get_formatted_crossref_reference(doi):
             "rerun when you have an internet connection"
         )
         return None, None
+    except Exception as e:
+        print(
+            f"request to Crossref returned error {e} for reference {doi}"
+        )
+        return None, None
 
     authorlist = [
         f"{a['given'].strip()} {a['family'].strip()}" for a in article.get("message", {}).get("author", "")
