@@ -2101,9 +2101,7 @@ def get_formatted_crossref_reference(doi):
         )
         return None, None
     except Exception as e:
-        print(
-            f"request to Crossref returned error {e} for reference {doi}"
-        )
+        print(f"request to Crossref returned error {e} for reference {doi}")
         return None, None
 
     authorlist = [
