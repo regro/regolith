@@ -41,9 +41,9 @@ class ReadingListsBuilder(LatexBuilderBase):
             for paper in rlist["papers"]:
                 dois.append(paper.get("doi", ""))
         dois = list(set(dois))
-        for item in ["tbd", ""]:
-            if item in dois:
-                dois.remove(item)
+        for bad_doi in ["tbd", ""]:
+            if bad_doi in dois:
+                dois.remove(bad_doi)
         for doi in dois:
             ref_and_date = get_formatted_crossref_reference(doi)
             formatted_refs.update({doi: ref_and_date})
