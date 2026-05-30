@@ -163,7 +163,21 @@
             "homework": 0.35,
             "midterm": 0.2
         },
-        "year": 2016
+        "year": 2016,
+        "assignments": {
+            "1some-assignment": {
+                "category": "homework",
+                "due_date": "2016-10-01",
+                "points": [3],
+                "questions": [1]
+            },
+            "2another-assignment": {
+                "category": "homework",
+                "due_date": ["2016-10-15", "2016-10-22"],
+                "points": [3],
+                "questions": [1]
+            }
+        }
     },
     "expenses": [
         {

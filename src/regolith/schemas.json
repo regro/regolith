@@ -87,6 +87,11 @@
             "required": false,
             "type": "list"
         },
+        "due_date": {
+            "description": "Deadline(s) for the assignment in ISO format (YYYY-MM-DD). Use a single date string for one deadline, or a two-element list [submission_due, review_due] when there are sequential deadlines (e.g. a PR submission deadline followed by a peer-review comment deadline).",
+            "required": false,
+            "anyof_type": ["string", "date", "list"]
+        },
         "solution": {
             "description": "path to solution file in store",
             "required": false,
