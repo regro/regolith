@@ -101,7 +101,6 @@ def find_gaps_overlaps(dateslist, overlaps_ok=False):
     -------
       True if there are no gaps or overlaps else False
     """
-
     status = True
     dateslist.sort(key=lambda x: x[0])
     for i in range(len(dateslist) - 1):
@@ -226,7 +225,6 @@ def get_dates(thing, date_field_prefix=None):
      'end_date': datetime.date(2020, 2, 29),
     }
     """
-
     datenames = ["day", "month", "year", "date"]
     if date_field_prefix:
         datenames = [f"{date_field_prefix}_{datename}" for datename in datenames]

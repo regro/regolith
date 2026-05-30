@@ -95,7 +95,7 @@ the path to the file in the store.
 This way the figure can be accessed across machines in a uniform way.
 
 Note that this isn't limited to figures, any file can be stored in the store,
-so if there were boilerplate or short chunks which could be re-used then
+so if there were boilerplate or short chunks which could be reused then
 they could be stored centrally and retrieved as needed.
 
 Also note that we could have also used the builder to replace other pieces of

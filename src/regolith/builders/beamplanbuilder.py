@@ -59,8 +59,9 @@ class BeamPlanBuilder(LatexBuilderBase):
         return None
 
     def _gather_info(self, bt, docs):
-        """Query information from the list of documents. Return a table
-        as the summary of the plans and a list of experiment plans.
+        """Query information from the list of documents.
+
+        Return a table as the summary of the plans and a list of experiment plans.
 
         Parameters
         ----------

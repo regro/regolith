@@ -34,7 +34,6 @@ class ReadingListsBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template."""
-
         # build the collection of formatted references so that we only go
         # and fetch the formatted references once per doi
         dois, formatted_refs = [], {}
@@ -42,10 +41,9 @@ class ReadingListsBuilder(LatexBuilderBase):
             for paper in rlist["papers"]:
                 dois.append(paper.get("doi", ""))
         dois = list(set(dois))
-        for item in ["tbd", ""]:
-            if item in dois:
-                dois.remove("tbd")
-                dois.remove("")
+        for bad_doi in ["tbd", ""]:
+            if bad_doi in dois:
+                dois.remove(bad_doi)
         for doi in dois:
             ref_and_date = get_formatted_crossref_reference(doi)
             formatted_refs.update({doi: ref_and_date})

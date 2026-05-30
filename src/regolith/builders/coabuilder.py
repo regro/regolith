@@ -29,7 +29,6 @@ def get_advisors_name_inst(advisee, rc):
 
     Yield (last name, first name, institution name).
     """
-
     phd_advisors = [
         {
             "name": i.get("advisor", "missing name"),
@@ -595,7 +594,6 @@ class RecentCollaboratorsBuilder(BuilderBase):
 
     def render_template2(self, person_info, collabs, **kwargs):
         """Render the doe template."""
-
         template2 = self.template2
         num_rows = len(collabs)
         wb = openpyxl.load_workbook(template2)
