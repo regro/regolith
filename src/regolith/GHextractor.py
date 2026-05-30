@@ -63,7 +63,6 @@ class GitHubRepoExtractor:
         -------
         The dictionary of releases for the repository.
         """
-
         return self._get(f"/repos/{self.owner}/{self.repo}/releases")
 
     def get_file(self, path: str) -> Optional[str]:

@@ -1761,7 +1761,6 @@ def key_value_pair_filter(collection, arguments):
     This would get all people for which their name contains the string 'ab'
     and whose position is professor and return them
     """
-
     if len(arguments) % 2 != 0:
         raise RuntimeError("Error: Number of keys and values do not match")
     elements = collection
@@ -1863,7 +1862,6 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
     >>> collect_appts(people, filter_key=['grant', 'grant'], filter_value=['mrsec14', 'dmref19'])
     This would return all appointments on the grants 'mrsec14' and 'dmref19' irrespective of their dates.
     """
-
     if bool(begin_date) ^ bool(end_date):
         raise RuntimeError("please enter both begin date and end date or neither")
     filter_key = [filter_key] if not isinstance(filter_key, list) else filter_key
@@ -1946,7 +1944,6 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
          datetime.date(2020, 9, 2): {'student_days': 4.0, 'postdoc_days': 11.5, 'ss_days': 15.0}, \
          datetime.date(2020, 9, 3): {'student_days': 3.0, 'postdoc_days': 11.0, 'ss_days': 10.0}}
     """
-
     if not grant.get("budget"):
         raise ValueError("{} has no specified budget".format(grant.get("_id")))
     if bool(begin_date) ^ bool(end_date):
@@ -2087,7 +2084,6 @@ def get_formatted_crossref_reference(doi):
       the date of the reference
     returns None None in the article cannot be found given the doi
     """
-
     cr = Crossref()
     try:
         article = cr.works(ids=doi)
@@ -2203,7 +2199,6 @@ def add_to_google_calendar(event):
     Returns:
         None
     """
-
     tokendir = os.path.expanduser("~/.config/regolith/tokens/google_calendar_api")
     creds = None
     os.makedirs(tokendir, exist_ok=True)
@@ -2363,7 +2358,6 @@ def create_repo(destination_id, token_info_id, rc):
         Success message (repo target_repo has been created in talks) if repo is successfully created in target_repo
         Warning/setup messages if unsuccessful (or if repo info or token are not valid)
     """
-
     repo_info = get_target_repo_info(destination_id, rc.repos)
     token = get_target_token(token_info_id, rc.tokens)
     if repo_info and token:
@@ -2414,7 +2408,6 @@ def get_tags(coll):
     -------
     the set of all tags as a list
     """
-
     all_tags = []
     for paper in coll:
         tag_long = paper.get("tags", "")

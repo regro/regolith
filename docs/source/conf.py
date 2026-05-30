@@ -441,18 +441,19 @@ def build_cli_doc(cli):
     s += ".. code-block:: bash\n\n"
     s += indent(out, "\t") + "\n"
     if cli == "validate":
-        s += """Misc
+        s += """Misc.
 
-----
-This can also be added as a git hook by adding the following to
-``.git/hooks/pre-commit``
+             ----
+             This can also be added as a git hook by adding the following to
+             ``.git/hooks/pre-commit``
 
-.. code-block:: sh
+             .. code-block:: sh
 
-    #!/bin/sh
-    regolith validate
+                 #!/bin/sh
+                 regolith validate
 
-This can be enabled with ``chmod +x .git/hooks/pre-commit``"""
+             This can be enabled with ``chmod +x .git/hooks/pre-commit``
+             """
     with open(fn, "w") as f:
         f.write(s)
 
