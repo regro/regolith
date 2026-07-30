@@ -7,6 +7,7 @@ from copy import deepcopy
 from pathlib import Path
 from subprocess import CalledProcessError
 
+import matplotlib
 import pytest
 from pymongo import MongoClient
 from pymongo import errors as mongo_errors
@@ -15,6 +16,12 @@ from xonsh.api.os import rmtree
 
 from regolith.fsclient import dump_yaml
 from regolith.schemas import EXEMPLARS
+
+# Select a non-interactive backend before any helper imports pyplot, so that the
+# interactive backends are never loaded during the tests.  The Tk backend reads
+# uuid.uuid4().hex when it is imported, which fails in the tests that patch
+# uuid.uuid4 globally, and no test needs a display.
+matplotlib.use("Agg")
 
 OUTPUT_FAKE_DB = False  # always turn it to false after you used it
 # Currently the first two must be named test solely to match the helper map test output text
