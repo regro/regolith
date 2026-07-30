@@ -38,6 +38,15 @@ alloweds = {
     ],
     "GRANT_STATI": ["pending", "declined", "accepted", "in-prep"],
     "GRANT_ROLES": ["pi", "copi", "co-pi"],
+    "SLIDE_TYPES": [
+        "text",
+        "image",
+        "imageleft-2col",
+        "imageright-2col",
+        "animation",
+        "cork",
+        "cork_2col",
+    ],
     "MILESTONE_TYPES": [
         "mergedpr",
         "meeting",

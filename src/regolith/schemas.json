@@ -2934,6 +2934,129 @@
             "anyof_type": ["string", "integer"]
         }
     },
+    "slides": {
+        "_description": {
+            "description": "This collection contains decks of slides on a single topic, which are assembled into talks by the talks collection."
+        },
+        "_id": {
+            "description": "The unique id for the deck, which is the name the talks collection refers to it by.",
+            "required": true,
+            "type": "string"
+        },
+        "name": {
+            "description": "The human readable name of the deck.",
+            "required": false,
+            "type": "string"
+        },
+        "slides": {
+            "description": "The slides in the deck, in the order they are shown.",
+            "required": true,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "type": {
+                        "description": "The kind of slide, which selects the latex template used to lay it out.",
+                        "required": true,
+                        "type": "string",
+                        "eallowed": "SLIDE_TYPES"
+                    },
+                    "title": {
+                        "description": "The title placed at the top of the slide.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    "image": {
+                        "description": "The name of the image file to place on the slide, without its extension. It is resolved against the graphics path of the latex template.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    "caption": {
+                        "description": "The caption placed under the image.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    "fig_width": {
+                        "description": "The width of the image as a fraction of the column it is placed in.",
+                        "required": false,
+                        "anyof_type": ["float", "integer"]
+                    },
+                    "fig_rotation": {
+                        "description": "The rotation applied to the image, in degrees.",
+                        "required": false,
+                        "anyof_type": ["float", "integer"]
+                    },
+                    "imagecol_width": {
+                        "description": "The width of the image column as a fraction of the slide, for the two column slide types.",
+                        "required": false,
+                        "anyof_type": ["float", "integer"]
+                    },
+                    "intro": {
+                        "description": "The text placed above the bullets.",
+                        "required": false,
+                        "anyof_type": ["string", "list"]
+                    },
+                    "bullets": {
+                        "description": "The bulleted points making up the body of the slide.",
+                        "required": false,
+                        "anyof_type": ["string", "list"]
+                    },
+                    "outro": {
+                        "description": "The text placed below the bullets.",
+                        "required": false,
+                        "anyof_type": ["string", "list"]
+                    },
+                    "shrink": {
+                        "description": "Whether the slide is shrunk to fit its content onto one frame.",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    "n-frames": {
+                        "description": "The number of frames in the animation, for slides of the animation type.",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    "notes": {
+                        "description": "The speaker notes for the slide.",
+                        "required": false,
+                        "anyof_type": ["string", "list"]
+                    },
+                    "solution": {
+                        "description": "The answer to the question posed on the slide, for slides used in teaching.",
+                        "required": false,
+                        "anyof_type": ["string", "list"]
+                    },
+                    "paper": {
+                        "description": "The paper the content of the slide is taken from.",
+                        "required": false,
+                        "type": "dict",
+                        "schema": {
+                            "doi": {
+                                "description": "The doi of the paper.",
+                                "required": false,
+                                "type": "string"
+                            },
+                            "avatars": {
+                                "description": "The ids of the people whose avatars are shown beside the citation.",
+                                "required": false,
+                                "anyof_type": ["string", "list"]
+                            },
+                            "render": {
+                                "description": "Whether the citation is rendered on the slide.",
+                                "required": false,
+                                "type": "boolean"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "tags": {
+            "description": "The tags used to find the deck.",
+            "required": false,
+            "anyof_type": ["string", "list"]
+        }
+    },
     "software": {
         "_description": {"description": "Information about software, such as active, grants, etc."},
         "_id": {
@@ -3053,6 +3176,114 @@
             "description": "The university identifier for the student",
             "required": false,
             "type": "string"
+        }
+    },
+    "talks": {
+        "_description": {
+            "description": "This collection describes talks, which are assembled from decks in the slides collection. A talk is the reusable content, and a presentation in the presentations collection is one occasion on which it was given."
+        },
+        "_id": {
+            "description": "The unique id for the talk.",
+            "required": true,
+            "type": "string"
+        },
+        "active": {
+            "description": "Whether the talk is one that may still be given.",
+            "required": false,
+            "type": "boolean"
+        },
+        "addresses": {
+            "description": "The affiliations of the authors, in the same order as authorlist.",
+            "required": false,
+            "anyof_type": ["string", "list"]
+        },
+        "authorlist": {
+            "description": "The ids or names of the authors of the talk.",
+            "required": false,
+            "anyof_type": ["string", "list"]
+        },
+        "learning_objectives": {
+            "description": "The things the audience should take away from the talk.",
+            "required": false,
+            "anyof_type": ["string", "list"]
+        },
+        "notes": {
+            "description": "The notes made about how the talk went.",
+            "required": false,
+            "anyof_type": ["string", "list"]
+        },
+        "presentationid": {
+            "description": "The id of the presentation in the presentations collection that this talk was built for.",
+            "required": false,
+            "type": "string"
+        },
+        "presenter": {
+            "description": "The id or name of the person who gives the talk.",
+            "required": false,
+            "type": "string"
+        },
+        "talk_description": {
+            "description": "The short description of what the talk covers.",
+            "required": false,
+            "type": "string"
+        },
+        "topics": {
+            "description": "The sections of the talk, in the order they are shown. An entry is either a topic taken straight from a deck, or a supertopic gathering slides from several decks under one section heading.",
+            "required": true,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "anyof": [
+                    {
+                        "schema": {
+                            "topic": {
+                                "description": "The id of the deck in the slides collection to take slides from.",
+                                "required": true,
+                                "type": "string"
+                            },
+                            "slide_list": {
+                                "description": "The slides to take from the deck, written as python indexing syntax, either a slice such as \"[:]\" or \"[2:5]\" or a list of indices such as \"[1,4,7]\".",
+                                "required": true,
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "schema": {
+                            "supertopic": {
+                                "description": "The heading shown for the gathered section.",
+                                "required": true,
+                                "type": "string"
+                            },
+                            "topics": {
+                                "description": "The decks gathered under the heading.",
+                                "required": true,
+                                "type": "list",
+                                "schema": {
+                                    "type": "dict",
+                                    "schema": {
+                                        "topic": {
+                                            "description": "The id of the deck in the slides collection to take slides from.",
+                                            "required": true,
+                                            "type": "string"
+                                        },
+                                        "slide_list": {
+                                            "description": "The slides to take from the deck, written as python indexing syntax, either a slice such as \"[:]\" or \"[2:5]\" or a list of indices such as \"[1,4,7]\".",
+                                            "required": true,
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "year": {
+            "description": "The year the talk was written.",
+            "required": false,
+            "type": "integer"
         }
     },
     "todos": {

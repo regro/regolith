@@ -2177,6 +2177,37 @@
             "year": 2020
         }
     ],
+    "slides": {
+        "_id": "example-introduction",
+        "name": "introduction",
+        "tags": ["introduction", "overview"],
+        "slides": [
+            {
+                "type": "text",
+                "title": "What is local structure?",
+                "intro": "Three ideas underpin the rest of the talk.",
+                "bullets": ["crystals are described by an average structure", "real materials deviate from that average", "those deviations control the properties"],
+                "outro": "We will return to each of these.",
+                "shrink": false
+            },
+            {
+                "type": "imageleft-2col",
+                "title": "The nanostructure problem",
+                "image": "example_nanoparticle",
+                "caption": "A nanoparticle with a disordered surface.",
+                "fig_width": 0.9,
+                "fig_rotation": 0,
+                "imagecol_width": 0.5,
+                "bullets": ["the surface is not the same as the core"],
+                "shrink": false,
+                "paper": {
+                    "doi": "10.1107/S002188981000988X",
+                    "avatars": ["aexample"],
+                    "render": true
+                }
+            }
+        ]
+    },
     "students": {
         "_id": "Human A. Person",
         "aka": ["H. A. Person"],
@@ -2272,6 +2303,37 @@
             ]
         }
     ],
+    "talks": {
+        "_id": "2406ab_example_talk",
+        "active": true,
+        "talk_description": "An overview of the group's work on nanostructure, for a general audience.",
+        "learning_objectives": ["what a pair distribution function is", "why local structure matters for nanomaterials"],
+        "authorlist": ["A. B. Example", "C. D. Sample"],
+        "addresses": ["Department of Physics, Example University, New York, NY 10027, USA", "Department of Chemistry, Sample University, Boston, MA 02115, USA"],
+        "presenter": "aexample",
+        "presentationid": "2406ab_example_meeting",
+        "year": 2024,
+        "notes": ["the audience asked about sample preparation"],
+        "topics": [
+            {
+                "topic": "example-introduction",
+                "slide_list": "[:]"
+            },
+            {
+                "supertopic": "Local structure of materials",
+                "topics": [
+                    {
+                        "topic": "example-introduction",
+                        "slide_list": "[0]"
+                    },
+                    {
+                        "topic": "example-methods",
+                        "slide_list": "[1:3]"
+                    }
+                ]
+            }
+        ]
+    },
     "todos": [
         {"_id": "ascopatz"},
         {
