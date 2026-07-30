@@ -1512,6 +1512,64 @@ def missing_fields(affiliation):
     return [key for key, value in affiliation.items() if value == MISSING_INFO]
 
 
+AFFILIATION_STYLES = ("full", "short", "institution")
+
+
+def _is_present(value):
+    """Return true if an affiliation field holds usable text."""
+    return bool(value) and value != MISSING_INFO
+
+
+def format_affiliation(affiliation, style="full"):
+    """Return a person's affiliation as a single line of text.
+
+    The fields are joined by ", ".  Three styles are available.  The full style gives the department,
+    the institution and its address, as wanted on a manuscript.  The
+    short style gives the department and the institution, and the
+    institution style gives the institution alone, as wanted on a
+    presentation slide.  Fields that are empty, and fields that hold the
+    MISSING_INFO placeholder because get_person_affiliation was called
+    with strict=False, are left out rather than being written into the
+    line, so pass the affiliation through missing_fields first if an
+    incomplete line would be a problem.
+
+    Parameters
+    ----------
+    affiliation: dict
+        The affiliation returned by get_person_affiliation
+    style: str
+        The style of the line to build, one of "full", "short" or "institution".  Default
+        is "full"
+
+    Returns
+    -------
+    line: str
+        The affiliation fields for the style, in order, joined by ", ".  The state and the
+        zip are joined to each other by a space.  It is empty if the style has no field
+        that holds usable text
+
+    Raises
+    ------
+    ValueError
+        If the style is not one of the recognized styles
+    """
+    if style not in AFFILIATION_STYLES:
+        raise ValueError(
+            f"'{style}' is not a recognized affiliation style. Please pass one of "
+            f"{', '.join(AFFILIATION_STYLES)}."
+        )
+    parts = []
+    if style in ("full", "short"):
+        parts.append(affiliation.get("department"))
+    parts.append(affiliation.get("institution"))
+    if style == "full":
+        state_zip = " ".join(
+            field for field in (affiliation.get("state"), affiliation.get("zip")) if _is_present(field)
+        )
+        parts.extend([affiliation.get("street"), affiliation.get("city"), state_zip, affiliation.get("country")])
+    return ", ".join(part for part in parts if _is_present(part))
+
+
 def merge_collections_intersect(a, b, target_id):
     """Merge two collections such that just the intersection is
     returned.
