@@ -7,6 +7,7 @@ import requests_mock
 
 from regolith.runcontrol import DEFAULT_RC
 from regolith.tools import (
+    MISSING_INFO,
     awards_grants_honors,
     collect_appts,
     collection_str,
@@ -24,6 +25,7 @@ from regolith.tools import (
     get_appointments,
     get_formatted_crossref_reference,
     get_id_from_name,
+    get_person_affiliation,
     get_person_contact,
     get_tags,
     get_target_repo_info,
@@ -39,6 +41,7 @@ from regolith.tools import (
     merge_collections_all,
     merge_collections_intersect,
     merge_collections_superior,
+    missing_fields,
     month_and_year,
     number_suffix,
     remove_duplicate_docs,
@@ -3495,3 +3498,312 @@ def test_strip_string(tstr):
     expected = tstr[1]
     actual = strip_str(tstr[0])
     assert expected == actual
+
+
+AFFILIATION_INSTITUTIONS = [
+    {
+        "_id": "columbiau",
+        "aka": ["Columbia University", "Columbia"],
+        "name": "Columbia University",
+        "street": "500 W 120th St",
+        "city": "New York",
+        "state": "NY",
+        "zip": "10027",
+        "country": "USA",
+        "departments": {
+            "physics": {"name": "Department of Physics", "aka": ["Dept. of Physics", "Physics"]},
+            "apam": {"name": "Department of Applied Physics and Applied Mathematics", "aka": ["APAM"]},
+        },
+    },
+    {
+        # An overseas institution, which records no state or zip
+        "_id": "cambridge",
+        "aka": ["Cambridge"],
+        "name": "University of Cambridge",
+        "city": "Cambridge",
+        "country": "UK",
+        "departments": {"physics": {"name": "Cavendish Laboratory", "aka": ["Cavendish"]}},
+    },
+]
+
+AFFILIATION_PEOPLE = [
+    {
+        # A person whose current employment is the second entry in the list
+        "_id": "aeinstein",
+        "name": "Albert Einstein",
+        "aka": ["A. Einstein", "Einstein"],
+        "employment": [
+            {
+                "begin_date": "2010-01-01",
+                "end_date": "2014-12-31",
+                "organization": "cambridge",
+                "department": "physics",
+                "position": "post-doctoral scholar",
+            },
+            {
+                "begin_date": "2015-01-01",
+                "organization": "Columbia University",
+                "department": "APAM",
+                "position": "professor",
+            },
+        ],
+    },
+    {
+        # A person with no current employment, whose latest entry ended most recently
+        "_id": "mcurie",
+        "name": "Marie Curie",
+        "aka": ["M. Curie"],
+        "employment": [
+            {
+                "begin_year": 2001,
+                "end_year": 2004,
+                "organization": "cambridge",
+                "department": "Cavendish",
+                "position": "research scientist",
+            },
+            {
+                "begin_year": 2005,
+                "end_year": 2009,
+                "organization": "columbiau",
+                "department": "Dept. of Physics",
+                "position": "professor",
+            },
+        ],
+    },
+    {
+        # A person employed by an organization that is not in the institutions collection
+        "_id": "pdirac",
+        "name": "Paul Dirac",
+        "employment": [
+            {"begin_year": 2015, "organization": "Miskatonic University", "position": "professor"},
+        ],
+    },
+    {
+        # A person whose employment records no department
+        "_id": "rfeynman",
+        "name": "Richard Feynman",
+        "employment": [{"begin_year": 2015, "organization": "columbiau", "position": "professor"}],
+    },
+    {
+        # A person with no employment at all
+        "_id": "nemo",
+        "name": "Captain Nemo",
+    },
+]
+
+AFFILIATION_CONTACTS = [
+    {
+        "_id": "afriend",
+        "name": "Anthony B Friend",
+        "aka": ["A. B. Friend", "Tony Friend"],
+        "institution": "columbiau",
+        "department": "physics",
+    },
+    {
+        # A short-form person at the overseas institution, referred to by aka
+        "_id": "bfriend",
+        "name": "Bernice Friend",
+        "institution": "Cambridge",
+        "department": "Cavendish Laboratory",
+    },
+]
+
+COLUMBIA_PHYSICS_AFFILIATION = {
+    "name": "Anthony B Friend",
+    "department": "Department of Physics",
+    "institution": "Columbia University",
+    "street": "500 W 120th St",
+    "city": "New York",
+    "state": "NY",
+    "zip": "10027",
+    "country": "USA",
+    "institution_id": "columbiau",
+    "department_id": "physics",
+}
+
+
+@pytest.mark.parametrize(
+    "name_or_id, expected_affiliation",
+    [
+        # Test that a person is found and their affiliation resolved from either collection
+        # C1: A person in people whose second employment entry is current, expect the current one
+        (
+            "aeinstein",
+            {
+                "name": "Albert Einstein",
+                "department": "Department of Applied Physics and Applied Mathematics",
+                "institution": "Columbia University",
+                "street": "500 W 120th St",
+                "city": "New York",
+                "state": "NY",
+                "zip": "10027",
+                "country": "USA",
+                "institution_id": "columbiau",
+                "department_id": "apam",
+            },
+        ),
+        # C2: A person found only in contacts, expect their institution and department fields used
+        ("afriend", COLUMBIA_PHYSICS_AFFILIATION),
+        # C3: A person looked up by name, aka and mixed case, expect the same person each time
+        # 1. Canonical name
+        ("Anthony B Friend", COLUMBIA_PHYSICS_AFFILIATION),
+        # 2. An aka
+        ("Tony Friend", COLUMBIA_PHYSICS_AFFILIATION),
+        # 3. An id in the wrong case
+        ("AFriend", COLUMBIA_PHYSICS_AFFILIATION),
+        # C4: A person with no current employment, expect the entry that ended most recently
+        (
+            "mcurie",
+            {
+                "name": "Marie Curie",
+                "department": "Department of Physics",
+                "institution": "Columbia University",
+                "street": "500 W 120th St",
+                "city": "New York",
+                "state": "NY",
+                "zip": "10027",
+                "country": "USA",
+                "institution_id": "columbiau",
+                "department_id": "physics",
+            },
+        ),
+        # C5: An institution that records no state or zip, expect empty strings for those
+        (
+            "bfriend",
+            {
+                "name": "Bernice Friend",
+                "department": "Cavendish Laboratory",
+                "institution": "University of Cambridge",
+                "street": "",
+                "city": "Cambridge",
+                "state": "",
+                "zip": "",
+                "country": "UK",
+                "institution_id": "cambridge",
+                "department_id": "physics",
+            },
+        ),
+    ],
+)
+def test_get_person_affiliation(name_or_id, expected_affiliation):
+    actual = get_person_affiliation(name_or_id, AFFILIATION_PEOPLE, AFFILIATION_CONTACTS, AFFILIATION_INSTITUTIONS)
+    assert actual == expected_affiliation
+
+
+@pytest.mark.parametrize(
+    "name_or_id, expected_affiliation, expected_missing",
+    [
+        # Test that unresolvable fields become placeholders when strict is false
+        # C1: An organization absent from institutions, expect its name kept but no id or address
+        (
+            "pdirac",
+            {
+                "name": "Paul Dirac",
+                "department": MISSING_INFO,
+                "institution": "Miskatonic University",
+                "street": MISSING_INFO,
+                "city": MISSING_INFO,
+                "state": MISSING_INFO,
+                "zip": MISSING_INFO,
+                "country": MISSING_INFO,
+                "institution_id": MISSING_INFO,
+                "department_id": MISSING_INFO,
+            },
+            ["department", "street", "city", "state", "zip", "country", "institution_id", "department_id"],
+        ),
+        # C2: Employment recording no department, expect only the department fields missing
+        (
+            "rfeynman",
+            {
+                "name": "Richard Feynman",
+                "department": MISSING_INFO,
+                "institution": "Columbia University",
+                "street": "500 W 120th St",
+                "city": "New York",
+                "state": "NY",
+                "zip": "10027",
+                "country": "USA",
+                "institution_id": "columbiau",
+                "department_id": MISSING_INFO,
+            },
+            ["department", "department_id"],
+        ),
+        # C3: A person with no employment at all, expect every affiliation field missing
+        (
+            "nemo",
+            {
+                "name": "Captain Nemo",
+                "department": MISSING_INFO,
+                "institution": MISSING_INFO,
+                "street": MISSING_INFO,
+                "city": MISSING_INFO,
+                "state": MISSING_INFO,
+                "zip": MISSING_INFO,
+                "country": MISSING_INFO,
+                "institution_id": MISSING_INFO,
+                "department_id": MISSING_INFO,
+            },
+            [
+                "department",
+                "institution",
+                "street",
+                "city",
+                "state",
+                "zip",
+                "country",
+                "institution_id",
+                "department_id",
+            ],
+        ),
+    ],
+)
+def test_get_person_affiliation_not_strict(name_or_id, expected_affiliation, expected_missing):
+    actual = get_person_affiliation(
+        name_or_id, AFFILIATION_PEOPLE, AFFILIATION_CONTACTS, AFFILIATION_INSTITUTIONS, strict=False
+    )
+    assert actual == expected_affiliation
+    assert missing_fields(actual) == expected_missing
+
+
+@pytest.mark.parametrize(
+    "name_or_id, strict, expected_error",
+    [
+        # Test that missing information raises rather than building a partial affiliation
+        # C1: An unresolvable field with strict true, expect every unresolved field named
+        ("rfeynman", True, "could not be resolved: department, department_id"),
+        # C2: An organization absent from institutions with strict true, expect the address named
+        ("pdirac", True, "could not be resolved: department, street, city"),
+        # C3: A person absent from both collections, expect a raise whatever the value of strict
+        # 1. With strict true
+        ("Nobody McGhost", True, "was not found in the people or contacts collections"),
+        # 2. With strict false, because a wrong name cannot be papered over with a placeholder
+        ("Nobody McGhost", False, "was not found in the people or contacts collections"),
+    ],
+)
+def test_get_person_affiliation_raises(name_or_id, strict, expected_error):
+    with pytest.raises(ValueError) as excinfo:
+        get_person_affiliation(
+            name_or_id, AFFILIATION_PEOPLE, AFFILIATION_CONTACTS, AFFILIATION_INSTITUTIONS, strict=strict
+        )
+    assert expected_error in str(excinfo.value)
+
+
+def test_get_person_affiliation_now():
+    # Test that the now argument decides which employment entry counts as current
+    expected_department = "Cavendish Laboratory"
+    actual = get_person_affiliation(
+        "aeinstein",
+        AFFILIATION_PEOPLE,
+        AFFILIATION_CONTACTS,
+        AFFILIATION_INSTITUTIONS,
+        now=dt.date(2012, 6, 1),
+    )
+    assert actual["department"] == expected_department
+    assert actual["institution"] == "University of Cambridge"
+
+
+def test_get_person_affiliation_does_not_mutate():
+    # Test that resolving a department leaves the institutions collection unchanged
+    expected_institutions = copy.deepcopy(AFFILIATION_INSTITUTIONS)
+    get_person_affiliation("afriend", AFFILIATION_PEOPLE, AFFILIATION_CONTACTS, AFFILIATION_INSTITUTIONS)
+    assert AFFILIATION_INSTITUTIONS == expected_institutions

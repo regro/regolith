@@ -56,6 +56,9 @@ PRESENTATION_TYPES = alloweds.get("PRESENTATION_TYPES")
 PRESENTATION_STATI = alloweds.get("PRESENTATION_STATI")
 OPTIONAL_KEYS_INSTITUTIONS = alloweds.get("OPTIONAL_KEYS_INSTITUTIONS")
 
+# The placeholder written into an affiliation field that could not be resolved
+MISSING_INFO = "MISSING"
+
 
 def dbdirname(db, rc):
     """Gets the database dir name."""
@@ -1327,6 +1330,186 @@ def get_person_contact(name, people_coll, contacts_coll):
         return contacts_person
     else:
         return None
+
+
+def _latest_employment(employment, now=None):
+    """Return the current employment entry, or the most recently ended
+    one."""
+    if now is None:
+        now = date.today()
+    current, ended, undated = [], [], []
+    for entry in employment:
+        dates = get_dates(entry)
+        begin_date, end_date = dates.get("begin_date"), dates.get("end_date")
+        if begin_date is None:
+            # An entry with no parseable begin date can only be used as a last resort
+            undated.append(entry)
+        elif is_current(entry, now=now):
+            current.append((entry, begin_date))
+        else:
+            ended.append((entry, end_date or date.min))
+    if current:
+        return max(current, key=lambda pair: pair[1])[0]
+    if ended:
+        return max(ended, key=lambda pair: pair[1])[0]
+    if undated:
+        return undated[0]
+    return None
+
+
+def _resolve_department(department, institution):
+    """Return the canonical department name and id for a department
+    reference."""
+    if not department:
+        return {"department": MISSING_INFO, "department_id": MISSING_INFO}
+    departments = []
+    if institution is not None:
+        for department_id, entry in (institution.get("departments") or {}).items():
+            # Copy so that the institution document is not modified by adding the key as an _id
+            entry = dict(entry)
+            entry["_id"] = department_id
+            departments.append(entry)
+    match = fuzzy_retrieval(departments, ["name", "aka", "_id"], department, case_sensitive=False)
+    if match is None:
+        # The reference is all we know, so keep it but flag that it resolved to no department
+        return {"department": department, "department_id": MISSING_INFO}
+    return {
+        "department": match.get("name") or MISSING_INFO,
+        "department_id": match.get("_id") or MISSING_INFO,
+    }
+
+
+def _resolve_address(institution):
+    """Return the address fields of an institution document."""
+    if institution is None:
+        return {key: MISSING_INFO for key in ("street", "city", "state", "zip", "country")}
+    address = {}
+    for key in ("city", "country"):
+        address[key] = str(institution[key]) if institution.get(key) else MISSING_INFO
+    for key in ("street", "state", "zip"):
+        address[key] = str(institution[key]) if institution.get(key) else ""
+    return address
+
+
+def get_person_affiliation(name_or_id, people_coll, contacts_coll, institutions_coll, strict=True, now=None):
+    """Return a dict with a person's canonical name and affiliation.
+
+    The person is looked for in the people collection and, if not found
+    there, in the contacts collection.  Their affiliation is taken from
+    the current entry of their employment list, or from the most recently
+    ended entry if none is current.  Short-form people in contacts carry
+    their affiliation directly in their institution and department
+    fields.  The institution and department references are resolved
+    against the institutions collection, and may each be given as an
+    _id, a canonical name or an aka.
+
+    Parameters
+    ----------
+    name_or_id: str
+        The name, aka or id of the person to look for.  The match is not case sensitive
+    people_coll: collection (list of dicts)
+        The people collection
+    contacts_coll: collection (list of dicts)
+        The contacts collection
+    institutions_coll: collection (list of dicts)
+        The institutions collection
+    strict: bool
+        The switch controlling what happens when a field cannot be resolved.  When true a
+        ValueError naming every unresolved field is raised.  When false the unresolved
+        fields are filled with the MISSING_INFO placeholder.  Default is True
+    now: datetime.date object
+        The date to treat as today when deciding which employment entry is current.  If it
+        is None the current date is used.  Default is None
+
+    Returns
+    -------
+    affiliation: dict
+        The canonical name under "name", the affiliation under "department" and
+        "institution", the institution address under "street", "city", "state", "zip" and
+        "country", and the resolved database keys under "institution_id" and
+        "department_id".  Fields that could not be resolved hold MISSING_INFO.  The street,
+        state and zip fields are optional in the institutions schema, so for a resolved
+        institution that simply does not record them they hold an empty string rather than
+        MISSING_INFO
+
+    Raises
+    ------
+    ValueError
+        If the person is not found in either collection, whatever the value of strict, or
+        if strict is true and any affiliation field could not be resolved
+    """
+    person = get_person_contact(name_or_id, people_coll, contacts_coll)
+    if person is None:
+        raise ValueError(
+            f"Person '{name_or_id}' was not found in the people or contacts collections. "
+            f"Please add an entry for them, or add '{name_or_id}' to the aka list of their "
+            "existing entry."
+        )
+    employment = person.get("employment") or []
+    employment_entry = _latest_employment(employment, now=now)
+    if employment_entry is not None:
+        organization = employment_entry.get("organization") or employment_entry.get("institution")
+        department = employment_entry.get("department")
+    else:
+        organization = person.get("institution") or person.get("organization")
+        department = person.get("department")
+    institution = None
+    if organization:
+        institution = fuzzy_retrieval(
+            list(institutions_coll),
+            ["name", "aka", "_id"],
+            organization,
+            case_sensitive=False,
+        )
+    if institution is not None:
+        institution_name = institution.get("name") or MISSING_INFO
+        institution_id = institution.get("_id") or MISSING_INFO
+    elif organization:
+        # The organization is not in the institutions collection, so its name is all we know
+        institution_name, institution_id = organization, MISSING_INFO
+    else:
+        institution_name, institution_id = MISSING_INFO, MISSING_INFO
+    department_info = _resolve_department(department, institution)
+    address = _resolve_address(institution)
+    affiliation = {
+        "name": person.get("name") or MISSING_INFO,
+        "department": department_info["department"],
+        "institution": institution_name,
+        "street": address["street"],
+        "city": address["city"],
+        "state": address["state"],
+        "zip": address["zip"],
+        "country": address["country"],
+        "institution_id": institution_id,
+        "department_id": department_info["department_id"],
+    }
+    if strict:
+        unresolved = missing_fields(affiliation)
+        if unresolved:
+            raise ValueError(
+                f"The following affiliation information for '{affiliation['name']}' could not be "
+                f"resolved: {', '.join(unresolved)}. Please add the missing information to the "
+                "people, contacts or institutions collections, or call get_person_affiliation with "
+                "strict=False to receive placeholders instead."
+            )
+    return affiliation
+
+
+def missing_fields(affiliation):
+    """Return the list of affiliation fields that could not be resolved.
+
+    Parameters
+    ----------
+    affiliation: dict
+        The affiliation returned by get_person_affiliation
+
+    Returns
+    -------
+    fields: list of str
+        The keys whose value is the MISSING_INFO placeholder, in the order they appear in
+        the affiliation.  An empty list means every field was resolved
+    """
+    return [key for key, value in affiliation.items() if value == MISSING_INFO]
 
 
 def merge_collections_intersect(a, b, target_id):
