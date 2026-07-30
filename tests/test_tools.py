@@ -20,6 +20,7 @@ from regolith.tools import (
     filter_presentations,
     filter_publications,
     filter_software,
+    format_affiliation,
     fragment_retrieval,
     fuzzy_retrieval,
     get_appointments,
@@ -3807,3 +3808,87 @@ def test_get_person_affiliation_does_not_mutate():
     expected_institutions = copy.deepcopy(AFFILIATION_INSTITUTIONS)
     get_person_affiliation("afriend", AFFILIATION_PEOPLE, AFFILIATION_CONTACTS, AFFILIATION_INSTITUTIONS)
     assert AFFILIATION_INSTITUTIONS == expected_institutions
+
+
+CAMBRIDGE_AFFILIATION = {
+    "name": "Bernice Friend",
+    "department": "Cavendish Laboratory",
+    "institution": "University of Cambridge",
+    "street": "",
+    "city": "Cambridge",
+    "state": "",
+    "zip": "",
+    "country": "UK",
+    "institution_id": "cambridge",
+    "department_id": "physics",
+}
+
+
+@pytest.mark.parametrize(
+    "affiliation, style, expected_line",
+    [
+        # Test that each style selects the right fields of a fully resolved affiliation
+        (
+            # C1: A complete affiliation with the default style, expect department, institution
+            # and full address
+            COLUMBIA_PHYSICS_AFFILIATION,
+            "full",
+            "Department of Physics, Columbia University, 500 W 120th St, New York, NY 10027, USA",
+        ),
+        (
+            # C2: A complete affiliation with the short style, expect department and institution only
+            COLUMBIA_PHYSICS_AFFILIATION,
+            "short",
+            "Department of Physics, Columbia University",
+        ),
+        (
+            # C3: A complete affiliation with the institution style, expect the institution alone
+            COLUMBIA_PHYSICS_AFFILIATION,
+            "institution",
+            "Columbia University",
+        ),
+        (
+            # C4: An institution that records no street, state or zip, expect those fields left out
+            # with no doubled or trailing commas
+            CAMBRIDGE_AFFILIATION,
+            "full",
+            "Cavendish Laboratory, University of Cambridge, Cambridge, UK",
+        ),
+        (
+            # C5: A state with no zip, expect the state alone rather than a trailing space
+            {**COLUMBIA_PHYSICS_AFFILIATION, "zip": ""},
+            "full",
+            "Department of Physics, Columbia University, 500 W 120th St, New York, NY, USA",
+        ),
+        (
+            # C6: Fields left as placeholders by strict=False, expect them left out
+            {**COLUMBIA_PHYSICS_AFFILIATION, "department": MISSING_INFO, "country": MISSING_INFO},
+            "full",
+            "Columbia University, 500 W 120th St, New York, NY 10027",
+        ),
+        (
+            # C7: A style whose every field is a placeholder, expect an empty line
+            {**COLUMBIA_PHYSICS_AFFILIATION, "institution": MISSING_INFO},
+            "institution",
+            "",
+        ),
+    ],
+)
+def test_format_affiliation(affiliation, style, expected_line):
+    actual = format_affiliation(affiliation, style=style)
+    assert actual == expected_line
+
+
+def test_format_affiliation_bad_style():
+    # Test that an unrecognized style is rejected and the valid styles are named
+    with pytest.raises(ValueError) as excinfo:
+        format_affiliation(COLUMBIA_PHYSICS_AFFILIATION, style="address")
+    assert "'address' is not a recognized affiliation style" in str(excinfo.value)
+    assert "full, short, institution" in str(excinfo.value)
+
+
+def test_format_affiliation_does_not_mutate():
+    # Test that building a line leaves the affiliation unchanged
+    expected_affiliation = copy.deepcopy(COLUMBIA_PHYSICS_AFFILIATION)
+    format_affiliation(COLUMBIA_PHYSICS_AFFILIATION)
+    assert COLUMBIA_PHYSICS_AFFILIATION == expected_affiliation
