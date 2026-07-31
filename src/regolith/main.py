@@ -153,7 +153,10 @@ def create_parser():
         "--kwargs",
         nargs="+",
         dest="kwargs",
-        help="pass a specific command to build a specific task " "if it exists",
+        help="pass an option to the builder as key:value, for the builders that take one. "
+        "The presentation builder takes presentation:<id>, to build that one presentation, "
+        "or talk:<id>, to build every presentation of that talk. The publist builder takes "
+        "facility:<name>, to build the publications from that facility",
         default=None,
     )
 

@@ -10,8 +10,8 @@ build
 	                      build_targets [build_targets ...]
 
 	positional arguments:
-	  build_targets         targets to build. Currently valid targets are:
-	                        ['annual-activity', 'beamplan', 'current-pending', 'cv', 'figure', 'formalletter', 'grade', 'grades', 'grant-report', 'html', 'internalhtml', 'postdocad', 'preslist', 'publist', 'reading-lists', 'reimb', 'recent-collabs', 'resume', 'review-man', 'review-prop']
+	  build_targets         targets to build. Currently valid targets are: 
+	                        ['annual-activity', 'beamplan', 'current-pending', 'cv', 'figure', 'formalletter', 'grade', 'grades', 'grant-report', 'html', 'internalhtml', 'postdocad', 'presentation', 'preslist', 'publist', 'releaselist', 'reading-lists', 'reimb', 'recent-collabs', 'resume', 'review-man', 'review-prop']
 
 	options:
 	  -h, --help            show this help message and exit
@@ -23,4 +23,4 @@ build
 	  --people PEOPLE [PEOPLE ...]
 	                        specify a person or a space-separated list of people such that the build will be for only those people
 	  --kwargs KWARGS [KWARGS ...]
-	                        pass a specific command to build a specific task if it exists
+	                        pass an option to the builder as key:value, for the builders that take one. The presentation builder takes presentation:<id>, to build that one presentation, or talk:<id>, to build every presentation of that talk. The publist builder takes facility:<name>, to build the publications from that facility
