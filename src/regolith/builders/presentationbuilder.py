@@ -257,9 +257,45 @@ class PresentationBuilder(LatexBuilderBase):
         ]
         return number_affiliations(entries, presenter_name)
 
+    def _selected(self, presentations):
+        """Return the presentations the kwargs of the run ask for.
+
+        A run may name one presentation to build with
+        "presentation:<id>", or one talk with "talk:<id>", which builds
+        every presentation of that talk.  A run naming neither builds
+        them all.
+
+        Raises
+        ------
+        ValueError
+            If a key other than presentation or talk is given, or if
+            nothing matches what was asked for
+        """
+        kwargs = getattr(self.rc, "kwargs", None)
+        if not kwargs:
+            return presentations
+        key, _, value = kwargs[0].partition(":")
+        if key not in ("presentation", "talk"):
+            raise ValueError(
+                f"'{key}' is not something the presentation builder can be filtered on. Please "
+                f"pass --kwargs presentation:<id> to build one presentation, or --kwargs "
+                f"talk:<id> to build every presentation of one talk."
+            )
+        field = "_id" if key == "presentation" else "talk_id"
+        selected = [presentation for presentation in presentations if presentation.get(field) == value]
+        if not selected:
+            asked_for = (
+                f"the presentation '{value}'" if key == "presentation" else f"a presentation of the talk '{value}'"
+            )
+            raise ValueError(
+                f"There is nothing to build, because {asked_for} was not found in the presentations "
+                f"collection. Please check the id, and that the presentation carries a talk_id."
+            )
+        return selected
+
     def latex(self):
         """Render latex template."""
-        for presentation in self.gtx["presentations"]:
+        for presentation in self._selected(self.gtx["presentations"]):
             if not presentation.get("talk_id"):
                 continue
             talk = self._get_talk(presentation)

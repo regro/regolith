@@ -10,7 +10,7 @@ import openpyxl
 import pytest
 
 from regolith.broker import load_db
-from regolith.builders.presentationbuilder import number_affiliations
+from regolith.builders.presentationbuilder import PresentationBuilder, number_affiliations
 from regolith.main import main
 
 builder_map = [
@@ -441,3 +441,60 @@ def test_number_affiliations(entries, presenter_name, expected_authors, expected
     actual_authors, actual_affiliations = number_affiliations(entries, presenter_name)
     assert actual_authors == expected_authors
     assert actual_affiliations == expected_affiliations
+
+
+class FakeRc:
+    """Stand in for the run control, holding only the kwargs of a
+    run."""
+
+    def __init__(self, kwargs=None):
+        self.kwargs = kwargs
+
+
+PRESENTATIONS = [
+    {"_id": "18sb_nslsii", "talk_id": "30-graphite-rock"},
+    {"_id": "18sb_kentstate", "talk_id": "30-graphite-rock"},
+    {"_id": "19sb_apsmarch", "talk_id": "45-nanostructure"},
+]
+
+
+@pytest.mark.parametrize(
+    "kwargs, expected_ids",
+    [
+        # Test that the kwargs of a run pick out the presentations to build
+        # C1: No kwargs, expect every presentation
+        (None, ["18sb_nslsii", "18sb_kentstate", "19sb_apsmarch"]),
+        # C2: One presentation named, expect only that one
+        (["presentation:18sb_nslsii"], ["18sb_nslsii"]),
+        # C3: A talk named, expect every presentation of it, since a talk may be given more
+        # than once
+        (["talk:30-graphite-rock"], ["18sb_nslsii", "18sb_kentstate"]),
+        # C4: A talk given once, expect the single presentation of it
+        (["talk:45-nanostructure"], ["19sb_apsmarch"]),
+    ],
+)
+def test_presentation_builder_selected(kwargs, expected_ids):
+    builder = PresentationBuilder.__new__(PresentationBuilder)
+    builder.rc = FakeRc(kwargs)
+    actual = builder._selected(PRESENTATIONS)
+    assert [presentation["_id"] for presentation in actual] == expected_ids
+
+
+@pytest.mark.parametrize(
+    "kwargs, expected_error",
+    [
+        # Test that a filter naming nothing buildable says so rather than building nothing
+        # C1: An unknown key, expect the keys that are accepted to be named
+        (["facility:nslsii"], "'facility' is not something the presentation builder can be filtered on"),
+        # C2: A presentation id that does not exist, expect it named
+        (["presentation:nosuch"], "the presentation 'nosuch' was not found"),
+        # C3: A talk id that no presentation names, expect it named
+        (["talk:nosuch"], "a presentation of the talk 'nosuch' was not found"),
+    ],
+)
+def test_presentation_builder_selected_raises(kwargs, expected_error):
+    builder = PresentationBuilder.__new__(PresentationBuilder)
+    builder.rc = FakeRc(kwargs)
+    with pytest.raises(ValueError) as excinfo:
+        builder._selected(PRESENTATIONS)
+    assert expected_error in str(excinfo.value)
