@@ -13,6 +13,7 @@ from regolith.builders.htmlbuilder import HtmlBuilder
 from regolith.builders.internalhtmlbuilder import InternalHtmlBuilder
 from regolith.builders.manuscriptreviewbuilder import ManRevBuilder
 from regolith.builders.postdocadbuilder import PostdocadBuilder
+from regolith.builders.presentationbuilder import PresentationBuilder
 from regolith.builders.preslistbuilder import PresListBuilder
 from regolith.builders.proposalreviewbuilder import PropRevBuilder
 from regolith.builders.publistbuilder import PubListBuilder
@@ -34,6 +35,7 @@ BUILDERS = {
     "html": HtmlBuilder,
     "internalhtml": InternalHtmlBuilder,
     "postdocad": PostdocadBuilder,
+    "presentation": PresentationBuilder,
     "preslist": PresListBuilder,
     "publist": PubListBuilder,
     "releaselist": ReleaseListBuilder,

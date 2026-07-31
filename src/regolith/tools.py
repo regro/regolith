@@ -2703,3 +2703,24 @@ def strip_str(s):
     if isinstance(s, str):
         return s.strip()
     return s
+
+
+def string_to_slice(slice_str):
+    """Return the slice described by a string such as "[2:5]".
+
+    Parameters
+    ----------
+    slice_str: str
+        The slice written in python syntax, with or without the enclosing brackets.  An
+        omitted start, stop or step is taken as None, so "[:]" is every item
+
+    Returns
+    -------
+    selection: slice
+        The slice the string describes
+    """
+    parts = slice_str.strip("[]").split(":")
+    start = int(parts[0]) if parts[0] else None
+    stop = int(parts[1]) if parts[1] else None
+    step = int(parts[2]) if len(parts) > 2 and parts[2] else None
+    return slice(start, stop, step)

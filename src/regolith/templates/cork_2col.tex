@@ -1,0 +1,19 @@
+{{ s['question'] }}
+{% if s['answers'] %}
+\begin{columns}
+\column{ {{ s['imagecol_width'] }}\textwidth}
+\begin{figure}
+\begin{center}
+\includegraphics[width={{ s['fig_width'] }}\columnwidth]{ {{ s['image'] }} }
+\caption{ {{ s['caption'] }} }
+\end{center}
+\end{figure}
+\column{ {{ 1-s['imagecol_width'] }}\textwidth}
+\begin{enumerate}
+{% for a in s['answers'] %}
+  \pause\item {{ a }}
+{% endfor %}
+\end{enumerate}
+  \pause
+\end{columns}
+{% endif %}

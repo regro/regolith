@@ -1,0 +1,9 @@
+{{ s['question'] }}
+{% if s['answers'] %}
+\begin{enumerate}
+{% for a in s['answers'] %}
+  \pause\item {{ a }}
+{% endfor %}
+\end{enumerate}
+  \pause
+{% endif %}
