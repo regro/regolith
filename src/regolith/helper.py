@@ -21,6 +21,8 @@ from regolith.helpers import l_membershelper as l_members
 from regolith.helpers import l_milestoneshelper as l_milestone
 from regolith.helpers import l_progressreporthelper as l_progress
 from regolith.helpers import l_projectahelper as l_projecta
+from regolith.helpers import l_slideshelper as l_slides
+from regolith.helpers import l_talkshelper as l_talks
 from regolith.helpers import l_todohelper as l_todo
 from regolith.helpers import makeappointmentshelper as makeappointments
 from regolith.helpers import reimbstatushelper as reimbstatus
@@ -66,6 +68,8 @@ LISTER_HELPERS = {
     "l_progress": (l_progress.ProgressReportHelper, l_progress.subparser),
     "l_projecta": (l_projecta.ProjectaListerHelper, l_projecta.subparser),
     "l_reimbstatus": (reimbstatus.ReimbstatusHelper, reimbstatus.subparser),
+    "l_slides": (l_slides.SlidesListerHelper, l_slides.subparser),
+    "l_talks": (l_talks.TalksListerHelper, l_talks.subparser),
     "l_todo": (l_todo.TodoListerHelper, l_todo.subparser),
     "v_meetings": (v_meetings.MeetingsValidatorHelper, v_meetings.subparser),
     "attestations": (attestations.AttestationsHelper, attestations.subparser),

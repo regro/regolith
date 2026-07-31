@@ -1223,6 +1223,57 @@ helper_map = [
     #   "--presentation-url", "http://drive.google.com/SEV356DV",
     #   "--no-cal", "--expense-db private-test"], # Expect a new presentation and new expense in db 'private-test'
     #    "2006na_testd has been added in presentations\n2006na_testd has been added in expenses in database private-test\n"),
+    # Test the talks lister, which shows each talk beside the presentations it was given at
+    (
+        # A filter on a fragment of the talk id, expect the talk and its presentation
+        ["helper", "l_talks", "--talk-id", "graphite"],
+        "30-graphite-rock - (18sb_nslsii)\n",
+    ),
+    (
+        # A filter on the presenter, expect the talk they give
+        ["helper", "l_talks", "--presenter", "sbillinge"],
+        "30-graphite-rock - (18sb_nslsii)\n",
+    ),
+    (
+        # A filter matching no talk, expect a message saying to loosen the filters
+        ["helper", "l_talks", "--talk-id", "nosuchtalk"],
+        "No talks were found. Please loosen the filters and try again.\n",
+    ),
+    (
+        # The verbose form, expect the presenter, the description and how the talk is built
+        ["helper", "l_talks", "--verbose"],
+        "30-graphite-rock - (18sb_nslsii)\n"
+        "    presenter: Simon J. L. Billinge\n"
+        "    description: An overview of the group's work on nanostructure, for a general audience.\n"
+        "    2 sections built from 3 decks\n",
+    ),
+    # Test the slides lister, which shows each deck and how many slides it holds
+    (
+        # A filter on a tag, expect only the deck carrying it
+        ["helper", "l_slides", "--tag", "introduction"],
+        "example-introduction - (2 slides) - introduction\n",
+    ),
+    (
+        # A filter on the title of a slide inside a deck, expect the deck holding it
+        ["helper", "l_slides", "--title", "nanostructure"],
+        "example-introduction - (2 slides) - introduction\n",
+    ),
+    (
+        # A filter matching no deck, expect a message saying to loosen the filters
+        ["helper", "l_slides", "--deck-id", "nosuchdeck"],
+        "No decks of slides were found. Please loosen the filters and try again.\n",
+    ),
+    (
+        # The verbose form, expect every slide with the index a slide_list would use
+        ["helper", "l_slides", "--verbose"],
+        "example-introduction - (2 slides) - introduction\n"
+        "    [0] text: What is local structure?\n"
+        "    [1] imageleft-2col: The nanostructure problem\n"
+        "example-methods - (3 slides) - methods\n"
+        "    [0] image: Measuring a pair distribution function\n"
+        "    [1] imageright-2col: From diffraction pattern to PDF\n"
+        "    [2] text: What the PDF tells us\n",
+    ),
 ]
 
 db_srcs = [
