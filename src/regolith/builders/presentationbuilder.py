@@ -10,28 +10,15 @@ that names a talk.
 import ast
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.tools import all_docs_from_collection, get_person_contact
-
-
-def string_to_slice(slice_str):
-    """Return the slice described by a string such as "[2:5]".
-
-    Parameters
-    ----------
-    slice_str: str
-        The slice written in python syntax, with or without the enclosing
-        brackets.  An omitted start, stop or step is taken as None
-
-    Returns
-    -------
-    selection: slice
-        The slice the string describes
-    """
-    parts = slice_str.strip("[]").split(":")
-    start = int(parts[0]) if parts[0] else None
-    stop = int(parts[1]) if parts[1] else None
-    step = int(parts[2]) if len(parts) > 2 and parts[2] else None
-    return slice(start, stop, step)
+from regolith.dates import get_dates
+from regolith.tools import (
+    all_docs_from_collection,
+    format_affiliation,
+    fuzzy_retrieval,
+    get_person_affiliation,
+    get_person_contact,
+    string_to_slice,
+)
 
 
 def select_slides(deck, slide_list, topic):
@@ -71,6 +58,50 @@ def select_slides(deck, slide_list, topic):
         )
 
 
+def number_affiliations(entries, presenter_name=""):
+    """Return authors numbered by the affiliation they share.
+
+    Parameters
+    ----------
+    entries: list of dicts
+        The authors in the order they are to appear, each holding their "name" and their
+        "affiliation" as a single line of text.  An empty affiliation is one that could
+        not be found
+    presenter_name: str
+        The name of the author giving the presentation.  Default is an empty string,
+        which marks nobody
+
+    Returns
+    -------
+    authors: list of dicts
+        The authors in the order given, each holding their "name", the "number" of their
+        affiliation and whether they are the presenter under "is_presenter".  The number
+        is None for an author with no affiliation, and for every author when there is
+        nothing to tell apart
+    affiliations: list of str
+        The affiliations in the order they first appear, each listed once.  Two authors
+        whose affiliation reads the same share a number, so two departments of one
+        institution stay apart while one department shared by two authors is listed once
+    """
+    authors, affiliations = [], []
+    for entry in entries:
+        affiliation = entry.get("affiliation") or ""
+        if affiliation and affiliation not in affiliations:
+            affiliations.append(affiliation)
+        authors.append(
+            {
+                "name": entry.get("name") or "",
+                "number": affiliations.index(affiliation) + 1 if affiliation else None,
+                "is_presenter": bool(presenter_name) and entry.get("name") == presenter_name,
+            }
+        )
+    # A single affiliation needs no numbering, since every author shares it
+    if len(affiliations) < 2:
+        for author in authors:
+            author["number"] = None
+    return authors, affiliations
+
+
 class PresentationBuilder(LatexBuilderBase):
     """Build a beamer document for each presentation that names a talk.
 
@@ -86,7 +117,7 @@ class PresentationBuilder(LatexBuilderBase):
     """
 
     btype = "presentation"
-    needed_colls = ["presentations", "talks", "slides", "people", "contacts"]
+    needed_colls = ["presentations", "talks", "slides", "people", "contacts", "institutions"]
 
     def construct_global_ctx(self):
         """Constructs the global context."""
@@ -160,16 +191,85 @@ class PresentationBuilder(LatexBuilderBase):
             return presenter
         return person.get("name") or presenter
 
+    def _resolve_address(self, address):
+        """Return an entry of the addresses of a talk as text.
+
+        The entry is either an id in the institutions collection or an
+        address already written out.
+        """
+        institution = fuzzy_retrieval(
+            self.gtx["institutions"], ["name", "aka", "_id"], address, case_sensitive=False
+        )
+        if institution is None:
+            return address
+        return institution.get("name") or address
+
+    def _get_author(self, author, address, on):
+        """Return the name and affiliation of one author of a talk.
+
+        The author is looked for in the people and contacts collections,
+        which give their canonical name and the affiliation they held on
+        the date of the presentation.  For an author who is not in
+        either collection the name is taken as written and the
+        affiliation from the addresses of the talk.
+        """
+        try:
+            affiliation = get_person_affiliation(
+                author,
+                self.gtx["people"],
+                self.gtx["contacts"],
+                self.gtx["institutions"],
+                strict=False,
+                now=on,
+            )
+        except ValueError:
+            # Not a person we hold, so the talk itself has to say who they are
+            return {"name": author, "affiliation": self._resolve_address(address) if address else ""}
+        return {
+            "name": affiliation["name"],
+            "affiliation": format_affiliation(affiliation, style="short"),
+        }
+
+    def _get_authors(self, presentation, talk):
+        """Return the authors of a talk and the affiliations they share.
+
+        Authors keep the order the talk lists them in.  Affiliations are
+        numbered in the order they first appear, and an affiliation
+        shared by several authors is listed once, so that two authors in
+        the same department of the same institution carry the same
+        number while two departments of one institution stay apart.  The
+        author giving the presentation is marked so that the template
+        can pick them out.
+        """
+        authorlist = talk.get("authorlist") or []
+        if isinstance(authorlist, str):
+            authorlist = [authorlist]
+        addresses = talk.get("addresses") or []
+        if isinstance(addresses, str):
+            addresses = [addresses]
+        dates = get_dates(presentation) if presentation.get("begin_date") or presentation.get("begin_year") else {}
+        on = dates.get("begin_date") or dates.get("date")
+        presenter_name = self._get_presenter_name(presentation, talk)
+
+        entries = [
+            self._get_author(author, addresses[index] if index < len(addresses) else "", on)
+            for index, author in enumerate(authorlist)
+        ]
+        return number_affiliations(entries, presenter_name)
+
     def latex(self):
         """Render latex template."""
         for presentation in self.gtx["presentations"]:
             if not presentation.get("talk_id"):
                 continue
             talk = self._get_talk(presentation)
+            authors, affiliations = self._get_authors(presentation, talk)
             general = {
                 "title": presentation.get("title") or "",
                 "subtitle": presentation.get("subtitle") or "",
                 "presenter": self._get_presenter_name(presentation, talk),
+                "authors": authors,
+                "affiliations": affiliations,
             }
             presentation_id = presentation.get("_id")
             self.render(

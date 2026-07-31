@@ -4,7 +4,24 @@
 \setbeamertemplate{caption}{\centering\raggedright\scriptsize\insertcaption\par}
 \title{ {{ general['title'] }} }
 \subtitle{ {{ general['subtitle'] }} }
+{% if general['authors'] -%}
+\author{
+{%- for a in general['authors'] -%}
+{%- if a['is_presenter'] -%}\underline{ {{- a['name'] -}} }{%- else -%}{{ a['name'] }}{%- endif -%}
+{%- if a['number'] -%}\textsuperscript{ {{- a['number'] -}} }{%- endif -%}
+{%- if not loop.last %}, {% endif -%}
+{%- endfor -%}
+}
+\institute{\small
+{%- for affiliation in general['affiliations'] -%}
+{%- if general['affiliations']|length > 1 -%}\textsuperscript{ {{- loop.index -}} }{%- endif -%}
+{{- affiliation -}}
+{%- if not loop.last %} \\ {% endif -%}
+{%- endfor -%}
+}
+{%- else -%}
 \author{ {{ general['presenter'] }} }
+{%- endif %}
 \date{\today}
 \begin{document}
 

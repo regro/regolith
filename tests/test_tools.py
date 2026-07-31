@@ -47,6 +47,7 @@ from regolith.tools import (
     number_suffix,
     remove_duplicate_docs,
     search_collection,
+    string_to_slice,
     strip_str,
     update_schemas,
     validate_meeting,
@@ -3892,3 +3893,35 @@ def test_format_affiliation_does_not_mutate():
     expected_affiliation = copy.deepcopy(COLUMBIA_PHYSICS_AFFILIATION)
     format_affiliation(COLUMBIA_PHYSICS_AFFILIATION)
     assert COLUMBIA_PHYSICS_AFFILIATION == expected_affiliation
+
+
+@pytest.mark.parametrize(
+    "slice_str, expected_selection",
+    [
+        # Test that a slice written as a string selects the same items python indexing would
+        # C1: A start and a stop, expect the items between them
+        ("[1:3]", slice(1, 3, None)),
+        # C2: Neither a start nor a stop, expect every item
+        ("[:]", slice(None, None, None)),
+        # C3: A start only, expect everything from it onwards
+        ("[2:]", slice(2, None, None)),
+        # C4: A stop only, expect everything up to it
+        ("[:4]", slice(None, 4, None)),
+        # C5: A step as well, expect it carried through
+        ("[0:6:2]", slice(0, 6, 2)),
+        # C6: A negative start, expect it kept as written so it counts from the end
+        ("[-2:]", slice(-2, None, None)),
+        # C7: No enclosing brackets, expect them not to be needed
+        ("1:3", slice(1, 3, None)),
+    ],
+)
+def test_string_to_slice(slice_str, expected_selection):
+    assert string_to_slice(slice_str) == expected_selection
+
+
+def test_string_to_slice_applies_to_a_list():
+    # Test that the returned slice selects the items it names
+    items = ["a", "b", "c", "d", "e"]
+    assert items[string_to_slice("[1:3]")] == ["b", "c"]
+    assert items[string_to_slice("[:]")] == items
+    assert items[string_to_slice("[0:5:2]")] == ["a", "c", "e"]

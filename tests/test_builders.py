@@ -10,6 +10,7 @@ import openpyxl
 import pytest
 
 from regolith.broker import load_db
+from regolith.builders.presentationbuilder import number_affiliations
 from regolith.main import main
 
 builder_map = [
@@ -341,3 +342,102 @@ def test_builder_python(bm, db_src, make_db, make_mongodb, monkeypatch):
         # Skip because of a date time in
         if file != "rss.xml":
             assert expected == actual
+
+
+@pytest.mark.parametrize(
+    "entries, presenter_name, expected_authors, expected_affiliations",
+    [
+        (
+            # C1: Authors at three different places, expect them numbered in the order they
+            # first appear
+            [
+                {"name": "A. One", "affiliation": "Department of Physics, Columbia University"},
+                {"name": "B. Two", "affiliation": "The University of South Carolina"},
+                {"name": "C. Three", "affiliation": "Department of Chemistry, Sample University"},
+            ],
+            "B. Two",
+            [
+                {"name": "A. One", "number": 1, "is_presenter": False},
+                {"name": "B. Two", "number": 2, "is_presenter": True},
+                {"name": "C. Three", "number": 3, "is_presenter": False},
+            ],
+            [
+                "Department of Physics, Columbia University",
+                "The University of South Carolina",
+                "Department of Chemistry, Sample University",
+            ],
+        ),
+        (
+            # C2: Two authors in the same department of the same institution, expect them to
+            # share a number and that affiliation to be listed once
+            [
+                {"name": "A. One", "affiliation": "APAM, Columbia University"},
+                {"name": "B. Two", "affiliation": "APAM, Columbia University"},
+                {"name": "C. Three", "affiliation": "The University of South Carolina"},
+            ],
+            "",
+            [
+                {"name": "A. One", "number": 1, "is_presenter": False},
+                {"name": "B. Two", "number": 1, "is_presenter": False},
+                {"name": "C. Three", "number": 2, "is_presenter": False},
+            ],
+            ["APAM, Columbia University", "The University of South Carolina"],
+        ),
+        (
+            # C3: Two authors in different departments of one institution, expect distinct
+            # numbers because the affiliations do not read the same
+            [
+                {"name": "A. One", "affiliation": "APAM, Columbia University"},
+                {"name": "B. Two", "affiliation": "Department of Physics, Columbia University"},
+            ],
+            "A. One",
+            [
+                {"name": "A. One", "number": 1, "is_presenter": True},
+                {"name": "B. Two", "number": 2, "is_presenter": False},
+            ],
+            ["APAM, Columbia University", "Department of Physics, Columbia University"],
+        ),
+        (
+            # C4: Every author at one place, expect no numbering since there is nothing to
+            # tell apart
+            [
+                {"name": "A. One", "affiliation": "APAM, Columbia University"},
+                {"name": "B. Two", "affiliation": "APAM, Columbia University"},
+            ],
+            "B. Two",
+            [
+                {"name": "A. One", "number": None, "is_presenter": False},
+                {"name": "B. Two", "number": None, "is_presenter": True},
+            ],
+            ["APAM, Columbia University"],
+        ),
+        (
+            # C5: An author whose affiliation could not be found, expect them to carry no
+            # number while the others keep theirs
+            [
+                {"name": "A. One", "affiliation": "APAM, Columbia University"},
+                {"name": "B. Two", "affiliation": ""},
+                {"name": "C. Three", "affiliation": "The University of South Carolina"},
+            ],
+            "",
+            [
+                {"name": "A. One", "number": 1, "is_presenter": False},
+                {"name": "B. Two", "number": None, "is_presenter": False},
+                {"name": "C. Three", "number": 2, "is_presenter": False},
+            ],
+            ["APAM, Columbia University", "The University of South Carolina"],
+        ),
+        (
+            # C6: No authors at all, expect nothing to number
+            [],
+            "A. One",
+            [],
+            [],
+        ),
+    ],
+)
+def test_number_affiliations(entries, presenter_name, expected_authors, expected_affiliations):
+    # Test that authors keep their order and that a shared affiliation is listed once
+    actual_authors, actual_affiliations = number_affiliations(entries, presenter_name)
+    assert actual_authors == expected_authors
+    assert actual_affiliations == expected_affiliations
