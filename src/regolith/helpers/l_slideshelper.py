@@ -82,6 +82,13 @@ class SlidesListerHelper(SoutHelperBase):
         rc = self.rc
         decks = self.gtx["slides"]
 
+        if not decks:
+            print(
+                "The slides collection is empty, so there is nothing to list. Please run from a "
+                "directory whose regolithrc.json lists the database that holds slides.yml."
+            )
+            return
+
         if rc.deck_id:
             decks = [deck for deck in decks if rc.deck_id.casefold() in deck.get("_id", "").casefold()]
         if rc.tag:
