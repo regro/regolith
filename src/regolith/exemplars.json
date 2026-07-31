@@ -2304,14 +2304,14 @@
         }
     ],
     "talks": {
-        "_id": "2406ab_example_talk",
+        "_id": "30-example-talk",
         "active": true,
         "talk_description": "An overview of the group's work on nanostructure, for a general audience.",
         "learning_objectives": ["what a pair distribution function is", "why local structure matters for nanomaterials"],
-        "authorlist": ["A. B. Example", "C. D. Sample"],
-        "addresses": ["Department of Physics, Example University, New York, NY 10027, USA", "Department of Chemistry, Sample University, Boston, MA 02115, USA"],
-        "presenter": "aexample",
-        "presentationid": "2406ab_example_meeting",
+        "authorlist": ["sbillinge", "afriend", "C. D. Sample"],
+        "addresses": ["columbiau", "usouthcarolina", "Department of Chemistry, Sample University, Boston, MA 02115, USA"],
+        "presenter": "sbillinge",
+        "presentationid": "18sb_this_and_that",
         "year": 2024,
         "notes": ["the audience asked about sample preparation"],
         "topics": [

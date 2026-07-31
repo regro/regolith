@@ -3183,7 +3183,7 @@
             "description": "This collection describes talks, which are assembled from decks in the slides collection. A talk is the reusable content, and a presentation in the presentations collection is one occasion on which it was given."
         },
         "_id": {
-            "description": "The unique id for the talk.",
+            "description": "The unique id for the talk. By convention this is the length of the talk in minutes, followed by a short name, with the words separated by dashes, such as 30-example-talk.",
             "required": true,
             "type": "string"
         },
@@ -3193,12 +3193,12 @@
             "type": "boolean"
         },
         "addresses": {
-            "description": "The affiliations of the authors, in the same order as authorlist.",
+            "description": "The affiliations of the authors, in the same order as authorlist. An entry is either an id in the institutions collection, which is dereferenced when the talk is built, or an address written out in full.",
             "required": false,
             "anyof_type": ["string", "list"]
         },
         "authorlist": {
-            "description": "The ids or names of the authors of the talk.",
+            "description": "The authors of the talk. An entry is either an id in the people or contacts collections, which is dereferenced when the talk is built, or a name written out in full.",
             "required": false,
             "anyof_type": ["string", "list"]
         },
@@ -3218,7 +3218,7 @@
             "type": "string"
         },
         "presenter": {
-            "description": "The id or name of the person who gives the talk.",
+            "description": "The id or name of the person who gives the talk, who is normally one of the authorlist.",
             "required": false,
             "type": "string"
         },
