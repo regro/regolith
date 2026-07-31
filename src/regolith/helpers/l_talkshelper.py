@@ -121,6 +121,13 @@ class TalksListerHelper(SoutHelperBase):
         talks = self.gtx["talks"]
         presentations = self._presentations_by_talk()
 
+        if not talks:
+            print(
+                "The talks collection is empty, so there is nothing to list. Please run from a "
+                "directory whose regolithrc.json lists the database that holds talks.yml."
+            )
+            return
+
         if not getattr(rc, "all", False):
             talks = [talk for talk in talks if talk.get("active", True)]
         if rc.talk_id:
