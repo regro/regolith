@@ -1,0 +1,181 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\setlength{\parskip}{0 pt}
+\setbeamertemplate{caption}{\centering\raggedright\scriptsize\insertcaption\par}
+\title{ ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function }
+\subtitle{  }
+\author{ Simon J. L. Billinge }
+\date{\today}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\section{ introduction }
+
+
+\begin{frame}
+
+\frametitle{ What is local structure? }
+
+
+
+
+
+
+Three ideas underpin the rest of the talk.
+
+
+\begin{itemize}
+
+  \item crystals are described by an average structure
+
+  \item real materials deviate from that average
+
+  \item those deviations control the properties
+
+\end{itemize}
+
+
+We will return to each of these.
+
+
+
+
+\end{frame}
+
+
+\begin{frame}
+
+\frametitle{ The nanostructure problem }
+
+\begin{columns}
+\column{ 0.5\textwidth}
+\begin{figure}
+\begin{center}
+\makebox[\columnwidth][c]{\includegraphics[width=0.9\dimexpr\columnwidth+2cm\relax, angle=0 ]{ example_nanoparticle }}
+
+\caption{ A nanoparticle with a disordered surface. }
+
+\end{center}
+\end{figure}
+\column{ 0.5\textwidth}
+
+
+\begin{itemize}
+
+  \item the surface is not the same as the core
+
+\end{itemize}
+
+
+\end{columns}
+
+
+
+
+
+
+
+\end{frame}
+
+
+\section{ Local structure of materials }
+
+
+\begin{frame}
+
+\frametitle{ What is local structure? }
+
+
+
+
+
+
+Three ideas underpin the rest of the talk.
+
+
+\begin{itemize}
+
+  \item crystals are described by an average structure
+
+  \item real materials deviate from that average
+
+  \item those deviations control the properties
+
+\end{itemize}
+
+
+We will return to each of these.
+
+
+
+
+\end{frame}
+
+
+\begin{frame}
+
+\frametitle{ Measuring a pair distribution function }
+
+
+
+\begin{figure}
+\begin{center}
+\makebox[\textwidth][c]{\includegraphics[width=0.8\dimexpr\textwidth+2cm\relax, angle=0 ]{ example_diffractometer }}
+
+\caption{ The diffractometer used to collect the data. }
+
+\end{center}
+\end{figure}
+
+
+
+
+
+\end{frame}
+
+
+\begin{frame}[shrink=10]
+
+\frametitle{ From diffraction pattern to PDF }
+
+
+\begin{columns}
+\column{ 0.6\textwidth}
+
+The transform is done in three steps.
+
+
+\begin{itemize}
+
+  \item correct and normalize the measured intensity
+
+  \item Fourier transform to real space
+
+  \item fit a structure model to the result
+
+\end{itemize}
+
+
+\column{ 0.4\textwidth}
+\begin{figure}
+\begin{center}
+\makebox[\columnwidth][c]{\includegraphics[width=0.9\dimexpr\columnwidth+2cm\relax, angle=0 ]{ example_transform }}
+
+\caption{ The Fourier transform of the total scattering structure function. }
+
+\end{center}
+\end{figure}
+\end{columns}
+
+
+
+
+
+
+\end{frame}
+
+
+\end{document}

@@ -1,0 +1,13 @@
+{% if s['intro'] %}
+{{ s['intro'] }}
+{% endif %}
+{% if s['bullets'] %}
+\begin{itemize}
+{% for a in s['bullets'] %}
+  \item {{ a }}
+{% endfor %}
+\end{itemize}
+{% endif %}
+{% if s['outro'] %}
+{{ s['outro'] }}
+{% endif %}

@@ -22,6 +22,7 @@ builder_map = [
     "formalletter",
     #    "html",
     "internalhtml",
+    "presentation",
     "preslist",
     "publist",
     "recent-collabs",

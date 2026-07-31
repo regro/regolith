@@ -1,0 +1,25 @@
+\begin{columns}
+\column{ {{ 1-s['imagecol_width'] }}\textwidth}
+{% if s['intro'] %}
+{{ s['intro'] }}
+{% endif %}
+{% if s['bullets'] %}
+\begin{itemize}
+{% for a in s['bullets'] %}
+  \item {{ a }}
+{% endfor %}
+\end{itemize}
+{% endif %}
+{% if s['outro'] %}
+{{ s['outro'] }}
+{% endif %}
+\column{ {{ s['imagecol_width'] }}\textwidth}
+\begin{figure}
+\begin{center}
+\makebox[\columnwidth][c]{\includegraphics[width={{ s['fig_width'] }}\dimexpr\columnwidth+2cm\relax, angle={{ s['fig_rotation'] }} ]{ {{ s['image'] }} }}
+{% if s['caption'] %}
+\caption{ {{ s['caption'] }} }
+{% endif %}
+\end{center}
+\end{figure}
+\end{columns}

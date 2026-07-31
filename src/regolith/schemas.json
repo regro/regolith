@@ -3021,6 +3021,16 @@
                         "required": false,
                         "anyof_type": ["string", "list"]
                     },
+                    "question": {
+                        "description": "The question posed to the audience, for slides of the cork and cork_2col types.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    "answers": {
+                        "description": "The answers offered to the audience, revealed one at a time, for slides of the cork and cork_2col types.",
+                        "required": false,
+                        "anyof_type": ["string", "list"]
+                    },
                     "solution": {
                         "description": "The answer to the question posed on the slide, for slides used in teaching.",
                         "required": false,

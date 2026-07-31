@@ -1,0 +1,47 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\setlength{\parskip}{0 pt}
+\setbeamertemplate{caption}{\centering\raggedright\scriptsize\insertcaption\par}
+\title{ {{ general['title'] }} }
+\subtitle{ {{ general['subtitle'] }} }
+\author{ {{ general['presenter'] }} }
+\date{\today}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+{% for topic in topics %}
+\section{ {{ topic['name'] }} }
+{% for s in topic['slides'] %}
+{% if s["shrink"] %}
+\begin{frame}[shrink=10]
+{% else %}
+\begin{frame}
+{% endif %}
+\frametitle{ {{ s['title'] }} }
+{% if s["type"] == "imageleft-2col" %}
+{% include 'imageleft-2col.tex' %}
+{% endif %}
+{% if s["type"] == "imageright-2col" %}
+{% include 'imageright-2col.tex' %}
+{% endif %}
+{% if s["type"] == "image" %}
+{% include 'image.tex' %}
+{% endif %}
+{% if s["type"] == "animation" %}
+{% include 'animation.tex' %}
+{% endif %}
+{% if s["type"] == "text" %}
+{% include 'text.tex' %}
+{% endif %}
+{% if s["type"] == "cork" %}
+{% include 'cork.tex' %}
+{% endif %}
+{% if s["type"] == "cork_2col" %}
+{% include 'cork_2col.tex' %}
+{% endif %}
+\end{frame}
+{% endfor %}
+{% endfor %}
+\end{document}
