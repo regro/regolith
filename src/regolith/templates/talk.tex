@@ -12,7 +12,7 @@
 {%- if not loop.last %}, {% endif -%}
 {%- endfor -%}
 }
-\institute{\small
+\institute{\small{}
 {%- for affiliation in general['affiliations'] -%}
 {%- if general['affiliations']|length > 1 -%}\textsuperscript{ {{- loop.index -}} }{%- endif -%}
 {{- affiliation -}}

@@ -1337,6 +1337,10 @@ def _latest_employment(employment, now=None):
     one."""
     if now is None:
         now = date.today()
+    # An entry kept out of the cv, such as an editorship held alongside a post, is not the
+    # affiliation the person would put on a paper, so it is only used if it is all there is
+    substantive = [entry for entry in employment if not entry.get("not_in_cv")]
+    employment = substantive or employment
     current, ended, undated = [], [], []
     for entry in employment:
         dates = get_dates(entry)

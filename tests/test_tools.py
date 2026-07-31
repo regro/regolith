@@ -3591,6 +3591,41 @@ AFFILIATION_PEOPLE = [
         "_id": "nemo",
         "name": "Captain Nemo",
     },
+    {
+        # A person holding an editorship, kept out of their cv, alongside their post. The
+        # editorship began later, so it would win on date alone
+        "_id": "reditor",
+        "name": "Rosalind Editor",
+        "employment": [
+            {
+                "begin_year": 2008,
+                "organization": "columbiau",
+                "department": "physics",
+                "position": "professor",
+            },
+            {
+                "begin_year": 2011,
+                "organization": "cambridge",
+                "department": "physics",
+                "position": "editor",
+                "not_in_cv": True,
+            },
+        ],
+    },
+    {
+        # A person whose only employment is kept out of their cv
+        "_id": "oeditor",
+        "name": "Only Editor",
+        "employment": [
+            {
+                "begin_year": 2011,
+                "organization": "cambridge",
+                "department": "physics",
+                "position": "editor",
+                "not_in_cv": True,
+            },
+        ],
+    },
 ]
 
 AFFILIATION_CONTACTS = [
@@ -3925,3 +3960,20 @@ def test_string_to_slice_applies_to_a_list():
     assert items[string_to_slice("[1:3]")] == ["b", "c"]
     assert items[string_to_slice("[:]")] == items
     assert items[string_to_slice("[0:5:2]")] == ["a", "c", "e"]
+
+
+@pytest.mark.parametrize(
+    "name_or_id, expected_department, expected_institution",
+    [
+        # Test that an employment entry kept out of the cv is not taken as the affiliation
+        # C1: A post held alongside an editorship that began later, expect the post, since an
+        # editorship is not what the person would put on a paper
+        ("reditor", "Department of Physics", "Columbia University"),
+        # C2: An editorship as the only employment, expect it used rather than nothing
+        ("oeditor", "Cavendish Laboratory", "University of Cambridge"),
+    ],
+)
+def test_get_person_affiliation_skips_not_in_cv(name_or_id, expected_department, expected_institution):
+    actual = get_person_affiliation(name_or_id, AFFILIATION_PEOPLE, AFFILIATION_CONTACTS, AFFILIATION_INSTITUTIONS)
+    assert actual["department"] == expected_department
+    assert actual["institution"] == expected_institution

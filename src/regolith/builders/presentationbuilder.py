@@ -231,17 +231,23 @@ class PresentationBuilder(LatexBuilderBase):
         }
 
     def _get_authors(self, presentation, talk):
-        """Return the authors of a talk and the affiliations they share.
+        """Return the authors of a presentation and the affiliations
+        they share.
 
-        Authors keep the order the talk lists them in.  Affiliations are
-        numbered in the order they first appear, and an affiliation
-        shared by several authors is listed once, so that two authors in
-        the same department of the same institution carry the same
-        number while two departments of one institution stay apart.  The
-        author giving the presentation is marked so that the template
-        can pick them out.
+        The authors are the ones the presentation credits, falling back
+        to the authorlist of the talk for a presentation that names
+        none, since the same talk given on two occasions may credit
+        different people.  Authors keep the order they are listed in.
+        Affiliations are numbered in the order they first appear, and an
+        affiliation shared by several authors is listed once, so that
+        two authors in the same department of the same institution carry
+        the same number while two departments of one institution stay
+        apart.  The author giving the presentation is marked so that the
+        template can pick them out.
         """
-        authorlist = talk.get("authorlist") or []
+        # The presentation is the occasion, so the authors credited on it come first. A
+        # talk carries an authorlist only when its presentations do not say who to credit
+        authorlist = presentation.get("authors") or talk.get("authorlist") or []
         if isinstance(authorlist, str):
             authorlist = [authorlist]
         addresses = talk.get("addresses") or []
