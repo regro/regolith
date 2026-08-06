@@ -11,7 +11,7 @@ jobs:
       project: regolith
       c_extension: false
       headless: false
-      python_version: 3.13
+      python_version: 3.14
       run: pip install gooey
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

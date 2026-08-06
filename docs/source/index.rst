@@ -35,6 +35,15 @@ Regolith is developed as a `regro project <https://regro.github.io/>`_
 | Software version |release|
 | Last updated |today|.
 
+===============
+Getting started
+===============
+
+Welcome to the ``regolith`` documentation!
+
+To get started, please visit the `Getting Started <https://github.com/regro/regolith#getting-started>`_
+section of the README page.
+
 =======
 Authors
 =======

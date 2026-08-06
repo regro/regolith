@@ -2,9 +2,10 @@
 ##############################################################################
 #
 # (c) 2024-2025 The Trustees of Columbia University in the City of New York.
+# (c) 2026 Billinge Group members and regolith contributors.
 # All rights reserved.
 #
-# File coded by: Billinge Group members and community contributors.
+# File coded by: Anthony Scopatz, Simon Billinge, Billinge Group members and community contributors.
 #
 # See GitHub contributions for a more detailed list of contributors.
 # https://github.com/regro/regolith/graphs/contributors

@@ -25,6 +25,7 @@
         :target: https://anaconda.org/conda-forge/regolith
 
 .. |PR| image:: https://img.shields.io/badge/PR-Welcome-29ab47ff
+        :target: https://github.com/regro/regolith/pulls
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/regolith
         :target: https://pypi.org/project/regolith/
@@ -83,6 +84,19 @@ and run the following ::
 
         pip install .
 
+This package also provides command-line utilities. To check the software has been installed correctly, type ::
+
+        regolith --version
+
+You can also type the following command to verify the installation. ::
+
+        python -c "import regolith; print(regolith.__version__)"
+
+
+To view the basic usage and available commands, type ::
+
+        regolith -h
+
 Getting Started
 ---------------
 
@@ -116,12 +130,12 @@ trying to commit again.
 
 Improvements and fixes are always appreciated.
 
-Before contributing, please read our `Code of Conduct <https://github.com/regro/regolith/blob/main/CODE_OF_CONDUCT.rst>`_.
+Before contributing, please read our `Code of Conduct <https://github.com/regro/regolith/blob/main/CODE-OF-CONDUCT.rst>`_.
 
 Contact
 -------
 
-For more information on regolith please visit the project `web-page <https://regro.github.io/>`_ or email Simon J.L. Billinge group at sb2896@columbia.edu.
+For more information on regolith please visit the project `web-page <https://regro.github.io/>`_ or email the maintainers ``Simon Billinge(sbillinge@ucsb.edu) and Anthony Scopatz(scopatz@gmail.com)``.
 
 Acknowledgements
 ----------------

@@ -1,0 +1,20 @@
+{
+  "author_names": "Simon Billinge, Anthony Scopatz",
+  "author_emails": "sbillinge@ucsb.edu, scopatz@gmail.com",
+  "maintainer_names": "Simon Billinge, Anthony Scopatz",
+  "maintainer_emails": "sbillinge@ucsb.edu, scopatz@gmail.com",
+  "maintainer_github_usernames": "sbillinge, scopatz",
+  "contributors": "Anthony Scopatz, Simon Billinge, Billinge Group members",
+  "project_name": "regolith",
+  "license_holders": "regolith contributors",
+  "github_username_or_orgname": "regro",
+  "github_repo_name": "regolith",
+  "conda_pypi_package_dist_name": "regolith",
+  "package_dir_name": "regolith",
+  "project_short_description": "Python package for research group content management system",
+  "project_keywords": "content management system",
+  "minimum_supported_python_version": "3.12",
+  "maximum_supported_python_version": "3.14",
+  "project_needs_c_code_compiled": "No",
+  "project_has_gui_tests": "No"
+}
