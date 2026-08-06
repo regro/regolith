@@ -28,7 +28,7 @@ jobs:
     with:
       project: regolith
       c_extension: false
-      maintainer_github_username: sbillinge, scopatz
+      maintainer_github_username: sbillinge
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
       PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
