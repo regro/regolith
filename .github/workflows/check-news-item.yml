@@ -3,7 +3,7 @@ name: Check for News
 on:
   pull_request_target:
     branches:
-      - main
+      - main  # GitHub does not evaluate expressions in trigger filters; edit this value if your base branch is not main
 
 jobs:
   check-news-item:

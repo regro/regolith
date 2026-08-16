@@ -1,18 +1,76 @@
-name: Release (GitHub/PyPI) and Deploy Docs
+name: Build Wheel and Release
 
+# Trigger on tag push or manual dispatch.
+# Tag and release privilege are verified inside the reusable workflow.
 on:
   workflow_dispatch:
   push:
     tags:
-      - "*" # Trigger on all tags initially, but tag and release privilege are verified in _build-wheel-release-upload.yml
+      - "*"
+
+# ── Release modality ──────────────────────────────────────────────────────────
+# Three options are provided below. Only ONE job should be active at a time.
+# To switch: comment out the active job and uncomment your preferred option,
+# then commit the change to main before tagging a release.
+# ─────────────────────────────────────────────────────────────────────────────
 
 jobs:
-  release:
+  # Option 1 (default): Release to GitHub, publish to PyPI, and deploy docs.
+  #
+  # The wheel is uploaded to PyPI so users can install with `pip install`.
+  # A GitHub release is created with the changelog as the release body, and
+  # the Sphinx documentation is rebuilt and deployed to GitHub Pages.
+  #
+  # Choose this for open-source packages distributed via PyPI and/or
+  # conda-forge where broad public availability is the goal.
+  build-release:
     uses: scikit-package/release-scripts/.github/workflows/_build-wheel-release-upload.yml@v0
     with:
       project: regolith
       c_extension: false
-      maintainer_GITHUB_username: sbillinge
+      maintainer_github_username: sbillinge
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
       PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+  # Option 2: Release to GitHub and deploy docs, without publishing to PyPI.
+  #
+  # A GitHub release is created and the Sphinx docs are deployed, but the
+  # wheel is not uploaded to PyPI. The source code remains publicly visible
+  # on GitHub and can be installed directly from there.
+  #
+  # Choose this when the package is public but you prefer to keep it off the
+  # default pip index — for example, if you distribute via conda-forge only,
+  # or if the package is not yet ready for a permanent PyPI presence.
+  #
+  # To use: comment out Option 1 above and uncomment the lines below.
+  # build-release-no-pypi:
+  #   uses: scikit-package/release-scripts/.github/workflows/_build-release-github-no-pypi.yml@v0
+  #   with:
+  #     project: regolith
+  #     c_extension: false
+  #     maintainer_github_username: sbillinge
+  #   secrets:
+  #     PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+  # Option 3: Release to GitHub with wheel, license, and instructions bundled
+  # as a downloadable zip attached to the GitHub release asset.
+  #
+  # The wheel is built and packaged together with INSTRUCTIONS.txt and the
+  # LICENSE file into a zip that is attached directly to the GitHub release.
+  # Users with access to the (private) repo download the zip, follow the
+  # instructions inside, and install locally with pip. No PyPI or conda-forge
+  # upload occurs, and no docs are deployed.
+  #
+  # Choose this for private or restricted packages where distribution must be
+  # controlled: only users with repo access can download the release asset,
+  # making the GitHub release itself the distribution channel.
+  #
+  # To use: comment out Option 1 above and uncomment the lines below.
+  # build-release-private:
+  #   uses: scikit-package/release-scripts/.github/workflows/_build-release-github-private-pure.yml@v0
+  #   with:
+  #     project: regolith
+  #     maintainer_github_username: sbillinge
+  #   secrets:
+  #     PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
