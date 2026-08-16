@@ -1,0 +1,20 @@
+{
+  "author_names": "Simon Billinge",
+  "author_emails": "sbillinge@ucsb.edu",
+  "maintainer_names": "Simon Billinge",
+  "maintainer_emails": "sbillinge@ucsb.edu",
+  "maintainer_github_usernames": "sbillinge",
+  "contributors": "Simon Billinge, Anthony Scopatz and Contributors to Regolith",
+  "project_name": "regolith",
+  "license_holders": "Contributors to Regolith",
+  "github_username_or_orgname": "regro",
+  "github_repo_name": "regolith",
+  "conda_pypi_package_dist_name": "regolith",
+  "package_dir_name": "regolith",
+  "project_short_description": "Python package for doing science.",
+  "project_keywords": "diffraction, PDF, X-ray, neutron",
+  "minimum_supported_python_version": "3.12",
+  "maximum_supported_python_version": "3.14",
+  "project_needs_c_code_compiled": "No",
+  "project_has_gui_tests": "No"
+}

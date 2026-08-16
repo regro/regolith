@@ -41,7 +41,7 @@ sys.path.insert(0, str(Path("../..").resolve()))
 sys.path.insert(0, str(Path("../../src").resolve()))
 
 # abbreviations
-ab_authors = "Billinge Group members and community contributors"
+ab_authors = "Anthony Scopatz, C.J. Wright, Simon Billinge, Anthony Scopatz and Contributors to Regolith"
 
 # -- General configuration ------------------------------------------------
 
@@ -60,7 +60,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx_rtd_theme",
     "sphinx_copybutton",
-    "m2r",
+    "m2r2",
 ]
 
 # napoleon_google_docstring = False
@@ -83,7 +83,9 @@ master_doc = "index"
 
 # General information about the project.
 project = "regolith"
-copyright = "2015-2017 Anthony Scopatz, 2018-%Y The Trustees of Columbia University in the City of New York"
+copyright = (
+    "2015-2017 Anthony Scopatz, 2018-2025 The Trustees of Columbia University in the City of New York, 2026-%Y"
+)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
