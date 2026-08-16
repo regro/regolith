@@ -6,17 +6,17 @@ build-backend = "setuptools.build_meta"
 name = "regolith"
 dynamic=['version', 'dependencies']
 authors = [
-  { name="Simon J.L. Billinge group", email="sb2896@columbia.edu" },
+  { name="Simon J.L. Billinge group", email="sbillinge@ucsb.edu" },
   { name="Anthony Scopatz", email="scopatz@gmail.com" },
 ]
 maintainers = [
-  { name="Simon J.L. Billinge group", email="sb2896@columbia.edu" },
+  {name='Simon Billinge', email='sbillinge@ucsb.edu'},
   { name="Anthony Scopatz", email="scopatz@gmail.com" },
 ]
 description = "Python package for research group content management system"
 keywords = ['content management system']
 readme = "README.rst"
-requires-python = ">=3.11, <3.14"
+requires-python = ">=3.12, <3.15"
 classifiers = [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
@@ -27,9 +27,9 @@ classifiers = [
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
         'Operating System :: Unix',
-        'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
         'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
         'Topic :: Scientific/Engineering :: Physics',
         'Topic :: Scientific/Engineering :: Chemistry',
 ]

@@ -65,10 +65,6 @@ The following creates and activates a new environment named ``regolith_env`` ::
         conda create -n regolith_env regolith
         conda activate regolith_env
 
-To confirm that the installation was successful, type ::
-
-        python -c "import regolith; print(regolith.__version__)"
-
 The output should print the latest version displayed on the badges above.
 
 If the above does not work, you can use ``pip`` to download and install the latest release from
@@ -82,6 +78,19 @@ If you prefer to install from sources, after installing the dependencies, obtain
 and run the following ::
 
         pip install .
+
+This package also provides command-line utilities. To check the software has been installed correctly, type ::
+
+        regolith --version
+
+You can also type the following command to verify the installation. ::
+
+        python -c "import regolith; print(regolith.__version__)"
+
+
+To view the basic usage and available commands, type ::
+
+        regolith -h
 
 Getting Started
 ---------------
@@ -116,12 +125,12 @@ trying to commit again.
 
 Improvements and fixes are always appreciated.
 
-Before contributing, please read our `Code of Conduct <https://github.com/regro/regolith/blob/main/CODE_OF_CONDUCT.rst>`_.
+Before contributing, please read our `Code of Conduct <https://github.com/regro/regolith/blob/main/CODE-OF-CONDUCT.rst>`_.
 
 Contact
 -------
 
-For more information on regolith please visit the project `web-page <https://regro.github.io/>`_ or email Simon J.L. Billinge group at sb2896@columbia.edu.
+For more information on regolith please visit the project `web-page <https://regro.github.io/>`_ or email the maintainers ``Simon Billinge(sbillinge@ucsb.edu)``.
 
 Acknowledgements
 ----------------

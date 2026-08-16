@@ -2,6 +2,6 @@ sphinx
 sphinx_rtd_theme
 sphinx-copybutton
 doctr
-m2r
+m2r2
 ruamel.yaml
 flask
