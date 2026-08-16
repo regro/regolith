@@ -77,10 +77,36 @@ class PropRevAdderHelper(DbHelperBase):
             {
                 "adequacy_of_resources": ["The resources available to the PI seem adequate"],
                 "agency": rc.type,
-                "competency_of_team": [],
-                "doe_appropriateness_of_approach": [],
-                "doe_reasonableness_of_budget": [],
+                "competency_of_team": [
+                    "For renewal applications, what is the past performance and potential of the research team? "
+                    "How well qualified is the research team to carry out the proposed research? Is the lead "
+                    "institution proposing to perform a greater portion of the scientific and technical work than "
+                    "any other team member? Are the research environment and facilities adequate for performing "
+                    "the research? Does the proposed work take advantage of unique facilities and capabilities?"
+                ],
+                "doe_appropriateness_of_approach": [
+                    "How logical and feasible are the research approaches? Does the proposed research employ "
+                    "innovative concepts or methods? Are the conceptual framework, methods, and analyses well "
+                    "justified, adequately developed, and likely to lead to scientifically valid conclusions? "
+                    "Does the applicant recognize significant potential problems and consider alternative "
+                    "strategies? Is the proposed research aligned with the published priorities identified or "
+                    "incorporated by reference in Section III of this NOFO? Does the proposed plan to recruit "
+                    "and retain students and early-stage investigators provide sufficient mentorship?"
+                ],
+                "doe_reasonableness_of_budget": [
+                    "Are the proposed budget and staffing levels adequate to carry out the proposed research? "
+                    "Is the budget reasonable and appropriate for the scope?"
+                ],
                 "doe_relevance_to_program_mission": [],
+                "doe_other": [],
+                "doe_appropriateness_data_management_plan": [
+                    "To what extent does the Data Management and Sharing Plan (DMSP) enable data generated in "
+                    "the course of the research project to be publicly shared and preserved in a timely and "
+                    "fair manner that enables validation and replication of results? How well do the selected "
+                    "digital repositories enable appropriate sharing of scientific data? Does the DMSP adequately "
+                    "justify any limitations of data sharing?  Are there any weaknesses in the DMSP that should "
+                    "be addressed prior to the start of the project?"
+                ],
                 "does_how": [],
                 "does_what": "",
                 "due_date": rc.due_date,
