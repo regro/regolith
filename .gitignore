@@ -94,3 +94,6 @@ target/
 
 # Auto sphinx docs
 docs/source/collections/
+
+# Claude
+.claude
