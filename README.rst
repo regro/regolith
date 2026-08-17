@@ -37,12 +37,6 @@
 
 Python package for research group content management system
 
-item
-* Second bullet item
-  * Nested item (indented by 2 spaces)
-  * Another nested item
-* Third bullet item
-
 Regolith is a content management system for software & research groups. Regolith creates and manages a database of people, publications, projects, proposals & grants, courses, and more! From this database, regolith is then able to:
 
 * Generate a group website,
@@ -51,7 +45,7 @@ Regolith is a content management system for software & research groups. Regolith
 
 The databases may be file-based (JSON and YAML) or MongoDB-based.
 
-For more information about the regolith library, please consult our `online documentation <https://regro.github.io/regolith>`_.
+For more information about the regolith library, please consult our `online documentation <https://regro.github.io/regolith>`__.
 
 Citation
 --------
