@@ -4,6 +4,82 @@ Release notes
 
 .. current developments
 
+0.10.0
+=====
+
+**Added:**
+
+* article synopsis and professional summary added to grant-report citation list
+* acknowledgement statement added to grant-report citation list
+* ``l_talks`` lister, which shows each talk beside the presentations it was given at,
+filtered by id, description, presenter or year.
+* ``l_slides`` lister, which shows each deck of slides and how many slides it holds,
+filtered by id, tag or the title of a slide it contains.
+* 'prettier' and 'docformatter' added to .pre-commit-configs.yml
+* PyPI/Github full-release nd conda-forge release checklist added.
+* Add command line utility to Github Repos metadata extractor to build `releaselist`
+* Add test output for releaselist.
+* ``format_affiliation`` in ``tools.py``, which renders the affiliation returned by
+``get_person_affiliation`` as one line of text in a full, short or institution style.
+* ``--kwargs presentation:<id>`` and ``--kwargs talk:<id>`` on the presentation builder,
+to build one presentation, or every presentation of one talk, rather than all of them.
+* student response rate to annual activity columbia template
+* Added Python 3.14 support
+* ``get_person_affiliation`` tool returning a person's canonical name and affiliation as a flat dict, with ``missing_fields`` and the ``MISSING_INFO`` placeholder for unresolved information
+* ``talks`` and ``slides`` schemas and exemplars, describing reusable talks assembled
+from decks of slides, together with the ``SLIDE_TYPES`` allowed list.
+* Add Github repository extractor
+* Add software-exemplar in exemplar.json.
+* article synopsis and professional summary added to grant-report citation list
+* acknowledgement statement added to grant-report citation list
+* subtitle added to schemas and exemplars
+* Add `ReleaseListBuilder` functionality, filter criteria
+* Ability to print a prior-support statement as part of the grant-report.
+* ``presentation`` builder, which renders a beamer document for each presentation that
+names a talk, gathering the slides from the decks the talk lists under its topics.
+* ``question`` and ``answers`` fields on a slide, used by the cork slide types.
+
+**Changed:**
+
+* CV and resume now differentiates current and past projects.
+* Better printing of results from prums in grant report builder
+* a_presentation helper now adds new fields needed for new way of building talks
+* Modified the prum adder so that by default it creates a less bloated prum
+* Progress lister tweaked to be more easily readable
+* The help of ``--kwargs`` now names the options each builder accepts, so that they can
+be found from the command line.
+* Brought up to latest scikit-package standards
+* defaults for adding presentations is no-cal and no-repo.  These will be created if selected as --cal and --repo on the command line
+* The presentation builder credits the authors of the presentation, falling back to the
+authorlist of the talk, rather than reading the talk alone.
+
+**Fixed:**
+
+* spacing in names in citations in grant-reports
+* ``l_talks`` and ``l_slides`` now say when the collection is empty, rather than telling
+the reader to loosen filters they may not have set.
+* errors introduced by auto linting that broke the eallowed validator in cerberus
+* Repo structure modified to the new diffpy (cookiecutter) standard
+* Formatting of reimbursed amounts in reimbursement lister
+* Support ``scikit-package`` Level 5 standard (https://scikit-package.github.io/scikit-package/).
+* Added presenter and talk_id to the presentations schema
+* Tests no longer load an interactive matplotlib backend, so the suite passes
+locally without setting ``MPLBACKEND=Agg`` by hand.
+* Strip inputs of leading and trailing whitespace
+* ``get_person_affiliation`` no longer takes an employment entry marked ``not_in_cv``,
+such as an editorship held alongside a post, as a person's affiliation.
+* The institute line of a talk no longer runs ``\small`` into the text of a single
+affiliation, which made an undefined control sequence.
+* spacing in names in citations in grant-reports
+* Helpful error message when grant is not found in grant report builder
+* Better formatting and ordering of finished todos when `--stati finished` is supplied
+* The general key-value lister can now saerch for booleans when True or False are entered in the CLI.
+
+**Removed:**
+
+* Python 3.11 support
+
+
 0.9.1
 =====
 
