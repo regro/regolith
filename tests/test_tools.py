@@ -1,5 +1,7 @@
 import copy
 import datetime as dt
+import os
+from pathlib import PurePath
 
 import habanero
 import pytest
@@ -15,6 +17,8 @@ from regolith.tools import (
     compound_list,
     create_repo,
     date_to_rfc822,
+    dbdirname,
+    dbpathname,
     dereference_institution,
     filter_employment_for_advisees,
     filter_presentations,
@@ -3977,3 +3981,45 @@ def test_get_person_affiliation_skips_not_in_cv(name_or_id, expected_department,
     actual = get_person_affiliation(name_or_id, AFFILIATION_PEOPLE, AFFILIATION_CONTACTS, AFFILIATION_INSTITUTIONS)
     assert actual["department"] == expected_department
     assert actual["institution"] == expected_institution
+
+
+@pytest.mark.parametrize(
+    "db, expected_parts",
+    [
+        # Test that database directories are composed with pathlib so that posix-style
+        # entries in the rc file do not leave mixed separators on Windows
+        # C1: A remote database, expect it cached under the build directory
+        ({"name": "test-db", "path": "db", "url": "https://example.com/db.git"}, ("_build", "_dbs", "test-db")),
+        # C2: A local database whose url is posix-style, expect the url used as given
+        (
+            {"name": "test-db", "path": "db", "url": "../../rg-db-private", "local": True},
+            ("..", "..", "rg-db-private"),
+        ),
+    ],
+)
+def test_dbdirname(db, expected_parts):
+    rc = copy.copy(DEFAULT_RC)
+    actual = dbdirname(db, rc)
+    assert isinstance(actual, PurePath)
+    assert actual.parts == expected_parts
+
+
+@pytest.mark.parametrize(
+    "db",
+    [
+        # Test that the collection directory of a local database is composed with the
+        # native separator only.  A str-joined path mixes "/" and "\\" on Windows, which
+        # python 3.14 refuses to open with "OSError: [Errno 22] Invalid argument"
+        # C1: A posix-style url carrying the parent hops, expect the parent hops kept
+        {"name": "test-db", "path": "db", "url": "../../rg-db-private", "local": True},
+        # C2: A posix-style multi-component path carrying the parent hops, expect the
+        # same directory, since it is the join of url and path that has to stay native
+        {"name": "test-db", "path": "../rg-db-private/db", "url": "..", "local": True},
+    ],
+)
+def test_dbpathname_has_no_foreign_separators(db):
+    rc = copy.copy(DEFAULT_RC)
+    actual = dbpathname(db, rc)
+    assert actual.parts == ("..", "..", "rg-db-private", "db")
+    foreign_sep = "/" if os.sep == "\\" else "\\"
+    assert foreign_sep not in str(actual)

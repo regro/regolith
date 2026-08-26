@@ -3,12 +3,11 @@
 import datetime
 import json
 import logging
-import os
 import signal
 import sys
 from collections import defaultdict
 from copy import deepcopy
-from glob import iglob
+from pathlib import Path
 
 import ruamel.yaml
 from ruamel.yaml import YAML
@@ -58,7 +57,7 @@ def _id_key(doc):
 def load_json(filename):
     """Loads a JSON file and returns a dict of its documents."""
     docs = {}
-    with open(filename, encoding="utf-8") as fh:
+    with Path(filename).open(encoding="utf-8") as fh:
         lines = fh.readlines()
     for line in lines:
         doc = json.loads(line)
@@ -76,7 +75,7 @@ def dump_json(filename, docs, date_handler=None):
     docs = sorted(docs.values(), key=_id_key)
     lines = [json.dumps(doc, sort_keys=True, default=date_handler) for doc in docs]
     s = "\n".join(lines)
-    with open(filename, "w", encoding="utf-8") as fh:
+    with Path(filename).open("w", encoding="utf-8") as fh:
         fh.write(s)
 
 
@@ -86,7 +85,7 @@ def load_yaml(filename, return_inst=False, loader=None):
         inst = YAML()
     else:
         inst = loader
-    with open(filename, encoding="utf-8") as fh:
+    with Path(filename).open(encoding="utf-8") as fh:
         docs = inst.load(fh)
         docs = _rec_re_type(docs)
     for _id, doc in docs.items():
@@ -106,7 +105,7 @@ def dump_yaml(filename, docs, inst=None):
         sorted_dict[k] = ruamel.yaml.comments.CommentedMap()
         for kk in sorted(doc.keys()):
             sorted_dict[k][kk] = doc[kk]
-    with open(filename, "w", encoding="utf-8") as fh:
+    with Path(filename).open("w", encoding="utf-8") as fh:
         with DelayedKeyboardInterrupt():
             inst.dump(sorted_dict, stream=fh)
 
@@ -150,15 +149,14 @@ class FileSystemClient:
         dbs = self.dbs
         for f in [
             file
-            for file in iglob(os.path.join(dbpath, "*.json"))
-            if file not in db["blacklist"]
+            for file in sorted(Path(dbpath).glob("*.json"))
+            if str(file) not in db["blacklist"]
             and len(db["whitelist"]) == 0
-            or os.path.basename(file).split(".")[0] in db["whitelist"]
+            or file.name.split(".")[0] in db["whitelist"]
         ]:
-            collfilename = os.path.split(f)[-1]
-            base, ext = os.path.splitext(collfilename)
+            base = f.stem
             self._collfiletypes[base] = "json"
-            print("loading " + f + "...", file=sys.stderr)
+            print("loading " + str(f) + "...", file=sys.stderr)
             dbs[db["name"]][base] = load_json(f)
 
     def load_yaml(self, db, dbpath):
@@ -166,19 +164,18 @@ class FileSystemClient:
         dbs = self.dbs
         for f in [
             file
-            for file in iglob(os.path.join(dbpath, "*.y*ml"))
-            if file not in db["blacklist"]
+            for file in sorted(Path(dbpath).glob("*.y*ml"))
+            if str(file) not in db["blacklist"]
             and len(db["whitelist"]) == 0
-            or os.path.basename(file).split(".")[0] in db["whitelist"]
+            or file.name.split(".")[0] in db["whitelist"]
         ]:
-            collfilename = os.path.split(f)[-1]
-            base, ext = os.path.splitext(collfilename)
+            base, ext = f.stem, f.suffix
             self._collexts[base] = ext
             self._collfiletypes[base] = "yaml"
             # print("loading " + f + "...", file=sys.stderr)
             coll, inst = load_yaml(f, return_inst=True)
             dbs[db["name"]][base] = coll
-            self._yamlinsts[dbpath, base] = inst
+            self._yamlinsts[Path(dbpath), base] = inst
 
     def load_database(self, db):
         """Loads a database."""
@@ -188,23 +185,21 @@ class FileSystemClient:
 
     def dump_json(self, docs, collname, dbpath):
         """Dumps json docs and returns filename."""
-        f = os.path.join(dbpath, collname + ".json")
+        f = Path(dbpath) / (collname + ".json")
         dump_json(f, docs)
-        filename = os.path.split(f)[-1]
-        return filename
+        return f.name
 
     def dump_yaml(self, docs, collname, dbpath):
         """Dumps json docs and returns filename."""
-        f = os.path.join(dbpath, collname + self._collexts.get(collname, ".yaml"))
-        inst = self._yamlinsts.get((dbpath, collname), None)
+        f = Path(dbpath) / (collname + self._collexts.get(collname, ".yaml"))
+        inst = self._yamlinsts.get((Path(dbpath), collname), None)
         dump_yaml(f, docs, inst=inst)
-        filename = os.path.split(f)[-1]
-        return filename
+        return f.name
 
     def dump_database(self, db):
         """Dumps a database back to the filesystem."""
         dbpath = dbpathname(db, self.rc)
-        os.makedirs(dbpath, exist_ok=True)
+        Path(dbpath).mkdir(parents=True, exist_ok=True)
         to_add = []
         for collname, collection in self.dbs[db["name"]].items():
             # print("dumping " + collname + "...", file=sys.stderr)
@@ -215,7 +210,7 @@ class FileSystemClient:
                 filename = self.dump_yaml(collection, collname, dbpath)
             else:
                 raise ValueError("did not recognize file type for regolith")
-            to_add.append(os.path.join(db["path"], filename))
+            to_add.append(str(Path(db["path"]) / filename))
         return to_add
 
     def close(self):

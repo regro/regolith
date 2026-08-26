@@ -1,6 +1,6 @@
 """Helps manage mongodb setup and connections."""
-import os
 from contextlib import contextmanager
+from pathlib import Path
 from warnings import warn
 
 from xonsh.api import subprocess
@@ -20,14 +20,14 @@ def load_git_database(db, client, rc):
     """Loads a git database"""
     dbdir = dbdirname(db, rc)
     # get or update the database
-    if os.path.isdir(dbdir):
-        with indir(dbdir):
+    if dbdir.is_dir():
+        with indir(str(dbdir)):
             (![git pull upstream master]
              or ![git pull origin master]
              or ![git pull])
     else:
-        git clone @(db['url']) @(dbdir)
-    with indir(dbdir):
+        git clone @(db['url']) @(str(dbdir))
+    with indir(str(dbdir)):
         if getattr(rc, 'branch', None):
             branch = rc.branch
             git checkout @(branch) or git checkout -b @(branch) master
@@ -42,12 +42,12 @@ def load_hg_database(db, client, rc):
         raise ImportError('hglib')
     dbdir = dbdirname(db, rc)
     # get or update the database
-    if os.path.isdir(dbdir):
-        client = hglib.open(dbdir)
+    if dbdir.is_dir():
+        client = hglib.open(str(dbdir))
         client.pull(update=True, force=True)
     else:
         # Strip off three characters for hg+
-        client = hglib.clone(db['url'][3:], dbdir)
+        client = hglib.clone(db['url'][3:], str(dbdir))
     # import all of the data
     client.load_database(db)
 
@@ -55,7 +55,7 @@ def load_hg_database(db, client, rc):
 def load_local_database(db, client, rc):
     """Loads a local database"""
     # make sure that we expand user stuff
-    db['url'] = os.path.expanduser(db['url'])
+    db['url'] = str(Path(db['url']).expanduser())
     # import all of the data
     client.load_database(db)
 
@@ -75,7 +75,7 @@ def load_database(db, client, rc):
         load_git_database(db, client, rc)
     elif url.startswith('hg+'):
         load_hg_database(db, client, rc)
-    elif os.path.exists(os.path.expanduser(url)):
+    elif Path(url).expanduser().exists():
         load_local_database(db, client, rc)
     else:
         raise ValueError('Do not know how to load this kind of database: '
@@ -96,7 +96,7 @@ def dump_git_database(db, client, rc):
     try:
         subprocess.check_call(cmd, cwd=dbdir)
     except subprocess.CalledProcessError:
-        warn('Could not git commit to ' + dbdir, RuntimeWarning)
+        warn('Could not git commit to ' + str(dbdir), RuntimeWarning)
         return
     cmd = ['git', 'push']
     if hasattr(rc, 'remote') and hasattr(rc, 'branch'):
@@ -104,7 +104,7 @@ def dump_git_database(db, client, rc):
     try:
         subprocess.check_call(cmd, cwd=dbdir)
     except subprocess.CalledProcessError:
-        warn('Could not git push from ' + dbdir, RuntimeWarning)
+        warn('Could not git push from ' + str(dbdir), RuntimeWarning)
         return
 
 
@@ -141,7 +141,7 @@ def dump_database(db, client, rc):
         dump_git_database(db, client, rc)
     elif url.startswith('hg+'):
         dump_hg_database(db, client, rc)
-    elif os.path.exists(url):
+    elif Path(url).expanduser().exists():
         dump_local_database(db, client, rc)
     else:
         raise ValueError('Do not know how to dump this kind of database')
