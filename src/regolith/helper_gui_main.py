@@ -1,7 +1,3 @@
-"""The main CLI for regolith."""
-
-from __future__ import print_function
-
 import copy
 import os
 
@@ -14,6 +10,10 @@ from regolith.helper import HELPERS
 from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
 from regolith.schemas import SCHEMAS
 from regolith.tools import update_schemas
+
+# Set at the very top of your GUI script
+os.environ["NO_COLOR"] = "1"
+os.environ["TERM"] = "dumb" """The main CLI for regolith."""
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}
