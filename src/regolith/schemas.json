@@ -2448,8 +2448,18 @@
             "required": true,
             "type": "list"
         },
+        "doe_appropriateness_data_management_plan": {
+            "description": "Appropriateness of the data management and sharing plan. only used if agency is doe.",
+            "required": false,
+            "type": "list"
+        },
         "doe_appropriateness_of_approach": {
             "description": "Appropriateness of Research. only used if agency is doe.",
+            "required": false,
+            "type": "list"
+        },
+        "doe_other": {
+            "description": "Any other comments on the proposal. only used if agency is doe.",
             "required": false,
             "type": "list"
         },

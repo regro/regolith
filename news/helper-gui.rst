@@ -1,6 +1,7 @@
 **Added:**
 
-* <news item>
+* ``doe_other`` and ``doe_appropriateness_data_management_plan`` fields to the
+  ``proposalReviews`` schema, so that the prompts a_proprev now writes validate.
 
 **Changed:**
 
