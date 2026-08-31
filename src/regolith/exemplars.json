@@ -1867,8 +1867,14 @@
             ],
             "agency": "doe",
             "competency_of_team": ["super competent!"],
+            "doe_appropriateness_data_management_plan": [
+                "The DMSP names a repository and is appropriate"
+            ],
             "doe_appropriateness_of_approach": [
                 "The proposed approach is highly innovative"
+            ],
+            "doe_other": [
+                "The team should say more about the mosquito nets"
             ],
             "doe_reasonableness_of_budget": ["They could do it with half the money"],
             "doe_relevance_to_program_mission": ["super relevant"],
