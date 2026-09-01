@@ -184,7 +184,8 @@ def expense_constructor(key, begin_date, end_date, rc):
                 "notes": [""],
             },
         ]
-        itemized_expenses.extend(meal_expenses(begin_date, end_date))
+        if not getattr(rc, "no_meals", False):
+            itemized_expenses.extend(meal_expenses(begin_date, end_date))
         pdoc.update({"itemized_expenses": itemized_expenses})
     else:
         pdoc.update(
@@ -296,6 +297,12 @@ def subparser(subpi):
     )
     subpi.add_argument(
         "-y", "--payee", help="payee of the expense. defaults to rc.default_user_id", type=strip_str
+    )
+    subpi.add_argument(
+        "--no-meals",
+        action="store_true",
+        help="Do not itemize breakfast, lunch, dinner and incidentals for each day "
+        "of the trip.  Default is to add them.",
     )
     subpi.add_argument("--seed", help="Random seed for the meal amounts.  Used for testing.", type=int)
     # Do not delete --database arg

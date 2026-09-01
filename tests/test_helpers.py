@@ -3,11 +3,17 @@ import datetime as dt
 import os
 import random
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 import requests_mock
 
-from regolith.helpers.a_expensehelper import MEAL_RATE_SPREAD, MEAL_RATES, meal_expenses
+from regolith.helpers.a_expensehelper import (
+    MEAL_RATE_SPREAD,
+    MEAL_RATES,
+    expense_constructor,
+    meal_expenses,
+)
 from regolith.main import main
 from regolith.schemas import alloweds
 
@@ -1658,3 +1664,32 @@ def test_meal_expenses_are_reproducible_from_a_seed():
     random.seed(42)
     second = meal_expenses(dt.date(2020, 6, 20), dt.date(2020, 6, 25))
     assert first == second
+
+
+@pytest.mark.parametrize(
+    "no_meals, expect_meals",
+    [
+        # Test that the meals the adder itemizes can be switched off from the command line
+        # C1: The switch left alone, expect meals, since they are on by default
+        (False, True),
+        # C2: The switch passed, expect the fixed travel legs but no meals
+        (True, False),
+    ],
+)
+def test_expense_constructor_no_meals(no_meals, expect_meals):
+    rc = SimpleNamespace(
+        business=False,
+        grants=["mrsec14"],
+        purpose="travel to timbuktoo",
+        payee="ashaaban",
+        where="bank",
+        notes=[],
+        status="unsubmitted",
+        seed=42,
+        no_meals=no_meals,
+    )
+    actual = expense_constructor("2006as_timbuktoo", dt.date(2020, 6, 20), dt.date(2020, 6, 22), rc)
+    purposes = [item["purpose"] for item in actual["itemized_expenses"]]
+    assert "flights" in purposes
+    for meal in MEAL_RATES:
+        assert (meal in purposes) is expect_meals

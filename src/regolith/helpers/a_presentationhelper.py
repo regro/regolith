@@ -124,6 +124,12 @@ def subparser(subpi):
         "--id",
         help="Override the default id created from the date, " "speaker and place by specifying an id here",
     )
+    subpi.add_argument(
+        "--no-meals",
+        action="store_true",
+        help="Do not itemize breakfast, lunch, dinner and incidentals for each day "
+        "of the trip.  Default is to add them.",
+    )
     subpi.add_argument("--seed", help="Random seed for the meal amounts.  Used for testing.", type=int)
     return subpi
 
