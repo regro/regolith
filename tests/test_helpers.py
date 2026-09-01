@@ -1,10 +1,13 @@
 import copy
+import datetime as dt
 import os
+import random
 from pathlib import Path
 
 import pytest
 import requests_mock
 
+from regolith.helpers.a_expensehelper import MEAL_RATE_SPREAD, MEAL_RATES, meal_expenses
 from regolith.main import main
 from regolith.schemas import alloweds
 
@@ -1478,6 +1481,8 @@ helper_map_requests = [
             "2020-06-20",
             "--end-date",
             "2020-06-25",
+            "--seed",
+            "42",
         ],
         "2006as_timbuktoo has been added in expenses\n",
     ),
@@ -1511,6 +1516,8 @@ helper_map_requests = [
             "--no-cal",
             "--force",
             "--repo",
+            "--seed",
+            "42",
         ],  # Expect a new presentation and new expense in db 'test'
         "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\nrepo 2006na_testc.2 has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:talks/2006na_testc.2.git\nor (SSH):\ngit clone git@example.com:talks/2006na_testc.2.git\n",
     ),
@@ -1609,3 +1616,45 @@ def assert_outputs(builddir, expecteddir):
                                 assert expected == actual
                     else:
                         assert expected == actual
+
+
+@pytest.mark.parametrize(
+    "begin_date, end_date, expected_dates",
+    [
+        # Test that a meal is created for every meal on every day of the trip
+        # C1: A trip spanning three days, expect meals on all three, first day and last included
+        (
+            dt.date(2020, 6, 20),
+            dt.date(2020, 6, 22),
+            [dt.date(2020, 6, 20), dt.date(2020, 6, 21), dt.date(2020, 6, 22)],
+        ),
+        # C2: A trip that begins and ends on one day, expect one day of meals
+        (dt.date(2020, 6, 20), dt.date(2020, 6, 20), [dt.date(2020, 6, 20)]),
+        # C3: An end date before the begin date, expect no meals rather than an error
+        (dt.date(2020, 6, 20), dt.date(2020, 6, 19), []),
+    ],
+)
+def test_meal_expenses_cover_every_day(begin_date, end_date, expected_dates):
+    actual = meal_expenses(begin_date, end_date)
+    assert [item["date"] for item in actual] == [date for date in expected_dates for _ in MEAL_RATES]
+    assert [item["purpose"] for item in actual] == list(MEAL_RATES) * len(expected_dates)
+
+
+def test_meal_expenses_amounts_sit_within_the_spread():
+    # Test that every amount is drawn from the mean for that meal plus or minus the
+    # spread, so that a meal can be left as it is, edited, or deleted
+    random.seed(42)
+    actual = meal_expenses(dt.date(2020, 6, 20), dt.date(2020, 6, 30))
+    for item in actual:
+        mean = MEAL_RATES[item["purpose"]]
+        assert mean * (1 - MEAL_RATE_SPREAD) <= item["unsegregated_expense"] <= mean * (1 + MEAL_RATE_SPREAD)
+
+
+def test_meal_expenses_are_reproducible_from_a_seed():
+    # Test that the same seed gives the same amounts, which is what lets the helper
+    # tests compare against a fixed expected output
+    random.seed(42)
+    first = meal_expenses(dt.date(2020, 6, 20), dt.date(2020, 6, 25))
+    random.seed(42)
+    second = meal_expenses(dt.date(2020, 6, 20), dt.date(2020, 6, 25))
+    assert first == second

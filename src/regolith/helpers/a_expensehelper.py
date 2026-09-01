@@ -1,6 +1,7 @@
 """Helper to add expenses."""
 
 import datetime as dt
+import random
 
 import dateutil.parser as date_parser
 from gooey import GooeyParser
@@ -12,8 +13,65 @@ from regolith.tools import all_docs_from_collection, get_pi_id, strip_str
 
 TARGET_COLL = "expenses"
 
+# The mean daily reimbursement rate for each meal, in USD.  These change from year
+# to year, so they are collected here as the one place to update.  The eventual home
+# for them is a collection with the date range over which each rate is effective.
+MEAL_RATES = {
+    "breakfast": 15.00,
+    "lunch": 22.00,
+    "dinner": 55.00,
+    "incidentals": 10.00,
+}
+# The half width of the uniform distribution each amount is drawn from, as a
+# fraction of the mean for that meal.
+MEAL_RATE_SPREAD = 0.2
+
 EXPENSES_STATI = alloweds.get("EXPENSES_STATI")
 EXPENSES_TYPES = alloweds.get("EXPENSES_TYPES")
+
+
+def meal_expenses(begin_date, end_date, rates=None, spread=MEAL_RATE_SPREAD):
+    """Build an itemized expense for every meal on every day of a trip.
+
+    Each amount is drawn from a uniform distribution centered on the mean rate for
+    that meal, so the entries can be left as they are, edited, or deleted for meals
+    that were not taken or were paid for by someone else.
+
+    Parameters
+    ----------
+    begin_date : datetime.date
+        The first day of the trip.  Meals are created for this day.
+    end_date : datetime.date
+        The last day of the trip.  Meals are created for this day too.
+    rates : dict, optional
+        The mean amount in USD keyed by meal name.  Defaults to MEAL_RATES.
+    spread : float, optional
+        The half width of the distribution, as a fraction of the mean.  Defaults
+        to MEAL_RATE_SPREAD.
+
+    Returns
+    -------
+    list
+        The itemized expense entries, ordered by day and then by meal.  The list is
+        empty if end_date falls before begin_date.
+    """
+    rates = MEAL_RATES if rates is None else rates
+    itemized_expenses = []
+    for day_number in range((end_date - begin_date).days + 1):
+        date = begin_date + dt.timedelta(days=day_number)
+        for purpose, mean in rates.items():
+            delta = spread * mean
+            itemized_expenses.append(
+                {
+                    "date": date,
+                    "purpose": purpose,
+                    "unsegregated_expense": round(random.uniform(mean - delta, mean + delta), 2),
+                    "segregated_expense": 0,
+                    "currency": "USD",
+                    "notes": [""],
+                }
+            )
+    return itemized_expenses
 
 
 def expense_constructor(key, begin_date, end_date, rc):
@@ -46,6 +104,8 @@ def expense_constructor(key, begin_date, end_date, rc):
     -------
     The constructed expense document
     """
+    if getattr(rc, "seed", None) is not None:
+        random.seed(rc.seed)
     pdoc = {}
     pdoc.update(
         {
@@ -66,76 +126,66 @@ def expense_constructor(key, begin_date, end_date, rc):
     pdoc.update({"grant_percentages": percentages, "grants": rc.grants})
 
     if expense_type == "travel":
-        pdoc.update(
+        itemized_expenses = [
             {
-                "itemized_expenses": [
-                    {
-                        "date": begin_date,
-                        "purpose": "registration",
-                        "unsegregated_expense": 0,
-                        "segregated_expense": 0,
-                        "currency": "USD",
-                        "notes": [""],
-                    },
-                    {
-                        "date": begin_date,
-                        "purpose": "home to airport",
-                        "unsegregated_expense": 0,
-                        "segregated_expense": 0,
-                        "currency": "USD",
-                        "notes": [""],
-                    },
-                    {
-                        "date": begin_date,
-                        "purpose": "flights",
-                        "unsegregated_expense": 0,
-                        "segregated_expense": 0,
-                        "currency": "USD",
-                        "notes": [""],
-                    },
-                    {
-                        "date": begin_date,
-                        "purpose": "airport to hotel",
-                        "unsegregated_expense": 0,
-                        "segregated_expense": 0,
-                        "currency": "USD",
-                        "notes": [""],
-                    },
-                    {
-                        "date": begin_date,
-                        "purpose": "hotel",
-                        "unsegregated_expense": 0,
-                        "segregated_expense": 0,
-                        "currency": "USD",
-                        "notes": [""],
-                    },
-                    {
-                        "date": begin_date,
-                        "purpose": "hotel to airport",
-                        "unsegregated_expense": 0,
-                        "segregated_expense": 0,
-                        "currency": "USD",
-                        "notes": [""],
-                    },
-                    {
-                        "date": begin_date,
-                        "purpose": "airport to home",
-                        "unsegregated_expense": 0,
-                        "segregated_expense": 0,
-                        "currency": "USD",
-                        "notes": [""],
-                    },
-                    {
-                        "date": begin_date,
-                        "purpose": "meals",
-                        "unsegregated_expense": 0,
-                        "segregated_expense": 0,
-                        "currency": "USD",
-                        "notes": [""],
-                    },
-                ]
-            }
-        )
+                "date": begin_date,
+                "purpose": "registration",
+                "unsegregated_expense": 0,
+                "segregated_expense": 0,
+                "currency": "USD",
+                "notes": [""],
+            },
+            {
+                "date": begin_date,
+                "purpose": "home to airport",
+                "unsegregated_expense": 0,
+                "segregated_expense": 0,
+                "currency": "USD",
+                "notes": [""],
+            },
+            {
+                "date": begin_date,
+                "purpose": "flights",
+                "unsegregated_expense": 0,
+                "segregated_expense": 0,
+                "currency": "USD",
+                "notes": [""],
+            },
+            {
+                "date": begin_date,
+                "purpose": "airport to hotel",
+                "unsegregated_expense": 0,
+                "segregated_expense": 0,
+                "currency": "USD",
+                "notes": [""],
+            },
+            {
+                "date": begin_date,
+                "purpose": "hotel",
+                "unsegregated_expense": 0,
+                "segregated_expense": 0,
+                "currency": "USD",
+                "notes": [""],
+            },
+            {
+                "date": begin_date,
+                "purpose": "hotel to airport",
+                "unsegregated_expense": 0,
+                "segregated_expense": 0,
+                "currency": "USD",
+                "notes": [""],
+            },
+            {
+                "date": begin_date,
+                "purpose": "airport to home",
+                "unsegregated_expense": 0,
+                "segregated_expense": 0,
+                "currency": "USD",
+                "notes": [""],
+            },
+        ]
+        itemized_expenses.extend(meal_expenses(begin_date, end_date))
+        pdoc.update({"itemized_expenses": itemized_expenses})
     else:
         pdoc.update(
             {
@@ -247,6 +297,7 @@ def subparser(subpi):
     subpi.add_argument(
         "-y", "--payee", help="payee of the expense. defaults to rc.default_user_id", type=strip_str
     )
+    subpi.add_argument("--seed", help="Random seed for the meal amounts.  Used for testing.", type=int)
     # Do not delete --database arg
     subpi.add_argument(
         "--database",

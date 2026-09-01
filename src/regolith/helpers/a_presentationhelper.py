@@ -124,6 +124,7 @@ def subparser(subpi):
         "--id",
         help="Override the default id created from the date, " "speaker and place by specifying an id here",
     )
+    subpi.add_argument("--seed", help="Random seed for the meal amounts.  Used for testing.", type=int)
     return subpi
 
 
