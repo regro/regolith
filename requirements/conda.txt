@@ -8,6 +8,7 @@ flatten-dict
 xonsh
 rever
 openpyxl
+pypdf
 nameparser
 pandas
 pymongo

@@ -12,6 +12,7 @@ from regolith.builders.grantreportbuilder import GrantReportBuilder
 from regolith.builders.htmlbuilder import HtmlBuilder
 from regolith.builders.internalhtmlbuilder import InternalHtmlBuilder
 from regolith.builders.manuscriptreviewbuilder import ManRevBuilder
+from regolith.builders.mealslogbuilder import MealsLogBuilder
 from regolith.builders.postdocadbuilder import PostdocadBuilder
 from regolith.builders.presentationbuilder import PresentationBuilder
 from regolith.builders.preslistbuilder import PresListBuilder
@@ -34,6 +35,7 @@ BUILDERS = {
     "grant-report": GrantReportBuilder,
     "html": HtmlBuilder,
     "internalhtml": InternalHtmlBuilder,
+    "meals-log": MealsLogBuilder,
     "postdocad": PostdocadBuilder,
     "presentation": PresentationBuilder,
     "preslist": PresListBuilder,

@@ -1,3 +1,4 @@
+import datetime as dt
 import os
 
 # from xonsh.lib import subprocess
@@ -10,6 +11,7 @@ import openpyxl
 import pytest
 
 from regolith.broker import load_db
+from regolith.builders.mealslogbuilder import ROWS_PER_FORM, fill_form, meals_by_day
 from regolith.builders.presentationbuilder import PresentationBuilder, number_affiliations
 from regolith.main import main
 
@@ -498,3 +500,90 @@ def test_presentation_builder_selected_raises(kwargs, expected_error):
     with pytest.raises(ValueError) as excinfo:
         builder._selected(PRESENTATIONS)
     assert expected_error in str(excinfo.value)
+
+
+MEALS_LOG_TEMPLATE = Path(__file__).parent.parent / "src" / "regolith" / "templates" / "ucsb-meals-log.pdf"
+
+
+def _meal(date, purpose, amount):
+    return {"date": date, "purpose": purpose, "unsegregated_expense": amount}
+
+
+@pytest.mark.parametrize(
+    "itemized, expected_rows",
+    [
+        # Test that the meals of an expense are collected into one row per day
+        # C1: A day with all four meals, expect them on one row keyed by meal
+        (
+            [
+                _meal(dt.date(2020, 6, 20), "breakfast", 15.0),
+                _meal(dt.date(2020, 6, 20), "lunch", 22.0),
+                _meal(dt.date(2020, 6, 20), "dinner", 55.0),
+                _meal(dt.date(2020, 6, 20), "incidentals", 10.0),
+            ],
+            [(dt.date(2020, 6, 20), {"breakfast": 15.0, "lunch": 22.0, "dinner": 55.0, "incidentals": 10.0})],
+        ),
+        # C2: A day whose dinner was deleted because it was hosted, expect the day to
+        # keep its other meals rather than being dropped
+        (
+            [
+                _meal(dt.date(2020, 6, 20), "breakfast", 15.0),
+                _meal(dt.date(2020, 6, 20), "lunch", 22.0),
+            ],
+            [(dt.date(2020, 6, 20), {"breakfast": 15.0, "lunch": 22.0})],
+        ),
+        # C3: Days given out of order alongside the other travel legs, expect only the
+        # meals, ordered by date
+        (
+            [
+                _meal(dt.date(2020, 6, 21), "breakfast", 16.0),
+                {"date": dt.date(2020, 6, 20), "purpose": "flights", "unsegregated_expense": 400.0},
+                _meal(dt.date(2020, 6, 20), "breakfast", 15.0),
+            ],
+            [
+                (dt.date(2020, 6, 20), {"breakfast": 15.0}),
+                (dt.date(2020, 6, 21), {"breakfast": 16.0}),
+            ],
+        ),
+        # C4: An expense with no meals left on it at all, expect no rows
+        ([{"date": dt.date(2020, 6, 20), "purpose": "hotel", "unsegregated_expense": 300.0}], []),
+    ],
+)
+def test_meals_by_day(itemized, expected_rows):
+    assert meals_by_day({"_id": "trip", "itemized_expenses": itemized}) == expected_rows
+
+
+def test_fill_form_writes_the_amounts_into_the_named_fields(tmp_path):
+    # Test that a filled form carries the amounts, totals each day, leaves a deleted
+    # meal blank, and can still be filled in by hand afterwards
+    from pypdf import PdfReader
+
+    rows = [
+        (dt.date(2020, 6, 20), {"breakfast": 15.84, "lunch": 17.82, "dinner": 50.05, "incidentals": 8.89}),
+        (dt.date(2020, 6, 21), {"breakfast": 16.42, "lunch": 23.55, "incidentals": 9.10}),
+    ]
+    filename = tmp_path / "trip.pdf"
+    fill_form(str(MEALS_LOG_TEMPLATE), rows, str(filename))
+    fields = PdfReader(str(filename)).get_fields()
+    assert fields["DateRow1"].get("/V") == "06/20/2020"
+    assert fields["BreakfastRow1"].get("/V") == "15.84"
+    assert fields["Daily TotalRow1"].get("/V") == "92.60"
+    # the dinner that was deleted from the expense stays blank on the form
+    assert fields["DinnerRow2"].get("/V") is None
+    assert fields["Daily TotalRow2"].get("/V") == "49.07"
+    # a day the trip did not reach is left alone
+    assert fields["DateRow3"].get("/V") is None
+
+
+def test_fill_form_keeps_the_form_fillable(tmp_path):
+    # Test that the output is still the university's form, so the parts regolith does
+    # not know about can be completed by hand
+    from pypdf import PdfReader
+
+    filename = tmp_path / "trip.pdf"
+    fill_form(str(MEALS_LOG_TEMPLATE), [(dt.date(2020, 6, 20), {"lunch": 22.0})], str(filename))
+    reader = PdfReader(str(filename))
+    assert len(reader.get_fields()) == ROWS_PER_FORM * 6
+    assert len(reader.pages) == 1
+    # without this some viewers show the values we wrote as blank
+    assert reader.trailer["/Root"]["/AcroForm"]["/NeedAppearances"]
