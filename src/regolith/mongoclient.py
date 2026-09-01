@@ -135,7 +135,7 @@ def export_json(collection: str, dbpath: str, dbname: str, host: str = None, uri
         cmd += ["--host", host, "--db", dbname]
     if uri is not None:
         cmd += ["--uri", uri]
-    cmd += ["--out", str(os.path.join(dbpath, collection + ".json"))]
+    cmd += ["--out", str(Path(dbpath) / (collection + ".json"))]
     try:
         subprocess.check_call(cmd, stderr=subprocess.STDOUT)
     except FileNotFoundError:
@@ -433,7 +433,7 @@ class MongoClient:
         if uri == "localhost":
             uri = None
             host = "localhost"
-        dbpath = os.path.abspath(dbpathname(db, self.rc))
+        dbpath = Path(dbpathname(db, self.rc)).resolve()
         dbname = db["name"]
         for collection in self.dbs[dbname].keys():
             export_json(collection, dbpath, dbname, host=host, uri=uri)
@@ -441,12 +441,12 @@ class MongoClient:
 
     def dump_database(self, db):
         """Dumps a database dict via mongoexport."""
-        dbpath = dbpathname(db, self.rc)
-        os.makedirs(dbpath, exist_ok=True)
+        dbpath = Path(dbpathname(db, self.rc))
+        dbpath.mkdir(parents=True, exist_ok=True)
         to_add = []
         colls = self.client[db["name"]].collection_names(include_system_collections=False)
         for collection in colls:
-            f = os.path.join(dbpath, collection + ".json")
+            f = str(dbpath / (collection + ".json"))
             cmd = [
                 "mongoexport",
                 "--db",
@@ -461,7 +461,7 @@ class MongoClient:
             except subprocess.CalledProcessError as exc:
                 print("Status : FAIL", exc.returncode, exc.output)
                 raise exc
-            to_add.append(os.path.join(db["path"], collection + ".json"))
+            to_add.append(str(Path(db["path"]) / (collection + ".json")))
         return to_add
 
     def close(self):

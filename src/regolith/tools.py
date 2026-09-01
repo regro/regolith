@@ -61,19 +61,48 @@ MISSING_INFO = "MISSING"
 
 
 def dbdirname(db, rc):
-    """Gets the database dir name."""
+    """Get the directory that holds a database as a pathlib.Path.
+
+    Parameters
+    ----------
+    db : dict
+        The database description.  A remote database is cached under
+        the build directory, a local one lives at its own ``url``.
+    rc : RunControl
+        The run control instance supplying ``builddir``.
+
+    Returns
+    -------
+    pathlib.Path
+        The directory of the database.  Building it with pathlib keeps
+        the separators native, so a posix-style ``url`` read from the
+        rc file does not leave mixed separators on Windows.
+    """
     if db.get("local", False) is False:
-        dbsdir = os.path.join(rc.builddir, "_dbs")
-        dbdir = os.path.join(dbsdir, db["name"])
+        dbdir = pathlib.Path(rc.builddir) / "_dbs" / db["name"]
     else:
-        dbdir = db["url"]
+        dbdir = pathlib.Path(db["url"])
     return dbdir
 
 
 def dbpathname(db, rc):
-    """Gets the database path name."""
-    dbdir = dbdirname(db, rc)
-    dbpath = os.path.join(dbdir, db["path"])
+    """Get the directory that holds the collection files as a
+    pathlib.Path.
+
+    Parameters
+    ----------
+    db : dict
+        The database description, supplying ``path`` relative to the
+        database directory.
+    rc : RunControl
+        The run control instance supplying ``builddir``.
+
+    Returns
+    -------
+    pathlib.Path
+        The directory of the collection files.
+    """
+    dbpath = dbdirname(db, rc) / db["path"]
     return dbpath
 
 
