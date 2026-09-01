@@ -66,6 +66,8 @@ class PropRevBuilder(LatexBuilderBase):
                 does_what=rev["does_what"],
                 relevance=rev["doe_relevance_to_program_mission"],
                 budget=rev["doe_reasonableness_of_budget"],
+                data_management_plan=rev.get("doe_appropriateness_data_management_plan", []),
+                other=rev.get("doe_other", []),
                 does_how=rev["does_how"],
                 goals=rev["goals"],
                 importance=rev["importance"],

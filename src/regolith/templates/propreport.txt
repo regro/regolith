@@ -86,6 +86,20 @@ Relevance to Program Mission:
 {%- for thing in relevance %}
   - {{ thing -}}
 {% endfor %}
+{% if len(data_management_plan) > 0 %}
+
+Appropriateness of the Data Management and Sharing Plan:
+{%- for thing in data_management_plan %}
+  - {{ thing -}}
+{% endfor %}
+{% endif %}
+{% if len(other) > 0 %}
+
+Other comments:
+{%- for thing in other %}
+  - {{ thing -}}
+{% endfor %}
+{% endif %}
 {% endif %}
 
 {% if agency.lower() == "nsf"%}
