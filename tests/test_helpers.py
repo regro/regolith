@@ -1104,6 +1104,8 @@ helper_map = [
             "downloaded",
             "--title",
             "A flat world theory",
+            "--date",
+            "2020-04-08",
         ],
         "A. Einstein proposal has been added/updated in proposal reviews\n",
     ),

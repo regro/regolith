@@ -4,6 +4,7 @@ import datetime as dt
 import sys
 
 import nameparser
+from dateutil import parser as date_parser
 from gooey import GooeyParser
 
 from regolith.dates import month_to_str_int
@@ -35,6 +36,7 @@ def subparser(subpi):
         "-s", "--status", choices=ALLOWED_STATI, help="Report status", default="accepted", type=strip_str
     )
     subpi.add_argument("-t", "--title", help="the title of the proposal", type=strip_str)
+    subpi.add_argument("--date", help="The date that will be used for testing.", type=strip_str, **date_kwargs)
     return subpi
 
 
@@ -61,8 +63,12 @@ class PropRevAdderHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
         name = nameparser.HumanName(rc.name)
-        month = dt.datetime.today().month
-        year = dt.datetime.today().year
+        if rc.date:
+            now = date_parser.parse(rc.date).date()
+        else:
+            now = dt.date.today()
+        month = now.month
+        year = now.year
         key = "{}{}_{}_{}".format(
             str(year)[-2:], month_to_str_int(month), name.last.casefold(), name.first.casefold().strip(".")
         )
