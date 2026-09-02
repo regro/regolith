@@ -16,11 +16,13 @@ TARGET_COLL = "expenses"
 # The mean daily reimbursement rate for each meal, in USD.  These change from year
 # to year, so they are collected here as the one place to update.  The eventual home
 # for them is a collection with the date range over which each rate is effective.
+# The four means sum to 84.50, which with the spread below puts a day over the 92 USD
+# the meals are meant to stay within about one time in ten.
 MEAL_RATES = {
     "breakfast": 15.00,
     "lunch": 22.00,
-    "dinner": 55.00,
-    "incidentals": 10.00,
+    "dinner": 42.50,
+    "incidentals": 5.00,
 }
 # The half width of the uniform distribution each amount is drawn from, as a
 # fraction of the mean for that meal.

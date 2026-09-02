@@ -595,19 +595,24 @@ def test_fill_form_keeps_the_form_fillable(tmp_path):
 
 
 MEALS_EXPENSES = [
-    {"_id": "2006as_timbuktoo", "payee": "ashaaban"},
-    {"_id": "2006sb_paris", "payee": "sbillinge"},
+    {"_id": "2006as_timbuktoo", "payee": "ashaaban", "status": "unsubmitted"},
+    {"_id": "2006sb_paris", "payee": "sbillinge", "status": "unsubmitted"},
+    {"_id": "1906sb_oldtrip", "payee": "sbillinge", "status": "submitted"},
 ]
 
 
 @pytest.mark.parametrize(
     "kwargs, expected_ids",
     [
-        # Test that a run can name the one expense whose meals log it wants
-        # C1: No kwargs, expect every expense, since the people filter does the choosing
+        # Test that a run builds what it asks for, and otherwise what is still to submit
+        # C1: No kwargs, expect only the expenses that have not been submitted, since a
+        # submitted one had its log filed with it already
         (None, ["2006as_timbuktoo", "2006sb_paris"]),
         # C2: An expense named by its id, expect only that one
         (["_id:2006sb_paris"], ["2006sb_paris"]),
+        # C3: A submitted expense named by its id, expect it built anyway, since naming
+        # it outright says it is wanted
+        (["_id:1906sb_oldtrip"], ["1906sb_oldtrip"]),
     ],
 )
 def test_meals_log_builder_selected(kwargs, expected_ids):
@@ -632,3 +637,41 @@ def test_meals_log_builder_selected_raises(kwargs, expected_error):
     with pytest.raises(ValueError) as excinfo:
         builder._selected(MEALS_EXPENSES)
     assert expected_error in str(excinfo.value)
+
+
+class FakePeopleRc:
+    """Stand in for the run control, holding the people of a run and the
+    default user."""
+
+    def __init__(self, people=None, default_user_id=None):
+        self.people = people
+        if default_user_id is not None:
+            self.default_user_id = default_user_id
+
+
+@pytest.mark.parametrize(
+    "rc, expected_people",
+    [
+        # Test that a run that names nobody falls back on the user of the run control
+        # C1: A person named on the command line, expect that person
+        (FakePeopleRc(people=["nasker"], default_user_id="sbillinge"), ["nasker"]),
+        # C2: Nobody named, expect the default user
+        (FakePeopleRc(people=None, default_user_id="sbillinge"), ["sbillinge"]),
+        # C3: One person named as a bare string rather than a list, expect it wrapped
+        (FakePeopleRc(people="nasker", default_user_id="sbillinge"), ["nasker"]),
+    ],
+)
+def test_meals_log_builder_people(rc, expected_people):
+    builder = MealsLogBuilder.__new__(MealsLogBuilder)
+    builder.rc = rc
+    assert builder._people() == expected_people
+
+
+def test_meals_log_builder_people_raises_without_a_default():
+    # Test that a run naming nobody, with no default user to fall back on, says how to
+    # fix it rather than building nothing
+    builder = MealsLogBuilder.__new__(MealsLogBuilder)
+    builder.rc = FakePeopleRc(people=None)
+    with pytest.raises(ValueError) as excinfo:
+        builder._people()
+    assert "set default_user_id" in str(excinfo.value)

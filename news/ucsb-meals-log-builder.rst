@@ -1,10 +1,12 @@
 **Added:**
 
 * ``meals-log`` builder, which fills the UCSB daily meals log with the meals left on
-  a travel expense.  Run it as ``regolith build meals-log --people <person>`` for
-  everything of one person, or ``regolith build meals-log --kwargs _id:<id>`` for a
-  single expense.  One form is written per expense that has meals on it, and a trip
-  longer than the 19 rows the form carries is written over as many copies as it needs.
+  a travel expense.  ``regolith build meals-log`` builds the expenses of the
+  ``default_user_id`` that have still to be submitted, ``--people <person>`` builds
+  for somebody else, and ``--kwargs _id:<id>`` builds one named expense whatever its
+  status and whoever its payee.  One form is written per expense that has meals on
+  it, and a trip longer than the 19 rows the form carries is written over as many
+  copies as it needs.
 
 * ``ucsb-meals-log.pdf``, the empty form, to the templates folder.  It is a fillable
   AcroForm, so the builder sets the field values rather than rendering a template,
@@ -14,7 +16,9 @@
 
 **Changed:**
 
-* <news item>
+* The mean dinner rate is now 42.50 USD and incidentals 5.00 USD, down from 55.00 and
+  10.00.  The four means now sum to 84.50, which keeps a day inside the 92 USD limit
+  about nine times in ten.
 
 **Deprecated:**
 

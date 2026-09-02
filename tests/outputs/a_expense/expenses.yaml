@@ -74,14 +74,14 @@
         - ''
     - date: 2020-06-20
       purpose: dinner
-      unsegregated_expense: 50.05
+      unsegregated_expense: 38.68
       segregated_expense: 0
       currency: USD
       notes:
         - ''
     - date: 2020-06-20
       purpose: incidentals
-      unsegregated_expense: 8.89
+      unsegregated_expense: 4.45
       segregated_expense: 0
       currency: USD
       notes:
@@ -102,14 +102,14 @@
         - ''
     - date: 2020-06-21
       purpose: dinner
-      unsegregated_expense: 63.63
+      unsegregated_expense: 49.17
       segregated_expense: 0
       currency: USD
       notes:
         - ''
     - date: 2020-06-21
       purpose: incidentals
-      unsegregated_expense: 8.35
+      unsegregated_expense: 4.17
       segregated_expense: 0
       currency: USD
       notes:
@@ -130,14 +130,14 @@
         - ''
     - date: 2020-06-22
       purpose: dinner
-      unsegregated_expense: 48.81
+      unsegregated_expense: 37.72
       segregated_expense: 0
       currency: USD
       notes:
         - ''
     - date: 2020-06-22
       purpose: incidentals
-      unsegregated_expense: 10.02
+      unsegregated_expense: 5.01
       segregated_expense: 0
       currency: USD
       notes:
@@ -158,14 +158,14 @@
         - ''
     - date: 2020-06-23
       purpose: dinner
-      unsegregated_expense: 58.3
+      unsegregated_expense: 45.05
       segregated_expense: 0
       currency: USD
       notes:
         - ''
     - date: 2020-06-23
       purpose: incidentals
-      unsegregated_expense: 10.18
+      unsegregated_expense: 5.09
       segregated_expense: 0
       currency: USD
       notes:
@@ -186,14 +186,14 @@
         - ''
     - date: 2020-06-24
       purpose: dinner
-      unsegregated_expense: 61.81
+      unsegregated_expense: 47.76
       segregated_expense: 0
       currency: USD
       notes:
         - ''
     - date: 2020-06-24
       purpose: incidentals
-      unsegregated_expense: 8.03
+      unsegregated_expense: 4.01
       segregated_expense: 0
       currency: USD
       notes:
@@ -214,14 +214,14 @@
         - ''
     - date: 2020-06-25
       purpose: dinner
-      unsegregated_expense: 51.49
+      unsegregated_expense: 39.78
       segregated_expense: 0
       currency: USD
       notes:
         - ''
     - date: 2020-06-25
       purpose: incidentals
-      unsegregated_expense: 8.62
+      unsegregated_expense: 4.31
       segregated_expense: 0
       currency: USD
       notes:

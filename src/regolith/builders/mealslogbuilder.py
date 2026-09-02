@@ -23,6 +23,9 @@ DATE_COLUMN = "DateRow{}"
 DAILY_TOTAL_COLUMN = "Daily TotalRow{}"
 # The form is submitted to a US university, so the dates are written the US way.
 DATE_FORMAT = "%m/%d/%Y"
+# An expense that has been submitted has had its log filed with it already, so only
+# the ones still to go are built unless one is named outright.
+DEFAULT_STATUS = "unsubmitted"
 
 
 def meals_by_day(expense):
@@ -103,22 +106,41 @@ class MealsLogBuilder(BuilderBase):
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        if not rc.people and not getattr(rc, "kwargs", None):
-            raise ValueError(
-                "Missing person for the meals log.  Please rerun specifying "
-                "--people and a person or list of people, or --kwargs _id:<id> "
-                "to build the meals log of one expense"
-            )
         for n in ["expenses", "people"]:
             gtx[n] = list(all_docs_from_collection(rc.client, n))
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
+    def _people(self):
+        """Return the people whose meals logs are wanted.
+
+        A run that names nobody builds for the user of the run control.
+
+        Raises
+        ------
+        ValueError
+            If nobody was named and there is no default user to fall back on
+        """
+        people = self.rc.people
+        if isinstance(people, str):
+            people = [people]
+        if not people:
+            default_user_id = getattr(self.rc, "default_user_id", None)
+            if not default_user_id:
+                raise ValueError(
+                    "Missing person for the meals log.  Please rerun specifying "
+                    "--people and a person or list of people, or --kwargs _id:<id> to "
+                    "build one expense, or set default_user_id in "
+                    "'~/.config/regolith/user.json'"
+                )
+            people = [default_user_id]
+        return people
+
     def _selected(self, expenses):
         """Return the expenses the kwargs of the run ask for.
 
-        A run may name one expense to build with "_id:<id>".  A run
-        naming none builds every expense of the people that were asked
-        for.
+        A run may name one expense to build with "_id:<id>", which is
+        built whatever its status and whoever its payee.  A run naming
+        none builds the expenses that have still to be submitted.
 
         Raises
         ------
@@ -128,7 +150,7 @@ class MealsLogBuilder(BuilderBase):
         """
         kwargs = getattr(self.rc, "kwargs", None)
         if not kwargs:
-            return expenses
+            return [expense for expense in expenses if expense.get("status") == DEFAULT_STATUS]
         key, _, value = kwargs[0].partition(":")
         if key != "_id":
             raise ValueError(
@@ -148,13 +170,11 @@ class MealsLogBuilder(BuilderBase):
         it."""
         gtx = self.gtx
         rc = self.rc
-        if isinstance(rc.people, str):
-            rc.people = [rc.people]
         # an expense named by its id is built whoever the payee is
         named_by_id = bool(getattr(rc, "kwargs", None))
         chosen_names = []
         if not named_by_id:
-            chosen_ones = [fuzzy_retrieval(gtx["people"], ["name", "aka", "_id"], one) for one in rc.people]
+            chosen_ones = [fuzzy_retrieval(gtx["people"], ["name", "aka", "_id"], one) for one in self._people()]
             chosen_names = [one.get("name") for one in chosen_ones if one]
         for expense in self._selected(sorted(gtx["expenses"], key=lambda doc: doc["_id"])):
             if not named_by_id:
