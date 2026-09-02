@@ -1,3 +1,4 @@
+import datetime as dt
 import os
 
 # from xonsh.lib import subprocess
@@ -10,6 +11,12 @@ import openpyxl
 import pytest
 
 from regolith.broker import load_db
+from regolith.builders.mealslogbuilder import (
+    ROWS_PER_FORM,
+    MealsLogBuilder,
+    fill_form,
+    meals_by_day,
+)
 from regolith.builders.presentationbuilder import PresentationBuilder, number_affiliations
 from regolith.main import main
 
@@ -498,3 +505,173 @@ def test_presentation_builder_selected_raises(kwargs, expected_error):
     with pytest.raises(ValueError) as excinfo:
         builder._selected(PRESENTATIONS)
     assert expected_error in str(excinfo.value)
+
+
+MEALS_LOG_TEMPLATE = Path(__file__).parent.parent / "src" / "regolith" / "templates" / "ucsb-meals-log.pdf"
+
+
+def _meal(date, purpose, amount):
+    return {"date": date, "purpose": purpose, "unsegregated_expense": amount}
+
+
+@pytest.mark.parametrize(
+    "itemized, expected_rows",
+    [
+        # Test that the meals of an expense are collected into one row per day
+        # C1: A day with all four meals, expect them on one row keyed by meal
+        (
+            [
+                _meal(dt.date(2020, 6, 20), "breakfast", 15.0),
+                _meal(dt.date(2020, 6, 20), "lunch", 22.0),
+                _meal(dt.date(2020, 6, 20), "dinner", 55.0),
+                _meal(dt.date(2020, 6, 20), "incidentals", 10.0),
+            ],
+            [(dt.date(2020, 6, 20), {"breakfast": 15.0, "lunch": 22.0, "dinner": 55.0, "incidentals": 10.0})],
+        ),
+        # C2: A day whose dinner was deleted because it was hosted, expect the day to
+        # keep its other meals rather than being dropped
+        (
+            [
+                _meal(dt.date(2020, 6, 20), "breakfast", 15.0),
+                _meal(dt.date(2020, 6, 20), "lunch", 22.0),
+            ],
+            [(dt.date(2020, 6, 20), {"breakfast": 15.0, "lunch": 22.0})],
+        ),
+        # C3: Days given out of order alongside the other travel legs, expect only the
+        # meals, ordered by date
+        (
+            [
+                _meal(dt.date(2020, 6, 21), "breakfast", 16.0),
+                {"date": dt.date(2020, 6, 20), "purpose": "flights", "unsegregated_expense": 400.0},
+                _meal(dt.date(2020, 6, 20), "breakfast", 15.0),
+            ],
+            [
+                (dt.date(2020, 6, 20), {"breakfast": 15.0}),
+                (dt.date(2020, 6, 21), {"breakfast": 16.0}),
+            ],
+        ),
+        # C4: An expense with no meals left on it at all, expect no rows
+        ([{"date": dt.date(2020, 6, 20), "purpose": "hotel", "unsegregated_expense": 300.0}], []),
+    ],
+)
+def test_meals_by_day(itemized, expected_rows):
+    assert meals_by_day({"_id": "trip", "itemized_expenses": itemized}) == expected_rows
+
+
+def test_fill_form_writes_the_amounts_into_the_named_fields(tmp_path):
+    # Test that a filled form carries the amounts, totals each day, leaves a deleted
+    # meal blank, and can still be filled in by hand afterwards
+    from pypdf import PdfReader
+
+    rows = [
+        (dt.date(2020, 6, 20), {"breakfast": 15.84, "lunch": 17.82, "dinner": 50.05, "incidentals": 8.89}),
+        (dt.date(2020, 6, 21), {"breakfast": 16.42, "lunch": 23.55, "incidentals": 9.10}),
+    ]
+    filename = tmp_path / "trip.pdf"
+    fill_form(str(MEALS_LOG_TEMPLATE), rows, str(filename))
+    fields = PdfReader(str(filename)).get_fields()
+    assert fields["DateRow1"].get("/V") == "06/20/2020"
+    assert fields["BreakfastRow1"].get("/V") == "15.84"
+    assert fields["Daily TotalRow1"].get("/V") == "92.60"
+    # the dinner that was deleted from the expense stays blank on the form
+    assert fields["DinnerRow2"].get("/V") is None
+    assert fields["Daily TotalRow2"].get("/V") == "49.07"
+    # a day the trip did not reach is left alone
+    assert fields["DateRow3"].get("/V") is None
+
+
+def test_fill_form_keeps_the_form_fillable(tmp_path):
+    # Test that the output is still the university's form, so the parts regolith does
+    # not know about can be completed by hand
+    from pypdf import PdfReader
+
+    filename = tmp_path / "trip.pdf"
+    fill_form(str(MEALS_LOG_TEMPLATE), [(dt.date(2020, 6, 20), {"lunch": 22.0})], str(filename))
+    reader = PdfReader(str(filename))
+    assert len(reader.get_fields()) == ROWS_PER_FORM * 6
+    assert len(reader.pages) == 1
+    # without this some viewers show the values we wrote as blank
+    assert reader.trailer["/Root"]["/AcroForm"]["/NeedAppearances"]
+
+
+MEALS_EXPENSES = [
+    {"_id": "2006as_timbuktoo", "payee": "ashaaban", "status": "unsubmitted"},
+    {"_id": "2006sb_paris", "payee": "sbillinge", "status": "unsubmitted"},
+    {"_id": "1906sb_oldtrip", "payee": "sbillinge", "status": "submitted"},
+]
+
+
+@pytest.mark.parametrize(
+    "kwargs, expected_ids",
+    [
+        # Test that a run builds what it asks for, and otherwise what is still to submit
+        # C1: No kwargs, expect only the expenses that have not been submitted, since a
+        # submitted one had its log filed with it already
+        (None, ["2006as_timbuktoo", "2006sb_paris"]),
+        # C2: An expense named by its id, expect only that one
+        (["_id:2006sb_paris"], ["2006sb_paris"]),
+        # C3: A submitted expense named by its id, expect it built anyway, since naming
+        # it outright says it is wanted
+        (["_id:1906sb_oldtrip"], ["1906sb_oldtrip"]),
+    ],
+)
+def test_meals_log_builder_selected(kwargs, expected_ids):
+    builder = MealsLogBuilder.__new__(MealsLogBuilder)
+    builder.rc = FakeRc(kwargs)
+    assert [expense["_id"] for expense in builder._selected(MEALS_EXPENSES)] == expected_ids
+
+
+@pytest.mark.parametrize(
+    "kwargs, expected_error",
+    [
+        # Test that a filter naming nothing buildable says so rather than building nothing
+        # C1: An unknown key, expect the key that is accepted to be named
+        (["expense:2006sb_paris"], "'expense' is not something the meals log builder can be filtered on"),
+        # C2: An expense id that does not exist, expect it named
+        (["_id:nosuch"], "the expense 'nosuch' was not found"),
+    ],
+)
+def test_meals_log_builder_selected_raises(kwargs, expected_error):
+    builder = MealsLogBuilder.__new__(MealsLogBuilder)
+    builder.rc = FakeRc(kwargs)
+    with pytest.raises(ValueError) as excinfo:
+        builder._selected(MEALS_EXPENSES)
+    assert expected_error in str(excinfo.value)
+
+
+class FakePeopleRc:
+    """Stand in for the run control, holding the people of a run and the
+    default user."""
+
+    def __init__(self, people=None, default_user_id=None):
+        self.people = people
+        if default_user_id is not None:
+            self.default_user_id = default_user_id
+
+
+@pytest.mark.parametrize(
+    "rc, expected_people",
+    [
+        # Test that a run that names nobody falls back on the user of the run control
+        # C1: A person named on the command line, expect that person
+        (FakePeopleRc(people=["nasker"], default_user_id="sbillinge"), ["nasker"]),
+        # C2: Nobody named, expect the default user
+        (FakePeopleRc(people=None, default_user_id="sbillinge"), ["sbillinge"]),
+        # C3: One person named as a bare string rather than a list, expect it wrapped
+        (FakePeopleRc(people="nasker", default_user_id="sbillinge"), ["nasker"]),
+    ],
+)
+def test_meals_log_builder_people(rc, expected_people):
+    builder = MealsLogBuilder.__new__(MealsLogBuilder)
+    builder.rc = rc
+    assert builder._people() == expected_people
+
+
+def test_meals_log_builder_people_raises_without_a_default():
+    # Test that a run naming nobody, with no default user to fall back on, says how to
+    # fix it rather than building nothing
+    builder = MealsLogBuilder.__new__(MealsLogBuilder)
+    builder.rc = FakePeopleRc(people=None)
+    with pytest.raises(ValueError) as excinfo:
+        builder._people()
+    assert "set default_user_id" in str(excinfo.value)
