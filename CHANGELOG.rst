@@ -4,6 +4,72 @@ Release notes
 
 .. current developments
 
+0.10.1
+=====
+
+**Added:**
+
+* ``--date`` option to the ``a_proprev`` helper, so tests can fix the date that the
+document id is built from.  It follows the convention already used by
+``a_proposal``, ``a_grppub_readlist``, ``u_milestone`` and ``l_progressreport``.
+* ``doe_other`` and ``doe_appropriateness_data_management_plan`` fields to the
+``proposalReviews`` schema, so that the prompts a_proprev now writes validate.
+* ``a_expense`` and ``a_presentation`` now itemize breakfast, lunch, dinner and
+incidentals for every day of a trip, from the begin date to the end date.  Each
+amount is drawn uniformly from the mean rate for that meal plus or minus 20%, so
+meals that were not taken or were paid for by someone else can simply be deleted.
+* ``--no-meals`` option to ``a_expense`` and ``a_presentation``, which leaves the
+meals off.  The meals are added by default.
+* ``--seed`` option to ``a_expense`` and ``a_presentation``, which fixes the meal
+amounts.  Used for testing.
+* ``doe_appropriateness_data_management_plan`` and ``doe_other`` to the exemplar DOE
+proposal review, so the new sections of the report are covered by the tests.
+* ``meals-log`` builder, which fills the UCSB daily meals log with the meals left on
+a travel expense.  ``regolith build meals-log`` builds the expenses of the
+``default_user_id`` that have still to be submitted, ``--people <person>`` builds
+for somebody else, and ``--kwargs _id:<id>`` builds one named expense whatever its
+status and whoever its payee.  One form is written per expense that has meals on
+it, and a trip longer than the 19 rows the form carries is written over as many
+copies as it needs.
+* ``ucsb-meals-log.pdf``, the empty form, to the templates folder.  It is a fillable
+AcroForm, so the builder sets the field values rather than rendering a template,
+and the form the university issued is passed through untouched.
+* ``pypdf`` to the requirements, used to fill the form.
+
+**Changed:**
+
+* Update template for new DOE proposals with new DOE requirements
+* The mean dinner rate is now 42.50 USD and incidentals 5.00 USD, down from 55.00 and
+10.00.  The four means now sum to 84.50, which keeps a day inside the 92 USD limit
+about nine times in ten.
+* Database directory and file paths in ``tools.dbdirname``, ``tools.dbpathname``,
+``fsclient.py``, ``mongoclient.py`` and ``database.xsh`` are now composed with
+``pathlib.Path`` instead of ``os.path`` string joins.
+
+**Fixed:**
+
+* The expected ``a_proprev`` output is compared again.  It sat in
+``tests/outputs/helper/proposalReviews.yml``, where the test never looked, so it
+went stale and the helper had no output coverage.  Moved to
+``tests/outputs/a_proprev/proposalReviews.yaml``, the name the test builds from the
+helper name and the extension the helper writes, and refreshed to the current output.
+* Stop ANSI colors being passed when Gooey is being invoked
+* The proposal review report now prints the reviewer's answers on the data management
+and sharing plan and their other comments.  ``a_proprev`` has been prompting for both
+since the DOE prompt update, but ``propreport.txt`` never rendered them, so the
+answers were collected and silently dropped.  Reviews written before those fields
+existed are read with a default, and the NSF report is unchanged.
+* The expected ``a_proprev`` output now carries the two DOE fields that were added to
+the exemplar proposal review.  The fixture is a snapshot of the whole
+``proposalReviews`` collection, so adding a field to any document in it changes the
+file, and the two changes were written against a ``main`` that did not yet have the
+other.
+* ``OSError: [Errno 22] Invalid argument`` when dumping collections on Windows under
+python 3.14.  A posix-style ``url`` or ``path`` in ``regolithrc.json`` was joined as a
+string, producing a filename such as ``..\../rg-db-private/db\people.yml`` that mixes
+``/`` and ``\`` separators.
+
+
 0.10.0
 =====
 
