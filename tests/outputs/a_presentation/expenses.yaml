@@ -59,8 +59,169 @@
       notes:
         - ''
     - date: 2020-06-20
-      purpose: meals
-      unsegregated_expense: 0
+      purpose: breakfast
+      unsegregated_expense: 15.84
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-20
+      purpose: lunch
+      unsegregated_expense: 17.82
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-20
+      purpose: dinner
+      unsegregated_expense: 50.05
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-20
+      purpose: incidentals
+      unsegregated_expense: 8.89
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-21
+      purpose: breakfast
+      unsegregated_expense: 16.42
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-21
+      purpose: lunch
+      unsegregated_expense: 23.55
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-21
+      purpose: dinner
+      unsegregated_expense: 63.63
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-21
+      purpose: incidentals
+      unsegregated_expense: 8.35
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-22
+      purpose: breakfast
+      unsegregated_expense: 14.53
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-22
+      purpose: lunch
+      unsegregated_expense: 17.86
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-22
+      purpose: dinner
+      unsegregated_expense: 48.81
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-22
+      purpose: incidentals
+      unsegregated_expense: 10.02
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-23
+      purpose: breakfast
+      unsegregated_expense: 12.16
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-23
+      purpose: lunch
+      unsegregated_expense: 19.35
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-23
+      purpose: dinner
+      unsegregated_expense: 58.3
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-23
+      purpose: incidentals
+      unsegregated_expense: 10.18
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-24
+      purpose: breakfast
+      unsegregated_expense: 13.32
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-24
+      purpose: lunch
+      unsegregated_expense: 22.79
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-24
+      purpose: dinner
+      unsegregated_expense: 61.81
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-24
+      purpose: incidentals
+      unsegregated_expense: 8.03
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-25
+      purpose: breakfast
+      unsegregated_expense: 16.83
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-25
+      purpose: lunch
+      unsegregated_expense: 23.74
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-25
+      purpose: dinner
+      unsegregated_expense: 51.49
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-25
+      purpose: incidentals
+      unsegregated_expense: 8.62
       segregated_expense: 0
       currency: USD
       notes:
@@ -133,8 +294,29 @@
       notes:
         - ''
     - date: 2020-06-26
-      purpose: meals
-      unsegregated_expense: 0
+      purpose: breakfast
+      unsegregated_expense: 15.84
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-26
+      purpose: lunch
+      unsegregated_expense: 17.82
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-26
+      purpose: dinner
+      unsegregated_expense: 50.05
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-26
+      purpose: incidentals
+      unsegregated_expense: 8.89
       segregated_expense: 0
       currency: USD
       notes:
