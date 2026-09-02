@@ -11,7 +11,12 @@ import openpyxl
 import pytest
 
 from regolith.broker import load_db
-from regolith.builders.mealslogbuilder import ROWS_PER_FORM, fill_form, meals_by_day
+from regolith.builders.mealslogbuilder import (
+    ROWS_PER_FORM,
+    MealsLogBuilder,
+    fill_form,
+    meals_by_day,
+)
 from regolith.builders.presentationbuilder import PresentationBuilder, number_affiliations
 from regolith.main import main
 
@@ -587,3 +592,43 @@ def test_fill_form_keeps_the_form_fillable(tmp_path):
     assert len(reader.pages) == 1
     # without this some viewers show the values we wrote as blank
     assert reader.trailer["/Root"]["/AcroForm"]["/NeedAppearances"]
+
+
+MEALS_EXPENSES = [
+    {"_id": "2006as_timbuktoo", "payee": "ashaaban"},
+    {"_id": "2006sb_paris", "payee": "sbillinge"},
+]
+
+
+@pytest.mark.parametrize(
+    "kwargs, expected_ids",
+    [
+        # Test that a run can name the one expense whose meals log it wants
+        # C1: No kwargs, expect every expense, since the people filter does the choosing
+        (None, ["2006as_timbuktoo", "2006sb_paris"]),
+        # C2: An expense named by its id, expect only that one
+        (["_id:2006sb_paris"], ["2006sb_paris"]),
+    ],
+)
+def test_meals_log_builder_selected(kwargs, expected_ids):
+    builder = MealsLogBuilder.__new__(MealsLogBuilder)
+    builder.rc = FakeRc(kwargs)
+    assert [expense["_id"] for expense in builder._selected(MEALS_EXPENSES)] == expected_ids
+
+
+@pytest.mark.parametrize(
+    "kwargs, expected_error",
+    [
+        # Test that a filter naming nothing buildable says so rather than building nothing
+        # C1: An unknown key, expect the key that is accepted to be named
+        (["expense:2006sb_paris"], "'expense' is not something the meals log builder can be filtered on"),
+        # C2: An expense id that does not exist, expect it named
+        (["_id:nosuch"], "the expense 'nosuch' was not found"),
+    ],
+)
+def test_meals_log_builder_selected_raises(kwargs, expected_error):
+    builder = MealsLogBuilder.__new__(MealsLogBuilder)
+    builder.rc = FakeRc(kwargs)
+    with pytest.raises(ValueError) as excinfo:
+        builder._selected(MEALS_EXPENSES)
+    assert expected_error in str(excinfo.value)

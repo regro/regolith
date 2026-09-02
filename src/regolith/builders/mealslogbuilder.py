@@ -103,14 +103,45 @@ class MealsLogBuilder(BuilderBase):
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        if not rc.people:
+        if not rc.people and not getattr(rc, "kwargs", None):
             raise ValueError(
                 "Missing person for the meals log.  Please rerun specifying "
-                "--people and a person or list of people"
+                "--people and a person or list of people, or --kwargs _id:<id> "
+                "to build the meals log of one expense"
             )
         for n in ["expenses", "people"]:
             gtx[n] = list(all_docs_from_collection(rc.client, n))
         gtx["all_docs_from_collection"] = all_docs_from_collection
+
+    def _selected(self, expenses):
+        """Return the expenses the kwargs of the run ask for.
+
+        A run may name one expense to build with "_id:<id>".  A run
+        naming none builds every expense of the people that were asked
+        for.
+
+        Raises
+        ------
+        ValueError
+            If a key other than _id is given, or if nothing matches what
+            was asked for
+        """
+        kwargs = getattr(self.rc, "kwargs", None)
+        if not kwargs:
+            return expenses
+        key, _, value = kwargs[0].partition(":")
+        if key != "_id":
+            raise ValueError(
+                f"'{key}' is not something the meals log builder can be filtered on. Please "
+                f"pass --kwargs _id:<id> to build the meals log of one expense."
+            )
+        selected = [expense for expense in expenses if expense.get("_id") == value]
+        if not selected:
+            raise ValueError(
+                f"There is nothing to build, because the expense '{value}' was not found in "
+                f"the expenses collection. Please check the id."
+            )
+        return selected
 
     def pdf_form(self):
         """Write one filled meals log per expense that has meals on
@@ -119,12 +150,17 @@ class MealsLogBuilder(BuilderBase):
         rc = self.rc
         if isinstance(rc.people, str):
             rc.people = [rc.people]
-        chosen_ones = [fuzzy_retrieval(gtx["people"], ["name", "aka", "_id"], one) for one in rc.people]
-        chosen_names = [one.get("name") for one in chosen_ones if one]
-        for expense in sorted(gtx["expenses"], key=lambda doc: doc["_id"]):
-            payee = fuzzy_retrieval(gtx["people"], ["name", "aka", "_id"], expense.get("payee"))
-            if not payee or payee.get("name") not in chosen_names:
-                continue
+        # an expense named by its id is built whoever the payee is
+        named_by_id = bool(getattr(rc, "kwargs", None))
+        chosen_names = []
+        if not named_by_id:
+            chosen_ones = [fuzzy_retrieval(gtx["people"], ["name", "aka", "_id"], one) for one in rc.people]
+            chosen_names = [one.get("name") for one in chosen_ones if one]
+        for expense in self._selected(sorted(gtx["expenses"], key=lambda doc: doc["_id"])):
+            if not named_by_id:
+                payee = fuzzy_retrieval(gtx["people"], ["name", "aka", "_id"], expense.get("payee"))
+                if not payee or payee.get("name") not in chosen_names:
+                    continue
             rows = meals_by_day(expense)
             if not rows:
                 continue

@@ -1,9 +1,10 @@
 **Added:**
 
 * ``meals-log`` builder, which fills the UCSB daily meals log with the meals left on
-  a travel expense.  Run it as ``regolith build meals-log --people <person>``.  One
-  form is written per expense that has meals on it, and a trip longer than the 19
-  rows the form carries is written over as many copies as it needs.
+  a travel expense.  Run it as ``regolith build meals-log --people <person>`` for
+  everything of one person, or ``regolith build meals-log --kwargs _id:<id>`` for a
+  single expense.  One form is written per expense that has meals on it, and a trip
+  longer than the 19 rows the form carries is written over as many copies as it needs.
 
 * ``ucsb-meals-log.pdf``, the empty form, to the templates folder.  It is a fillable
   AcroForm, so the builder sets the field values rather than rendering a template,
