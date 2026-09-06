@@ -161,12 +161,16 @@ class TodoFinisherHelper(DbHelperBase):
                         for i, todo_u in enumerate(todolist_update):
                             if rc.index == todo_u.get("running_index"):
                                 todolist_update[i] = todo
-                                rc.client.update_one(
+                                # Only this one task changed, so set it on
+                                # its own rather than writing the whole list
+                                # back, which is the bulk of what an update
+                                # to a remote database costs
+                                rc.client.update_field(
                                     db_name,
                                     rc.coll,
-                                    {"_id": rc.assigned_to},
-                                    {"todos": todolist_update},
-                                    upsert=True,
+                                    rc.assigned_to,
+                                    f"todos.{i}",
+                                    todo,
                                 )
                                 print(
                                     f"The task \"({todo_u['running_index']}) {todo_u['description'].strip()}\" "

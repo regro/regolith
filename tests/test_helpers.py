@@ -1770,10 +1770,21 @@ def test_a_todo_reads_only_what_it_searches(extra_args, expected_reads, make_db,
     assert read == expected_reads
 
 
-def test_u_todo_writes_only_the_task_it_changed(make_db, mocker):
-    # Test that updating one task sets that task on its own rather than
-    # writing the whole list back.  On a remote database the list is the bulk
-    # of what the update sends.
+@pytest.mark.parametrize(
+    "args",
+    [
+        # Test that the todo helpers write only the task they touched rather
+        # than the whole list, which on a remote database is the bulk of what
+        # the write sends
+        # C1: finishing a task, expect only that task written
+        ["helper", "f_todo", "-i", "1", "-t", "sbillinge"],
+        # C2: updating a task, expect only that task written
+        ["helper", "u_todo", "-i", "1", "-t", "sbillinge", "--notes", "a note"],
+        # C3: adding a task, expect only the new position written
+        ["helper", "a_todo", "a new task", "6", "50", "--assigned-to", "sbillinge"],
+    ],
+)
+def test_todo_helpers_write_only_the_task_they_touched(args, make_db, mocker):
     repo = make_db
     os.chdir(repo)
     update_field = mocker.patch.object(
@@ -1782,8 +1793,8 @@ def test_u_todo_writes_only_the_task_it_changed(make_db, mocker):
     update_one = mocker.patch.object(
         ClientManager, "update_one", autospec=True, side_effect=ClientManager.update_one
     )
-    main(["helper", "u_todo", "-i", "1", "-t", "sbillinge", "--notes", "a note"])
+    main(args)
     paths = [call.args[4] for call in update_field.call_args_list]
     assert paths and all(p.startswith("todos.") for p in paths)
-    written_whole = [c for c in update_one.call_args_list if "todos" in (c.args[4] or {})]
-    assert written_whole == [], "the whole todos list was written back"
+    whole = [c for c in update_one.call_args_list if "todos" in (c.args[4] or {})]
+    assert whole == [], "the whole todos list was written back"
