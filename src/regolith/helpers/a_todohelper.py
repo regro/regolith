@@ -131,8 +131,9 @@ class TodoAdderHelper(DbHelperBase):
         rc.col2 = "projecta"
         if not rc.database:
             rc.database = rc.databases[0]["name"]
-        gtx[rc.coll] = sorted(all_docs_from_collection(rc.client, rc.coll), key=_id_key)
-        gtx["projecta"] = sorted(all_docs_from_collection(rc.client, rc.col2), key=_id_key)
+        # db_updater looks its two people up by id and only goes through
+        # projecta when a milestone uuid is given, so neither collection is
+        # gathered here
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -201,7 +202,8 @@ class TodoAdderHelper(DbHelperBase):
             todolist[-1]["tags"] = rc.tags
         if rc.milestone_uuid:
             # get the prum that contains the milestone that has the uuid rc.milestone_uuid
-            target_prum = fragment_retrieval(self.gtx["projecta"], ["milestones"], rc.milestone_uuid)
+            projecta = sorted(all_docs_from_collection(rc.client, rc.col2), key=_id_key)
+            target_prum = fragment_retrieval(projecta, ["milestones"], rc.milestone_uuid)
             if not target_prum:
                 raise RuntimeError(
                     f"No milestone ids were found that match your entry ({rc.milestone_uuid}).\n"
