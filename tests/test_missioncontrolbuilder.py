@@ -4,7 +4,13 @@ import datetime as dt
 
 import pytest
 
-from regolith.builders.missioncontrolbuilder import MissionControlBuilder, as_date, week_of
+from regolith.builders.missioncontrolbuilder import (
+    MissionControlBuilder,
+    as_date,
+    ids_in_document,
+    in_document_order,
+    week_of,
+)
 
 PROJECTS = [
     {
@@ -207,3 +213,53 @@ def test_nobody_has_to_type_the_numbers_or_the_ids(documents):
     doc = documents["pliu"]
     for _id in ["g-converge", "g-methods", "g-gpu", "g-tutorial", "t-bg", "t-plot"]:
         assert f"^{_id}" in doc
+
+
+@pytest.mark.parametrize(
+    "text, expected_ids",
+    [
+        # Test reading the ids a document carries, which is how a render keeps
+        # an order somebody chose in a meeting
+        # C1: ids in the order they appear, expect that order
+        ("- one ^g-b\n- two ^g-a\n", ["g-b", "g-a"]),
+        # C2: an id repeated, as a rolled goal is, expect it once
+        ("- one ^g-b\n- again ^g-b\n- two ^g-a\n", ["g-b", "g-a"]),
+        # C3: nothing to read, expect nothing
+        ("# Mission control — pliu\n", []),
+    ],
+)
+def test_ids_in_document_reads_the_order(text, expected_ids):
+    assert ids_in_document(text) == expected_ids
+
+
+@pytest.mark.parametrize(
+    "order, expected_ids",
+    [
+        # Test the ordering rule: the document wins for what it mentions, and
+        # anything else follows it
+        # C1: the document names both, expect its order rather than the default
+        (["p-orphan", "p-pdf"], ["p-orphan", "p-pdf"]),
+        # C2: the document names one, expect it first and the rest after
+        (["p-orphan"], ["p-orphan", "p-pdf"]),
+        # C3: the document names none, expect the fallback order
+        ([], ["p-orphan", "p-pdf"]),
+        # C4: the document names something that is gone, expect it ignored
+        (["p-deleted", "p-pdf"], ["p-pdf", "p-orphan"]),
+    ],
+)
+def test_in_document_order_puts_the_document_first(order, expected_ids):
+    ordered = in_document_order(PROJECTS, order, lambda p: p["_id"])
+    assert [p["_id"] for p in ordered] == expected_ids
+
+
+def test_a_render_keeps_the_order_the_document_chose():
+    # Test the whole rule through a render: a person who has reordered their
+    # projects keeps that order, and a new project joins the end
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": GOALS, "mc_tasks": TASKS}
+    both = [dict(p, lead="pliu") for p in PROJECTS]
+    builder.gtx["mc_projects"] = both
+    reordered = builder.documents({"pliu": ["p-orphan"]})["pliu"]
+    projects = [line for line in reordered if line.startswith(("1. ", "2. "))]
+    assert projects[0].endswith("^p-orphan")
+    assert projects[1].endswith("^p-pdf")

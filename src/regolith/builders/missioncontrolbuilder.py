@@ -14,7 +14,9 @@ See ~/dev/regolith-notes/plan-mission-control.md for the design.
 """
 
 import datetime as dt
+import re
 from collections import defaultdict
+from pathlib import Path
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates
@@ -22,6 +24,58 @@ from regolith.tools import all_docs_from_collection
 
 UNASSIGNED = "unassigned"
 OPEN_STATI = ("proposed", "active")
+ID_IN_DOCUMENT = re.compile(r"\^([\w.-]+)")
+
+
+def ids_in_document(text):
+    """Return the ids a document carries, in the order they appear.
+
+    The order of a mission control document is meaningful: things are put
+    in the order they matter, in conversation.  Reading the ids back is
+    how a render keeps an order somebody chose.
+
+    Parameters
+    ----------
+    text : str
+        The document to read.
+
+    Returns
+    -------
+    list of str
+        The ids, in the order they appear, each once.
+    """
+    seen = []
+    for _id in ID_IN_DOCUMENT.findall(text):
+        if _id not in seen:
+            seen.append(_id)
+    return seen
+
+
+def in_document_order(items, order, fallback_key):
+    """Return items in the order a document put them in.
+
+    Anything the document does not mention goes after everything it does,
+    in whatever order ``fallback_key`` gives, since nobody has said where
+    it belongs yet.
+
+    Parameters
+    ----------
+    items : list of dict
+        The items to order.
+    order : list of str
+        The ids the document carries, in order.
+    fallback_key : callable
+        The sort key for items the document does not mention.
+
+    Returns
+    -------
+    list of dict
+        The items, ordered.
+    """
+    position = {_id: n for n, _id in enumerate(order)}
+    known = sorted((i for i in items if i["_id"] in position), key=lambda i: position[i["_id"]])
+    unknown = sorted((i for i in items if i["_id"] not in position), key=fallback_key)
+    return known + unknown
 
 
 def week_of(date):
@@ -83,11 +137,19 @@ class MissionControlBuilder(BuilderBase):
 
     def render(self):
         """Write a document for each person, and one for the orphans."""
-        for person, lines in sorted(self.documents().items()):
+        for person, lines in sorted(self.documents(self.existing_orders()).items()):
             with open(f"{self.bldir}/{person}.md", "w", encoding="utf-8") as f:
                 f.write("\n".join(lines) + "\n")
 
-    def documents(self):
+    def existing_orders(self):
+        """Return the id order of each document already in the build
+        dir."""
+        orders = {}
+        for path in Path(self.bldir).glob("*.md"):
+            orders[path.stem] = ids_in_document(path.read_text(encoding="utf-8"))
+        return orders
+
+    def documents(self, orders=None):
         """Return the lines of every document, keyed by the person it is
         for.
 
@@ -97,12 +159,16 @@ class MissionControlBuilder(BuilderBase):
             The lines of each document, keyed by person id.  A project
             with no lead goes to the unassigned document.
         """
+        orders = orders or {}
         by_person = defaultdict(list)
         for project in self.gtx["mc_projects"]:
             by_person[project.get("lead") or UNASSIGNED].append(project)
-        return {person: self.render_person(person, projects) for person, projects in by_person.items()}
+        return {
+            person: self.render_person(person, projects, orders.get(person, []))
+            for person, projects in by_person.items()
+        }
 
-    def render_person(self, person, projects):
+    def render_person(self, person, projects, order=()):
         """Return the lines of one person's document.
 
         Parameters
@@ -117,9 +183,11 @@ class MissionControlBuilder(BuilderBase):
         list of str
             The lines of the document.
         """
-        projects = sorted(projects, key=lambda p: p["_id"])
+        projects = in_document_order(projects, order, lambda p: p["_id"])
         number_of = {project["_id"]: n for n, project in enumerate(projects, start=1)}
-        goals = [g for g in self.gtx["mc_goals"] if g["project"] in number_of]
+        goals = in_document_order(
+            [g for g in self.gtx["mc_goals"] if g["project"] in number_of], order, lambda g: g["_id"]
+        )
         goal_number = self.number_goals(goals, number_of)
         tasks = [t for t in self.gtx["mc_tasks"] if t["goal"] in goal_number]
 
@@ -150,7 +218,7 @@ class MissionControlBuilder(BuilderBase):
         """
         numbers = {}
         counts = defaultdict(int)
-        for goal in sorted(goals, key=lambda g: (number_of[g["project"]], g["_id"])):
+        for goal in sorted(goals, key=lambda g: number_of[g["project"]]):
             counts[goal["project"]] += 1
             numbers[goal["_id"]] = f"{number_of[goal['project']]}.{counts[goal['project']]}"
         return numbers
