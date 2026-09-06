@@ -6,7 +6,7 @@ import pytest
 from regolith.chained_db import ChainDB, LazyChainedDB
 from regolith.client_manager import ClientManager
 from regolith.database import connect
-from regolith.fsclient import dump_yaml
+from regolith.fsclient import FileSystemClient, dump_yaml
 from regolith.runcontrol import DEFAULT_RC, load_rcfile
 from regolith.schemas import EXEMPLARS
 from regolith.tools import all_docs_from_collection
@@ -235,3 +235,33 @@ def test_materialize_reads_every_collection(two_fs_dbs):
     materialized = two_fs_dbs.chained_db.materialize()
     assert sorted(materialized) == ["abstracts", "people"]
     assert materialized["people"]["scopatz"]["name"] == "A. Scopatz"
+
+
+@pytest.mark.parametrize(
+    "operation",
+    [
+        # Test that routing a document operation asks no server which
+        # databases exist.  MongoClient.keys is list_database_names, a round
+        # trip, and the rc already says which backend each database has.
+        # C1: reading one document by id
+        lambda client: client.find_one("first", "people", {"_id": "scopatz"}),
+        # C2: inserting a document
+        lambda client: client.insert_one("first", "people", {"_id": "new", "name": "New"}),
+        # C3: updating a document
+        lambda client: client.update_one("first", "people", {"_id": "scopatz"}, {"name": "A"}),
+        # C4: deleting a document
+        lambda client: client.delete_one("first", "people", {"_id": "scopatz"}),
+    ],
+)
+def test_routing_an_operation_does_not_ask_which_databases_exist(operation, two_fs_dbs, mocker):
+    keys = mocker.patch.object(FileSystemClient, "keys", autospec=True, side_effect=FileSystemClient.keys)
+    operation(two_fs_dbs)
+    assert keys.call_count == 0
+
+
+def test_an_operation_on_an_unknown_database_is_a_no_op(two_fs_dbs):
+    # Test that naming a database the rc does not have is ignored rather than
+    # raising, which is how the old routing behaved
+    assert two_fs_dbs.find_one("nonexistent", "people", {"_id": "scopatz"}) is None
+    two_fs_dbs.insert_one("nonexistent", "people", {"_id": "new"})
+    assert two_fs_dbs.get("people", "new") is None

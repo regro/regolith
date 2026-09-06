@@ -229,6 +229,29 @@ class ClientManager:
                 return client
         return None
 
+    def _client_for_dbname(self, dbname):
+        """Return the client that backs a database, found by its name.
+
+        The rc says which backend each database has, so routing a read or
+        a write does not need to ask a server what it holds.  Asking is
+        what ``MongoClient.keys`` does, and it costs a round trip.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database.
+
+        Returns
+        -------
+        FileSystemClient, MongoClient or None
+            The client for that database, or None when the rc has no
+            database of that name.
+        """
+        for db in self.rc.databases:
+            if db["name"] == dbname:
+                return self._client_for(db)
+        return None
+
     def _chain(self, docs):
         """Merge the versions of one document held by several databases.
 
@@ -329,30 +352,30 @@ class ClientManager:
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
-        for client in self.clients:
-            if dbname in client.keys():
-                client.insert_one(dbname, collname, doc)
+        client = self._client_for_dbname(dbname)
+        if client is not None:
+            client.insert_one(dbname, collname, doc)
 
     def insert_many(self, dbname, collname, docs):
         """Inserts many documents into a database/collection."""
-        for client in self.clients:
-            if dbname in client.keys():
-                client.insert_many(dbname, collname, docs)
+        client = self._client_for_dbname(dbname)
+        if client is not None:
+            client.insert_many(dbname, collname, docs)
 
     def delete_one(self, dbname, collname, doc):
         """Removes a single document from a collection."""
-        for client in self.clients:
-            if dbname in client.keys():
-                client.delete_one(dbname, collname, doc)
+        client = self._client_for_dbname(dbname)
+        if client is not None:
+            client.delete_one(dbname, collname, doc)
 
     def find_one(self, dbname, collname, filter):
         """Finds the first document matching filter."""
-        for client in self.clients:
-            if dbname in client.keys():
-                return client.find_one(dbname, collname, filter)
+        client = self._client_for_dbname(dbname)
+        if client is not None:
+            return client.find_one(dbname, collname, filter)
 
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
-        for client in self.clients:
-            if dbname in client.keys():
-                client.update_one(dbname, collname, filter, update, **kwargs)
+        client = self._client_for_dbname(dbname)
+        if client is not None:
+            client.update_one(dbname, collname, filter, update, **kwargs)
