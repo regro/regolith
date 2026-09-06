@@ -290,5 +290,7 @@ def connect_db(rc, colls=None):
     """
     with connect(rc, dbs=colls) as rc.client:
         dbs = rc.client.dbs
-        chained_db = rc.client.chained_db
+        # Collections chain on demand, and the client is closed on the way out
+        # of this block, so read them all while the connection is still open
+        chained_db = rc.client.chained_db.materialize()
     return chained_db, dbs

@@ -35,6 +35,7 @@ class ClientManager:
         self.rc = rc
         self.closed = True
         self.chained_db = None
+        self._sources = {}
         # self.open()
         self._collfiletypes = {}
         self._collexts = {}
@@ -56,6 +57,7 @@ class ClientManager:
 
     def open(self):
         """Opens the database connections."""
+        self._sources = {}
         for client in self.clients:
             client.open()
 
@@ -65,9 +67,94 @@ class ClientManager:
             client.close()
 
     def load_database(self, db):
+        """Record which collections a database holds, without reading
+        them.
+
+        Parameters
+        ----------
+        db : dict
+            The database description, supplying ``name`` and ``backend``.
+        """
         for client in self.clients:
             if isinstance(client, CLIENTS[db["backend"]]):
                 client.load_database(db)
+                for collname in client.available_collections(db["name"]):
+                    self._sources.setdefault(collname, []).append(db)
+
+    def collection_sources(self, collname):
+        """Return the databases that hold a collection.
+
+        The list is in ``rc.databases`` order, which is the order the
+        merge resolves in.
+
+        Parameters
+        ----------
+        collname : str
+            The name of the collection.
+
+        Returns
+        -------
+        list of dict
+            The descriptions of the databases holding the collection.
+        """
+        return self._sources.get(collname, [])
+
+    def chained_collection_names(self):
+        """Return the names of every collection any database holds.
+
+        Returns
+        -------
+        set of str
+            The collection names.
+        """
+        return set(self._sources)
+
+    def load_collection(self, collname):
+        """Read one collection into memory from each database that holds
+        it.
+
+        Parameters
+        ----------
+        collname : str
+            The name of the collection to read.
+        """
+        for db in self.collection_sources(collname):
+            client = self._client_for(db)
+            if client is not None:
+                client.load_collection(db["name"], collname)
+
+    def chain_collection(self, collname):
+        """Build the chained view of one collection.
+
+        Parameters
+        ----------
+        collname : str
+            The name of the collection to chain.
+
+        Returns
+        -------
+        dict
+            The merged documents, keyed by id.
+
+        Raises
+        ------
+        KeyError
+            When no database holds the collection.
+        """
+        sources = self.collection_sources(collname)
+        if not sources:
+            raise KeyError(collname)
+        chained = {}
+        for db in sources:
+            client = self._client_for(db)
+            if client is None:
+                continue
+            for _id, doc in client.raw_collection(db["name"], collname).items():
+                if _id in chained:
+                    chained[_id].maps.append(doc)
+                else:
+                    chained[_id] = ChainDB(doc)
+        return chained
 
     def import_database(self, db: dict):
         for client in self.clients:
@@ -192,7 +279,7 @@ class ClientManager:
             The merged document, or None when no database holds it.
         """
         docs = []
-        for db in self.rc.databases:
+        for db in self.collection_sources(collname):
             client = self._client_for(db)
             if client is None:
                 continue
@@ -229,7 +316,7 @@ class ClientManager:
             The matching merged documents.
         """
         versions = {}
-        for db in self.rc.databases:
+        for db in self.collection_sources(collname):
             client = self._client_for(db)
             if client is None:
                 continue

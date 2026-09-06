@@ -116,10 +116,13 @@ def test_dump_database_clears_dirty_state(fs_db):
     assert _mtimes(dbpath) == before
 
 
-def test_dump_database_force_writes_every_collection(fs_db):
-    # Test that force writes the unmodified collections too, which is what
-    # an in-place edit outside the client needs
+def test_dump_database_force_writes_every_loaded_collection(fs_db):
+    # Test that force writes collections that were read but not modified,
+    # which is what an in-place edit outside the client needs.  Collections
+    # are read on demand, so only the ones that were asked for are written.
     client, db, dbpath = fs_db
+    client.raw_collection("test", "people")
+    client.raw_collection("test", "abstracts")
     before = _mtimes(dbpath)
     written = client.dump_database(db, force=True)
     assert sorted(written) == [str(Path("db") / "abstracts.yaml"), str(Path("db") / "people.yaml")]

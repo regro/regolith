@@ -255,6 +255,8 @@ class MongoClient:
         self.chained_db = dict()
         self.closed = True
         self.local = True
+        self._available = {}
+        self._loaded = set()
 
     def _preclean(self):
         mongodbpath = self.rc.mongodbpath
@@ -365,31 +367,34 @@ class MongoClient:
             self.closed = False
 
     def load_database(self, db: dict):
-        """Load the database information from mongo database.
+        """Record which collections the mongo database holds, without
+        reading them.
 
-        It populate the 'dbs' attribute with a dictionary like {database: {collection: docs_dict}}.
+        Only the collection names are fetched here.  The documents of a
+        collection are read by ``load_collection``, when something first
+        asks for them, and a query made through ``get`` or ``find`` never
+        reads them at all.
 
         Parameters
         ----------
         db : dict
             The dictionary of data base information, such as 'name'.
         """
-        dbs: dict = self.dbs
-        client: pymongo.MongoClient = self.client
         from pymongo.errors import OperationFailure
 
+        dbname = db["name"]
+        self._available[dbname] = set()
         try:
-            mongodb = client[db["name"]]
+            mongodb = self.client[dbname]
         except OperationFailure:
             print("WARNING: Database name provided in regolithrc.json not found in mongodb")
+            return
         try:
-            for colname in [
+            self._available[dbname] = {
                 coll
                 for coll in mongodb.list_collection_names()
                 if coll not in db["blacklist"] and len(db["whitelist"]) == 0 or coll in db["whitelist"]
-            ]:
-                col = mongodb[colname]
-                dbs[db["name"]][colname] = load_mongo_col(col)
+            }
         except OperationFailure as fail:
             print("Mongo's Error Message:" + str(fail) + "\n")
             print("The user does not have permission to access " + db["name"] + "\n\n")
@@ -398,6 +403,60 @@ class MongoClient:
                 "permission as well as finding is needed"
             )
         return
+
+    def available_collections(self, dbname):
+        """Return the names of the collections a database holds.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database to list.
+
+        Returns
+        -------
+        set of str
+            The collection names, whether or not they have been read.
+        """
+        return set(self._available.get(dbname, set()))
+
+    def load_collection(self, dbname, collname):
+        """Read one collection into memory unless it is already there.
+
+        This pulls the whole collection across the network, so prefer
+        ``get`` or ``find``, which let the server do the work.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database holding the collection.
+        collname : str
+            The name of the collection to read.
+        """
+        if (dbname, collname) in self._loaded:
+            return
+        if collname not in self._available.get(dbname, set()):
+            return
+        self.dbs[dbname][collname] = load_mongo_col(self.client[dbname][collname])
+        self._loaded.add((dbname, collname))
+
+    def raw_collection(self, dbname, collname):
+        """Return the documents of one collection as this database holds
+        them, unmerged with any other database.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database holding the collection.
+        collname : str
+            The name of the collection to read.
+
+        Returns
+        -------
+        dict
+            The documents, keyed by id.
+        """
+        self.load_collection(dbname, collname)
+        return self.dbs.get(dbname, {}).get(collname, {})
 
     def import_database(self, db: dict):
         """Import the database from filesystem to the mongo backend.

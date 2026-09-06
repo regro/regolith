@@ -10,7 +10,7 @@ try:
 except ImportError:
     hglib = None
 
-from regolith.chained_db import ChainDB
+from regolith.chained_db import LazyChainedDB
 from regolith.client_manager import ClientManager
 from regolith.tools import dbdirname
 
@@ -212,22 +212,15 @@ def open_dbs(rc, dbs=None):
         dbs = []
     client = ClientManager(rc.databases, rc)
     client.open()
-    chained_db = {}
     for db in rc.databases:
         # if we only want to access some dbs and this db is not in that some
         db["whitelist"] = dbs
         if "blacklist" not in db:
             db["blacklist"] = [".travis.yml", ".travis.yaml"]
         load_database(db, client, rc)
-        for base, coll in client.dbs[db["name"]].items():
-            if base not in chained_db:
-                chained_db[base] = {}
-            for k, v in coll.items():
-                if k in chained_db[base]:
-                    chained_db[base][k].maps.append(v)
-                else:
-                    chained_db[base][k] = ChainDB(v)
-    client.chained_db = chained_db
+    # Chain each collection when it is first asked for rather than now, so a
+    # command only reads the collections it actually uses
+    client.chained_db = LazyChainedDB(client)
     return client
 
 
