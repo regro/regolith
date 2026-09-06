@@ -23,7 +23,8 @@ from regolith.dates import get_dates
 from regolith.tools import all_docs_from_collection
 
 UNASSIGNED = "unassigned"
-OPEN_STATI = ("proposed", "active")
+UNASSIGNED_NAME = "unassigned"
+HELD_STATI = ("backburner", "wishlist")
 ID_IN_DOCUMENT = re.compile(r"\^([\w.-]+)")
 
 
@@ -124,6 +125,43 @@ class MissionControlBuilder(BuilderBase):
     def __init__(self, rc):
         super().__init__(rc)
         self.cmds = ["render"]
+        # The documents are edited where people can reach them, which is not
+        # the build directory.  rc.mission_control_dir says where; without it
+        # they go under the build directory like any other built thing.
+        self.mcdir = Path(getattr(rc, "mission_control_dir", None) or self.bldir)
+
+    def display_name(self, person):
+        """Return the name to head a person's document with."""
+        for entry in self.gtx.get("people", []):
+            if entry["_id"] == person:
+                return entry.get("name") or person
+        return person
+
+    def document_name(self, person):
+        """Return the file name to write a person's document to.
+
+        A person is known to the database by an id, but the document is
+        for them to open, so it is named for them.  Their first name if
+        the people collection knows it, and their id if it does not.
+
+        Parameters
+        ----------
+        person : str
+            The id of the person, or ``unassigned``.
+
+        Returns
+        -------
+        str
+            The file name, without a suffix.
+        """
+        if person == UNASSIGNED:
+            return UNASSIGNED_NAME
+        for entry in self.gtx.get("people", []):
+            if entry["_id"] == person:
+                first = str(entry.get("name", "")).split()[0:1]
+                if first:
+                    return first[0].lower().replace(" ", "-")
+        return person
 
     def construct_global_ctx(self):
         """Constructs the global context."""
@@ -133,21 +171,24 @@ class MissionControlBuilder(BuilderBase):
         gtx["mc_projects"] = list(all_docs_from_collection(rc.client, "mc_projects"))
         gtx["mc_goals"] = list(all_docs_from_collection(rc.client, "mc_goals"))
         gtx["mc_tasks"] = list(all_docs_from_collection(rc.client, "mc_tasks"))
+        gtx["people"] = list(all_docs_from_collection(rc.client, "people"))
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def render(self):
         """Write a document for each person, and one for the orphans."""
+        self.mcdir.mkdir(parents=True, exist_ok=True)
         for person, lines in sorted(self.documents(self.existing_orders()).items()):
-            with open(f"{self.bldir}/{person}.md", "w", encoding="utf-8") as f:
-                f.write("\n".join(lines) + "\n")
+            path = self.mcdir / f"{self.document_name(person)}.md"
+            path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     def existing_orders(self):
         """Return the id order of each document already in the build
         dir."""
-        orders = {}
-        for path in Path(self.bldir).glob("*.md"):
-            orders[path.stem] = ids_in_document(path.read_text(encoding="utf-8"))
-        return orders
+        by_name = {}
+        for path in self.mcdir.glob("*.md"):
+            by_name[path.stem] = ids_in_document(path.read_text(encoding="utf-8"))
+        people = {p.get("lead") or UNASSIGNED for p in self.gtx["mc_projects"]}
+        return {person: by_name.get(self.document_name(person), []) for person in people}
 
     def documents(self, orders=None):
         """Return the lines of every document, keyed by the person it is
@@ -191,7 +232,7 @@ class MissionControlBuilder(BuilderBase):
         goal_number = self.number_goals(goals, number_of)
         tasks = [t for t in self.gtx["mc_tasks"] if t["goal"] in goal_number]
 
-        lines = [f"# Mission control — {person}", ""]
+        lines = [f"# Mission control — {self.display_name(person)}", ""]
         lines += self.render_projects(projects)
         lines += self.render_goals(goals, goal_number)
         lines += self.render_weeks(tasks, goal_number)
@@ -242,9 +283,12 @@ class MissionControlBuilder(BuilderBase):
             return []
         lines = [f"## Goals — {current}", ""]
         for goal in self.in_order(goals, goal_number):
-            if goal["period"] != current or goal["status"] not in OPEN_STATI:
+            if goal["period"] != current or goal["status"] in HELD_STATI:
                 continue
-            lines.append(f"- {goal_number[goal['_id']]}  {goal['text']}  ^{goal['_id']}{self.carried(goal)}")
+            lines.append(
+                f"- {goal_number[goal['_id']]}  {goal['text']}  ^{goal['_id']}"
+                f"{self.carried(goal)}{self.outcome(goal, current)}"
+            )
         lines.append("")
         return lines
 

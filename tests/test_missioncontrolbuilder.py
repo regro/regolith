@@ -263,3 +263,42 @@ def test_a_render_keeps_the_order_the_document_chose():
     projects = [line for line in reordered if line.startswith(("1. ", "2. "))]
     assert projects[0].endswith("^p-orphan")
     assert projects[1].endswith("^p-pdf")
+
+
+def test_a_goal_finished_this_period_is_still_shown():
+    # Test that closing a goal does not make it disappear.  The goals section
+    # used to show only open ones and the archive only past periods, so a goal
+    # finished in the current period appeared nowhere, and reviewing the period
+    # is most of what the meeting is for.
+    finished_now = dict(GOALS[1], status="finished", end_date="2026-09-11")
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": [GOALS[0], finished_now], "mc_tasks": []}
+    doc = "\n".join(builder.documents()["pliu"])
+    section = doc.split("## Goals — 2026Q3")[1].split("\n##")[0]
+    assert "Draft the methods section" in section
+    assert "(finished 2026-09-11)" in section
+
+
+@pytest.mark.parametrize(
+    "people, expected_name, expected_heading",
+    [
+        # Test what a document is called and headed.  It is for a person to
+        # open, so it carries their name rather than their id.
+        # C1: the people collection knows them, expect their first name
+        ([{"_id": "pliu", "name": "Pei Liu"}], "pei", "Pei Liu"),
+        # C2: it does not know them, expect the id, so a document is still written
+        ([], "pliu", "pliu"),
+    ],
+)
+def test_a_document_is_named_for_the_person(people, expected_name, expected_heading):
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": GOALS, "mc_tasks": TASKS, "people": people}
+    assert builder.document_name("pliu") == expected_name
+    assert builder.documents()["pliu"][0] == f"# Mission control — {expected_heading}"
+
+
+def test_the_unassigned_document_is_not_named_for_a_person():
+    # Test that the orphans document keeps its own name, since no person owns it
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": GOALS, "mc_tasks": TASKS, "people": []}
+    assert builder.document_name("unassigned") == "unassigned"
