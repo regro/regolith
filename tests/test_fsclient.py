@@ -257,3 +257,40 @@ def test_a_database_is_named_before_its_collections_are_read(fs_db):
     client, db, dbpath = fs_db
     assert set(client.keys()) == {"test"}
     assert client.dbs.get("test", {}) == {}
+
+
+@pytest.mark.parametrize(
+    "load, expected_how",
+    [
+        # Test which loader reads a collection.  The round trip loader records
+        # the comments and formatting a file has, and is around nine times
+        # slower, so it is used only when the file is going to be written.
+        # C1: reading a collection, expect the fast loader
+        (lambda c: c.raw_collection("test", "people"), "fast"),
+        # C2: writing to a collection, expect the round trip loader
+        (lambda c: c.insert_one("test", "people", {"_id": "new"}), "round_trip"),
+        # C3: reading then writing, expect the round trip loader to replace the
+        # fast read, so the dump still keeps the file's formatting
+        (
+            lambda c: (c.raw_collection("test", "people"), c.insert_one("test", "people", {"_id": "new"})),
+            "round_trip",
+        ),
+    ],
+)
+def test_a_collection_is_read_round_trip_only_when_it_will_be_written(load, expected_how, fs_db):
+    client, db, dbpath = fs_db
+    load(client)
+    assert client._loaded[("test", "people")] == expected_how
+
+
+def test_writing_after_a_fast_read_keeps_the_file_formatting(fs_db):
+    # Test that a collection read fast and then written comes back with its
+    # formatting intact, which is the reason the round trip loader exists
+    client, db, dbpath = fs_db
+    before = (dbpath / "people.yaml").read_text()
+    client.raw_collection("test", "people")
+    client.insert_one("test", "people", {"_id": "sbillinge", "name": "Simon Billinge"})
+    client.dump_database(db)
+    after = (dbpath / "people.yaml").read_text()
+    assert before.rstrip("\n") in after or "Anthony Scopatz" in after
+    assert "Simon Billinge" in after

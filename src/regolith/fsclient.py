@@ -104,10 +104,27 @@ def dump_json(filename, docs, date_handler=None):
         fh.write(s)
 
 
-def load_yaml(filename, return_inst=False, loader=None):
-    """Loads a YAML file and returns a dict of its documents."""
+def load_yaml(filename, return_inst=False, loader=None, round_trip=True):
+    """Loads a YAML file and returns a dict of its documents.
+
+    Parameters
+    ----------
+    filename : str or pathlib.Path
+        The file to read.
+    return_inst : bool, optional
+        The switch to also return the loader that read the file, which
+        writing the file back needs in order to keep its formatting.
+    loader : ruamel.yaml.YAML, optional
+        The loader to read with.  The default builds one.
+    round_trip : bool, optional
+        The switch to read with the round trip loader, which records the
+        comments and formatting so they survive being written back.  The
+        safe loader is around nine times faster but keeps none of that,
+        so reading without round trip is only for a file that will not be
+        written.  The default is True.
+    """
     if loader is None:
-        inst = YAML()
+        inst = YAML() if round_trip else YAML(typ="safe")
     else:
         inst = loader
     with Path(filename).open(encoding="utf-8") as fh:
@@ -157,7 +174,7 @@ class FileSystemClient:
         self.chained_db = None
         self._dirty = set()
         self._available = {}
-        self._loaded = set()
+        self._loaded = {}
         self._dbpaths = {}
         self.open()
         self._collfiletypes = {}
@@ -173,7 +190,7 @@ class FileSystemClient:
             self.chained_db = {}
             self._dirty = set()
             self._available = {}
-            self._loaded = set()
+            self._loaded = {}
             self._dbpaths = {}
             self.closed = False
 
@@ -279,8 +296,12 @@ class FileSystemClient:
         """
         return set(self._available.get(dbname, {}))
 
-    def load_collection(self, dbname, collname):
+    def load_collection(self, dbname, collname, round_trip=False):
         """Read one collection into memory unless it is already there.
+
+        A collection is read with the fast loader, and read again with
+        the round trip loader if it is about to be written, since only
+        that one records the comments and formatting the file has.
 
         Parameters
         ----------
@@ -289,19 +310,21 @@ class FileSystemClient:
         collname : str
             The name of the collection to read.
         """
-        if (dbname, collname) in self._loaded:
+        already = self._loaded.get((dbname, collname))
+        if already is not None and (already == "round_trip" or not round_trip):
             return
         f = self._available.get(dbname, {}).get(collname)
         if f is None:
             return
-        logger.debug("loading %s", f)
+        logger.debug("loading %s%s", f, " for writing" if round_trip else "")
         if self._collfiletypes.get(collname) == "json":
             docs = load_json(f)
         else:
-            docs, inst = load_yaml(f, return_inst=True)
-            self._yamlinsts[self._dbpaths[dbname], collname] = inst
+            docs, inst = load_yaml(f, return_inst=True, round_trip=round_trip)
+            if round_trip:
+                self._yamlinsts[self._dbpaths[dbname], collname] = inst
         self.dbs[dbname][collname] = docs
-        self._loaded.add((dbname, collname))
+        self._loaded[(dbname, collname)] = "round_trip" if round_trip else "fast"
 
     def raw_collection(self, dbname, collname):
         """Return the documents of one collection as this database holds
@@ -412,14 +435,14 @@ class FileSystemClient:
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
-        self.load_collection(dbname, collname)
+        self.load_collection(dbname, collname, round_trip=True)
         coll = self.dbs[dbname][collname]
         coll[doc["_id"]] = doc
         self.mark_dirty(dbname, collname)
 
     def insert_many(self, dbname, collname, docs):
         """Inserts many documents into a database/collection."""
-        self.load_collection(dbname, collname)
+        self.load_collection(dbname, collname, round_trip=True)
         coll = self.dbs[dbname][collname]
         for doc in docs:
             coll[doc["_id"]] = doc
@@ -427,7 +450,7 @@ class FileSystemClient:
 
     def delete_one(self, dbname, collname, doc):
         """Removes a single document from a collection."""
-        self.load_collection(dbname, collname)
+        self.load_collection(dbname, collname, round_trip=True)
         coll = self.dbs[dbname][collname]
         del coll[doc["_id"]]
         self.mark_dirty(dbname, collname)
@@ -483,7 +506,7 @@ class FileSystemClient:
 
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
-        self.load_collection(dbname, collname)
+        self.load_collection(dbname, collname, round_trip=True)
         coll = self.dbs[dbname][collname]
         doc = self.find_one(dbname, collname, filter)
         newdoc = dict(filter if doc is None else doc)
