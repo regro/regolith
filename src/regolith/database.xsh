@@ -82,11 +82,14 @@ def load_database(db, client, rc):
                          '{}'.format(db))
 
 
-def dump_git_database(db, client, rc):
+def dump_git_database(db, client, rc, force=False):
     """Dumps a git database"""
     dbdir = dbdirname(db, rc)
-    # dump all of the data
-    to_add = client.dump_database(db)
+    # dump the data that changed
+    to_add = client.dump_database(db, force=force)
+    if not to_add:
+        # nothing was modified, so there is nothing to commit or push
+        return
     # update the repo
     cmd = ['git', 'add', '']
     for file in to_add:
@@ -108,11 +111,14 @@ def dump_git_database(db, client, rc):
         return
 
 
-def dump_hg_database(db, client, rc):
+def dump_hg_database(db, client, rc, force=False):
     """Dumps an hg database"""
     dbdir = dbdirname(db, rc)
-    # dump all of the data
-    to_add = client.dump_database(db)
+    # dump the data that changed
+    to_add = client.dump_database(db, force=force)
+    if not to_add:
+        # nothing was modified, so there is nothing to commit or push
+        return
     # update the repo
     hgclient = hglib.open(dbdir)
     if len(hgclient.status(include=to_add, modified=True,
@@ -123,26 +129,30 @@ def dump_hg_database(db, client, rc):
     hgclient.push()
 
 
-def dump_local_database(db, client, rc):
+def dump_local_database(db, client, rc, force=False):
     """Dumps a local database"""
-    dbdir = dbdirname(db, rc)
-    # dump all of the data
-    client.dump_database(db)
+    # dump the data that changed
+    client.dump_database(db, force=force)
     return
 
 
-def dump_database(db, client, rc):
-    """Dumps a database"""
+def dump_database(db, client, rc, force=False):
+    """Dumps a database
+
+    Only the collections that were modified since they were loaded are
+    written, unless ``force`` is set, so a command that reads without
+    writing leaves the database files untouched.
+    """
     # do not dump mongo db
     if db['backend'] in ('mongo', 'mongodb'):
         return
     url = db['url']
     if url.startswith('git') or url.endswith('.git'):
-        dump_git_database(db, client, rc)
+        dump_git_database(db, client, rc, force=force)
     elif url.startswith('hg+'):
-        dump_hg_database(db, client, rc)
+        dump_hg_database(db, client, rc, force=force)
     elif Path(url).expanduser().exists():
-        dump_local_database(db, client, rc)
+        dump_local_database(db, client, rc, force=force)
     else:
         raise ValueError('Do not know how to dump this kind of database')
 

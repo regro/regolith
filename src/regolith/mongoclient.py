@@ -439,8 +439,18 @@ class MongoClient:
             export_json(collection, dbpath, dbname, host=host, uri=uri)
         return
 
-    def dump_database(self, db):
-        """Dumps a database dict via mongoexport."""
+    def dump_database(self, db, force=False):
+        """Dumps a database dict via mongoexport.
+
+        Parameters
+        ----------
+        db : dict
+            The database description, supplying ``name`` and ``path``.
+        force : bool, optional
+            The switch kept for signature parity with the filesystem
+            client.  Mongo exports every collection either way, so it is
+            ignored.
+        """
         dbpath = Path(dbpathname(db, self.rc))
         dbpath.mkdir(parents=True, exist_ok=True)
         to_add = []
