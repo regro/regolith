@@ -1,7 +1,6 @@
 """Helper for marking a task as finished in todos collection."""
 
 import datetime as dt
-import math
 
 import dateutil.parser as date_parser
 from gooey import GooeyParser
@@ -12,6 +11,7 @@ from regolith.tools import (
     all_docs_from_collection,
     document_by_value,
     get_pi_id,
+    get_todo_order,
     key_value_pair_filter,
     print_task,
     strip_str,
@@ -129,7 +129,7 @@ class TodoFinisherHelper(DbHelperBase):
                 if isinstance(todo["due_date"], str):
                     todo["due_date"] = date_parser.parse(todo["due_date"]).date()
                 todo["days_to_due"] = (todo.get("due_date") - today).days
-                todo["order"] = 1 / (1 + math.exp(abs(todo["days_to_due"] - 0.5)))
+                todo["order"] = get_todo_order(todo["days_to_due"])
             todolist = sorted(
                 todolist, key=lambda k: (k["status"], k["importance"], k["order"], -k.get("duration", 10000))
             )
