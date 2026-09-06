@@ -383,7 +383,19 @@ class FileSystemClient:
         self.closed = True
 
     def keys(self):
-        return self.dbs.keys()
+        """Return the names of the databases this client is backing.
+
+        A database is named here from the moment it is loaded, before any
+        of its collections have been read, because the client is asked
+        whether it holds a database in order to decide where a write
+        should go.
+
+        Returns
+        -------
+        set of str
+            The names of the databases.
+        """
+        return set(self._available) | set(self.dbs)
 
     def __getitem__(self, key):
         return self.dbs[key]
