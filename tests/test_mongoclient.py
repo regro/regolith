@@ -170,6 +170,42 @@ def test_update_field_reports_a_miss():
     assert client.update_field("test", "people", "nobody", "name", "x") is False
 
 
+@pytest.mark.parametrize(
+    "value, expected_sent",
+    [
+        # Test that a value is encodable by the time it reaches the server.
+        # Mongo cannot encode a datetime.date, and regolith stores dates as iso
+        # strings, so update_field has to clean the value the way update_one
+        # does.
+        # C1: a task carrying a date, which is what finishing one sends
+        (
+            {"description": "a task", "end_date": dt.date(2026, 9, 6)},
+            {"description": "a task", "end_date": "2026-09-06"},
+        ),
+        # C2: a bare date
+        (dt.date(2026, 9, 6), "2026-09-06"),
+        # C3: dates nested in a list, which the recursion has to reach
+        ({"notes": [{"on": dt.date(2026, 1, 2)}]}, {"notes": [{"on": "2026-01-02"}]}),
+        # C4: a value with no dates in it, expect it sent unchanged
+        ({"description": "a task"}, {"description": "a task"}),
+    ],
+)
+def test_update_field_sends_an_encodable_value(value, expected_sent):
+    client, queries = _client_with({"people": PEOPLE_DOCS})
+    client.update_field("test", "people", "scopatz", "todos.3", value)
+    assert queries == [("update_one", {"_id": "scopatz"}, {"$set": {"todos.3": expected_sent}})]
+
+
+def test_update_field_does_not_rewrite_the_path():
+    # Test that the path survives cleaning.  bson_cleanup replaces the periods
+    # in keys, so cleaning the whole $set would turn "todos.3" into "todos-3"
+    # and set a field of that name rather than the fourth entry of the list.
+    client, queries = _client_with({"people": PEOPLE_DOCS})
+    client.update_field("test", "people", "scopatz", "todos.3", {"end_date": dt.date(2026, 9, 6)})
+    ((_, _, update),) = queries
+    assert list(update["$set"]) == ["todos.3"]
+
+
 def test_the_fake_collection_refuses_what_mongo_would_refuse():
     # Test the guard itself.  A test that sends an unencodable value must fail
     # here rather than passing and failing against a real server, which is how
