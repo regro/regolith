@@ -705,7 +705,12 @@ class MongoClient:
         bool
             Whether a document was found and set.
         """
-        result = self.client[dbname][collname].update_one({"_id": _id}, {"$set": {path: value}})
+        # Mongo cannot encode a datetime.date, and regolith stores dates as iso
+        # strings, so the value goes through the same cleanup an update_one
+        # does.  Only the value: bson_cleanup also rewrites the periods in keys,
+        # which would turn a path like "todos.3" into "todos-3" and set a field
+        # of that name instead of the fourth entry of the list.
+        result = self.client[dbname][collname].update_one({"_id": _id}, {"$set": {path: bson_cleanup(value)}})
         return result.matched_count > 0
 
     def update_one(self, dbname, collname, filter, update, **kwargs):
