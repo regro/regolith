@@ -454,7 +454,7 @@ class MongoClient:
         dbpath = Path(dbpathname(db, self.rc))
         dbpath.mkdir(parents=True, exist_ok=True)
         to_add = []
-        colls = self.client[db["name"]].collection_names(include_system_collections=False)
+        colls = self.client[db["name"]].list_collection_names()
         for collection in colls:
             f = str(dbpath / (collection + ".json"))
             cmd = [
@@ -486,8 +486,23 @@ class MongoClient:
         return self.client[key]
 
     def collection_names(self, dbname, include_system_collections=True):
-        """Returns the collection names for the database name."""
-        return self.client[dbname].collection_names()
+        """Return the names of the collections in a database.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database to list.
+        include_system_collections : bool, optional
+            The switch kept for signature parity with the filesystem
+            client.  Mongo keeps its system collections in a namespace
+            that is not listed, so it is ignored.
+
+        Returns
+        -------
+        list of str
+            The names of the collections in the database.
+        """
+        return self.client[dbname].list_collection_names()
 
     def all_documents(self, collname, copy=True):
         """Returns an iterable over all documents in a collection."""
