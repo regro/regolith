@@ -156,3 +156,53 @@ def test_insert_many_of_nothing_is_not_a_modification(fs_db):
     client.insert_many("test", "people", [])
     assert client.is_dirty("test", "people") is False
     assert client.dump_database(db) == []
+
+
+def test_get_returns_one_document_by_id(fs_db):
+    # Test the id lookup that lets a caller avoid reading a whole collection
+    client, db, dbpath = fs_db
+    assert client.get("test", "people", "scopatz")["name"] == "Anthony Scopatz"
+
+
+def test_get_returns_none_for_a_missing_document_or_collection(fs_db):
+    # Test the misses, none of which should raise
+    client, db, dbpath = fs_db
+    assert client.get("test", "people", "nobody") is None
+    assert client.get("test", "nonexistent", "scopatz") is None
+    assert client.get("nonexistent", "people", "scopatz") is None
+
+
+def test_get_of_a_missing_database_does_not_create_it(fs_db):
+    # Test that a miss leaves dbs alone, since dbs is a defaultdict and a
+    # stray lookup would otherwise add an empty database that gets dumped
+    client, db, dbpath = fs_db
+    client.get("nonexistent", "people", "scopatz")
+    assert "nonexistent" not in client.dbs
+
+
+@pytest.mark.parametrize(
+    "filter,expected_ids",
+    [
+        # C1: no filter, expect every document in the collection
+        (None, ["scopatz"]),
+        # C2: a filter on a value that matches, expect that document
+        ({"name": "Anthony Scopatz"}, ["scopatz"]),
+        # C3: a filter on a value that does not match, expect nothing
+        ({"name": "Nobody"}, []),
+        # C4: a filter on a key no document has, expect nothing
+        ({"missing_key": "any"}, []),
+    ],
+)
+def test_find_matches_documents_on_every_filter_key(fs_db, filter, expected_ids):
+    # Test filtering a collection on the filesystem backend
+    client, db, dbpath = fs_db
+    assert [doc["_id"] for doc in client.find("test", "people", filter)] == expected_ids
+
+
+def test_find_one_by_id_agrees_with_a_scan(fs_db):
+    # Test that the id fast path in find_one returns what scanning would
+    client, db, dbpath = fs_db
+    client.insert_one("test", "people", {"_id": "sbillinge", "name": "Simon Billinge"})
+    by_id = client.find_one("test", "people", {"_id": "sbillinge"})
+    by_scan = client.find_one("test", "people", {"name": "Simon Billinge"})
+    assert by_id == by_scan

@@ -54,6 +54,30 @@ def _id_key(doc):
     return doc["_id"]
 
 
+def doc_matches(doc, filter):
+    """Return True if a document has every key and value of a filter.
+
+    Parameters
+    ----------
+    doc : dict
+        The document to test.
+    filter : dict or None
+        The keys and values the document must have.  An empty or absent
+        filter matches every document.
+
+    Returns
+    -------
+    bool
+        Whether the document matches.
+    """
+    if not filter:
+        return True
+    for key, value in filter.items():
+        if key not in doc or doc[key] != value:
+            return False
+    return True
+
+
 def load_json(filename):
     """Loads a JSON file and returns a dict of its documents."""
     docs = {}
@@ -314,17 +338,54 @@ class FileSystemClient:
         del coll[doc["_id"]]
         self.mark_dirty(dbname, collname)
 
+    def get(self, dbname, collname, _id):
+        """Return one document of a collection by id.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database holding the collection.
+        collname : str
+            The name of the collection to read.
+        _id : str
+            The id of the document.
+
+        Returns
+        -------
+        dict or None
+            The document, or None when the database has no such document.
+        """
+        return self.dbs.get(dbname, {}).get(collname, {}).get(_id)
+
+    def find(self, dbname, collname, filter=None):
+        """Yield the documents of a collection that match a filter.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database holding the collection.
+        collname : str
+            The name of the collection to read.
+        filter : dict, optional
+            The keys and values a document must have.  The default
+            yields every document of the collection.
+
+        Yields
+        ------
+        dict
+            The matching documents.
+        """
+        for doc in self.dbs.get(dbname, {}).get(collname, {}).values():
+            if doc_matches(doc, filter):
+                yield doc
+
     def find_one(self, dbname, collname, filter):
         """Finds the first document matching filter."""
-        coll = self.dbs[dbname][collname]
-        for doc in coll.values():
-            matches = True
-            for key, value in filter.items():
-                if key not in doc or doc[key] != value:
-                    matches = False
-                    break
-            if matches:
-                return doc
+        # An id is unique, so look it up rather than scanning the collection
+        if filter and set(filter) == {"_id"}:
+            return self.get(dbname, collname, filter["_id"])
+        for doc in self.find(dbname, collname, filter):
+            return doc
 
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
