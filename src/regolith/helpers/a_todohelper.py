@@ -180,6 +180,9 @@ class TodoAdderHelper(DbHelperBase):
             importance = int(rc.importance)
 
         todolist = person.get("todos", [])
+        # Whether the stored document already has a list to append to decides
+        # how the new task can be written, below
+        had_todos = len(todolist) > 0
         if not rc.deadline:
             rc.deadline = False
         todo_uuid = get_uuid()
@@ -237,7 +240,17 @@ class TodoAdderHelper(DbHelperBase):
             rc.client.update_one(rc.database, "projecta", {"_id": target_prum.get("_id")}, target_prum)
         indices = [todo.get("running_index", 0) for todo in todolist]
         todolist[-1]["running_index"] = max(indices) + 1
-        rc.client.update_one(rc.database, rc.coll, {"_id": rc.assigned_to}, {"todos": todolist}, upsert=True)
+        # Append by setting the one new position, so the tasks already stored
+        # are not sent back with it.  A document with no todos yet has no list
+        # for that to append to, and setting a numbered field on it would
+        # store a mapping rather than a list, so that case writes the list.
+        appended = False
+        if had_todos:
+            appended = rc.client.update_field(
+                rc.database, rc.coll, rc.assigned_to, f"todos.{len(todolist) - 1}", todolist[-1]
+            )
+        if not appended:
+            rc.client.update_one(rc.database, rc.coll, {"_id": rc.assigned_to}, {"todos": todolist}, upsert=True)
         print(f'The task "{rc.description}" for {rc.assigned_to} has been added in {TARGET_COLL} collection.')
 
         return

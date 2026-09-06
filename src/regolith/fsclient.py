@@ -523,7 +523,8 @@ class FileSystemClient:
         _id : str
             The id of the document.
         path : str
-            The field to set.
+            The field to set.  A step into a list may be the next free
+            position, which appends, as ``$set`` does on mongo.
         value : object
             The value to set it to.
 
@@ -542,7 +543,15 @@ class FileSystemClient:
             target = target[int(step)] if isinstance(target, list) else target[step]
         last = steps[-1]
         if isinstance(target, list):
-            target[int(last)] = value
+            index = int(last)
+            # Mongo's $set appends when the index is the next free one, and
+            # pads with nulls beyond it.  Match that, since a database can be
+            # backed either way and the two must agree.
+            if index >= len(target):
+                target.extend([None] * (index - len(target)))
+                target.append(value)
+            else:
+                target[index] = value
         else:
             target[last] = value
         self.mark_dirty(dbname, collname)

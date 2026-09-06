@@ -344,3 +344,23 @@ def test_update_field_marks_the_collection_dirty(fs_db):
     client.update_field("test", "people", "scopatz", "name", "Renamed")
     assert client.is_dirty("test", "people") is True
     assert client.dump_database(db) == [str(Path("db") / "people.yaml")]
+
+
+@pytest.mark.parametrize(
+    "path, value, expected_todos",
+    [
+        # Test how a step into a list behaves, which has to match what $set
+        # does on mongo since a database can be backed either way
+        # C1: an existing position, expect it replaced
+        ("todos.1", {"i": "replaced"}, [{"i": 0}, {"i": "replaced"}, {"i": 2}]),
+        # C2: the next free position, expect the value appended
+        ("todos.3", {"i": 3}, [{"i": 0}, {"i": 1}, {"i": 2}, {"i": 3}]),
+        # C3: a position past the end, expect the gap padded with nulls
+        ("todos.5", {"i": 5}, [{"i": 0}, {"i": 1}, {"i": 2}, None, None, {"i": 5}]),
+    ],
+)
+def test_update_field_steps_into_a_list_the_way_mongo_does(path, value, expected_todos, fs_db):
+    client, db, dbpath = fs_db
+    client.insert_one("test", "people", {"_id": "me", "todos": [{"i": 0}, {"i": 1}, {"i": 2}]})
+    assert client.update_field("test", "people", "me", path, value) is True
+    assert client.get("test", "people", "me")["todos"] == expected_todos
