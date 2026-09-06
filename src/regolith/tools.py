@@ -4,6 +4,7 @@ regolith tools.
 """
 
 import email.utils
+import math
 import os
 import pathlib
 import platform
@@ -1317,6 +1318,32 @@ def merge_collections_superior(a, b, target_id):
                 b.remove(i)
     bdis = b
     return intersect + bdis
+
+
+def get_todo_order(days_to_due):
+    """Return the sort weight of a task from how long is left before it
+    is due.
+
+    The weight peaks for a task due now and falls away as the due date
+    moves in either direction, so that sorting on it groups the tasks
+    that need attention.  It is computed in the form that underflows to
+    zero rather than the one that overflows: a task due, or overdue, by
+    more than about two years would otherwise raise ``OverflowError``.
+
+    Parameters
+    ----------
+    days_to_due : int or float
+        The number of days until the task is due, negative once it is
+        overdue.
+
+    Returns
+    -------
+    float
+        The weight, between zero and one half, approaching zero as the
+        due date recedes in either direction.
+    """
+    decay = math.exp(-abs(days_to_due - 0.5))
+    return decay / (1 + decay)
 
 
 def get_person_contact(name, people_coll, contacts_coll):

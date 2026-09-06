@@ -1,5 +1,6 @@
 import copy
 import datetime as dt
+import math
 import os
 from pathlib import PurePath
 
@@ -35,6 +36,7 @@ from regolith.tools import (
     get_tags,
     get_target_repo_info,
     get_target_token,
+    get_todo_order,
     get_uuid,
     grant_burn,
     group,
@@ -4023,3 +4025,57 @@ def test_dbpathname_has_no_foreign_separators(db):
     assert actual.parts == ("..", "..", "rg-db-private", "db")
     foreign_sep = "/" if os.sep == "\\" else "\\"
     assert foreign_sep not in str(actual)
+
+
+@pytest.mark.parametrize(
+    "days_to_due, expected_order",
+    [
+        # Test the sort weight of a task from the days left before it is due
+        # C1: due about now, expect the largest weight the curve reaches
+        # 1. due today, expect the peak
+        # 2. due tomorrow, expect the same, since the curve peaks between them
+        (0, 0.3775406687981454),
+        (1, 0.3775406687981454),
+        # C2: due further off, expect a smaller weight
+        (10, 7.484622751061123e-05),
+        # C3: overdue by the same amount, expect the same weight as due in it,
+        # since only the distance from the peak counts
+        (-9, 7.484622751061123e-05),
+        # C4: due beyond the point where the exponential overflows, expect
+        # zero rather than OverflowError
+        (711, 0.0),
+        (100000, 0.0),
+        # C5: overdue beyond that point, expect zero for the same reason
+        (-710, 0.0),
+        (-100000, 0.0),
+    ],
+)
+def test_get_todo_order_weighs_a_task_by_its_due_date(days_to_due, expected_order):
+    assert get_todo_order(days_to_due) == pytest.approx(expected_order)
+
+
+@pytest.mark.parametrize(
+    "days_to_due",
+    [
+        # Test that the weight still matches the plain expression wherever
+        # that expression can be evaluated at all, so ordering does not shift
+        # C1: due today, the peak of the curve
+        0,
+        # C2: a due date a few days out
+        7,
+        # C3: a due date far enough out to be tiny but not yet overflowing
+        709,
+        # C4: overdue, the mirror of C2
+        -7,
+    ],
+)
+def test_get_todo_order_matches_the_unguarded_expression(days_to_due):
+    unguarded = 1 / (1 + math.exp(abs(days_to_due - 0.5)))
+    assert get_todo_order(days_to_due) == pytest.approx(unguarded)
+
+
+def test_get_todo_order_falls_as_the_due_date_recedes():
+    # Test that the weight decreases monotonically away from the peak, which
+    # is what makes it usable as a sort key
+    orders = [get_todo_order(d) for d in [0, 5, 50, 500, 5000]]
+    assert orders == sorted(orders, reverse=True)
