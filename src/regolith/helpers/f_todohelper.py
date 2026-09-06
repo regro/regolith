@@ -5,11 +5,9 @@ import datetime as dt
 import dateutil.parser as date_parser
 from gooey import GooeyParser
 
-from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.tools import (
     all_docs_from_collection,
-    document_by_value,
     get_pi_id,
     get_todo_order,
     key_value_pair_filter,
@@ -85,7 +83,6 @@ class TodoFinisherHelper(DbHelperBase):
             rc.pi_id = get_pi_id(rc)
 
         rc.coll = f"{TARGET_COLL}"
-        gtx[rc.coll] = sorted(all_docs_from_collection(rc.client, rc.coll), key=_id_key)
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -109,7 +106,7 @@ class TodoFinisherHelper(DbHelperBase):
                     "or you need to enter your group id in the command line"
                 )
                 return
-        person = document_by_value(all_docs_from_collection(rc.client, "todos"), "_id", rc.assigned_to)
+        person = rc.client.get("todos", rc.assigned_to)
         filterid = {"_id": rc.assigned_to}
         if not person:
             raise TypeError(f"Id {rc.assigned_to} can't be found in todos collection")

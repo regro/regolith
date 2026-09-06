@@ -15,7 +15,6 @@ from regolith.helpers.basehelper import SoutHelperBase
 from regolith.schemas import PROJECTUM_ACTIVE_STATI, alloweds
 from regolith.tools import (
     all_docs_from_collection,
-    document_by_value,
     get_pi_id,
     get_todo_order,
     key_value_pair_filter,
@@ -119,11 +118,12 @@ class TodoListerHelper(SoutHelperBase):
         if "groups" in self.needed_colls:
             rc.pi_id = get_pi_id(rc)
         rc.coll = f"{TARGET_COLL}"
-        colls = [
-            sorted(all_docs_from_collection(rc.client, collname), key=_id_key) for collname in self.needed_colls
-        ]
-        for db, coll in zip(self.needed_colls, colls):
-            gtx[db] = coll
+        # sout reads one document of the target collection by id, so only the
+        # collections it goes through in full are gathered here
+        for collname in self.needed_colls:
+            if collname == TARGET_COLL:
+                continue
+            gtx[collname] = sorted(all_docs_from_collection(rc.client, collname), key=_id_key)
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -141,7 +141,7 @@ class TodoListerHelper(SoutHelperBase):
                 )
                 return
         try:
-            person = document_by_value(all_docs_from_collection(rc.client, "todos"), "_id", rc.assigned_to)
+            person = rc.client.get("todos", rc.assigned_to)
             gather_todos = person.get("todos", [])
         except Exception:
             print("The id you entered can't be found in todos.yml.")

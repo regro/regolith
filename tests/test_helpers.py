@@ -8,6 +8,7 @@ from types import SimpleNamespace
 import pytest
 import requests_mock
 
+from regolith.client_manager import ClientManager
 from regolith.helpers.a_expensehelper import (
     MEAL_RATE_SPREAD,
     MEAL_RATES,
@@ -1693,3 +1694,40 @@ def test_expense_constructor_no_meals(no_meals, expect_meals):
     assert "flights" in purposes
     for meal in MEAL_RATES:
         assert (meal in purposes) is expect_meals
+
+
+@pytest.mark.parametrize(
+    "helper_target, extra_args",
+    [
+        # Test that the todo helpers fetch the one person's document they need
+        # by id, rather than reading the whole collection and searching it.  On
+        # a mongo backend the difference is an indexed query against a full
+        # download of every person's todos.
+        # C1: listing, expect the target collection fetched by id
+        ("l_todo", []),
+        # C2: updating, expect the same
+        ("u_todo", ["-i", "1", "--note", "a note"]),
+        # C3: finishing, expect the same
+        ("f_todo", ["-i", "1"]),
+    ],
+)
+def test_todo_helpers_fetch_one_document_by_id(helper_target, extra_args, make_db, mocker):
+    repo = make_db
+    os.chdir(repo)
+    # Spy on the client rather than on the module level helper, since the
+    # helpers bind all_docs_from_collection at import time and every whole
+    # collection read funnels through the client either way
+    get = mocker.patch.object(ClientManager, "get", autospec=True, side_effect=ClientManager.get)
+    read_all = mocker.patch.object(
+        ClientManager, "all_documents", autospec=True, side_effect=ClientManager.all_documents
+    )
+    try:
+        main(["helper", helper_target, "-t", "sbillinge"] + extra_args)
+    except Exception:
+        # The helper may not find matching data in the test database; what is
+        # under test is how it asked for the todos, not what it did with them
+        pass
+    assert any(call.args[1] == "todos" for call in get.call_args_list), "todos was not fetched by id"
+    assert not any(
+        call.args[1] == "todos" for call in read_all.call_args_list
+    ), "the whole todos collection was still read"
