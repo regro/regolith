@@ -7,6 +7,7 @@ install for maintenance tasks, such as fs-to-mongo.
 
 import datetime
 import itertools
+import logging
 import os
 import shutil
 import subprocess
@@ -151,6 +152,9 @@ def export_json(collection: str, dbpath: str, dbname: str, host: str = None, uri
     except subprocess.CalledProcessError as exc:
         print("Status : FAIL", exc.returncode, exc.output)
         raise exc
+
+
+logger = logging.getLogger(__name__)
 
 
 def load_mongo_col(col: Collection) -> dict:
@@ -436,6 +440,7 @@ class MongoClient:
             return
         if collname not in self._available.get(dbname, set()):
             return
+        logger.debug("loading %s.%s from mongo", dbname, collname)
         self.dbs[dbname][collname] = load_mongo_col(self.client[dbname][collname])
         self._loaded.add((dbname, collname))
 
