@@ -1,4 +1,5 @@
 import datetime
+import logging
 import tempfile
 from copy import copy
 from pathlib import Path
@@ -215,3 +216,13 @@ def test_find_one_by_id_agrees_with_a_scan(fs_db):
     by_id = client.find_one("test", "people", {"_id": "sbillinge"})
     by_scan = client.find_one("test", "people", {"name": "Simon Billinge"})
     assert by_id == by_scan
+
+
+def test_loading_a_collection_is_silent_but_logged(fs_db, caplog, capsys):
+    # Test that reading a collection prints nothing, since a helper's output is
+    # meant to be readable, while still saying what it read for debugging
+    client, db, dbpath = fs_db
+    with caplog.at_level(logging.DEBUG, logger="regolith.fsclient"):
+        client.raw_collection("test", "people")
+    assert capsys.readouterr().err == ""
+    assert any("people" in record.getMessage() for record in caplog.records)

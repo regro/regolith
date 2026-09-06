@@ -3,6 +3,7 @@
 from __future__ import print_function
 
 import copy
+import logging
 import os
 from argparse import ArgumentParser, Namespace, RawTextHelpFormatter
 
@@ -278,7 +279,26 @@ def create_parser():
     return p
 
 
+def _configure_logging():
+    """Send regolith's log messages to the console at the requested
+    level.
+
+    The level comes from the ``REGOLITH_LOG_LEVEL`` environment variable
+    and defaults to silence.  Set it to ``DEBUG`` to see which
+    collections are read from which database, which is the quickest way
+    to find out why a command is slow.
+    """
+    level = os.environ.get("REGOLITH_LOG_LEVEL")
+    if not level:
+        return
+    logging.basicConfig(
+        level=level.upper(),
+        format="%(levelname)s %(name)s: %(message)s",
+    )
+
+
 def main(args=None):
+    _configure_logging()
     rc = copy.copy(DEFAULT_RC)
     parser = create_parser()
     args0 = Namespace()

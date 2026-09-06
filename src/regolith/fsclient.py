@@ -4,7 +4,6 @@ import datetime
 import json
 import logging
 import signal
-import sys
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
@@ -31,6 +30,8 @@ class DelayedKeyboardInterrupt:
         if self.signal_received:
             self.old_handler(*self.signal_received)
 
+
+logger = logging.getLogger(__name__)
 
 YAML_BASE_MAP = {CommentedMap: dict, CommentedSeq: list}
 
@@ -293,7 +294,7 @@ class FileSystemClient:
         f = self._available.get(dbname, {}).get(collname)
         if f is None:
             return
-        print("loading " + str(f) + "...", file=sys.stderr)
+        logger.debug("loading %s", f)
         if self._collfiletypes.get(collname) == "json":
             docs = load_json(f)
         else:
@@ -364,7 +365,7 @@ class FileSystemClient:
         Path(dbpath).mkdir(parents=True, exist_ok=True)
         to_add = []
         for collname in collnames:
-            # print("dumping " + collname + "...", file=sys.stderr)
+            # logger.debug("dumping %s", collname)
             collection = self.dbs[dbname][collname]
             filetype = self._collfiletypes.get(collname, "yaml")
             if filetype == "json":
