@@ -19,8 +19,11 @@ PROJECTUM_STATI = list(
     PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
 )
 
+MC_STATI = ["proposed", "active", "backburner", "wishlist", "finished", "dropped"]
+
 alloweds = {
     "ACTIVITIES_TYPES": ["teaching", "research"],
+    "MC_STATI": MC_STATI,
     "AGENCIES": ["nsf", "doe", "other"],
     "APPOINTMENTS_TYPES": ["gra", "ss", "pd", "ug"],
     "APPOINTMENTS_STATI": ["proposed", "appointed", "finalized"],

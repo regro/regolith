@@ -18,6 +18,7 @@ BUILDERS = LazyRegistry(
         "grant-report": "regolith.builders.grantreportbuilder:GrantReportBuilder",
         "html": "regolith.builders.htmlbuilder:HtmlBuilder",
         "internalhtml": "regolith.builders.internalhtmlbuilder:InternalHtmlBuilder",
+        "mission-control": "regolith.builders.missioncontrolbuilder:MissionControlBuilder",
         "meals-log": "regolith.builders.mealslogbuilder:MealsLogBuilder",
         "postdocad": "regolith.builders.postdocadbuilder:PostdocadBuilder",
         "presentation": "regolith.builders.presentationbuilder:PresentationBuilder",

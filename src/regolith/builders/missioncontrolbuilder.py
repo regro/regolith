@@ -1,0 +1,276 @@
+"""Builder for the mission control documents.
+
+One document per person, plus one for the projects nobody leads.  The
+document is a view of the ``mc_projects``, ``mc_goals`` and ``mc_tasks``
+collections, laid out to follow a meeting: what are your projects, what
+did we agree for this period, what did you plan for this past week.
+
+The numbers in it are positional and are rewritten every time it is
+built.  The ``^id`` after each line is the stable identity, and is what
+a reader of the document will match a line back to.  Nobody types
+either.
+
+See ~/dev/regolith-notes/plan-mission-control.md for the design.
+"""
+
+import datetime as dt
+from collections import defaultdict
+
+from regolith.builders.basebuilder import BuilderBase
+from regolith.dates import get_dates
+from regolith.tools import all_docs_from_collection
+
+UNASSIGNED = "unassigned"
+OPEN_STATI = ("proposed", "active")
+
+
+def week_of(date):
+    """Return the Monday of the week a date falls in.
+
+    Parameters
+    ----------
+    date : datetime.date
+        The date to place.
+
+    Returns
+    -------
+    datetime.date
+        The Monday of that week.
+    """
+    return date - dt.timedelta(days=date.weekday())
+
+
+def as_date(value):
+    """Return a date from either a date or an iso string.
+
+    A collection can be backed by mongo, which stores dates as iso
+    strings, or by the filesystem, which stores them as dates.
+
+    Parameters
+    ----------
+    value : datetime.date or str or None
+        The value to read.
+
+    Returns
+    -------
+    datetime.date or None
+        The date, or None when there was nothing to read.
+    """
+    if value is None or isinstance(value, dt.date):
+        return value
+    return get_dates({"date": value}).get("date")
+
+
+class MissionControlBuilder(BuilderBase):
+    """Render the mission control document of every person."""
+
+    btype = "mission-control"
+    needed_colls = ["mc_projects", "mc_goals", "mc_tasks", "people"]
+
+    def __init__(self, rc):
+        super().__init__(rc)
+        self.cmds = ["render"]
+
+    def construct_global_ctx(self):
+        """Constructs the global context."""
+        super().construct_global_ctx()
+        gtx = self.gtx
+        rc = self.rc
+        gtx["mc_projects"] = list(all_docs_from_collection(rc.client, "mc_projects"))
+        gtx["mc_goals"] = list(all_docs_from_collection(rc.client, "mc_goals"))
+        gtx["mc_tasks"] = list(all_docs_from_collection(rc.client, "mc_tasks"))
+        gtx["all_docs_from_collection"] = all_docs_from_collection
+
+    def render(self):
+        """Write a document for each person, and one for the orphans."""
+        for person, lines in sorted(self.documents().items()):
+            with open(f"{self.bldir}/{person}.md", "w", encoding="utf-8") as f:
+                f.write("\n".join(lines) + "\n")
+
+    def documents(self):
+        """Return the lines of every document, keyed by the person it is
+        for.
+
+        Returns
+        -------
+        dict
+            The lines of each document, keyed by person id.  A project
+            with no lead goes to the unassigned document.
+        """
+        by_person = defaultdict(list)
+        for project in self.gtx["mc_projects"]:
+            by_person[project.get("lead") or UNASSIGNED].append(project)
+        return {person: self.render_person(person, projects) for person, projects in by_person.items()}
+
+    def render_person(self, person, projects):
+        """Return the lines of one person's document.
+
+        Parameters
+        ----------
+        person : str
+            The id of the person, or ``unassigned``.
+        projects : list of dict
+            Their projects.
+
+        Returns
+        -------
+        list of str
+            The lines of the document.
+        """
+        projects = sorted(projects, key=lambda p: p["_id"])
+        number_of = {project["_id"]: n for n, project in enumerate(projects, start=1)}
+        goals = [g for g in self.gtx["mc_goals"] if g["project"] in number_of]
+        goal_number = self.number_goals(goals, number_of)
+        tasks = [t for t in self.gtx["mc_tasks"] if t["goal"] in goal_number]
+
+        lines = [f"# Mission control — {person}", ""]
+        lines += self.render_projects(projects)
+        lines += self.render_goals(goals, goal_number)
+        lines += self.render_weeks(tasks, goal_number)
+        lines += self.render_bucket("Backburner", goals, goal_number, "backburner")
+        lines += self.render_bucket("Wishlist", goals, goal_number, "wishlist")
+        lines += self.render_archive(goals, goal_number)
+        return lines
+
+    @staticmethod
+    def number_goals(goals, number_of):
+        """Return the number to print against each goal, e.g. ``1.2``.
+
+        Parameters
+        ----------
+        goals : list of dict
+            The goals to number.
+        number_of : dict
+            The number of each project, keyed by project id.
+
+        Returns
+        -------
+        dict
+            The number of each goal, keyed by goal id.
+        """
+        numbers = {}
+        counts = defaultdict(int)
+        for goal in sorted(goals, key=lambda g: (number_of[g["project"]], g["_id"])):
+            counts[goal["project"]] += 1
+            numbers[goal["_id"]] = f"{number_of[goal['project']]}.{counts[goal['project']]}"
+        return numbers
+
+    @staticmethod
+    def render_projects(projects):
+        """Return the lines of the projects section."""
+        lines = ["## Projects", ""]
+        for n, project in enumerate(projects, start=1):
+            lines.append(f"{n}. **{project['name']}**  ^{project['_id']}")
+            if project.get("project_deliverable"):
+                lines.append(f"   deliverable: {project['project_deliverable']}")
+        lines.append("")
+        return lines
+
+    def render_goals(self, goals, goal_number):
+        """Return the lines of the goals section, for the current
+        period."""
+        current = self.current_period(goals)
+        if current is None:
+            return []
+        lines = [f"## Goals — {current}", ""]
+        for goal in self.in_order(goals, goal_number):
+            if goal["period"] != current or goal["status"] not in OPEN_STATI:
+                continue
+            lines.append(f"- {goal_number[goal['_id']]}  {goal['text']}  ^{goal['_id']}{self.carried(goal)}")
+        lines.append("")
+        return lines
+
+    def render_weeks(self, tasks, goal_number):
+        """Return the lines of one section per week that has tasks."""
+        by_week = defaultdict(list)
+        for task in tasks:
+            due = as_date(task.get("due_date"))
+            if due is not None:
+                by_week[week_of(due)].append(task)
+        lines = []
+        for monday in sorted(by_week, reverse=True):
+            lines += [f"## Week of {monday.isoformat()}", ""]
+            numbered = self.number_tasks(by_week[monday], goal_number)
+            for task in sorted(by_week[monday], key=lambda t: numbered[t["_id"]]):
+                box = "x" if task["status"] == "finished" else " "
+                lines.append(f"- [{box}] {numbered[task['_id']]}  {task['text']}  ^{task['_id']}")
+            lines.append("")
+        return lines
+
+    @staticmethod
+    def number_tasks(tasks, goal_number):
+        """Return the number to print against each task, e.g.
+        ``1.2.1``."""
+        numbers = {}
+        counts = defaultdict(int)
+        for task in sorted(tasks, key=lambda t: (goal_number[t["goal"]], t["_id"])):
+            counts[task["goal"]] += 1
+            numbers[task["_id"]] = f"{goal_number[task['goal']]}.{counts[task['goal']]}"
+        return numbers
+
+    def render_bucket(self, heading, goals, goal_number, status):
+        """Return the lines of the backburner or wishlist section."""
+        held = [g for g in self.in_order(goals, goal_number) if g["status"] == status]
+        if not held:
+            return []
+        lines = [f"## {heading}", ""]
+        for goal in held:
+            lines.append(f"- {goal_number[goal['_id']]}  {goal['text']}  ^{goal['_id']}")
+        lines.append("")
+        return lines
+
+    def render_archive(self, goals, goal_number):
+        """Return the lines of the archive, one section per past period.
+
+        A goal that has moved on from a period is still shown under it,
+        marked with where it went, so the record of what was agreed then
+        stays truthful without a second document.
+        """
+        current = self.current_period(goals)
+        periods = sorted({g["first_period"] for g in goals} | {g["period"] for g in goals}, reverse=True)
+        past = [p for p in periods if current is None or p < current]
+        if not past:
+            return []
+        lines = ["## Archive", ""]
+        for period in past:
+            shown = [g for g in self.in_order(goals, goal_number) if g["first_period"] <= period <= g["period"]]
+            if not shown:
+                continue
+            lines += [f"### Goals — {period}", ""]
+            for goal in shown:
+                lines.append(
+                    f"- {goal_number[goal['_id']]}  {goal['text']}  ^{goal['_id']}" f"{self.outcome(goal, period)}"
+                )
+            lines.append("")
+        return lines
+
+    @staticmethod
+    def in_order(goals, goal_number):
+        """Return the goals in the order their numbers read."""
+        return sorted(goals, key=lambda g: [int(n) for n in goal_number[g["_id"]].split(".")])
+
+    @staticmethod
+    def current_period(goals):
+        """Return the latest period any goal is in, or None."""
+        periods = [g["period"] for g in goals]
+        return max(periods) if periods else None
+
+    @staticmethod
+    def carried(goal):
+        """Return a note saying since when a goal has been carried."""
+        if goal["first_period"] != goal["period"]:
+            return f"  (carried since {goal['first_period']})"
+        return ""
+
+    @staticmethod
+    def outcome(goal, period):
+        """Return what became of a goal in a period it is shown
+        under."""
+        if goal["period"] != period:
+            return f"  (→ rolled to {goal['period']})"
+        if goal["status"] == "finished":
+            end = as_date(goal.get("end_date"))
+            return f"  (finished {end.isoformat()})" if end else "  (finished)"
+        if goal["status"] == "dropped":
+            return "  (dropped)"
+        return ""
