@@ -1,6 +1,7 @@
 """Tests for the mongo backed client that do not need a live mongod."""
 
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -22,6 +23,11 @@ class FakePymongoCollection:
             if all(doc.get(key) == value for key, value in filter.items()):
                 return doc
         return None
+
+    def update_one(self, filter, update):
+        self.queries.append(("update_one", filter, update))
+        matched = sum(1 for doc in self._docs if all(doc.get(k) == v for k, v in filter.items()))
+        return SimpleNamespace(matched_count=matched)
 
     def find(self, filter=None):
         self.queries.append(("find", filter))
@@ -123,3 +129,35 @@ def test_find_sends_the_filter_to_the_server(filter, expected_ids, expected_quer
     client, queries = _client_with({"people": PEOPLE_DOCS})
     assert [doc["_id"] for doc in client.find("test", "people", filter)] == expected_ids
     assert queries == [("find", expected_query)]
+
+
+@pytest.mark.parametrize(
+    "path, value, expected_found",
+    [
+        # Test that setting one field sends only that field to the server,
+        # where replacing the document would send all of it
+        # C1: one entry of a list, which is the case this exists for
+        ("todos.3", {"description": "changed"}, True),
+        # C2: a top level field
+        ("name", "Renamed", True),
+    ],
+)
+def test_update_field_sends_only_that_field(path, value, expected_found):
+    client, queries = _client_with({"people": PEOPLE_DOCS})
+    assert client.update_field("test", "people", "scopatz", path, value) is expected_found
+    assert queries == [("update_one", {"_id": "scopatz"}, {"$set": {path: value}})]
+
+
+def test_update_field_does_not_read_the_document_first():
+    # Test that no find is issued.  update_one reads the document back in
+    # order to validate it, which is the round trip this avoids.
+    client, queries = _client_with({"people": PEOPLE_DOCS})
+    client.update_field("test", "people", "scopatz", "todos.3", {"description": "changed"})
+    assert not any(q[0].startswith("find") for q in queries)
+
+
+def test_update_field_reports_a_miss():
+    # Test that setting a field of a document the server does not have says
+    # so rather than raising
+    client, _ = _client_with({"people": PEOPLE_DOCS})
+    assert client.update_field("test", "people", "nobody", "name", "x") is False

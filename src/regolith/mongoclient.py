@@ -675,6 +675,39 @@ class MongoClient:
         doc = coll.find_one(filter)
         return doc
 
+    def update_field(self, dbname, collname, _id, path, value):
+        """Set one field of one document, leaving the rest of it alone.
+
+        Only the field crosses the network, where replacing the document
+        would send all of it.  Updating one entry of a long list is the
+        case this exists for.
+
+        Nothing is validated against the schema, because validating means
+        reading the document back, which is the cost this avoids.  Use
+        ``update_one`` where the whole document should be checked.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database holding the collection.
+        collname : str
+            The name of the collection holding the document.
+        _id : str
+            The id of the document.
+        path : str
+            The field to set, with ``.`` separating the steps into nested
+            documents and lists.
+        value : object
+            The value to set it to.
+
+        Returns
+        -------
+        bool
+            Whether a document was found and set.
+        """
+        result = self.client[dbname][collname].update_one({"_id": _id}, {"$set": {path: value}})
+        return result.matched_count > 0
+
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
         from regolith.tools import validate_doc

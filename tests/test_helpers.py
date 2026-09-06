@@ -1768,3 +1768,22 @@ def test_a_todo_reads_only_what_it_searches(extra_args, expected_reads, make_db,
         pass
     read = {call.args[1] for call in read_all.call_args_list}
     assert read == expected_reads
+
+
+def test_u_todo_writes_only_the_task_it_changed(make_db, mocker):
+    # Test that updating one task sets that task on its own rather than
+    # writing the whole list back.  On a remote database the list is the bulk
+    # of what the update sends.
+    repo = make_db
+    os.chdir(repo)
+    update_field = mocker.patch.object(
+        ClientManager, "update_field", autospec=True, side_effect=ClientManager.update_field
+    )
+    update_one = mocker.patch.object(
+        ClientManager, "update_one", autospec=True, side_effect=ClientManager.update_one
+    )
+    main(["helper", "u_todo", "-i", "1", "-t", "sbillinge", "--notes", "a note"])
+    paths = [call.args[4] for call in update_field.call_args_list]
+    assert paths and all(p.startswith("todos.") for p in paths)
+    written_whole = [c for c in update_one.call_args_list if "todos" in (c.args[4] or {})]
+    assert written_whole == [], "the whole todos list was written back"
