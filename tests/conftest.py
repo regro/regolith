@@ -10,6 +10,7 @@ from copy import deepcopy
 from pathlib import Path
 from subprocess import CalledProcessError
 
+import bson
 import matplotlib
 import pytest
 from pymongo import MongoClient
@@ -34,6 +35,28 @@ ALTERNATE_REGOLITH_MONGODB_NAME = "mongo_test"
 # CalledProcessError.  Either way the mongo backed tests cannot run here, so
 # the fixtures treat both the same and yield False to skip them.
 MONGO_LAUNCH_ERRORS = (CalledProcessError, FileNotFoundError)
+
+
+def assert_mongo_encodable(what, document):
+    """Fail if mongo could not be sent this document.
+
+    pymongo encodes every command before it leaves the client, so a value
+    it cannot encode raises before a server ever sees it.  A
+    ``datetime.date`` is the one that keeps catching us out: regolith
+    stores dates as iso strings and has to convert before writing.
+    Checking here means a test fails rather than a production run.
+
+    Parameters
+    ----------
+    what : str
+        What is being sent, named for the failure message.
+    document : dict
+        The document to check.
+    """
+    try:
+        bson.encode(document)
+    except Exception as exc:
+        raise AssertionError(f"mongo cannot be sent this {what}: {exc}\n  {document!r}") from exc
 
 
 def rmtree(dirname):
