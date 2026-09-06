@@ -158,18 +158,24 @@ def test_insert_many_of_nothing_is_not_a_modification(fs_db):
     assert client.dump_database(db) == []
 
 
-def test_get_returns_one_document_by_id(fs_db):
-    # Test the id lookup that lets a caller avoid reading a whole collection
+@pytest.mark.parametrize(
+    "dbname, collname, _id, expected_name",
+    [
+        # Test looking one document up by id instead of reading a collection
+        # C1: a document the database holds, expect that document
+        ("test", "people", "scopatz", "Anthony Scopatz"),
+        # C2: an id the collection does not have, expect None
+        ("test", "people", "nobody", None),
+        # C3: a collection the database does not have, expect None
+        ("test", "nonexistent", "scopatz", None),
+        # C4: a database the client has not loaded, expect None
+        ("nonexistent", "people", "scopatz", None),
+    ],
+)
+def test_get_returns_one_document_by_id(dbname, collname, _id, expected_name, fs_db):
     client, db, dbpath = fs_db
-    assert client.get("test", "people", "scopatz")["name"] == "Anthony Scopatz"
-
-
-def test_get_returns_none_for_a_missing_document_or_collection(fs_db):
-    # Test the misses, none of which should raise
-    client, db, dbpath = fs_db
-    assert client.get("test", "people", "nobody") is None
-    assert client.get("test", "nonexistent", "scopatz") is None
-    assert client.get("nonexistent", "people", "scopatz") is None
+    doc = client.get(dbname, collname, _id)
+    assert (doc["name"] if doc is not None else None) == expected_name
 
 
 def test_get_of_a_missing_database_does_not_create_it(fs_db):
@@ -181,8 +187,9 @@ def test_get_of_a_missing_database_does_not_create_it(fs_db):
 
 
 @pytest.mark.parametrize(
-    "filter,expected_ids",
+    "filter, expected_ids",
     [
+        # Test filtering a collection on the filesystem backend
         # C1: no filter, expect every document in the collection
         (None, ["scopatz"]),
         # C2: a filter on a value that matches, expect that document
@@ -193,8 +200,7 @@ def test_get_of_a_missing_database_does_not_create_it(fs_db):
         ({"missing_key": "any"}, []),
     ],
 )
-def test_find_matches_documents_on_every_filter_key(fs_db, filter, expected_ids):
-    # Test filtering a collection on the filesystem backend
+def test_find_matches_documents_on_every_filter_key(filter, expected_ids, fs_db):
     client, db, dbpath = fs_db
     assert [doc["_id"] for doc in client.find("test", "people", filter)] == expected_ids
 

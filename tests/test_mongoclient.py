@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+import pytest
+
 from regolith.mongoclient import MongoClient
 
 
@@ -79,38 +81,45 @@ def test_dump_database_lists_collections_with_the_pymongo_4_api(mocker, tmp_path
     assert to_add == [str(Path("db") / "people.json")]
 
 
-def test_get_asks_the_server_for_one_document():
-    # Test that reading one document sends an _id query to the server rather
-    # than reading the collection, which is the whole point of the method
-    docs = [{"_id": "scopatz", "name": "Anthony Scopatz"}, {"_id": "sbillinge", "name": "Simon Billinge"}]
-    client, queries = _client_with({"people": docs})
-    assert client.get("test", "people", "scopatz")["name"] == "Anthony Scopatz"
-    assert queries == [("find_one", {"_id": "scopatz"})]
+PEOPLE_DOCS = [
+    {"_id": "scopatz", "name": "Anthony Scopatz", "position": "prof"},
+    {"_id": "sbillinge", "name": "Simon Billinge", "position": "prof"},
+    {"_id": "student", "name": "A Student", "position": "grad"},
+]
 
 
-def test_get_returns_none_when_the_server_has_no_such_document():
-    # Test the miss, which must not raise
-    client, _ = _client_with({"people": [{"_id": "scopatz", "name": "Anthony Scopatz"}]})
-    assert client.get("test", "people", "nobody") is None
+@pytest.mark.parametrize(
+    "_id, expected_name",
+    [
+        # Test that reading one document sends an _id query to the server
+        # instead of reading the collection, which is the point of the method
+        # C1: a document the server holds, expect that document
+        ("scopatz", "Anthony Scopatz"),
+        # C2: an id the server does not hold, expect None
+        ("nobody", None),
+    ],
+)
+def test_get_asks_the_server_for_one_document(_id, expected_name):
+    client, queries = _client_with({"people": PEOPLE_DOCS})
+    doc = client.get("test", "people", _id)
+    assert (doc["name"] if doc is not None else None) == expected_name
+    assert queries == [("find_one", {"_id": _id})]
 
 
-def test_find_sends_the_filter_to_the_server():
-    # Test that the filter is pushed down, so only matching documents cross
-    # the network rather than the whole collection
-    docs = [
-        {"_id": "scopatz", "position": "prof"},
-        {"_id": "sbillinge", "position": "prof"},
-        {"_id": "student", "position": "grad"},
-    ]
-    client, queries = _client_with({"people": docs})
-    found = [doc["_id"] for doc in client.find("test", "people", {"position": "prof"})]
-    assert found == ["scopatz", "sbillinge"]
-    assert queries == [("find", {"position": "prof"})]
-
-
-def test_find_without_a_filter_reads_the_whole_collection():
-    # Test that an absent filter still becomes a valid empty mongo query
-    docs = [{"_id": "scopatz"}, {"_id": "sbillinge"}]
-    client, queries = _client_with({"people": docs})
-    assert [doc["_id"] for doc in client.find("test", "people")] == ["scopatz", "sbillinge"]
-    assert queries == [("find", {})]
+@pytest.mark.parametrize(
+    "filter, expected_ids, expected_query",
+    [
+        # Test that the filter reaches the server, so only the matching
+        # documents cross the network rather than the whole collection
+        # C1: no filter, expect every document and a valid empty mongo query
+        (None, ["scopatz", "sbillinge", "student"], {}),
+        # C2: a filter several documents match, expect all of them
+        ({"position": "prof"}, ["scopatz", "sbillinge"], {"position": "prof"}),
+        # C3: a filter no document matches, expect nothing
+        ({"position": "postdoc"}, [], {"position": "postdoc"}),
+    ],
+)
+def test_find_sends_the_filter_to_the_server(filter, expected_ids, expected_query):
+    client, queries = _client_with({"people": PEOPLE_DOCS})
+    assert [doc["_id"] for doc in client.find("test", "people", filter)] == expected_ids
+    assert queries == [("find", expected_query)]

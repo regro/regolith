@@ -73,26 +73,38 @@ def two_fs_dbs(tmp_path):
     yield client
 
 
-def test_get_merges_the_versions_held_by_each_database(two_fs_dbs):
-    # Test reading one document that two databases both hold.  A scalar takes
-    # its value from the last database in rc.databases that has the key, and a
-    # key only one database has still comes through.
-    doc = two_fs_dbs.get("people", "scopatz")
-    assert doc["name"] == "A. Scopatz"
-    assert doc["position"] == "prof"
+@pytest.mark.parametrize(
+    "_id, expected_name, expected_position",
+    [
+        # Test reading one document through every database that holds it
+        # C1: an id both databases hold, expect the two versions merged
+        # 1. name is in both, expect the last database in rc.databases to win
+        # 2. position is only in the first, expect it to come through anyway
+        ("scopatz", "A. Scopatz", "prof"),
+        # C2: an id only the first database holds, expect that version
+        ("only_first", "First Only", None),
+        # C3: an id only the second database holds, expect that version
+        ("only_second", "Second Only", "prof"),
+    ],
+)
+def test_get_merges_the_versions_each_database_holds(_id, expected_name, expected_position, two_fs_dbs):
+    doc = two_fs_dbs.get("people", _id)
+    assert doc["name"] == expected_name
+    assert doc.get("position") == expected_position
 
 
-def test_get_returns_a_document_only_one_database_holds(two_fs_dbs):
-    # Test reading documents that live in a single database, one in each
-    assert two_fs_dbs.get("people", "only_first")["name"] == "First Only"
-    assert two_fs_dbs.get("people", "only_second")["name"] == "Second Only"
-
-
-def test_get_returns_none_when_no_database_holds_the_document(two_fs_dbs):
-    # Test asking for an id that is in neither database, and for a
-    # collection that does not exist at all
-    assert two_fs_dbs.get("people", "nobody") is None
-    assert two_fs_dbs.get("nonexistent", "scopatz") is None
+@pytest.mark.parametrize(
+    "collname, _id",
+    [
+        # Test asking for a document that is not there, which must not raise
+        # C1: an id no database holds, expect None
+        ("people", "nobody"),
+        # C2: a collection no database holds, expect None
+        ("nonexistent", "scopatz"),
+    ],
+)
+def test_get_returns_none_when_no_database_holds_the_document(collname, _id, two_fs_dbs):
+    assert two_fs_dbs.get(collname, _id) is None
 
 
 def test_get_agrees_with_the_chained_db(two_fs_dbs):
@@ -109,30 +121,38 @@ def test_get_agrees_with_the_chained_db(two_fs_dbs):
         assert two_fs_dbs.get("people", _id)["name"] == chained[_id]["name"]
 
 
-def test_find_without_a_filter_yields_every_merged_document(two_fs_dbs):
-    # Test that a document held by both databases is yielded once, merged
-    found = {doc["_id"]: doc for doc in two_fs_dbs.find("people")}
-    assert sorted(found) == ["only_first", "only_second", "scopatz"]
-    assert found["scopatz"]["name"] == "A. Scopatz"
+@pytest.mark.parametrize(
+    "filter, expected_ids",
+    [
+        # Test that find matches the merged document rather than any single
+        # database's version of it
+        # C1: no filter, expect every document, each merged and yielded once
+        (None, ["only_first", "only_second", "scopatz"]),
+        # C2: a filter on a key only one database supplies, expect both of the
+        # documents that carry it once merged
+        ({"position": "prof"}, ["only_second", "scopatz"]),
+        # C3: a filter on the value that wins the merge, expect that document
+        ({"name": "A. Scopatz"}, ["scopatz"]),
+        # C4: a filter on the value that lost the merge, expect nothing
+        ({"name": "Anthony Scopatz"}, []),
+    ],
+)
+def test_find_filters_on_the_merged_document(filter, expected_ids, two_fs_dbs):
+    assert sorted(doc["_id"] for doc in two_fs_dbs.find("people", filter)) == expected_ids
 
 
-def test_find_filters_on_the_merged_value(two_fs_dbs):
-    # Test that the filter sees the merged document.  1. position is only in
-    # the first database for scopatz but must still match. 2. a filter on a
-    # value that was overridden must match the winning value, not the losing
-    # one.
-    positions = sorted(doc["_id"] for doc in two_fs_dbs.find("people", {"position": "prof"}))
-    assert positions == ["only_second", "scopatz"]
-    assert [doc["_id"] for doc in two_fs_dbs.find("people", {"name": "A. Scopatz"})] == ["scopatz"]
-    assert list(two_fs_dbs.find("people", {"name": "Anthony Scopatz"})) == []
-
-
-def test_find_and_get_return_copies_by_default(two_fs_dbs):
-    # Test that mutating a returned document does not change the state the
-    # client holds, which it would otherwise write out without knowing
-    doc = two_fs_dbs.get("people", "only_first")
+@pytest.mark.parametrize(
+    "read_document",
+    [
+        # Test that a caller cannot change the state the client holds, which it
+        # would otherwise write out without knowing it had to
+        # C1: read through get, expect the client to keep its own value
+        lambda client: client.get("people", "only_first"),
+        # C2: read through find, expect the client to keep its own value
+        lambda client: next(iter(client.find("people", {"_id": "only_first"}))),
+    ],
+)
+def test_reads_return_copies_by_default(read_document, two_fs_dbs):
+    doc = read_document(two_fs_dbs)
     doc["name"] = "mutated"
-    assert two_fs_dbs.get("people", "only_first")["name"] == "First Only"
-    for found in two_fs_dbs.find("people", {"_id": "only_first"}):
-        found["name"] = "mutated again"
     assert two_fs_dbs.get("people", "only_first")["name"] == "First Only"
