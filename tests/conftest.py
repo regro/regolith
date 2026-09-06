@@ -2,6 +2,9 @@
 
 import json
 import os
+import shutil
+import stat
+import subprocess
 import tempfile
 from copy import deepcopy
 from pathlib import Path
@@ -11,8 +14,6 @@ import matplotlib
 import pytest
 from pymongo import MongoClient
 from pymongo import errors as mongo_errors
-from xonsh.api import subprocess
-from xonsh.api.os import rmtree
 
 from regolith.fsclient import dump_yaml
 from regolith.schemas import EXEMPLARS
@@ -28,6 +29,30 @@ OUTPUT_FAKE_DB = False  # always turn it to false after you used it
 REGOLITH_MONGODB_NAME = "test"
 FS_DB_NAME = "test"
 ALTERNATE_REGOLITH_MONGODB_NAME = "mongo_test"
+
+# A missing mongo binary raises FileNotFoundError and a failing one raises
+# CalledProcessError.  Either way the mongo backed tests cannot run here, so
+# the fixtures treat both the same and yield False to skip them.
+MONGO_LAUNCH_ERRORS = (CalledProcessError, FileNotFoundError)
+
+
+def rmtree(dirname):
+    """Remove a directory, even when git has left read-only files in it.
+
+    Parameters
+    ----------
+    dirname : str or pathlib.Path
+        The directory to remove.
+    """
+
+    def clear_readonly(func, path, exc):
+        # Git writes read-only files into .git, which Windows refuses to
+        # unlink until the read-only bit is cleared.  See
+        # https://stackoverflow.com/questions/2656322 for more info.
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+
+    shutil.rmtree(dirname, onexc=clear_readonly)
 
 
 # copied over from cookiecutter conftest.py
@@ -161,7 +186,7 @@ def make_mongodb():
         cmd = ["mongo", REGOLITH_MONGODB_NAME, "--eval", "db.dropDatabase()"]
         try:
             subprocess.check_call(cmd, cwd=repo)
-        except CalledProcessError:
+        except MONGO_LAUNCH_ERRORS:
             print(
                 "Mongodb likely has not been installed as a service. In order to run mongodb tests, make sure\n"
                 "to install the mongodb community edition with the following link: \n"
@@ -175,7 +200,7 @@ def make_mongodb():
         forked = True
     try:
         subprocess.check_call(cmd, cwd=repo)
-    except CalledProcessError:
+    except MONGO_LAUNCH_ERRORS:
         print(
             "If using linux or mac, Mongod command failed to execute. "
             "If using windows, the status of mongo could \n not be retrieved. "
@@ -194,7 +219,7 @@ def make_mongodb():
     cmd = ["mongo", REGOLITH_MONGODB_NAME, "--eval", "db.dropDatabase()"]
     try:
         subprocess.check_call(cmd, cwd=repo)
-    except CalledProcessError:
+    except MONGO_LAUNCH_ERRORS:
         print(
             f'Deleting the test database failed, insert "mongo {REGOLITH_MONGODB_NAME} --eval '
             f'"db.dropDatabase()"" into command line manually'
@@ -270,7 +295,7 @@ def make_mixed_db():
         cmd = ["mongo", REGOLITH_MONGODB_NAME, "--eval", "db.dropDatabase()"]
         try:
             subprocess.check_call(cmd, cwd=repo)
-        except CalledProcessError:
+        except MONGO_LAUNCH_ERRORS:
             print(
                 "Mongod likely has not been installed as a service. In order to run mongodb tests, make sure\n"
                 "to install the mongodb community edition with the following link: \n"
@@ -284,7 +309,7 @@ def make_mixed_db():
         forked = True
     try:
         subprocess.check_call(cmd, cwd=repo)
-    except CalledProcessError:
+    except MONGO_LAUNCH_ERRORS:
         print(
             "If on linux/mac, Mongod command failed to execute. If on windows, the status of mongo could not be\n"
             "retrieved. In order to run mongodb tests, make sure to install the mongodb community edition with\n"
@@ -307,7 +332,7 @@ def make_mixed_db():
     cmd = ["mongo", REGOLITH_MONGODB_NAME, "--eval", "db.dropDatabase()"]
     try:
         subprocess.check_call(cmd, cwd=repo)
-    except CalledProcessError:
+    except MONGO_LAUNCH_ERRORS:
         print(
             f'Deleting the test database failed, insert "mongo {REGOLITH_MONGODB_NAME} --eval '
             f'"db.dropDatabase()"" into command line manually'
@@ -444,7 +469,7 @@ def make_migration_db(fs_to_mongo_true__mongo_to_fs_false):
         cmd = ["mongo", ALTERNATE_REGOLITH_MONGODB_NAME, "--eval", "db.dropDatabase()"]
         try:
             subprocess.check_call(cmd, cwd=repo)
-        except CalledProcessError:
+        except MONGO_LAUNCH_ERRORS:
             print(
                 "Mongod likely has not been installed as a service. In order to run mongodb tests, make sure\n"
                 "to install the mongodb community edition with the following link: \n"
@@ -458,7 +483,7 @@ def make_migration_db(fs_to_mongo_true__mongo_to_fs_false):
         forked = True
     try:
         subprocess.check_call(cmd, cwd=repo)
-    except CalledProcessError:
+    except MONGO_LAUNCH_ERRORS:
         print(
             "If on linux/mac, Mongod command failed to execute. If on windows, the status of mongo could not be\n"
             "retrieved. In order to run mongodb tests, make sure to install the mongodb community edition with\n"
@@ -475,7 +500,7 @@ def make_migration_db(fs_to_mongo_true__mongo_to_fs_false):
     cmd = ["mongo", ALTERNATE_REGOLITH_MONGODB_NAME, "--eval", "db.dropDatabase()"]
     try:
         subprocess.check_call(cmd, cwd=repo)
-    except CalledProcessError:
+    except MONGO_LAUNCH_ERRORS:
         print(
             f'Deleting the test database failed, insert "mongo {ALTERNATE_REGOLITH_MONGODB_NAME} --eval '
             f'"db.dropDatabase()"" into command line manually'
@@ -491,7 +516,7 @@ def shut_down_fork(forked, repo):
         cmd = ["mongo", "admin", "--eval", "db.shutdownServer()"]
         try:
             subprocess.check_call(cmd, cwd=repo)
-        except CalledProcessError:
+        except MONGO_LAUNCH_ERRORS:
             print(
                 'Deleting the test database failed, insert "mongo admin --eval '
                 '"db.shutdownServer()"" into command line manually'

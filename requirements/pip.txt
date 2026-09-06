@@ -4,8 +4,6 @@ docutils
 jinja2
 cerberus
 flatten-dict
-xonsh
-rever
 openpyxl
 pypdf
 nameparser
