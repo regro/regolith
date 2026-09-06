@@ -130,6 +130,7 @@ class FileSystemClient:
         self.closed = True
         self.dbs = None
         self.chained_db = None
+        self._dirty = set()
         self.open()
         self._collfiletypes = {}
         self._collexts = {}
@@ -142,7 +143,42 @@ class FileSystemClient:
         if self.closed:
             self.dbs = defaultdict(lambda: defaultdict(dict))
             self.chained_db = {}
+            self._dirty = set()
             self.closed = False
+
+    def mark_dirty(self, dbname, collname):
+        """Record that a collection has changes that are not yet on
+        disk.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database holding the collection.
+        collname : str
+            The name of the collection that was modified.
+        """
+        self._dirty.add((dbname, collname))
+
+    def is_dirty(self, dbname, collname=None):
+        """Return True if a collection, or any collection of a database,
+        has changes that are not yet on disk.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database to check.
+        collname : str, optional
+            The name of the collection to check.  The default checks
+            every collection of the database.
+
+        Returns
+        -------
+        bool
+            The dirty state of the requested collection or database.
+        """
+        if collname is not None:
+            return (dbname, collname) in self._dirty
+        return any(dirty_dbname == dbname for dirty_dbname, _ in self._dirty)
 
     def load_json(self, db, dbpath):
         """Loads the JSON part of a database."""
@@ -196,13 +232,38 @@ class FileSystemClient:
         dump_yaml(f, docs, inst=inst)
         return f.name
 
-    def dump_database(self, db):
-        """Dumps a database back to the filesystem."""
+    def dump_database(self, db, force=False):
+        """Dump the modified collections of a database back to the
+        filesystem.
+
+        A collection is written only if it was modified since it was
+        loaded, so a command that reads without writing leaves the
+        database files untouched.
+
+        Parameters
+        ----------
+        db : dict
+            The database description, supplying ``name`` and ``path``.
+        force : bool, optional
+            The switch to write every loaded collection rather than only
+            the modified ones.  The default is False.
+
+        Returns
+        -------
+        list of str
+            The paths, relative to the database directory, of the files
+            that were written.
+        """
+        dbname = db["name"]
+        collnames = [collname for collname in self.dbs[dbname] if force or self.is_dirty(dbname, collname)]
+        if not collnames:
+            return []
         dbpath = dbpathname(db, self.rc)
         Path(dbpath).mkdir(parents=True, exist_ok=True)
         to_add = []
-        for collname, collection in self.dbs[db["name"]].items():
+        for collname in collnames:
             # print("dumping " + collname + "...", file=sys.stderr)
+            collection = self.dbs[dbname][collname]
             filetype = self._collfiletypes.get(collname, "yaml")
             if filetype == "json":
                 filename = self.dump_json(collection, collname, dbpath)
@@ -211,6 +272,7 @@ class FileSystemClient:
             else:
                 raise ValueError("did not recognize file type for regolith")
             to_add.append(str(Path(db["path"]) / filename))
+            self._dirty.discard((dbname, collname))
         return to_add
 
     def close(self):
@@ -237,17 +299,20 @@ class FileSystemClient:
         """Inserts one document to a database/collection."""
         coll = self.dbs[dbname][collname]
         coll[doc["_id"]] = doc
+        self.mark_dirty(dbname, collname)
 
     def insert_many(self, dbname, collname, docs):
         """Inserts many documents into a database/collection."""
         coll = self.dbs[dbname][collname]
         for doc in docs:
             coll[doc["_id"]] = doc
+            self.mark_dirty(dbname, collname)
 
     def delete_one(self, dbname, collname, doc):
         """Removes a single document from a collection."""
         coll = self.dbs[dbname][collname]
         del coll[doc["_id"]]
+        self.mark_dirty(dbname, collname)
 
     def find_one(self, dbname, collname, filter):
         """Finds the first document matching filter."""
@@ -268,3 +333,4 @@ class FileSystemClient:
         newdoc = dict(filter if doc is None else doc)
         newdoc.update(update)
         coll[newdoc["_id"]] = newdoc
+        self.mark_dirty(dbname, collname)

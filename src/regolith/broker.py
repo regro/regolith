@@ -57,8 +57,10 @@ class Broker:
         if "files" not in document:
             document["files"] = {}
         document["files"][name] = output_path
+        # The document is edited in place rather than through the client, so
+        # the client has no record of the change and has to be forced to write.
         for db in self.rc.databases:
-            dump_database(db, self.db_client, self.rc)
+            dump_database(db, self.db_client, self.rc, force=True)
         push(self.store.store, self.store.path)
 
     @classmethod

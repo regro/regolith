@@ -78,13 +78,29 @@ class ClientManager:
             if isinstance(client, MongoClient):
                 client.export_database(db)
 
-    def dump_database(self, db):
+    def dump_database(self, db, force=False):
+        """Dump a database with each client that backs it.
+
+        Parameters
+        ----------
+        db : dict
+            The database description, supplying ``name`` and ``backend``.
+        force : bool, optional
+            The switch to write every loaded collection rather than only
+            the modified ones.  The default is False.
+
+        Returns
+        -------
+        list of str
+            The paths, relative to the database directory, of the files
+            that were written.
+        """
         to_add = []
         # Iterate through the clients just in case databases on different backends have same name
         for client in self.clients:
             if isinstance(client, CLIENTS[db["backend"]]):
                 if db["name"] in client.keys():
-                    temp_add = client.dump_database(db)
+                    temp_add = client.dump_database(db, force=force)
                     if temp_add:
                         to_add.extend(temp_add)
         return to_add
