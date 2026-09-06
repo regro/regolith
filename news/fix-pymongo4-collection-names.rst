@@ -1,6 +1,6 @@
 **Added:**
 
-* <news item>
+* No news: part of the performance work summarised in consolidate-speedup-news.
 
 **Changed:**
 
@@ -16,11 +16,7 @@
 
 **Fixed:**
 
-* ``MongoClient.collection_names`` and ``MongoClient.dump_database`` now list
-  collections with ``list_collection_names``.  They called
-  ``Database.collection_names``, which pymongo removed in 4.0, so listing the
-  collections of a mongo database and backing one up to the filesystem both
-  raised ``AttributeError``.
+* <news item>
 
 **Security:**
 
