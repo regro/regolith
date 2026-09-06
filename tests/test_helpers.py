@@ -1731,3 +1731,40 @@ def test_todo_helpers_fetch_one_document_by_id(helper_target, extra_args, make_d
     assert not any(
         call.args[1] == "todos" for call in read_all.call_args_list
     ), "the whole todos collection was still read"
+
+
+@pytest.mark.parametrize(
+    "extra_args, expected_reads",
+    [
+        # Test which collections a_todo goes through in full.  It looks both
+        # people up by id and only searches projecta for a milestone, so a
+        # plain add should read neither collection whole.
+        # C1: adding a todo, expect no collection read in full
+        ([], set()),
+        # C2: adding a todo against a milestone, expect only projecta read,
+        # since the milestone is found by searching its uuids
+        (["--milestone_uuid", "milestone_uuid_sb1_2"], {"projecta"}),
+    ],
+)
+def test_a_todo_reads_only_what_it_searches(extra_args, expected_reads, make_db, mocker):
+    repo = make_db
+    os.chdir(repo)
+    read_all = mocker.patch.object(
+        ClientManager, "all_documents", autospec=True, side_effect=ClientManager.all_documents
+    )
+    args = [
+        "helper",
+        "a_todo",
+        "test the reads",
+        "6",
+        "50",
+        "--assigned-to",
+        "sbillinge",
+    ] + extra_args
+    try:
+        main(args)
+    except Exception:
+        # What is under test is which collections were read, not the outcome
+        pass
+    read = {call.args[1] for call in read_all.call_args_list}
+    assert read == expected_reads
