@@ -1,11 +1,14 @@
 """Tests for the mongo backed client that do not need a live mongod."""
 
+import datetime as dt
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
 from regolith.mongoclient import MongoClient
+
+from .conftest import assert_mongo_encodable
 
 
 class FakePymongoCollection:
@@ -18,6 +21,7 @@ class FakePymongoCollection:
         self.queries = queries
 
     def find_one(self, filter):
+        assert_mongo_encodable("filter", filter)
         self.queries.append(("find_one", filter))
         for doc in self._docs:
             if all(doc.get(key) == value for key, value in filter.items()):
@@ -25,11 +29,14 @@ class FakePymongoCollection:
         return None
 
     def update_one(self, filter, update):
+        assert_mongo_encodable("filter", filter)
+        assert_mongo_encodable("update", update)
         self.queries.append(("update_one", filter, update))
         matched = sum(1 for doc in self._docs if all(doc.get(k) == v for k, v in filter.items()))
         return SimpleNamespace(matched_count=matched)
 
     def find(self, filter=None):
+        assert_mongo_encodable("filter", filter or {})
         self.queries.append(("find", filter))
         for doc in self._docs:
             if all(doc.get(key) == value for key, value in (filter or {}).items()):
@@ -161,3 +168,12 @@ def test_update_field_reports_a_miss():
     # so rather than raising
     client, _ = _client_with({"people": PEOPLE_DOCS})
     assert client.update_field("test", "people", "nobody", "name", "x") is False
+
+
+def test_the_fake_collection_refuses_what_mongo_would_refuse():
+    # Test the guard itself.  A test that sends an unencodable value must fail
+    # here rather than passing and failing against a real server, which is how
+    # the datetime.date bug in update_field reached production.
+    client, _ = _client_with({"people": PEOPLE_DOCS})
+    with pytest.raises(AssertionError, match="mongo cannot be sent this update"):
+        client.client["test"]["people"].update_one({"_id": "scopatz"}, {"$set": {"end_date": dt.date(2026, 9, 6)}})
