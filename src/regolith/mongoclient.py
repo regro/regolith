@@ -556,6 +556,51 @@ class MongoClient:
         else:
             return coll.delete_one(doc)
 
+    def get(self, dbname, collname, _id):
+        """Return one document of a collection by id.
+
+        The lookup is served by the server's index on ``_id`` rather than
+        by reading the collection into memory.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database holding the collection.
+        collname : str
+            The name of the collection to read.
+        _id : str
+            The id of the document.
+
+        Returns
+        -------
+        dict or None
+            The document, or None when the database has no such document.
+        """
+        return self.client[dbname][collname].find_one({"_id": _id})
+
+    def find(self, dbname, collname, filter=None):
+        """Yield the documents of a collection that match a filter.
+
+        The filter is sent to the server, so only the matching documents
+        cross the network.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database holding the collection.
+        collname : str
+            The name of the collection to read.
+        filter : dict, optional
+            The keys and values a document must have.  The default
+            yields every document of the collection.
+
+        Yields
+        ------
+        dict
+            The matching documents.
+        """
+        yield from self.client[dbname][collname].find(filter or {})
+
     def find_one(self, dbname, collname, filter):
         """Finds the first document matching filter."""
         filter["_id"].replace(".", "")

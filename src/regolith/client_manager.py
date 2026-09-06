@@ -1,7 +1,8 @@
 from collections import defaultdict
 from copy import deepcopy
 
-from regolith.fsclient import FileSystemClient
+from regolith.chained_db import ChainDB
+from regolith.fsclient import FileSystemClient, doc_matches
 from regolith.mongoclient import MongoClient
 
 CLIENTS = {
@@ -122,6 +123,122 @@ class ClientManager:
         if copy:
             return deepcopy(self.chained_db.get(collname, {})).values()
         return self.chained_db.get(collname, {}).values()
+
+    def _client_for(self, db):
+        """Return the client that backs a database, or None.
+
+        Parameters
+        ----------
+        db : dict
+            The database description, supplying ``backend``.
+
+        Returns
+        -------
+        FileSystemClient, MongoClient or None
+            The client for the database's backend.
+        """
+        for client in self.clients:
+            if isinstance(client, CLIENTS[db["backend"]]):
+                return client
+        return None
+
+    def _chain(self, docs):
+        """Merge the versions of one document held by several databases.
+
+        Parameters
+        ----------
+        docs : list of dict
+            The versions of the document, ordered as ``rc.databases`` is,
+            so that the merge resolves the way ``open_dbs`` does.
+
+        Returns
+        -------
+        dict, ChainDB or None
+            The single document when only one database holds it, a
+            ChainDB over all of them when several do, and None when the
+            list is empty.
+        """
+        if not docs:
+            return None
+        if len(docs) == 1:
+            return docs[0]
+        chained = ChainDB(docs[0])
+        for doc in docs[1:]:
+            chained.maps.append(doc)
+        return chained
+
+    def get(self, collname, _id, copy=True):
+        """Return one document of a collection by id, chained across the
+        databases that hold it.
+
+        Each database is asked for the single document rather than for
+        the whole collection, so a mongo backend answers from its index
+        on ``_id``.
+
+        Parameters
+        ----------
+        collname : str
+            The name of the collection to read.
+        _id : str
+            The id of the document.
+        copy : bool, optional
+            The switch to return a copy rather than the client's own
+            document.  Mutating an uncopied document changes state the
+            client does not know it has to write.  The default is True.
+
+        Returns
+        -------
+        dict, ChainDB or None
+            The merged document, or None when no database holds it.
+        """
+        docs = []
+        for db in self.rc.databases:
+            client = self._client_for(db)
+            if client is None:
+                continue
+            doc = client.get(db["name"], collname, _id)
+            if doc is not None:
+                docs.append(doc)
+        chained = self._chain(docs)
+        if chained is None:
+            return None
+        return deepcopy(chained) if copy else chained
+
+    def find(self, collname, filter=None, copy=True):
+        """Yield the documents of a collection that match a filter,
+        chained across the databases that hold them.
+
+        A document is matched on its merged value, which no single
+        database knows, so the versions are gathered per database and the
+        filter is applied to the merge.  Each database is read once.
+
+        Parameters
+        ----------
+        collname : str
+            The name of the collection to read.
+        filter : dict, optional
+            The keys and values a document must have.  The default
+            yields every document of the collection.
+        copy : bool, optional
+            The switch to yield copies rather than the clients' own
+            documents.  The default is True.
+
+        Yields
+        ------
+        dict or ChainDB
+            The matching merged documents.
+        """
+        versions = {}
+        for db in self.rc.databases:
+            client = self._client_for(db)
+            if client is None:
+                continue
+            for doc in client.find(db["name"], collname):
+                versions.setdefault(doc["_id"], []).append(doc)
+        for docs in versions.values():
+            merged = self._chain(docs)
+            if doc_matches(merged, filter):
+                yield deepcopy(merged) if copy else merged
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
