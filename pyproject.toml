@@ -57,7 +57,6 @@ namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 regolith = ["templates/*",
             "static/*.*",
             "static/img/*.*",
-            "*.xsh",
             "*.json"
             ]
 

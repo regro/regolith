@@ -15,20 +15,8 @@
 ##############################################################################
 """Python package for research group content management system."""
 
-from xonsh.main import setup
-
 # package version
 from regolith.version import __version__  # noqa
 
 # silence the pyflakes syntax checker
 assert __version__ or True
-
-setup()
-del setup
-
-# Initialize the Xonsh environment
-# # execer = Execer(config=None)
-# # XSH.load(execer=execer)
-# # xonsh.imphooks.install_import_hooks(execer=execer)
-#
-# del xonsh

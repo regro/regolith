@@ -1,11 +1,10 @@
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 from copy import deepcopy
-
-from xonsh.api import subprocess
 
 from regolith.broker import load_db
 from regolith.fsclient import dump_yaml

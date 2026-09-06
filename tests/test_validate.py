@@ -1,10 +1,10 @@
 import os
+import subprocess
 import sys
 from io import StringIO
 from subprocess import CalledProcessError
 
 import pytest
-from xonsh.api import subprocess
 
 from regolith.main import main
 
@@ -59,9 +59,7 @@ def test_validate_bad_python(make_bad_db):
 def test_validate(make_db):
     repo = make_db
     os.chdir(repo)
-    out = subprocess.check_output(["regolith", "validate"])
-    if isinstance(out, bytes):
-        out = out.decode("utf-8")
+    out = subprocess.check_output(["regolith", "validate"], text=True)
     assert "NO ERRORS IN DBS" in out
 
 
@@ -70,7 +68,7 @@ def test_validate_bad(make_bad_db):
     repo = make_bad_db
     os.chdir(repo)
     try:
-        subprocess.check_output(["regolith", "validate"])
+        subprocess.check_output(["regolith", "validate"], text=True)
     except CalledProcessError as e:
         assert "Errors found in " in e.output
         assert "NO ERRORS IN DBS" not in e.output

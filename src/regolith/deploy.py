@@ -1,11 +1,10 @@
 """Helps deploy what we have built."""
 
 import os
+import subprocess
 import time
 from distutils.dir_util import copy_tree
 from warnings import warn
-
-from xonsh.api import subprocess
 
 try:
     import hglib

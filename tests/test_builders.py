@@ -1,7 +1,5 @@
 import datetime as dt
 import os
-
-# from xonsh.lib import subprocess
 import subprocess
 import sys
 from pathlib import Path

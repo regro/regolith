@@ -1,11 +1,11 @@
 """Builder Base Classes."""
 
 import os
+import subprocess
 from glob import glob
 from itertools import groupby
 
 from jinja2 import Environment, FileSystemLoader
-from xonsh.api import subprocess
 
 try:
     from bibtexparser.bibdatabase import BibDatabase
