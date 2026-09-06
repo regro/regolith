@@ -155,6 +155,9 @@ class FileSystemClient:
         self.dbs = None
         self.chained_db = None
         self._dirty = set()
+        self._available = {}
+        self._loaded = set()
+        self._dbpaths = {}
         self.open()
         self._collfiletypes = {}
         self._collexts = {}
@@ -168,6 +171,9 @@ class FileSystemClient:
             self.dbs = defaultdict(lambda: defaultdict(dict))
             self.chained_db = {}
             self._dirty = set()
+            self._available = {}
+            self._loaded = set()
+            self._dbpaths = {}
             self.closed = False
 
     def mark_dirty(self, dbname, collname):
@@ -204,44 +210,116 @@ class FileSystemClient:
             return (dbname, collname) in self._dirty
         return any(dirty_dbname == dbname for dirty_dbname, _ in self._dirty)
 
-    def load_json(self, db, dbpath):
-        """Loads the JSON part of a database."""
-        dbs = self.dbs
-        for f in [
-            file
-            for file in sorted(Path(dbpath).glob("*.json"))
-            if str(file) not in db["blacklist"]
-            and len(db["whitelist"]) == 0
-            or file.name.split(".")[0] in db["whitelist"]
-        ]:
-            base = f.stem
-            self._collfiletypes[base] = "json"
-            print("loading " + str(f) + "...", file=sys.stderr)
-            dbs[db["name"]][base] = load_json(f)
+    def _collection_files(self, db):
+        """Return the file of each collection of a database.
 
-    def load_yaml(self, db, dbpath):
-        """Loads the YAML part of a database."""
-        dbs = self.dbs
-        for f in [
-            file
-            for file in sorted(Path(dbpath).glob("*.y*ml"))
-            if str(file) not in db["blacklist"]
-            and len(db["whitelist"]) == 0
-            or file.name.split(".")[0] in db["whitelist"]
-        ]:
-            base, ext = f.stem, f.suffix
-            self._collexts[base] = ext
-            self._collfiletypes[base] = "yaml"
-            # print("loading " + f + "...", file=sys.stderr)
-            coll, inst = load_yaml(f, return_inst=True)
-            dbs[db["name"]][base] = coll
-            self._yamlinsts[Path(dbpath), base] = inst
+        The files are not read, so this costs one directory listing and no
+        parsing.
+
+        Parameters
+        ----------
+        db : dict
+            The database description, supplying ``blacklist`` and
+            ``whitelist``.
+
+        Returns
+        -------
+        dict
+            The path of each collection, keyed by collection name.
+        """
+        dbpath = dbpathname(db, self.rc)
+        files = {}
+        for pattern in ("*.json", "*.y*ml"):
+            for f in sorted(Path(dbpath).glob(pattern)):
+                if not (
+                    str(f) not in db["blacklist"]
+                    and len(db["whitelist"]) == 0
+                    or f.name.split(".")[0] in db["whitelist"]
+                ):
+                    continue
+                files[f.stem] = f
+        return files
 
     def load_database(self, db):
-        """Loads a database."""
-        dbpath = dbpathname(db, self.rc)
-        self.load_json(db, dbpath)
-        self.load_yaml(db, dbpath)
+        """Record which collections a database holds, without reading
+        them.
+
+        The documents of a collection are read by ``load_collection``, when
+        something first asks for them.
+
+        Parameters
+        ----------
+        db : dict
+            The database description.
+        """
+        dbname = db["name"]
+        self._dbpaths[dbname] = dbpathname(db, self.rc)
+        files = self._collection_files(db)
+        self._available[dbname] = files
+        for collname, f in files.items():
+            if f.suffix == ".json":
+                self._collfiletypes[collname] = "json"
+            else:
+                self._collexts[collname] = f.suffix
+                self._collfiletypes[collname] = "yaml"
+
+    def available_collections(self, dbname):
+        """Return the names of the collections a database holds.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database to list.
+
+        Returns
+        -------
+        set of str
+            The collection names, whether or not they have been read.
+        """
+        return set(self._available.get(dbname, {}))
+
+    def load_collection(self, dbname, collname):
+        """Read one collection into memory unless it is already there.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database holding the collection.
+        collname : str
+            The name of the collection to read.
+        """
+        if (dbname, collname) in self._loaded:
+            return
+        f = self._available.get(dbname, {}).get(collname)
+        if f is None:
+            return
+        print("loading " + str(f) + "...", file=sys.stderr)
+        if self._collfiletypes.get(collname) == "json":
+            docs = load_json(f)
+        else:
+            docs, inst = load_yaml(f, return_inst=True)
+            self._yamlinsts[self._dbpaths[dbname], collname] = inst
+        self.dbs[dbname][collname] = docs
+        self._loaded.add((dbname, collname))
+
+    def raw_collection(self, dbname, collname):
+        """Return the documents of one collection as this database holds
+        them, unmerged with any other database.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database holding the collection.
+        collname : str
+            The name of the collection to read.
+
+        Returns
+        -------
+        dict
+            The documents, keyed by id.
+        """
+        self.load_collection(dbname, collname)
+        return self.dbs.get(dbname, {}).get(collname, {})
 
     def dump_json(self, docs, collname, dbpath):
         """Dumps json docs and returns filename."""
@@ -311,7 +389,7 @@ class FileSystemClient:
 
     def collection_names(self, dbname, include_system_collections=True):
         """Returns the collection names for a database."""
-        return set(self.dbs[dbname].keys())
+        return self.available_collections(dbname)
 
     def all_documents(self, collname, copy=True):
         """Returns an iterable over all documents in a collection."""
@@ -321,12 +399,14 @@ class FileSystemClient:
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
+        self.load_collection(dbname, collname)
         coll = self.dbs[dbname][collname]
         coll[doc["_id"]] = doc
         self.mark_dirty(dbname, collname)
 
     def insert_many(self, dbname, collname, docs):
         """Inserts many documents into a database/collection."""
+        self.load_collection(dbname, collname)
         coll = self.dbs[dbname][collname]
         for doc in docs:
             coll[doc["_id"]] = doc
@@ -334,6 +414,7 @@ class FileSystemClient:
 
     def delete_one(self, dbname, collname, doc):
         """Removes a single document from a collection."""
+        self.load_collection(dbname, collname)
         coll = self.dbs[dbname][collname]
         del coll[doc["_id"]]
         self.mark_dirty(dbname, collname)
@@ -355,7 +436,7 @@ class FileSystemClient:
         dict or None
             The document, or None when the database has no such document.
         """
-        return self.dbs.get(dbname, {}).get(collname, {}).get(_id)
+        return self.raw_collection(dbname, collname).get(_id)
 
     def find(self, dbname, collname, filter=None):
         """Yield the documents of a collection that match a filter.
@@ -375,7 +456,7 @@ class FileSystemClient:
         dict
             The matching documents.
         """
-        for doc in self.dbs.get(dbname, {}).get(collname, {}).values():
+        for doc in self.raw_collection(dbname, collname).values():
             if doc_matches(doc, filter):
                 yield doc
 
@@ -389,6 +470,7 @@ class FileSystemClient:
 
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
+        self.load_collection(dbname, collname)
         coll = self.dbs[dbname][collname]
         doc = self.find_one(dbname, collname, filter)
         newdoc = dict(filter if doc is None else doc)

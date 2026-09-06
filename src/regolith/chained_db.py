@@ -5,7 +5,7 @@ ChainDBSingleton Copyright 2015-2016, the xonsh developers
 
 import itertools
 from collections import ChainMap
-from collections.abc import MutableMapping
+from collections.abc import Mapping, MutableMapping
 
 
 class ChainDBSingleton(object):
@@ -74,3 +74,49 @@ def _convert_to_dict(cm):
         return r
     else:
         return cm
+
+
+class LazyChainedDB(Mapping):
+    """The chained collections of the databases, each one built the
+    first time it is asked for.
+
+    Reading one collection must not pull in every other collection, so
+    the chaining is done per collection on demand rather than for the
+    whole database when it is opened.  Iterating this mapping, as
+    validation does, still reaches every collection and so still loads
+    them all.
+    """
+
+    def __init__(self, client):
+        self._client = client
+        self._chained = {}
+
+    def __getitem__(self, collname):
+        if collname not in self._chained:
+            self._chained[collname] = self._client.chain_collection(collname)
+        return self._chained[collname]
+
+    def __contains__(self, collname):
+        # Answer from the source map, so that testing for a collection does
+        # not read it
+        return collname in self._client.chained_collection_names()
+
+    def __iter__(self):
+        return iter(self._client.chained_collection_names())
+
+    def __len__(self):
+        return len(self._client.chained_collection_names())
+
+    def materialize(self):
+        """Return every chained collection as a plain dict.
+
+        This reads every collection of every database, so use it only
+        where the whole database is genuinely wanted, such as handing the
+        data to a caller that outlives the connection.
+
+        Returns
+        -------
+        dict
+            The chained collections, keyed by collection name.
+        """
+        return {collname: self[collname] for collname in self}

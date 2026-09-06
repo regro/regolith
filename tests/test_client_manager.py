@@ -3,7 +3,7 @@ from copy import copy, deepcopy
 
 import pytest
 
-from regolith.chained_db import ChainDB
+from regolith.chained_db import ChainDB, LazyChainedDB
 from regolith.client_manager import ClientManager
 from regolith.database import connect
 from regolith.fsclient import dump_yaml
@@ -48,6 +48,8 @@ def two_fs_dbs(tmp_path):
                 "only_second": {"_id": "only_second", "name": "Second Only", "position": "prof"},
             }
         dump_yaml(dbpath / "people.yaml", docs)
+        if name == "second":
+            dump_yaml(dbpath / "abstracts.yaml", {"first": {"_id": "first", "text": "an abstract"}})
     rc = copy(DEFAULT_RC)
     rc._update(
         {
@@ -70,6 +72,9 @@ def two_fs_dbs(tmp_path):
     client.open()
     for db in rc.databases:
         client.load_database(db)
+    # open_dbs attaches the lazy chained view; mirror it so the fixture
+    # behaves like a real connection
+    client.chained_db = LazyChainedDB(client)
     yield client
 
 
@@ -156,3 +161,77 @@ def test_reads_return_copies_by_default(read_document, two_fs_dbs):
     doc = read_document(two_fs_dbs)
     doc["name"] = "mutated"
     assert two_fs_dbs.get("people", "only_first")["name"] == "First Only"
+
+
+@pytest.mark.parametrize(
+    "collname, expected_dbnames",
+    [
+        # Test the source map that says which databases hold a collection,
+        # built from a directory listing rather than by reading documents
+        # C1: a collection both databases hold, expect both in rc.databases
+        # order, since that is the order the merge resolves in
+        ("people", ["first", "second"]),
+        # C2: a collection only the second database holds, expect only it
+        ("abstracts", ["second"]),
+        # C3: a collection no database holds, expect nothing
+        ("nonexistent", []),
+    ],
+)
+def test_collection_sources_reports_the_databases_holding_a_collection(collname, expected_dbnames, two_fs_dbs):
+    sources = two_fs_dbs.collection_sources(collname)
+    assert [db["name"] for db in sources] == expected_dbnames
+
+
+def test_opening_the_databases_reads_no_documents(two_fs_dbs):
+    # Test that opening builds the source map without reading any collection,
+    # which is what stops a command paying for collections it never uses
+    assert two_fs_dbs.chained_collection_names() == {"people", "abstracts"}
+    for db in two_fs_dbs.rc.databases:
+        assert two_fs_dbs.dbs[db["name"]] == {}
+
+
+@pytest.mark.parametrize(
+    "read_collection, expected_loaded",
+    [
+        # Test that reading one collection leaves the others unread
+        # C1: chain a collection, expect only that collection read
+        (lambda client: client.chained_db["people"], {"people"}),
+        # C2: get one document, expect only that collection read
+        (lambda client: client.get("people", "scopatz"), {"people"}),
+        # C3: read the other collection, expect people left alone
+        (lambda client: client.chained_db["abstracts"], {"abstracts"}),
+    ],
+)
+def test_reading_one_collection_does_not_read_the_others(read_collection, expected_loaded, two_fs_dbs):
+    read_collection(two_fs_dbs)
+    loaded = set()
+    for db in two_fs_dbs.rc.databases:
+        loaded.update(two_fs_dbs.dbs[db["name"]])
+    assert loaded == expected_loaded
+
+
+def test_the_chained_db_matches_what_eager_chaining_produced(two_fs_dbs):
+    # Test that chaining a collection on demand gives the same documents as
+    # building the whole chained db up front did, so nothing downstream shifts
+    people = two_fs_dbs.chained_db["people"]
+    assert sorted(people) == ["only_first", "only_second", "scopatz"]
+    assert people["scopatz"]["name"] == "A. Scopatz"
+    assert people["scopatz"]["position"] == "prof"
+
+
+def test_a_missing_collection_is_absent_without_being_read(two_fs_dbs):
+    # Test that testing for a collection answers from the source map, and that
+    # a missing one behaves like a missing key rather than an empty collection
+    assert "nonexistent" not in two_fs_dbs.chained_db
+    assert "people" in two_fs_dbs.chained_db
+    assert two_fs_dbs.dbs["first"] == {}
+    with pytest.raises(KeyError):
+        two_fs_dbs.chained_db["nonexistent"]
+
+
+def test_materialize_reads_every_collection(two_fs_dbs):
+    # Test the explicit whole-database read that connect_db needs, since it
+    # hands data to callers that outlive the connection
+    materialized = two_fs_dbs.chained_db.materialize()
+    assert sorted(materialized) == ["abstracts", "people"]
+    assert materialized["people"]["scopatz"]["name"] == "A. Scopatz"

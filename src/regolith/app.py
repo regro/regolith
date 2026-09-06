@@ -39,6 +39,8 @@ def shutdown():
 def collection_page(dbname, collname):
     rc = app.rc
     try:
+        # Collections load on demand, so ask for this one before reading it
+        rc.client.load_collection(collname)
         coll = rc.client[dbname][collname]
     except (KeyError, AttributeError):
         abort(404)
