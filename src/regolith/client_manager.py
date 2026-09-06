@@ -374,6 +374,33 @@ class ClientManager:
         if client is not None:
             return client.find_one(dbname, collname, filter)
 
+    def update_field(self, dbname, collname, _id, path, value):
+        """Set one field of one document, leaving the rest of it alone.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database holding the collection.
+        collname : str
+            The name of the collection holding the document.
+        _id : str
+            The id of the document.
+        path : str
+            The field to set, with ``.`` separating the steps into nested
+            documents and lists.
+        value : object
+            The value to set it to.
+
+        Returns
+        -------
+        bool
+            Whether a document was found and set.
+        """
+        client = self._client_for_dbname(dbname)
+        if client is None:
+            return False
+        return client.update_field(dbname, collname, _id, path, value)
+
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
         client = self._client_for_dbname(dbname)

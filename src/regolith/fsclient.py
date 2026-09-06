@@ -504,6 +504,50 @@ class FileSystemClient:
         for doc in self.find(dbname, collname, filter):
             return doc
 
+    def update_field(self, dbname, collname, _id, path, value):
+        """Set one field of one document, leaving the rest of it alone.
+
+        The path names the field, with ``.`` separating the steps into
+        nested documents and lists, so ``"todos.3"`` is the fourth entry
+        of the ``todos`` list.  A collection lives in one file here, so
+        this is no cheaper than replacing the whole document; it exists
+        because on the mongo backend it is, and both clients have to
+        offer the same operation.
+
+        Parameters
+        ----------
+        dbname : str
+            The name of the database holding the collection.
+        collname : str
+            The name of the collection holding the document.
+        _id : str
+            The id of the document.
+        path : str
+            The field to set.
+        value : object
+            The value to set it to.
+
+        Returns
+        -------
+        bool
+            Whether a document was found and set.
+        """
+        self.load_collection(dbname, collname, round_trip=True)
+        doc = self.dbs[dbname][collname].get(_id)
+        if doc is None:
+            return False
+        steps = path.split(".")
+        target = doc
+        for step in steps[:-1]:
+            target = target[int(step)] if isinstance(target, list) else target[step]
+        last = steps[-1]
+        if isinstance(target, list):
+            target[int(last)] = value
+        else:
+            target[last] = value
+        self.mark_dirty(dbname, collname)
+        return True
+
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
         self.load_collection(dbname, collname, round_trip=True)

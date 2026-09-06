@@ -294,3 +294,53 @@ def test_writing_after_a_fast_read_keeps_the_file_formatting(fs_db):
     after = (dbpath / "people.yaml").read_text()
     assert before.rstrip("\n") in after or "Anthony Scopatz" in after
     assert "Simon Billinge" in after
+
+
+@pytest.mark.parametrize(
+    "path, value, expected",
+    [
+        # Test setting one field of a document by its path
+        # C1: a top level field, expect only it to change
+        ("name", "Renamed", {"_id": "scopatz", "name": "Renamed"}),
+        # C2: a field that the document does not have yet, expect it added
+        ("position", "prof", {"_id": "scopatz", "name": "Anthony Scopatz", "position": "prof"}),
+    ],
+)
+def test_update_field_sets_one_field(path, value, expected, fs_db):
+    client, db, dbpath = fs_db
+    assert client.update_field("test", "people", "scopatz", path, value) is True
+    assert client.get("test", "people", "scopatz") == expected
+
+
+def test_update_field_reaches_into_a_list(fs_db):
+    # Test the case this exists for: replacing one entry of a list without
+    # rewriting the others
+    client, db, dbpath = fs_db
+    client.insert_one("test", "people", {"_id": "me", "todos": [{"i": 0}, {"i": 1}, {"i": 2}]})
+    assert client.update_field("test", "people", "me", "todos.1", {"i": "replaced"}) is True
+    assert client.get("test", "people", "me")["todos"] == [{"i": 0}, {"i": "replaced"}, {"i": 2}]
+
+
+@pytest.mark.parametrize(
+    "dbname, _id",
+    [
+        # Test that setting a field of something that is not there says so
+        # rather than raising
+        # C1: an id no document has, expect False
+        ("test", "nobody"),
+        # C2: a database the client does not back, expect False
+        ("nonexistent", "scopatz"),
+    ],
+)
+def test_update_field_reports_a_miss(dbname, _id, fs_db):
+    client, db, dbpath = fs_db
+    assert client.update_field(dbname, "people", _id, "name", "x") is False
+
+
+def test_update_field_marks_the_collection_dirty(fs_db):
+    # Test that the change is written out, since a field set is a write like
+    # any other
+    client, db, dbpath = fs_db
+    client.update_field("test", "people", "scopatz", "name", "Renamed")
+    assert client.is_dirty("test", "people") is True
+    assert client.dump_database(db) == [str(Path("db") / "people.yaml")]
