@@ -226,3 +226,34 @@ def test_loading_a_collection_is_silent_but_logged(fs_db, caplog, capsys):
         client.raw_collection("test", "people")
     assert capsys.readouterr().err == ""
     assert any("people" in record.getMessage() for record in caplog.records)
+
+
+@pytest.mark.parametrize(
+    "write, expected_name",
+    [
+        # Test that a write reaches a database whose collections have not been
+        # read yet.  The client is asked whether it holds the database before
+        # the write is routed to it, so a client that names no database until
+        # something is read would drop the write silently.
+        # C1: inserting a document, expect it to be stored
+        (lambda c: c.insert_one("test", "people", {"_id": "new", "name": "New Person"}), "New Person"),
+        # C2: inserting several documents, expect them stored
+        (lambda c: c.insert_many("test", "people", [{"_id": "new", "name": "New Person"}]), "New Person"),
+        # C3: updating a document, expect the new value
+        (lambda c: c.update_one("test", "people", {"_id": "new"}, {"name": "New Person"}), "New Person"),
+    ],
+)
+def test_a_write_reaches_a_database_whose_collections_are_unread(write, expected_name, fs_db):
+    client, db, dbpath = fs_db
+    assert "test" in client.keys()
+    assert client.dbs.get("test", {}) == {}
+    write(client)
+    assert client.get("test", "people", "new")["name"] == expected_name
+
+
+def test_a_database_is_named_before_its_collections_are_read(fs_db):
+    # Test that loading a database names it straight away, since routing a
+    # write depends on the client saying which databases it backs
+    client, db, dbpath = fs_db
+    assert set(client.keys()) == {"test"}
+    assert client.dbs.get("test", {}) == {}
