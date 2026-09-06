@@ -1,13 +1,10 @@
 **Added:**
 
-* ``REGOLITH_LOG_LEVEL``.  Set it to ``DEBUG`` to have regolith name each
-  collection as it is read, and from which database, which is the quickest way
-  to find out why a command is slow.
+* No news: part of the performance work summarised in consolidate-speedup-news.
 
 **Changed:**
 
-* Reading a collection no longer prints to the console.  It is logged at debug
-  level instead, so ordinary output stays readable.
+* <news item>
 
 **Deprecated:**
 
