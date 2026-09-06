@@ -21,8 +21,6 @@ from tempfile import TemporaryDirectory
 
 from ruamel.yaml import YAML
 
-from regolith.tools import validate_doc
-
 #
 # setup mongo
 #
@@ -40,7 +38,8 @@ except ImportError:
 from pymongo.collection import Collection
 
 from regolith import fsclient
-from regolith.tools import dbpathname, fallback
+from regolith.common import fallback
+from regolith.dbpaths import dbpathname
 
 if not MONGO_AVAILABLE:
     ON_PYMONGO_V2 = ON_PYMONGO_V3 = False
@@ -576,6 +575,8 @@ class MongoClient:
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
+        from regolith.tools import validate_doc
+
         doc = doc_cleanup(doc)
         valid, potential_error = validate_doc(collname, doc, self.rc)
         if not valid:
@@ -589,6 +590,8 @@ class MongoClient:
 
     def insert_many(self, dbname, collname, docs):
         """Inserts many documents into a database/collection."""
+        from regolith.tools import validate_doc
+
         docs = [doc_cleanup(doc) for doc in docs]
 
         screened_docs = []
@@ -674,6 +677,8 @@ class MongoClient:
 
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
+        from regolith.tools import validate_doc
+
         filter["_id"].replace(".", "")
         doc = self.find_one(dbname, collname, filter)
         newdoc = dict(filter if doc is None else doc)

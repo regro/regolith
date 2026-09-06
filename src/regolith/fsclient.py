@@ -12,7 +12,7 @@ import ruamel.yaml
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
-from regolith.tools import dbpathname
+from regolith.dbpaths import dbpathname
 
 
 class DelayedKeyboardInterrupt:

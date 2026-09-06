@@ -11,14 +11,21 @@ from ruamel.yaml import YAML
 
 from regolith import storage
 from regolith.builder import BUILDERS, builder
+from regolith.common import string_types
 from regolith.deploy import deploy as dploy
-from regolith.emailer import emailer
 from regolith.GHextractor import extract_github, to_software_yaml
 from regolith.helper import FAST_UPDATER_WHITELIST, HELPERS, UPDATER_HELPERS, helpr
 from regolith.runcontrol import RunControl
-from regolith.tools import string_types
 
-email = emailer
+
+def email(rc):
+    """Send an email."""
+    # Imported here because the emailer pulls in a builder, and with it the
+    # rest of the scientific stack, which no other command needs
+    from regolith.emailer import emailer
+
+    return emailer(rc)
+
 
 RE_AND = re.compile(r"\s+and\s+")
 RE_SPACE = re.compile(r"\s+")

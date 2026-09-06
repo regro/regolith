@@ -25,7 +25,9 @@ from googleapiclient.discovery import build
 from habanero import Crossref
 from requests.exceptions import ConnectionError, HTTPError
 
+from regolith.common import fallback, string_types, unicode_type  # noqa: F401  (re-exported)
 from regolith.dates import date_to_float, get_dates, is_current, month_to_int
+from regolith.dbpaths import dbdirname, dbpathname  # noqa: F401  (re-exported)
 from regolith.schemas import alloweds
 from regolith.sorters import doc_date_key_high, ene_date_key, id_key
 
@@ -38,12 +40,6 @@ except ImportError:
     HAVE_BIBTEX_PARSER = False
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
-
-if sys.version_info[0] >= 3:
-    string_types = (str, bytes)
-    unicode_type = str
-else:
-    pass
 
 DEFAULT_ENCODING = sys.getdefaultencoding()
 
@@ -59,62 +55,6 @@ OPTIONAL_KEYS_INSTITUTIONS = alloweds.get("OPTIONAL_KEYS_INSTITUTIONS")
 
 # The placeholder written into an affiliation field that could not be resolved
 MISSING_INFO = "MISSING"
-
-
-def dbdirname(db, rc):
-    """Get the directory that holds a database as a pathlib.Path.
-
-    Parameters
-    ----------
-    db : dict
-        The database description.  A remote database is cached under
-        the build directory, a local one lives at its own ``url``.
-    rc : RunControl
-        The run control instance supplying ``builddir``.
-
-    Returns
-    -------
-    pathlib.Path
-        The directory of the database.  Building it with pathlib keeps
-        the separators native, so a posix-style ``url`` read from the
-        rc file does not leave mixed separators on Windows.
-    """
-    if db.get("local", False) is False:
-        dbdir = pathlib.Path(rc.builddir) / "_dbs" / db["name"]
-    else:
-        dbdir = pathlib.Path(db["url"])
-    return dbdir
-
-
-def dbpathname(db, rc):
-    """Get the directory that holds the collection files as a
-    pathlib.Path.
-
-    Parameters
-    ----------
-    db : dict
-        The database description, supplying ``path`` relative to the
-        database directory.
-    rc : RunControl
-        The run control instance supplying ``builddir``.
-
-    Returns
-    -------
-    pathlib.Path
-        The directory of the collection files.
-    """
-    dbpath = dbdirname(db, rc) / db["path"]
-    return dbpath
-
-
-def fallback(cond, backup):
-    """Decorator for returning the object if cond is true and a backup
-    if cond is false."""
-
-    def dec(obj):
-        return obj if cond else backup
-
-    return dec
 
 
 def all_docs_from_collection(client, collname, copy=True):
