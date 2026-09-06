@@ -14,7 +14,6 @@ from regolith.database import connect
 from regolith.helper import HELPERS
 from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
 from regolith.schemas import SCHEMAS
-from regolith.tools import update_schemas
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}
@@ -330,6 +329,10 @@ def main(args=None):
         rc._update(load_rcfile("regolithrc.json"))
     rc._update(ns.__dict__)
     if "schemas" in rc._dict:
+        # Imported here because regolith.tools is heavy and only an rc that
+        # defines its own schemas needs it
+        from regolith.tools import update_schemas
+
         user_schema = copy.deepcopy(rc.schemas)
         default_schema = copy.deepcopy(SCHEMAS)
         rc.schemas = update_schemas(default_schema, user_schema)

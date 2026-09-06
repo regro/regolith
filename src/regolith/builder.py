@@ -1,53 +1,37 @@
 """Generic builder."""
 
-from regolith.builders.activitylogbuilder import ActivitylogBuilder
-from regolith.builders.beamplanbuilder import BeamPlanBuilder
-from regolith.builders.coabuilder import RecentCollaboratorsBuilder
-from regolith.builders.cpbuilder import CPBuilder
-from regolith.builders.cvbuilder import CVBuilder
-from regolith.builders.figurebuilder import FigureBuilder
-from regolith.builders.formalletterbuilder import FormalLetterBuilder
-from regolith.builders.gradebuilder import GradeReportBuilder
-from regolith.builders.grantreportbuilder import GrantReportBuilder
-from regolith.builders.htmlbuilder import HtmlBuilder
-from regolith.builders.internalhtmlbuilder import InternalHtmlBuilder
-from regolith.builders.manuscriptreviewbuilder import ManRevBuilder
-from regolith.builders.mealslogbuilder import MealsLogBuilder
-from regolith.builders.postdocadbuilder import PostdocadBuilder
-from regolith.builders.presentationbuilder import PresentationBuilder
-from regolith.builders.preslistbuilder import PresListBuilder
-from regolith.builders.proposalreviewbuilder import PropRevBuilder
-from regolith.builders.publistbuilder import PubListBuilder
-from regolith.builders.readinglistsbuilder import ReadingListsBuilder
-from regolith.builders.reimbursementbuilder import ReimbursementBuilder
-from regolith.builders.releaselistbuilder import ReleaseListBuilder
-from regolith.builders.resumebuilder import ResumeBuilder
+from regolith.lazy import LazyRegistry
 
-BUILDERS = {
-    "annual-activity": ActivitylogBuilder,
-    "beamplan": BeamPlanBuilder,
-    "current-pending": CPBuilder,
-    "cv": CVBuilder,
-    "figure": FigureBuilder,
-    "formalletter": FormalLetterBuilder,
-    "grade": GradeReportBuilder,
-    "grades": GradeReportBuilder,
-    "grant-report": GrantReportBuilder,
-    "html": HtmlBuilder,
-    "internalhtml": InternalHtmlBuilder,
-    "meals-log": MealsLogBuilder,
-    "postdocad": PostdocadBuilder,
-    "presentation": PresentationBuilder,
-    "preslist": PresListBuilder,
-    "publist": PubListBuilder,
-    "releaselist": ReleaseListBuilder,
-    "reading-lists": ReadingListsBuilder,
-    "reimb": ReimbursementBuilder,
-    "recent-collabs": RecentCollaboratorsBuilder,
-    "resume": ResumeBuilder,
-    "review-man": ManRevBuilder,
-    "review-prop": PropRevBuilder,
-}
+# The import path of each builder rather than the builder itself, so that
+# a build imports only the target it was asked for.  Importing all of them
+# costs about half a second and pulls in pandas, matplotlib and pypdf.
+BUILDERS = LazyRegistry(
+    {
+        "annual-activity": "regolith.builders.activitylogbuilder:ActivitylogBuilder",
+        "beamplan": "regolith.builders.beamplanbuilder:BeamPlanBuilder",
+        "current-pending": "regolith.builders.cpbuilder:CPBuilder",
+        "cv": "regolith.builders.cvbuilder:CVBuilder",
+        "figure": "regolith.builders.figurebuilder:FigureBuilder",
+        "formalletter": "regolith.builders.formalletterbuilder:FormalLetterBuilder",
+        "grade": "regolith.builders.gradebuilder:GradeReportBuilder",
+        "grades": "regolith.builders.gradebuilder:GradeReportBuilder",
+        "grant-report": "regolith.builders.grantreportbuilder:GrantReportBuilder",
+        "html": "regolith.builders.htmlbuilder:HtmlBuilder",
+        "internalhtml": "regolith.builders.internalhtmlbuilder:InternalHtmlBuilder",
+        "meals-log": "regolith.builders.mealslogbuilder:MealsLogBuilder",
+        "postdocad": "regolith.builders.postdocadbuilder:PostdocadBuilder",
+        "presentation": "regolith.builders.presentationbuilder:PresentationBuilder",
+        "preslist": "regolith.builders.preslistbuilder:PresListBuilder",
+        "publist": "regolith.builders.publistbuilder:PubListBuilder",
+        "releaselist": "regolith.builders.releaselistbuilder:ReleaseListBuilder",
+        "reading-lists": "regolith.builders.readinglistsbuilder:ReadingListsBuilder",
+        "reimb": "regolith.builders.reimbursementbuilder:ReimbursementBuilder",
+        "recent-collabs": "regolith.builders.coabuilder:RecentCollaboratorsBuilder",
+        "resume": "regolith.builders.resumebuilder:ResumeBuilder",
+        "review-man": "regolith.builders.manuscriptreviewbuilder:ManRevBuilder",
+        "review-prop": "regolith.builders.proposalreviewbuilder:PropRevBuilder",
+    }
+)
 
 
 def builder(btype, rc):

@@ -1,86 +1,150 @@
-"""Generic builder."""
+"""Generic helper."""
 
-from copy import copy
+from regolith.lazy import LazyRegistry
 
-from regolith.helpers import a_expensehelper as a_expense
-from regolith.helpers import a_grppub_readlisthelper as a_gprl
-from regolith.helpers import a_manurevhelper as a_manurev
-from regolith.helpers import a_presentationhelper as a_presentation
-from regolith.helpers import a_projectumhelper as a_projectum
-from regolith.helpers import a_proposalhelper as a_proposal
-from regolith.helpers import a_proprevhelper as a_proprev
-from regolith.helpers import a_todohelper as a_todo
-from regolith.helpers import attestationshelper as attestations
-from regolith.helpers import f_todohelper as f_todo
-from regolith.helpers import l_abstracthelper as l_abstract
-from regolith.helpers import l_contactshelper as l_contacts
-from regolith.helpers import l_currentappointmentshelper as l_currentappointments
-from regolith.helpers import l_generalhelper as l_general
-from regolith.helpers import l_grantshelper as l_grants
-from regolith.helpers import l_membershelper as l_members
-from regolith.helpers import l_milestoneshelper as l_milestone
-from regolith.helpers import l_progressreporthelper as l_progress
-from regolith.helpers import l_projectahelper as l_projecta
-from regolith.helpers import l_slideshelper as l_slides
-from regolith.helpers import l_talkshelper as l_talks
-from regolith.helpers import l_todohelper as l_todo
-from regolith.helpers import makeappointmentshelper as makeappointments
-from regolith.helpers import reimbstatushelper as reimbstatus
-from regolith.helpers import u_contacthelper as u_contact
-from regolith.helpers import u_finishprumhelper as u_finishprum
-from regolith.helpers import u_institutionshelper as u_institutions
-from regolith.helpers import u_logurlhelper as u_logurl
-from regolith.helpers import u_milestonehelper as u_milestone
-from regolith.helpers import u_todohelper as u_todo
-from regolith.helpers import v_meetingshelper as v_meetings
-
-# Updtaer helpers will update the db and should not load all databases but only
-# the one specified in rc.database for updating.
-UPDATER_HELPERS = {
-    "a_expense": (a_expense.ExpenseAdderHelper, a_expense.subparser),
-    "a_grppub_readlist": (a_gprl.GrpPubReadListAdderHelper, a_gprl.subparser),
-    "a_manurev": (a_manurev.ManuRevAdderHelper, a_manurev.subparser),
-    "a_presentation": (a_presentation.PresentationAdderHelper, a_presentation.subparser),
-    "a_projectum": (a_projectum.ProjectumAdderHelper, a_projectum.subparser),
-    "a_proposal": (a_proposal.ProposalAdderHelper, a_proposal.subparser),
-    "a_proprev": (a_proprev.PropRevAdderHelper, a_proprev.subparser),
-    "a_todo": (a_todo.TodoAdderHelper, a_todo.subparser),
-    "f_prum": (u_finishprum.FinishprumUpdaterHelper, u_finishprum.subparser),
-    "f_todo": (f_todo.TodoFinisherHelper, f_todo.subparser),
-    "u_contact": (u_contact.ContactUpdaterHelper, u_contact.subparser),
-    "u_institution": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
-    "u_logurl": (u_logurl.LogUrlUpdaterHelper, u_logurl.subparser),
-    "u_milestone": (u_milestone.MilestoneUpdaterHelper, u_milestone.subparser),
-    "u_todo": (u_todo.TodoUpdaterHelper, u_todo.subparser),
-}
-
-# Lister helpers need to load collections across all the databases to show everything
-LISTER_HELPERS = {
-    "l_abstract": (l_abstract.AbstractListerHelper, l_abstract.subparser),
-    "l_contacts": (l_contacts.ContactsListerHelper, l_contacts.subparser),
-    "l_currentappointments": (
-        l_currentappointments.CurrentAppointmentsListerHelper,
-        l_currentappointments.subparser,
+# The import path of each helper and its subparser rather than the objects
+# themselves, so that running one helper imports only that one.  See
+# regolith.lazy for why.
+# Updater helpers will update the db and should not load all databases but
+# only the one specified in rc.database for updating.
+UPDATER_HELPER_SPECS = {
+    "a_expense": (
+        "regolith.helpers.a_expensehelper:ExpenseAdderHelper",
+        "regolith.helpers.a_expensehelper:subparser",
     ),
-    "l_grants": (l_grants.GrantsListerHelper, l_grants.subparser),
-    "l_members": (l_members.MembersListerHelper, l_members.subparser),
-    "l_milestones": (l_milestone.MilestonesListerHelper, l_milestone.subparser),
-    "l_progress": (l_progress.ProgressReportHelper, l_progress.subparser),
-    "l_projecta": (l_projecta.ProjectaListerHelper, l_projecta.subparser),
-    "l_reimbstatus": (reimbstatus.ReimbstatusHelper, reimbstatus.subparser),
-    "l_slides": (l_slides.SlidesListerHelper, l_slides.subparser),
-    "l_talks": (l_talks.TalksListerHelper, l_talks.subparser),
-    "l_todo": (l_todo.TodoListerHelper, l_todo.subparser),
-    "v_meetings": (v_meetings.MeetingsValidatorHelper, v_meetings.subparser),
-    "attestations": (attestations.AttestationsHelper, attestations.subparser),
-    "lister": (l_general.GeneralListerHelper, l_general.subparser),
-    "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser),
+    "a_grppub_readlist": (
+        "regolith.helpers.a_grppub_readlisthelper:GrpPubReadListAdderHelper",
+        "regolith.helpers.a_grppub_readlisthelper:subparser",
+    ),
+    "a_manurev": (
+        "regolith.helpers.a_manurevhelper:ManuRevAdderHelper",
+        "regolith.helpers.a_manurevhelper:subparser",
+    ),
+    "a_presentation": (
+        "regolith.helpers.a_presentationhelper:PresentationAdderHelper",
+        "regolith.helpers.a_presentationhelper:subparser",
+    ),
+    "a_projectum": (
+        "regolith.helpers.a_projectumhelper:ProjectumAdderHelper",
+        "regolith.helpers.a_projectumhelper:subparser",
+    ),
+    "a_proposal": (
+        "regolith.helpers.a_proposalhelper:ProposalAdderHelper",
+        "regolith.helpers.a_proposalhelper:subparser",
+    ),
+    "a_proprev": (
+        "regolith.helpers.a_proprevhelper:PropRevAdderHelper",
+        "regolith.helpers.a_proprevhelper:subparser",
+    ),
+    "a_todo": (
+        "regolith.helpers.a_todohelper:TodoAdderHelper",
+        "regolith.helpers.a_todohelper:subparser",
+    ),
+    "f_prum": (
+        "regolith.helpers.u_finishprumhelper:FinishprumUpdaterHelper",
+        "regolith.helpers.u_finishprumhelper:subparser",
+    ),
+    "f_todo": (
+        "regolith.helpers.f_todohelper:TodoFinisherHelper",
+        "regolith.helpers.f_todohelper:subparser",
+    ),
+    "u_contact": (
+        "regolith.helpers.u_contacthelper:ContactUpdaterHelper",
+        "regolith.helpers.u_contacthelper:subparser",
+    ),
+    "u_institution": (
+        "regolith.helpers.u_institutionshelper:InstitutionsUpdaterHelper",
+        "regolith.helpers.u_institutionshelper:subparser",
+    ),
+    "u_logurl": (
+        "regolith.helpers.u_logurlhelper:LogUrlUpdaterHelper",
+        "regolith.helpers.u_logurlhelper:subparser",
+    ),
+    "u_milestone": (
+        "regolith.helpers.u_milestonehelper:MilestoneUpdaterHelper",
+        "regolith.helpers.u_milestonehelper:subparser",
+    ),
+    "u_todo": (
+        "regolith.helpers.u_todohelper:TodoUpdaterHelper",
+        "regolith.helpers.u_todohelper:subparser",
+    ),
 }
 
-HELPERS = copy(LISTER_HELPERS)
-HELPERS.update(UPDATER_HELPERS)
-# fast_updater updaters only connects to the one requested db, not to all dbs
-# in rc.databases which is the default behavior
+# Lister helpers need to load collections across all the databases to show
+# everything
+LISTER_HELPER_SPECS = {
+    "l_abstract": (
+        "regolith.helpers.l_abstracthelper:AbstractListerHelper",
+        "regolith.helpers.l_abstracthelper:subparser",
+    ),
+    "l_contacts": (
+        "regolith.helpers.l_contactshelper:ContactsListerHelper",
+        "regolith.helpers.l_contactshelper:subparser",
+    ),
+    "l_currentappointments": (
+        "regolith.helpers.l_currentappointmentshelper:CurrentAppointmentsListerHelper",
+        "regolith.helpers.l_currentappointmentshelper:subparser",
+    ),
+    "l_grants": (
+        "regolith.helpers.l_grantshelper:GrantsListerHelper",
+        "regolith.helpers.l_grantshelper:subparser",
+    ),
+    "l_members": (
+        "regolith.helpers.l_membershelper:MembersListerHelper",
+        "regolith.helpers.l_membershelper:subparser",
+    ),
+    "l_milestones": (
+        "regolith.helpers.l_milestoneshelper:MilestonesListerHelper",
+        "regolith.helpers.l_milestoneshelper:subparser",
+    ),
+    "l_progress": (
+        "regolith.helpers.l_progressreporthelper:ProgressReportHelper",
+        "regolith.helpers.l_progressreporthelper:subparser",
+    ),
+    "l_projecta": (
+        "regolith.helpers.l_projectahelper:ProjectaListerHelper",
+        "regolith.helpers.l_projectahelper:subparser",
+    ),
+    "l_reimbstatus": (
+        "regolith.helpers.reimbstatushelper:ReimbstatusHelper",
+        "regolith.helpers.reimbstatushelper:subparser",
+    ),
+    "l_slides": (
+        "regolith.helpers.l_slideshelper:SlidesListerHelper",
+        "regolith.helpers.l_slideshelper:subparser",
+    ),
+    "l_talks": (
+        "regolith.helpers.l_talkshelper:TalksListerHelper",
+        "regolith.helpers.l_talkshelper:subparser",
+    ),
+    "l_todo": (
+        "regolith.helpers.l_todohelper:TodoListerHelper",
+        "regolith.helpers.l_todohelper:subparser",
+    ),
+    "v_meetings": (
+        "regolith.helpers.v_meetingshelper:MeetingsValidatorHelper",
+        "regolith.helpers.v_meetingshelper:subparser",
+    ),
+    "attestations": (
+        "regolith.helpers.attestationshelper:AttestationsHelper",
+        "regolith.helpers.attestationshelper:subparser",
+    ),
+    "lister": (
+        "regolith.helpers.l_generalhelper:GeneralListerHelper",
+        "regolith.helpers.l_generalhelper:subparser",
+    ),
+    "makeappointments": (
+        "regolith.helpers.makeappointmentshelper:MakeAppointmentsHelper",
+        "regolith.helpers.makeappointmentshelper:subparser",
+    ),
+}
+
+UPDATER_HELPERS = LazyRegistry(UPDATER_HELPER_SPECS)
+LISTER_HELPERS = LazyRegistry(LISTER_HELPER_SPECS)
+HELPERS = LazyRegistry({**LISTER_HELPER_SPECS, **UPDATER_HELPER_SPECS})
+
+# fast_updater updaters only connects to the one requested db, not to all
+# dbs in rc.databases which is the default behavior
 FAST_UPDATER_WHITELIST = ["u_milestone", "f_prum"]
 
 

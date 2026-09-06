@@ -12,7 +12,7 @@ except ImportError:
 
 from regolith.chained_db import LazyChainedDB
 from regolith.client_manager import ClientManager
-from regolith.tools import dbdirname
+from regolith.dbpaths import dbdirname
 
 
 def _run_git(args, cwd, check=False):
