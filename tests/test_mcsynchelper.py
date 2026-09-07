@@ -314,3 +314,24 @@ def test_a_record_is_written_where_it_is_already_stored(mc_repo):
     main(["helper", "mc_sync"])
     stored_in_db = (tmp_path / "db" / "mc_goals.yaml").read_text()
     assert "a goal, reworded" in stored_in_db
+
+
+def test_a_held_thing_of_no_project_is_not_dropped_on_the_next_sync(mc_repo):
+    # Test that an idea of no project survives being read twice.  It is not
+    # reached through a project, so a sync that looked for it that way would
+    # find it missing and drop what somebody had just written down
+    _, mcdir = mc_repo
+    path = mcdir / "pei.md"
+    path.write_text(path.read_text() + "\n## On-deck\n\n- an idea nobody has taken on\n")
+    main(["helper", "mc_sync"])
+    rc = copy.copy(DEFAULT_RC)
+    rc._update(load_rcfile("regolithrc.json"))
+    filter_databases(rc)
+    with connect(rc) as rc.client:
+        idea = next(g for g in rc.client.all_documents("mc_goals") if g["text"] == "an idea nobody has taken on")
+    assert idea["project"] == "tbd"
+    assert idea["lead"] == "pliu"
+    assert idea["status"] == "on-deck"
+
+    main(["helper", "mc_sync"])
+    assert stored(mc_repo, "mc_goals", idea["_id"])["status"] == "on-deck"
