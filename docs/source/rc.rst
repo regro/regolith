@@ -154,6 +154,31 @@ would allow the names of people to also be
 
 See the collections for a complete list of the schemas.
 
+``mission_control_periods``
+===========================
+What the periods of the year are called and the day each one starts, as
+``{name: "MM-DD"}``. Mission control writes a period as the year and the name
+together, so ``{"fall": "09-01"}`` gives ``2026fall``.
+
+If none is provided it defaults to semesters:
+
+.. code-block:: json
+
+    {"spring": "01-01", "summer": "06-01", "fall": "09-01"}
+
+A group on a quarter system says so. For example, at UCSB:
+
+.. code-block:: json
+
+    {"winter": "01-01", "spring": "04-01", "summer": "07-01", "fall": "10-01"}
+
+The names need not be terms at all: a group that works in halves could say
+``{"first": "01-01", "second": "07-01"}``.
+
+The order the periods are given in does not matter, since they are put in the
+order they come round by the dates. That order is what mission control sorts an
+archive by, rather than the letters of the names, which do not agree with it.
+
 ``static_source``
 =================
 File path to the static source for ``regolith build html``. If none provided it defaults to "templates"

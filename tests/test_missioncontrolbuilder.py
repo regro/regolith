@@ -627,3 +627,28 @@ def test_every_section_is_written_even_with_nothing_in_it():
     ]:
         assert heading in document
     assert "\n\n\n" not in document
+
+
+def test_the_archive_reads_in_the_order_the_periods_came_round():
+    # Test that the archive is ordered by when a period happened rather than
+    # by the letters of its name.  Named periods do not sort into the order
+    # they come round, so an archive sorted on the text would put the autumn
+    # term of a year before its spring
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.periods = {"fall": "10-01", "winter": "01-01", "spring": "04-01"}
+    named = [
+        dict(GOALS[0], _id=f"g-{period}", period=period, first_period=period, status="finished")
+        for period in ("2026winter", "2026spring", "2026fall", "2027winter")
+    ]
+    builder.gtx = {
+        "mc_projects": [dict(PROJECTS[0], lead="pliu")],
+        "mc_goals": named,
+        "mc_tasks": [],
+        "people": [],
+    }
+    document = "\n".join(builder.documents()["pliu"])
+    archived = [line for line in document.splitlines() if line.startswith("### Goals — ")]
+    assert archived == ["### Goals — 2026fall", "### Goals — 2026spring", "### Goals — 2026winter"]
+    # the latest period is the current one, so it heads the document rather
+    # than the archive
+    assert "## Goals — 2027winter" in document

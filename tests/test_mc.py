@@ -1,13 +1,19 @@
 """Tests for the pieces the mission control tools share."""
 
+import datetime as dt
+
 import pytest
 
 from regolith.mc import (
     ID_ALPHABET,
     ID_LENGTH,
     WIDTH,
+    DocumentError,
     initials,
     logical_lines,
+    next_period,
+    period_key,
+    period_of,
     project_id,
     short_id,
     struck,
@@ -249,3 +255,69 @@ def test_initials_shorten_a_name_the_way_the_group_does(name, expected_initials)
 )
 def test_a_project_id_says_whose_project_it_is(name, taken, prefix, expected_id):
     assert project_id(name, taken, prefix) == expected_id
+
+
+UCSB = {"fall": "10-01", "winter": "01-01", "spring": "04-01", "summer": "07-01"}
+
+
+@pytest.mark.parametrize(
+    "date, periods, expected_period, expected_next",
+    [
+        # Test which period a date falls in and which comes after it.  A group
+        # says what its periods are called and when they start; the default is
+        # semesters, since most universities are on them.
+        # C1: the default semesters, in the autumn one
+        (dt.date(2026, 9, 7), None, "2026fall", "2027spring"),
+        # C2: the same date on a quarter system, where the autumn term has not
+        # started yet
+        (dt.date(2026, 9, 7), UCSB, "2026summer", "2026fall"),
+        # C3: the last period of the year, where the next one is next year's
+        (dt.date(2026, 11, 15), UCSB, "2026fall", "2027winter"),
+        # C4: the first day of a period, which belongs to the period it starts
+        (dt.date(2027, 1, 1), UCSB, "2027winter", "2027spring"),
+        # C5: before the first period of the year begins, on a calendar whose
+        # periods all start later, expect the last period of the year before
+        (dt.date(2027, 2, 1), {"midyear": "06-01"}, "2026midyear", "2027midyear"),
+    ],
+)
+def test_a_date_falls_in_the_period_a_group_says_it_does(date, periods, expected_period, expected_next):
+    assert period_of(date, periods) == expected_period
+    assert next_period(date, periods) == expected_next
+
+
+def test_periods_sort_into_the_order_they_come_round():
+    # Test that periods order by when they happen rather than by their names,
+    # which do not agree: fall comes before spring in the alphabet and after
+    # it in the year.  The archive and the current period both depend on this
+    written = ["2026fall", "2026spring", "2026summer", "2026winter", "2027winter"]
+    assert sorted(written, key=lambda p: period_key(p, UCSB)) == [
+        "2026winter",
+        "2026spring",
+        "2026summer",
+        "2026fall",
+        "2027winter",
+    ]
+
+
+def test_a_period_written_some_other_way_still_sorts():
+    # Test that a period from before a group settled its calendar does not
+    # bring the ordering down, since documents already carry them
+    assert period_key("2026Q3", UCSB) > period_key("2026fall", UCSB)
+
+
+@pytest.mark.parametrize(
+    "periods",
+    [
+        # Test that a calendar nobody can read says so, naming the period that
+        # is wrong, rather than failing somewhere later.
+        # C1: a date written the wrong way round
+        {"fall": "01-40"},
+        # C2: not a date at all
+        {"fall": "the first of October"},
+        # C3: nothing there
+        {"fall": None},
+    ],
+)
+def test_a_period_that_does_not_start_on_a_date_says_so(periods):
+    with pytest.raises(DocumentError, match="not a date of the year"):
+        period_of(dt.date(2026, 9, 7), periods)

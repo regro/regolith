@@ -24,7 +24,8 @@ from regolith.mc import (
     DocumentError,
     led_by,
     parse_document,
-    quarter_of,
+    period_key,
+    period_of,
     struck,
     week_of,
     wrap,
@@ -204,6 +205,12 @@ class MissionControlBuilder(BuilderBase):
 
     btype = "mission-control"
     needed_colls = ["mc_projects", "mc_goals", "mc_tasks", "people"]
+    # what the periods of the year are called and when they start, which a
+    # group says in regolithrc.json.  It decides the period a new goal belongs
+    # to and the order the archive reads in.  None is the semesters that
+    # mc.DEFAULT_PERIODS gives, and stands for a builder made without a
+    # runcontrol, as the sync helper makes one to name documents with.
+    periods = None
 
     def __init__(self, rc):
         super().__init__(rc)
@@ -212,6 +219,10 @@ class MissionControlBuilder(BuilderBase):
         # the build directory.  rc.mission_control_dir says where; without it
         # they go under the build directory like any other built thing.
         self.mcdir = Path(getattr(rc, "mission_control_dir", None) or self.bldir)
+        # what the periods of the year are called and when they start, which a
+        # group says in regolithrc.json and which decides both the period a new
+        # goal belongs to and the order the archive reads in
+        self.periods = getattr(rc, "mission_control_periods", None)
 
     def display_name(self, person):
         """Return the name to head a person's document with."""
@@ -470,11 +481,16 @@ class MissionControlBuilder(BuilderBase):
         stays truthful without a second document.
         """
         current = self.current_period(goals)
-        periods = sorted({g["first_period"] for g in goals} | {g["period"] for g in goals}, reverse=True)
-        past = [p for p in periods if p < current]
+        seen = {g["first_period"] for g in goals} | {g["period"] for g in goals}
+        periods = sorted(seen, key=self.period_key, reverse=True)
+        past = [p for p in periods if self.period_key(p) < self.period_key(current)]
         lines = ["## Archive", ""]
         for period in past:
-            shown = [g for g in self.in_order(goals, goal_number) if g["first_period"] <= period <= g["period"]]
+            shown = [
+                g
+                for g in self.in_order(goals, goal_number)
+                if self.period_key(g["first_period"]) <= self.period_key(period) <= self.period_key(g["period"])
+            ]
             if not shown:
                 continue
             lines += [f"### Goals — {period}", ""]
@@ -491,15 +507,21 @@ class MissionControlBuilder(BuilderBase):
         """Return the goals in the order their numbers read."""
         return sorted(goals, key=lambda g: [int(n) for n in goal_number[g["_id"]].split(".")])
 
-    @staticmethod
-    def current_period(goals):
+    def period_key(self, period):
+        """Return a key putting periods in the order they came round."""
+        return period_key(period, self.periods)
+
+    def current_period(self, goals):
         """Return the latest period any goal is in.
 
-        A person with no goals yet is in the quarter everybody else is,
-        so that their document has a goals section to type into.
+        A person with no goals yet is in the period everybody else is,
+        so that their document has a goals section to type into.  The
+        names of the periods do not sort into the order they happen, so
+        the latest is found by when it came round rather than by its
+        text.
         """
         periods = [g["period"] for g in goals]
-        return max(periods) if periods else quarter_of(dt.date.today())
+        return max(periods, key=self.period_key) if periods else period_of(dt.date.today(), self.periods)
 
     @staticmethod
     def carried(goal):

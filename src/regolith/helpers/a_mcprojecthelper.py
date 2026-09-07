@@ -18,7 +18,17 @@ from gooey import GooeyParser
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.mc import UNLED_PREFIX, initials, project_id, quarter_of, short_id, slug, unled, week_of
+from regolith.mc import (
+    UNLED_PREFIX,
+    initials,
+    next_period,
+    period_of,
+    project_id,
+    short_id,
+    slug,
+    unled,
+    week_of,
+)
 from regolith.schemas import MC_STATI
 from regolith.tools import all_docs_from_collection
 
@@ -89,7 +99,17 @@ def subparser(subpi):
     )
     subpi.add_argument(
         "--period",
-        help="The period the seeded goal belongs to, e.g. 2026Q3.  Default is " "the quarter we are in.",
+        help="The period the seeded goal belongs to, e.g. 2026fall.  Default is "
+        "the period we are in, which mission_control_periods in regolithrc.json "
+        "gives the names and dates of.",
+    )
+    subpi.add_argument(
+        "-n",
+        "--next",
+        dest="next_one",
+        action="store_true",
+        help="Put the seeded goal in the period after this one, for preparing "
+        "work that starts next term while this one is still running.",
     )
     subpi.add_argument("--database", help="The database to write to.")
     return subpi
@@ -188,7 +208,10 @@ class MCProjectAdderHelper(DbHelperBase):
         """
         rc = self.rc
         taken = {record["_id"] for collection in SEEDED_COLLS for record in self.gtx[collection]}
-        period = rc.period or quarter_of(dt.date.today())
+        periods = getattr(rc, "mission_control_periods", None)
+        today = dt.date.today()
+        which = next_period if rc.next_one else period_of
+        period = rc.period or which(today, periods)
         goal = {
             "_id": short_id(taken),
             "project": project_id,
@@ -198,7 +221,7 @@ class MCProjectAdderHelper(DbHelperBase):
             "status": rc.status,
         }
         taken.add(goal["_id"])
-        monday = week_of(dt.date.today())
+        monday = week_of(today)
         task = {
             "_id": short_id(taken),
             "goal": goal["_id"],

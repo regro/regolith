@@ -9,7 +9,7 @@ import pytest
 
 from regolith.database import connect
 from regolith.main import main
-from regolith.mc import led_by, quarter_of, slug, week_of
+from regolith.mc import led_by, next_period, period_of, slug, week_of
 from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
 
 
@@ -175,7 +175,7 @@ def test_a_new_project_comes_with_a_goal_and_a_task_under_it(make_db):
     # something to put in them, so a project with nothing under it gives a
     # file with no goals section and no week to type into
     os.chdir(make_db)
-    main(["helper", "a_mcproject", "a seeded project", "--period", "2026Q3"])
+    main(["helper", "a_mcproject", "a seeded project", "--period", "2026fall"])
     rc = copy.copy(DEFAULT_RC)
     rc._update(load_rcfile("regolithrc.json"))
     filter_databases(rc)
@@ -185,16 +185,16 @@ def test_a_new_project_comes_with_a_goal_and_a_task_under_it(make_db):
         goal = goals[0]
         tasks = [t for t in rc.client.all_documents("mc_tasks") if t["goal"] == goal["_id"]]
     assert goal["text"] == "tbd"
-    assert goal["period"] == "2026Q3"
-    assert goal["first_period"] == "2026Q3"
+    assert goal["period"] == "2026fall"
+    assert goal["first_period"] == "2026fall"
     assert len(tasks) == 1
     assert tasks[0]["text"] == "tbd"
     assert tasks[0]["due_date"] == tasks[0]["first_due_date"] == week_of(dt.date.today())
 
 
-def test_the_seeded_goal_is_of_the_quarter_we_are_in(make_db):
-    # Test the default period, since nobody wants to type the quarter to write
-    # a project down in the moment it is mentioned
+def test_the_seeded_goal_is_of_the_period_we_are_in(make_db):
+    # Test the default period, since nobody wants to type the term to write a
+    # project down in the moment it is mentioned
     os.chdir(make_db)
     main(["helper", "a_mcproject", "a project of this quarter"])
     rc = copy.copy(DEFAULT_RC)
@@ -204,4 +204,19 @@ def test_the_seeded_goal_is_of_the_quarter_we_are_in(make_db):
         goal = next(
             g for g in rc.client.all_documents("mc_goals") if g["project"] == "na-a-project-of-this-quarter"
         )
-    assert goal["period"] == quarter_of(dt.date.today())
+    assert goal["period"] == period_of(dt.date.today())
+
+
+def test_a_project_can_be_prepared_for_the_period_to_come(make_db):
+    # Test --next.  Preparing for next term happens while this one is still
+    # running, and without this the goal would land in the period being
+    # finished rather than the one being planned
+    os.chdir(make_db)
+    main(["helper", "a_mcproject", "a project for next term", "--next"])
+    rc = copy.copy(DEFAULT_RC)
+    rc._update(load_rcfile("regolithrc.json"))
+    filter_databases(rc)
+    with connect(rc) as rc.client:
+        goal = next(g for g in rc.client.all_documents("mc_goals") if g["project"] == "na-a-project-for-next-term")
+    assert goal["period"] == next_period(dt.date.today())
+    assert goal["period"] != period_of(dt.date.today())
