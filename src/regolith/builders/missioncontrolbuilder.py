@@ -20,7 +20,7 @@ from pathlib import Path
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates
-from regolith.mc import struck, wrap
+from regolith.mc import DocumentError, parse_document, struck, wrap
 from regolith.tools import all_docs_from_collection
 
 UNASSIGNED = "unassigned"
@@ -74,6 +74,43 @@ def ids_in_document(text):
     return seen
 
 
+def label(item):
+    """Return what a record is called, which is how a document names it
+    when it carries no id."""
+    return item.get("name") or item.get("text")
+
+
+def keys_in_document(text):
+    """Return what a document names, in the order it names them.
+
+    A line carries an id once a render has put one there, but a document
+    somebody typed carries none at all, and the order they typed is
+    still the order they chose.  So each thing is listed by its id and
+    by its text, and a render finds it either way.
+
+    Parameters
+    ----------
+    text : str
+        The document to read.
+
+    Returns
+    -------
+    list of str
+        The ids and the texts, in the order they appear, each once.
+    """
+    try:
+        read = parse_document(text)
+    except DocumentError:
+        # a document that cannot be read at all still has its ids
+        return ids_in_document(text)
+    keys = []
+    for record in read["projects"] + read["goals"] + read["tasks"]:
+        for key in (record["_id"], label(record)):
+            if key and key not in keys:
+                keys.append(key)
+    return keys
+
+
 def in_document_order(items, order, fallback_key):
     """Return items in the order a document put them in.
 
@@ -86,7 +123,8 @@ def in_document_order(items, order, fallback_key):
     items : list of dict
         The items to order.
     order : list of str
-        The ids the document carries, in order.
+        What the document names, in order: an id where a line carries
+        one and the text of the line where it does not.
     fallback_key : callable
         The sort key for items the document does not mention.
 
@@ -95,9 +133,16 @@ def in_document_order(items, order, fallback_key):
     list of dict
         The items, ordered.
     """
-    position = {_id: n for n, _id in enumerate(order)}
-    known = sorted((i for i in items if i["_id"] in position), key=lambda i: position[i["_id"]])
-    unknown = sorted((i for i in items if i["_id"] not in position), key=fallback_key)
+    position = {key: n for n, key in enumerate(order)}
+
+    def where(item):
+        """Return where the document put an item, or None for one it
+        does not name."""
+        found = position.get(item["_id"])
+        return position.get(label(item)) if found is None else found
+
+    known = sorted((i for i in items if where(i) is not None), key=where)
+    unknown = sorted((i for i in items if where(i) is None), key=fallback_key)
     return known + unknown
 
 
@@ -204,11 +249,11 @@ class MissionControlBuilder(BuilderBase):
             path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     def existing_orders(self):
-        """Return the id order of each document already in the build
-        dir."""
+        """Return what each document already in the build dir names, in
+        order."""
         by_name = {}
         for path in self.mcdir.glob("*.md"):
-            by_name[path.stem] = ids_in_document(path.read_text(encoding="utf-8"))
+            by_name[path.stem] = keys_in_document(path.read_text(encoding="utf-8"))
         people = {p.get("lead") or UNASSIGNED for p in self.gtx["mc_projects"]}
         return {person: by_name.get(self.document_name(person), []) for person in people}
 
