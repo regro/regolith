@@ -12,6 +12,10 @@ UPDATER_HELPER_SPECS = {
         "regolith.helpers.a_expensehelper:ExpenseAdderHelper",
         "regolith.helpers.a_expensehelper:subparser",
     ),
+    "a_mcproject": (
+        "regolith.helpers.a_mcprojecthelper:MCProjectAdderHelper",
+        "regolith.helpers.a_mcprojecthelper:subparser",
+    ),
     "a_grppub_readlist": (
         "regolith.helpers.a_grppub_readlisthelper:GrpPubReadListAdderHelper",
         "regolith.helpers.a_grppub_readlisthelper:subparser",
