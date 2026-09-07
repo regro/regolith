@@ -21,7 +21,15 @@ from regolith.builders.missioncontrolbuilder import (
     live,
 )
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.mc import UNLED_PREFIX, DocumentError, changes, initials, parse_document, slug
+from regolith.mc import (
+    UNLED_PREFIX,
+    DocumentError,
+    changes,
+    initials,
+    led_by,
+    parse_document,
+    slug,
+)
 from regolith.schemas import SCHEMAS, validate
 from regolith.tools import all_docs_from_collection
 
@@ -107,8 +115,9 @@ class MCSyncHelper(DbHelperBase):
         for person in self.gtx["people"]:
             whose.setdefault(renderer.document_name(person["_id"]), person["_id"])
         for project in self.gtx["mc_projects"]:
-            if project.get("lead"):
-                whose.setdefault(renderer.document_name(project["lead"]), project["lead"])
+            lead = led_by(project)
+            if lead:
+                whose.setdefault(renderer.document_name(lead), lead)
         found = []
         for path in sorted(mcdir.glob("*.md")):
             if path.stem in whose:
@@ -139,7 +148,7 @@ class MCSyncHelper(DbHelperBase):
         """
         lead = None if person == UNASSIGNED else person
         projects = {
-            project["_id"]: project for project in live(self.gtx["mc_projects"]) if project.get("lead") == lead
+            project["_id"]: project for project in live(self.gtx["mc_projects"]) if led_by(project) == lead
         }
         goals = {goal["_id"]: goal for goal in live(self.gtx["mc_goals"]) if goal.get("project") in projects}
         tasks = {task["_id"]: task for task in live(self.gtx["mc_tasks"]) if task.get("goal") in goals}

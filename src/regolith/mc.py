@@ -739,6 +739,26 @@ def unled(project):
     return not lead or str(lead).strip().lower() in NOBODY
 
 
+def led_by(project):
+    """Return who leads a project, or None when nobody does.
+
+    A lead written as ``tbd`` or ``na`` is a placeholder rather than a
+    person, so it reads the same as no lead at all: the project belongs
+    in the unassigned document until somebody picks it up.
+
+    Parameters
+    ----------
+    project : dict
+        The project.
+
+    Returns
+    -------
+    str or None
+        The id of whoever leads it, or None.
+    """
+    return None if unled(project) else project["lead"]
+
+
 def in_the_group(person_id, people):
     """Return True if somebody is in the group at the moment.
 
