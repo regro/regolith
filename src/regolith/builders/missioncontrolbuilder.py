@@ -22,6 +22,7 @@ from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates
 from regolith.mc import (
     DocumentError,
+    in_the_group,
     led_by,
     parse_document,
     period_key,
@@ -32,7 +33,7 @@ from regolith.mc import (
     would_lose,
     wrap,
 )
-from regolith.tools import all_docs_from_collection
+from regolith.tools import all_docs_from_collection, fuzzy_retrieval
 
 UNASSIGNED = "unassigned"
 # how many of the things a document would lose to name before saying how many
@@ -216,6 +217,11 @@ class MissionControlBuilder(BuilderBase):
     # mc.DEFAULT_PERIODS gives, and stands for a builder made without a
     # runcontrol, as the sync helper makes one to name documents with.
     periods = None
+    # whose documents to write.  None is everybody in the group, which is the
+    # point: a group of any age has more people who have left than people in
+    # it, and nobody wants to read through the documents of both.
+    only_people = None
+    build_all = False
 
     def __init__(self, rc):
         super().__init__(rc)
@@ -228,6 +234,8 @@ class MissionControlBuilder(BuilderBase):
         # group says in regolithrc.json and which decides both the period a new
         # goal belongs to and the order the archive reads in
         self.periods = getattr(rc, "mission_control_periods", None)
+        self.only_people = getattr(rc, "people", None)
+        self.build_all = bool(getattr(rc, "build_all", False))
 
     @staticmethod
     def owner(person):
@@ -288,7 +296,12 @@ class MissionControlBuilder(BuilderBase):
         read back yet, and writing over it would be the end of it.
         """
         self.mcdir.mkdir(parents=True, exist_ok=True)
+        wanted = self.whose_documents()
+        left_out = 0
         for person, lines in sorted(self.documents(self.existing_orders()).items()):
+            if person not in wanted:
+                left_out += 1
+                continue
             path = self.mcdir / f"{self.document_name(person)}.md"
             written = "\n".join(lines) + "\n"
             if path.is_file():
@@ -299,6 +312,57 @@ class MissionControlBuilder(BuilderBase):
                     continue
                 self.keep_a_copy(path, existing)
             path.write_text(written, encoding="utf-8")
+        if left_out:
+            print(
+                f"{left_out} documents were not built, of people who are not in the group. "
+                f"Use --all for all of them, or --people to name one."
+            )
+
+    def whose_documents(self):
+        """Return whose documents this build is for.
+
+        Everybody in the group, and the unassigned document, unless the
+        command line said otherwise.  A group of any age has more people
+        who have left than people in it, and their documents are answered
+        by ``l-mcprojects --orphans`` rather than by reading them.
+
+        Returns
+        -------
+        set of str
+            The ids of the people to write for, and ``unassigned``.
+        """
+        everybody = set(self.documents_by_person())
+        if self.only_people:
+            named = {self.person_id(name) for name in self.only_people}
+            return {person for person in everybody if person in named}
+        if self.build_all:
+            return everybody
+        return {p for p in everybody if p == UNASSIGNED or in_the_group(p, self.gtx.get("people", []))}
+
+    def documents_by_person(self):
+        """Return the projects of each person, keyed by whose they
+        are."""
+        by_person = defaultdict(list)
+        for project in live(self.gtx["mc_projects"]):
+            by_person[led_by(project) or UNASSIGNED].append(project)
+        return by_person
+
+    def person_id(self, name):
+        """Return the id of somebody named by id, by name or by an aka.
+
+        Parameters
+        ----------
+        name : str
+            What the command line called them.
+
+        Returns
+        -------
+        str
+            Their id, or what was given when the people collection does
+            not know them.
+        """
+        found = fuzzy_retrieval(self.gtx.get("people", []), ["_id", "name", "aka"], name, case_sensitive=False)
+        return found["_id"] if found else name
 
     @staticmethod
     def refuse(path, lost):
@@ -345,9 +409,7 @@ class MissionControlBuilder(BuilderBase):
             with no lead goes to the unassigned document.
         """
         orders = orders or {}
-        by_person = defaultdict(list)
-        for project in live(self.gtx["mc_projects"]):
-            by_person[led_by(project) or UNASSIGNED].append(project)
+        by_person = self.documents_by_person()
         return {
             person: self.render_person(person, projects, orders.get(person, []))
             for person, projects in by_person.items()
