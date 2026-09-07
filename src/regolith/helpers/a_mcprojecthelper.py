@@ -18,11 +18,12 @@ from gooey import GooeyParser
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.mc import UNLED_PREFIX, initials, project_id, slug, unled
+from regolith.mc import UNLED_PREFIX, initials, project_id, quarter_of, short_id, slug, unled, week_of
 from regolith.schemas import MC_STATI
 from regolith.tools import all_docs_from_collection
 
 TARGET_COLL = "mc_projects"
+SEEDED_COLLS = ("mc_goals", "mc_tasks")
 # a stub is written down so that it is not forgotten, and what is not known
 # yet says so rather than being left out
 TBD = "tbd"
@@ -86,6 +87,10 @@ def subparser(subpi):
         help="An id for it.  Default is made from the name.  Either way it is put "
         "in lower case with hyphens, since ids no longer carry underscores.",
     )
+    subpi.add_argument(
+        "--period",
+        help="The period the seeded goal belongs to, e.g. 2026Q3.  Default is " "the quarter we are in.",
+    )
     subpi.add_argument("--database", help="The database to write to.")
     return subpi
 
@@ -94,7 +99,7 @@ class MCProjectAdderHelper(DbHelperBase):
     """Add a project to mission control."""
 
     btype = HELPER_TARGET
-    needed_colls = [f"{TARGET_COLL}", "people"]
+    needed_colls = [f"{TARGET_COLL}", "people"] + list(SEEDED_COLLS)
 
     def construct_global_ctx(self):
         """Constructs the global context."""
@@ -105,6 +110,8 @@ class MCProjectAdderHelper(DbHelperBase):
             rc.database = rc.databases[0]["name"]
         self.gtx[rc.coll] = sorted(all_docs_from_collection(rc.client, rc.coll), key=_id_key)
         self.gtx["people"] = list(all_docs_from_collection(rc.client, "people"))
+        for collection in SEEDED_COLLS:
+            self.gtx[collection] = list(all_docs_from_collection(rc.client, collection))
 
     def prefix(self):
         """Return the initials a project of this lead's is named
@@ -150,7 +157,54 @@ class MCProjectAdderHelper(DbHelperBase):
             if value:
                 project[key] = value
         rc.client.insert_one(rc.database, rc.coll, project)
+        goal, task = self.seeds(_id)
+        rc.client.insert_one(rc.database, "mc_goals", goal)
+        rc.client.insert_one(rc.database, "mc_tasks", task)
 
         whose = "unassigned" if unled(project) else f"to {rc.lead}"
         print(f'The project "{rc.name}" has been added {whose} as {_id}.')
+        print(f"    a goal ({goal['_id']}) and a task ({task['_id']}) were seeded under it, both {TBD}.")
         return
+
+    def seeds(self, project_id):
+        """Return a goal and a task to start a project off with.
+
+        A project on its own renders as a name and nothing else, and the
+        sections of a document are written only where there is something
+        to put in them.  So one goal and one task are seeded, saying
+        ``tbd`` until somebody says otherwise, and the document comes out
+        with the headings and the numbering already in it for them to
+        type over.
+
+        Parameters
+        ----------
+        project_id : str
+            The id of the project they belong to.
+
+        Returns
+        -------
+        tuple of (dict, dict)
+            The goal and the task under it.
+        """
+        rc = self.rc
+        taken = {record["_id"] for collection in SEEDED_COLLS for record in self.gtx[collection]}
+        period = rc.period or quarter_of(dt.date.today())
+        goal = {
+            "_id": short_id(taken),
+            "project": project_id,
+            "period": period,
+            "first_period": period,
+            "text": TBD,
+            "status": rc.status,
+        }
+        taken.add(goal["_id"])
+        monday = week_of(dt.date.today())
+        task = {
+            "_id": short_id(taken),
+            "goal": goal["_id"],
+            "due_date": monday,
+            "first_due_date": monday,
+            "text": TBD,
+            "status": rc.status,
+        }
+        return goal, task

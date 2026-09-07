@@ -10,9 +10,8 @@ from regolith.builders.missioncontrolbuilder import (
     ids_in_document,
     in_document_order,
     keys_in_document,
-    week_of,
 )
-from regolith.mc import WIDTH, parse_document
+from regolith.mc import WIDTH, parse_document, week_of
 
 PROJECTS = [
     {
@@ -49,7 +48,7 @@ GOALS = [
         "period": "2026Q3",
         "first_period": "2026Q3",
         "text": "Port the solver to GPU",
-        "status": "backburner",
+        "status": "on-deck",
     },
     {
         "_id": "g-tutorial",
@@ -157,8 +156,9 @@ def test_a_project_with_no_lead_goes_to_the_unassigned_document(documents):
         # under, so the document follows the meeting
         # C1: an open goal in the current period, expect the goals section
         ("## Goals — 2026Q3", "Get the fits converging"),
-        # C2: a goal held back, expect the backburner
-        ("## Backburner", "Port the solver to GPU"),
+        # C2: a goal held back, expect the on-deck section: active work that
+        # is not being done this week
+        ("## On-deck", "Port the solver to GPU"),
         # C3: a goal not being worked on, expect the wishlist
         ("## Wishlist", "A tutorial notebook"),
         # C4: a goal from a past period, expect the archive
@@ -601,3 +601,29 @@ def test_a_project_nobody_leads_goes_to_the_unassigned_document(lead):
     }
     documents = builder.documents()
     assert list(documents) == ["unassigned"]
+
+
+def test_every_section_is_written_even_with_nothing_in_it():
+    # Test that a document has all its headings whether or not there is
+    # anything under each.  Somebody typing into a new file needs somewhere to
+    # type, and a heading that appears only once it has content cannot be
+    # typed under
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {
+        "mc_projects": [dict(PROJECTS[0], lead="pliu")],
+        "mc_goals": [],
+        "mc_tasks": [],
+        "people": [],
+    }
+    document = "\n".join(builder.documents()["pliu"])
+    monday = week_of(dt.date.today()).isoformat()
+    for heading in [
+        "## Projects",
+        "## Goals — ",
+        f"## Week of {monday}",
+        "## On-deck",
+        "## Wishlist",
+        "## Archive",
+    ]:
+        assert heading in document
+    assert "\n\n\n" not in document

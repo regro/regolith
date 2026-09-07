@@ -20,12 +20,20 @@ from pathlib import Path
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates
-from regolith.mc import DocumentError, led_by, parse_document, struck, wrap
+from regolith.mc import (
+    DocumentError,
+    led_by,
+    parse_document,
+    quarter_of,
+    struck,
+    week_of,
+    wrap,
+)
 from regolith.tools import all_docs_from_collection
 
 UNASSIGNED = "unassigned"
 UNASSIGNED_NAME = "unassigned"
-HELD_STATI = ("backburner", "wishlist")
+HELD_STATI = ("on-deck", "wishlist")
 ID_IN_DOCUMENT = re.compile(r"\^([\w.-]+)")
 
 
@@ -72,6 +80,30 @@ def ids_in_document(text):
         if _id not in seen:
             seen.append(_id)
     return seen
+
+
+def one_blank_between(lines):
+    """Return the lines with no more than one blank line in a row.
+
+    A section writes a blank line after itself and another before what
+    comes next, which used to be hidden by the sections with nothing in
+    them not being written at all.
+
+    Parameters
+    ----------
+    lines : list of str
+        The lines of the document.
+
+    Returns
+    -------
+    list of str
+        The lines, with runs of blank lines collapsed into one.
+    """
+    tidied = []
+    for line in lines:
+        if line.strip() or (tidied and tidied[-1].strip()):
+            tidied.append(line)
+    return tidied
 
 
 def label(item):
@@ -144,22 +176,6 @@ def in_document_order(items, order, fallback_key):
     known = sorted((i for i in items if where(i) is not None), key=where)
     unknown = sorted((i for i in items if where(i) is None), key=fallback_key)
     return known + unknown
-
-
-def week_of(date):
-    """Return the Monday of the week a date falls in.
-
-    Parameters
-    ----------
-    date : datetime.date
-        The date to place.
-
-    Returns
-    -------
-    datetime.date
-        The Monday of that week.
-    """
-    return date - dt.timedelta(days=date.weekday())
 
 
 def as_date(value):
@@ -303,10 +319,10 @@ class MissionControlBuilder(BuilderBase):
         lines += self.render_projects(projects)
         lines += self.render_goals(goals, goal_number)
         lines += self.render_weeks(tasks, goal_number, order)
-        lines += self.render_bucket("Backburner", goals, goal_number, "backburner")
+        lines += self.render_bucket("On-deck", goals, goal_number, "on-deck")
         lines += self.render_bucket("Wishlist", goals, goal_number, "wishlist")
         lines += self.render_archive(goals, goal_number)
-        return [written for line in lines for written in wrap(line)]
+        return [written for line in one_blank_between(lines) for written in wrap(line)]
 
     @staticmethod
     def number_goals(goals, number_of):
@@ -356,8 +372,6 @@ class MissionControlBuilder(BuilderBase):
         """Return the lines of the goals section, for the current
         period."""
         current = self.current_period(goals)
-        if current is None:
-            return []
         lines = [f"## Goals — {current}", ""]
         for goal in self.in_order(goals, goal_number):
             if goal["period"] != current or goal["status"] in HELD_STATI:
@@ -390,6 +404,7 @@ class MissionControlBuilder(BuilderBase):
             if due is not None:
                 by_week[week_of(due)].append(task)
         lines = []
+        by_week.setdefault(week_of(dt.date.today()), [])
         for monday in sorted(by_week, reverse=True):
             lines += [f"## Week of {monday.isoformat()}", ""]
             counts = defaultdict(int)
@@ -435,10 +450,12 @@ class MissionControlBuilder(BuilderBase):
         return lines
 
     def render_bucket(self, heading, goals, goal_number, status):
-        """Return the lines of the backburner or wishlist section."""
+        """Return the lines of the on-deck or wishlist section.
+
+        The heading is written whether or not there is anything under
+        it, so that a document has somewhere to move a goal to.
+        """
         held = [g for g in self.in_order(goals, goal_number) if g["status"] == status]
-        if not held:
-            return []
         lines = [f"## {heading}", ""]
         for goal in held:
             lines.append(f"- {goal_number[goal['_id']]}  {struck(goal['text'], goal['status'])}  ^{goal['_id']}")
@@ -454,9 +471,7 @@ class MissionControlBuilder(BuilderBase):
         """
         current = self.current_period(goals)
         periods = sorted({g["first_period"] for g in goals} | {g["period"] for g in goals}, reverse=True)
-        past = [p for p in periods if current is None or p < current]
-        if not past:
-            return []
+        past = [p for p in periods if p < current]
         lines = ["## Archive", ""]
         for period in past:
             shown = [g for g in self.in_order(goals, goal_number) if g["first_period"] <= period <= g["period"]]
@@ -478,9 +493,13 @@ class MissionControlBuilder(BuilderBase):
 
     @staticmethod
     def current_period(goals):
-        """Return the latest period any goal is in, or None."""
+        """Return the latest period any goal is in.
+
+        A person with no goals yet is in the quarter everybody else is,
+        so that their document has a goals section to type into.
+        """
         periods = [g["period"] for g in goals]
-        return max(periods) if periods else None
+        return max(periods) if periods else quarter_of(dt.date.today())
 
     @staticmethod
     def carried(goal):

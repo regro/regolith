@@ -2,13 +2,14 @@
 line."""
 
 import copy
+import datetime as dt
 import os
 
 import pytest
 
 from regolith.database import connect
 from regolith.main import main
-from regolith.mc import led_by, slug
+from regolith.mc import led_by, quarter_of, slug, week_of
 from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
 
 
@@ -166,3 +167,41 @@ def test_a_stub_with_no_lead_is_named_and_read_as_nobody_s(make_db):
         project = rc.client.get("mc_projects", "na-a-stub-nobody-leads")
     assert project["lead"] == "tbd"
     assert led_by(project) is None
+
+
+def test_a_new_project_comes_with_a_goal_and_a_task_under_it(make_db):
+    # Test that a stub renders as a whole document rather than a name on its
+    # own.  The sections of a document are written only where there is
+    # something to put in them, so a project with nothing under it gives a
+    # file with no goals section and no week to type into
+    os.chdir(make_db)
+    main(["helper", "a_mcproject", "a seeded project", "--period", "2026Q3"])
+    rc = copy.copy(DEFAULT_RC)
+    rc._update(load_rcfile("regolithrc.json"))
+    filter_databases(rc)
+    with connect(rc) as rc.client:
+        goals = [g for g in rc.client.all_documents("mc_goals") if g["project"] == "na-a-seeded-project"]
+        assert len(goals) == 1
+        goal = goals[0]
+        tasks = [t for t in rc.client.all_documents("mc_tasks") if t["goal"] == goal["_id"]]
+    assert goal["text"] == "tbd"
+    assert goal["period"] == "2026Q3"
+    assert goal["first_period"] == "2026Q3"
+    assert len(tasks) == 1
+    assert tasks[0]["text"] == "tbd"
+    assert tasks[0]["due_date"] == tasks[0]["first_due_date"] == week_of(dt.date.today())
+
+
+def test_the_seeded_goal_is_of_the_quarter_we_are_in(make_db):
+    # Test the default period, since nobody wants to type the quarter to write
+    # a project down in the moment it is mentioned
+    os.chdir(make_db)
+    main(["helper", "a_mcproject", "a project of this quarter"])
+    rc = copy.copy(DEFAULT_RC)
+    rc._update(load_rcfile("regolithrc.json"))
+    filter_databases(rc)
+    with connect(rc) as rc.client:
+        goal = next(
+            g for g in rc.client.all_documents("mc_goals") if g["project"] == "na-a-project-of-this-quarter"
+        )
+    assert goal["period"] == quarter_of(dt.date.today())

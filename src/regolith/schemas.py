@@ -19,7 +19,7 @@ PROJECTUM_STATI = list(
     PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
 )
 
-MC_STATI = ["proposed", "active", "backburner", "wishlist", "finished", "dropped"]
+MC_STATI = ["proposed", "active", "on-deck", "wishlist", "finished", "dropped"]
 
 alloweds = {
     "ACTIVITIES_TYPES": ["teaching", "research"],
