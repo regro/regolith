@@ -1,0 +1,304 @@
+"""Tests for rendering the mission control documents."""
+
+import datetime as dt
+
+import pytest
+
+from regolith.builders.missioncontrolbuilder import (
+    MissionControlBuilder,
+    as_date,
+    ids_in_document,
+    in_document_order,
+    week_of,
+)
+
+PROJECTS = [
+    {
+        "_id": "p-pdf",
+        "name": "Nanoparticle structure from the PDF",
+        "project_deliverable": "Submit the paper",
+        "lead": "pliu",
+        "status": "active",
+    },
+    {"_id": "p-orphan", "name": "GPU solver", "status": "proposed"},
+]
+
+GOALS = [
+    {
+        "_id": "g-converge",
+        "project": "p-pdf",
+        "period": "2026Q3",
+        "first_period": "2026Q2",
+        "text": "Get the fits converging",
+        "status": "active",
+    },
+    {
+        "_id": "g-methods",
+        "project": "p-pdf",
+        "period": "2026Q3",
+        "first_period": "2026Q3",
+        "text": "Draft the methods section",
+        "status": "active",
+    },
+    {
+        "_id": "g-gpu",
+        "project": "p-pdf",
+        "period": "2026Q3",
+        "first_period": "2026Q3",
+        "text": "Port the solver to GPU",
+        "status": "backburner",
+    },
+    {
+        "_id": "g-tutorial",
+        "project": "p-pdf",
+        "period": "2026Q3",
+        "first_period": "2026Q3",
+        "text": "A tutorial notebook",
+        "status": "wishlist",
+    },
+    {
+        "_id": "g-repro",
+        "project": "p-pdf",
+        "period": "2026Q2",
+        "first_period": "2026Q2",
+        "text": "Reproduce the 2019 result",
+        "status": "finished",
+        "end_date": "2026-06-30",
+    },
+]
+
+TASKS = [
+    {
+        "_id": "t-bg",
+        "goal": "g-converge",
+        "due_date": "2026-09-11",
+        "first_due_date": "2026-09-04",
+        "text": "Re-run the fits",
+        "status": "active",
+    },
+    {
+        "_id": "t-plot",
+        "goal": "g-converge",
+        "due_date": "2026-09-11",
+        "first_due_date": "2026-09-11",
+        "text": "Send the convergence plot",
+        "status": "finished",
+    },
+    {
+        "_id": "t-outline",
+        "goal": "g-methods",
+        "due_date": "2026-09-04",
+        "first_due_date": "2026-09-04",
+        "text": "Outline the methods section",
+        "status": "finished",
+    },
+]
+
+
+@pytest.fixture
+def documents():
+    """Return the rendered documents, keyed by the person they are
+    for."""
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": GOALS, "mc_tasks": TASKS}
+    return {person: "\n".join(lines) for person, lines in builder.documents().items()}
+
+
+@pytest.mark.parametrize(
+    "date, expected_monday",
+    [
+        # Test which week a date is rendered under, since a task is grouped by
+        # the week its due date falls in
+        # C1: a Monday, expect itself
+        (dt.date(2026, 9, 7), dt.date(2026, 9, 7)),
+        # C2: midweek, expect the Monday before it
+        (dt.date(2026, 9, 9), dt.date(2026, 9, 7)),
+        # C3: the Sunday that ends the week, expect the same Monday
+        (dt.date(2026, 9, 13), dt.date(2026, 9, 7)),
+        # C4: the next Monday, expect the following week
+        (dt.date(2026, 9, 14), dt.date(2026, 9, 14)),
+    ],
+)
+def test_week_of_places_a_date_in_its_week(date, expected_monday):
+    assert week_of(date) == expected_monday
+
+
+@pytest.mark.parametrize(
+    "value, expected",
+    [
+        # Test reading a date from a collection, which stores them as dates on
+        # the filesystem backend and as iso strings on mongo
+        # C1: an iso string, as mongo returns
+        ("2026-09-11", dt.date(2026, 9, 11)),
+        # C2: a date, as the filesystem returns
+        (dt.date(2026, 9, 11), dt.date(2026, 9, 11)),
+        # C3: nothing, expect nothing rather than an error
+        (None, None),
+    ],
+)
+def test_as_date_reads_either_backend(value, expected):
+    assert as_date(value) == expected
+
+
+def test_a_project_with_no_lead_goes_to_the_unassigned_document(documents):
+    # Test that an unled project is an orphan, which is how they are found and
+    # assigned
+    assert "GPU solver" in documents["unassigned"]
+    assert "GPU solver" not in documents["pliu"]
+
+
+@pytest.mark.parametrize(
+    "heading, expected_goal",
+    [
+        # Test that each goal is rendered under the heading its status puts it
+        # under, so the document follows the meeting
+        # C1: an open goal in the current period, expect the goals section
+        ("## Goals — 2026Q3", "Get the fits converging"),
+        # C2: a goal held back, expect the backburner
+        ("## Backburner", "Port the solver to GPU"),
+        # C3: a goal not being worked on, expect the wishlist
+        ("## Wishlist", "A tutorial notebook"),
+        # C4: a goal from a past period, expect the archive
+        ("### Goals — 2026Q2", "Reproduce the 2019 result"),
+    ],
+)
+def test_a_goal_is_rendered_under_its_status(heading, expected_goal, documents):
+    doc = documents["pliu"]
+    section = doc.split(heading)[1].split("\n##")[0]
+    assert expected_goal in section
+
+
+@pytest.mark.parametrize(
+    "expected_line",
+    [
+        # Test the notes that make a rolled goal legible without a second
+        # record, since a goal that moves period is one record that moved
+        # C1: in the current period, expect how long it has been carried
+        "Get the fits converging  ^g-converge  (carried since 2026Q2)",
+        # C2: in the period it came from, expect where it went
+        "Get the fits converging  ^g-converge  (→ rolled to 2026Q3)",
+        # C3: a goal that closed, expect when
+        "Reproduce the 2019 result  ^g-repro  (finished 2026-06-30)",
+    ],
+)
+def test_a_carried_goal_says_so_in_both_periods(expected_line, documents):
+    assert expected_line in documents["pliu"]
+
+
+@pytest.mark.parametrize(
+    "expected_line",
+    [
+        # Test that a task carries its checkbox state and its stable id, and is
+        # numbered against the goal it belongs to
+        # C1: an unfinished task, expect an empty box
+        "- [ ] 1.1.1  Re-run the fits  ^t-bg",
+        # C2: a finished task, expect a ticked box
+        "- [x] 1.1.2  Send the convergence plot  ^t-plot",
+    ],
+)
+def test_a_task_is_rendered_with_its_state_and_id(expected_line, documents):
+    assert expected_line in documents["pliu"]
+
+
+def test_weeks_run_backwards_from_the_most_recent(documents):
+    # Test that the newest week is nearest the top, which is the order the
+    # meeting reads in
+    doc = documents["pliu"]
+    assert doc.index("## Week of 2026-09-07") < doc.index("## Week of 2026-08-31")
+
+
+def test_nobody_has_to_type_the_numbers_or_the_ids(documents):
+    # Test that every goal and task line carries the id it will be matched back
+    # by, since the numbers beside them are positional and get rewritten
+    doc = documents["pliu"]
+    for _id in ["g-converge", "g-methods", "g-gpu", "g-tutorial", "t-bg", "t-plot"]:
+        assert f"^{_id}" in doc
+
+
+@pytest.mark.parametrize(
+    "text, expected_ids",
+    [
+        # Test reading the ids a document carries, which is how a render keeps
+        # an order somebody chose in a meeting
+        # C1: ids in the order they appear, expect that order
+        ("- one ^g-b\n- two ^g-a\n", ["g-b", "g-a"]),
+        # C2: an id repeated, as a rolled goal is, expect it once
+        ("- one ^g-b\n- again ^g-b\n- two ^g-a\n", ["g-b", "g-a"]),
+        # C3: nothing to read, expect nothing
+        ("# Mission control — pliu\n", []),
+    ],
+)
+def test_ids_in_document_reads_the_order(text, expected_ids):
+    assert ids_in_document(text) == expected_ids
+
+
+@pytest.mark.parametrize(
+    "order, expected_ids",
+    [
+        # Test the ordering rule: the document wins for what it mentions, and
+        # anything else follows it
+        # C1: the document names both, expect its order rather than the default
+        (["p-orphan", "p-pdf"], ["p-orphan", "p-pdf"]),
+        # C2: the document names one, expect it first and the rest after
+        (["p-orphan"], ["p-orphan", "p-pdf"]),
+        # C3: the document names none, expect the fallback order
+        ([], ["p-orphan", "p-pdf"]),
+        # C4: the document names something that is gone, expect it ignored
+        (["p-deleted", "p-pdf"], ["p-pdf", "p-orphan"]),
+    ],
+)
+def test_in_document_order_puts_the_document_first(order, expected_ids):
+    ordered = in_document_order(PROJECTS, order, lambda p: p["_id"])
+    assert [p["_id"] for p in ordered] == expected_ids
+
+
+def test_a_render_keeps_the_order_the_document_chose():
+    # Test the whole rule through a render: a person who has reordered their
+    # projects keeps that order, and a new project joins the end
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": GOALS, "mc_tasks": TASKS}
+    both = [dict(p, lead="pliu") for p in PROJECTS]
+    builder.gtx["mc_projects"] = both
+    reordered = builder.documents({"pliu": ["p-orphan"]})["pliu"]
+    projects = [line for line in reordered if line.startswith(("1. ", "2. "))]
+    assert projects[0].endswith("^p-orphan")
+    assert projects[1].endswith("^p-pdf")
+
+
+def test_a_goal_finished_this_period_is_still_shown():
+    # Test that closing a goal does not make it disappear.  The goals section
+    # used to show only open ones and the archive only past periods, so a goal
+    # finished in the current period appeared nowhere, and reviewing the period
+    # is most of what the meeting is for.
+    finished_now = dict(GOALS[1], status="finished", end_date="2026-09-11")
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": [GOALS[0], finished_now], "mc_tasks": []}
+    doc = "\n".join(builder.documents()["pliu"])
+    section = doc.split("## Goals — 2026Q3")[1].split("\n##")[0]
+    assert "Draft the methods section" in section
+    assert "(finished 2026-09-11)" in section
+
+
+@pytest.mark.parametrize(
+    "people, expected_name, expected_heading",
+    [
+        # Test what a document is called and headed.  It is for a person to
+        # open, so it carries their name rather than their id.
+        # C1: the people collection knows them, expect their first name
+        ([{"_id": "pliu", "name": "Pei Liu"}], "pei", "Pei Liu"),
+        # C2: it does not know them, expect the id, so a document is still written
+        ([], "pliu", "pliu"),
+    ],
+)
+def test_a_document_is_named_for_the_person(people, expected_name, expected_heading):
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": GOALS, "mc_tasks": TASKS, "people": people}
+    assert builder.document_name("pliu") == expected_name
+    assert builder.documents()["pliu"][0] == f"# Mission control — {expected_heading}"
+
+
+def test_the_unassigned_document_is_not_named_for_a_person():
+    # Test that the orphans document keeps its own name, since no person owns it
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": GOALS, "mc_tasks": TASKS, "people": []}
+    assert builder.document_name("unassigned") == "unassigned"
