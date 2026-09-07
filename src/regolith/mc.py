@@ -458,6 +458,72 @@ def logical_lines(text):
     return joined
 
 
+HEADING_LINE = re.compile(r"^\s*#+\s")
+# what a render may add to or take off a line without the line having changed
+LEADING = re.compile(r"^\s*(?:[-*]\s+(?:\[[ xX]\]\s+)?)?(?:\d+(?:\.\d+)*\.?\s+)?")
+NOTE = re.compile(r"\((?:carried since|finished|dropped|→ rolled to)[^)]*\)")
+MARKS = re.compile(r"\^[\w.-]+|~~|\*\*")
+
+
+def said_in(line):
+    """Return what a line says, without the marks a render may change.
+
+    The number in front of a goal is positional, the id after it is
+    written by the render, and the note at the end says what became of
+    it.  None of them is what somebody typed, so none of them counts
+    when asking whether a line is still there.
+
+    Parameters
+    ----------
+    line : str
+        The line, as the document has it.
+
+    Returns
+    -------
+    str
+        What it says.
+    """
+    text = NOTE.sub("", LEADING.sub("", line.strip(), count=1))
+    return " ".join(MARKS.sub("", text).split())
+
+
+def would_lose(existing, written):
+    """Return what a document says that a new one would not.
+
+    A render writes the collections out over the document, so anything
+    in the document that never reached the collections is gone.  That is
+    every line typed since the last sync, and every line a sync could
+    not store: a goal under no project, a task under no goal, a note
+    somebody left in the margin.
+
+    Headings are not compared.  They are the shape of the document
+    rather than anything somebody typed, and a week with nothing left in
+    it is meant to go.
+
+    Parameters
+    ----------
+    existing : str
+        The document as it stands.
+    written : str
+        The document as the render would write it.
+
+    Returns
+    -------
+    list of str
+        What the document says and the render does not, in the order it
+        says it.  Empty when nothing would be lost.
+    """
+    kept = {said_in(line) for _, line in logical_lines(written) if not HEADING_LINE.match(line)}
+    lost = []
+    for _, line in logical_lines(existing):
+        if not line.strip() or HEADING_LINE.match(line):
+            continue
+        said = said_in(line)
+        if said and said not in kept and said not in lost:
+            lost.append(said)
+    return lost
+
+
 def parse_document(text, taken=(), prefix=None):
     """Return the projects, goals and tasks a mission control document
     describes.

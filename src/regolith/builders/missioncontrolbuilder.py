@@ -28,11 +28,15 @@ from regolith.mc import (
     period_of,
     struck,
     week_of,
+    would_lose,
     wrap,
 )
 from regolith.tools import all_docs_from_collection
 
 UNASSIGNED = "unassigned"
+# how many of the things a document would lose to name before saying how many
+# more there are
+SHOWN_WHEN_REFUSING = 10
 UNASSIGNED_NAME = "unassigned"
 HELD_STATI = ("on-deck", "wishlist")
 ID_IN_DOCUMENT = re.compile(r"\^([\w.-]+)")
@@ -269,11 +273,50 @@ class MissionControlBuilder(BuilderBase):
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def render(self):
-        """Write a document for each person, and one for the orphans."""
+        """Write a document for each person, and one for the orphans.
+
+        A render writes the collections out over the document, so a
+        document is only written when everything in it is in the
+        collections already.  Anything else is work that has not been
+        read back yet, and writing over it would be the end of it.
+        """
         self.mcdir.mkdir(parents=True, exist_ok=True)
         for person, lines in sorted(self.documents(self.existing_orders()).items()):
             path = self.mcdir / f"{self.document_name(person)}.md"
-            path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+            written = "\n".join(lines) + "\n"
+            if path.is_file():
+                existing = path.read_text(encoding="utf-8")
+                lost = would_lose(existing, written)
+                if lost:
+                    self.refuse(path, lost)
+                    continue
+                self.keep_a_copy(path, existing)
+            path.write_text(written, encoding="utf-8")
+
+    @staticmethod
+    def refuse(path, lost):
+        """Say why a document was left as it is."""
+        print(f"{path.name} was left alone: it says things the collections do not have.")
+        for said in lost[:SHOWN_WHEN_REFUSING]:
+            print(f"    {said}")
+        if len(lost) > SHOWN_WHEN_REFUSING:
+            print(f"    ... and {len(lost) - SHOWN_WHEN_REFUSING} more")
+        print("Run 'regolith helper mc_sync' to read them in, then build again.")
+        print(
+            "A line still named after a sync is one the collections cannot hold as "
+            "it is: put it under a goal or a project, or take it out."
+        )
+
+    def keep_a_copy(self, path, existing):
+        """Keep the document as it was before writing over it.
+
+        The copy goes under the build directory rather than beside the
+        document, so that it is out of the way of whatever syncs the
+        documents themselves.
+        """
+        previous = Path(self.bldir) / "mission-control-previous"
+        previous.mkdir(parents=True, exist_ok=True)
+        (previous / path.name).write_text(existing, encoding="utf-8")
 
     def existing_orders(self):
         """Return what each document already in the build dir names, in

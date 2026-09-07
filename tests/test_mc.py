@@ -17,6 +17,7 @@ from regolith.mc import (
     project_id,
     short_id,
     struck,
+    would_lose,
     wrap,
 )
 
@@ -321,3 +322,62 @@ def test_a_period_written_some_other_way_still_sorts():
 def test_a_period_that_does_not_start_on_a_date_says_so(periods):
     with pytest.raises(DocumentError, match="not a date of the year"):
         period_of(dt.date(2026, 9, 7), periods)
+
+
+BUILT = """# Mission control — Simon Billinge
+
+## Projects
+
+1. **a project**  ^p1
+
+## Goals — 2026summer
+
+- 1.1  a stored goal  ^g1
+
+## Week of 2026-09-07
+
+- [ ] 1.1.1  a stored task  ^t1
+
+## On-deck
+
+## Wishlist
+
+## Archive
+"""
+
+
+@pytest.mark.parametrize(
+    "typed, expected_lost",
+    [
+        # Test what a render would write over.  A render puts the collections
+        # out over the document, so anything in the document that never
+        # reached the collections is gone, and that is what this has to catch.
+        # C1: nothing added, expect nothing lost
+        (BUILT, []),
+        # C2: a goal typed with no number, which a sync cannot store and so
+        # never reaches the collections
+        (
+            BUILT.replace("- 1.1  a stored goal  ^g1", "- 1.1  a stored goal  ^g1\n- one I typed"),
+            ["one I typed"],
+        ),
+        # C3: a task typed since the last sync
+        (
+            BUILT.replace("- [ ] 1.1.1  a stored task  ^t1", "- [ ] 1.1.1  a stored task  ^t1\n- [ ] and another"),
+            ["and another"],
+        ),
+        # C4: a note left in the margin, which no section holds and so no
+        # sync can store.  This is the one that cost Simon a morning's work
+        (
+            BUILT.replace("## On-deck", "remember to ask about the beamtime\n\n## On-deck"),
+            ["remember to ask about the beamtime"],
+        ),
+        # C5: a line whose number and id changed but whose text did not, which
+        # is an ordinary render and loses nothing
+        (BUILT.replace("- 1.1  a stored goal  ^g1", "- 2.3  a stored goal  ^g1  (carried since 2026spring)"), []),
+        # C6: a line struck through since the last sync, which says the same
+        # thing and so is not lost, only unsaved
+        (BUILT.replace("a stored goal", "~~a stored goal~~"), []),
+    ],
+)
+def test_would_lose_finds_what_a_render_would_write_over(typed, expected_lost):
+    assert would_lose(typed, BUILT) == expected_lost
