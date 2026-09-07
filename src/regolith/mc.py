@@ -60,20 +60,148 @@ def week_of(date):
     return date - dt.timedelta(days=date.weekday())
 
 
-def quarter_of(date):
+# When the periods of the year begin, for a group that has not said.  Most
+# universities are on semesters, so those are the default; a group on quarters,
+# or on nothing much, says so in regolithrc.json under mission_control_periods,
+# as {name: MM-DD} saying what each period is called and the day it starts.
+DEFAULT_PERIODS = {"spring": "01-01", "summer": "06-01", "fall": "09-01"}
+
+
+def period_starts(periods=None):
+    """Return when each period of the year starts, earliest first.
+
+    Parameters
+    ----------
+    periods : dict, optional
+        The periods as ``{name: "MM-DD"}``.  The default is semesters.
+
+    Returns
+    -------
+    list of tuple of (int, int, str)
+        The month, the day and the name of each, in the order they come
+        round.
+
+    Raises
+    ------
+    DocumentError
+        When a start is not written as MM-DD, naming the one that is not.
+    """
+    starts = []
+    for name, start in (periods or DEFAULT_PERIODS).items():
+        try:
+            month, day = (int(part) for part in str(start).split("-"))
+            dt.date(2000, month, day)
+        except (TypeError, ValueError):
+            raise DocumentError(
+                f"The period {name} starts on {start!r}, which is not a date of the "
+                f"year. Please write it as MM-DD, such as 09-01, in "
+                f"mission_control_periods in regolithrc.json."
+            )
+        starts.append((month, day, str(name)))
+    return sorted(starts)
+
+
+def period_of(date, periods=None):
     """Return the period a date falls in, as the documents write one.
+
+    The year goes in front of the name, so a period reads as the whole
+    of when it was: ``2026fall``.
 
     Parameters
     ----------
     date : datetime.date
         The date to place.
+    periods : dict, optional
+        The periods as ``{name: "MM-DD"}``.  The default is semesters.
 
     Returns
     -------
     str
-        The quarter, e.g. ``2026Q3``.
+        The period, e.g. ``2026fall``.
     """
-    return f"{date.year}Q{(date.month - 1) // 3 + 1}"
+    starts = period_starts(periods)
+    begun = [(month, day, name) for month, day, name in starts if (month, day) <= (date.month, date.day)]
+    if begun:
+        return f"{date.year}{begun[-1][2]}"
+    # the year has not reached its first period yet, so we are still in the
+    # last one of the year before
+    return f"{date.year - 1}{starts[-1][2]}"
+
+
+def next_period(date, periods=None):
+    """Return the period after the one a date falls in.
+
+    Preparing for the period to come is ordinary work, and it happens
+    while the one before it is still running.
+
+    Parameters
+    ----------
+    date : datetime.date
+        The date to start from.
+    periods : dict, optional
+        The periods as ``{name: "MM-DD"}``.  The default is semesters.
+
+    Returns
+    -------
+    str
+        The period after this one.
+    """
+    starts = period_starts(periods)
+    year, name = split_period(period_of(date, periods), periods)
+    nth = [start[2] for start in starts].index(name) + 1
+    if nth == len(starts):
+        return f"{int(year) + 1}{starts[0][2]}"
+    return f"{year}{starts[nth][2]}"
+
+
+def split_period(period, periods=None):
+    """Return a period as its year and its name.
+
+    Parameters
+    ----------
+    period : str
+        The period, e.g. ``2026fall``.
+    periods : dict, optional
+        The periods as ``{name: "MM-DD"}``.  The default is semesters.
+
+    Returns
+    -------
+    tuple of (str, str) or None
+        The year and the name, or None for a period written some other
+        way.
+    """
+    for _, _, name in period_starts(periods):
+        if period.endswith(name) and period[: -len(name)]:
+            return period[: -len(name)], name
+    return None
+
+
+def period_key(period, periods=None):
+    """Return a key that puts periods in the order they came round.
+
+    The names of the periods do not sort into the order they happen --
+    fall comes before spring in the alphabet and after it in the year --
+    so anything ordering periods sorts on this rather than on the text.
+
+    Parameters
+    ----------
+    period : str
+        The period, e.g. ``2026fall``.
+    periods : dict, optional
+        The periods as ``{name: "MM-DD"}``.  The default is semesters.
+
+    Returns
+    -------
+    tuple of (str, int)
+        The year, and where in the year the period comes.  A period
+        written some other way sorts after the ones of its own text.
+    """
+    starts = period_starts(periods)
+    split = split_period(period, periods)
+    if split is None:
+        return (period, len(starts))
+    year, name = split
+    return (year, [start[2] for start in starts].index(name))
 
 
 def slug(text):
