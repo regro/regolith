@@ -150,12 +150,14 @@ def create_parser():
         default=None,
     )
     bldp.add_argument(
-        "--build-everything",
-        dest="build_everything",
+        "--all",
+        dest="build_all",
         action="store_true",
         default=False,
-        help="build for everybody rather than only the people currently in the "
-        "group, for the builders that leave out the people who have left",
+        help="build everything the target has, rather than the part of it that "
+        "is current.  Several builders leave out what has finished or whoever "
+        "has left the group; this is how to ask for the rest.  It reads the "
+        "same way as --all on the listers",
     )
     bldp.add_argument(
         "--kwargs",

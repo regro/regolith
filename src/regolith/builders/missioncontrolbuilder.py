@@ -220,7 +220,7 @@ class MissionControlBuilder(BuilderBase):
     # point: a group of any age has more people who have left than people in
     # it, and nobody wants to read through the documents of both.
     only_people = None
-    build_everything = False
+    build_all = False
 
     def __init__(self, rc):
         super().__init__(rc)
@@ -234,7 +234,7 @@ class MissionControlBuilder(BuilderBase):
         # goal belongs to and the order the archive reads in
         self.periods = getattr(rc, "mission_control_periods", None)
         self.only_people = getattr(rc, "people", None)
-        self.build_everything = bool(getattr(rc, "build_everything", False))
+        self.build_all = bool(getattr(rc, "build_all", False))
 
     def display_name(self, person):
         """Return the name to head a person's document with."""
@@ -308,7 +308,7 @@ class MissionControlBuilder(BuilderBase):
         if left_out:
             print(
                 f"{left_out} documents were not built, of people who are not in the group. "
-                f"Use --build-everything for all of them, or --people to name one."
+                f"Use --all for all of them, or --people to name one."
             )
 
     def whose_documents(self):
@@ -328,7 +328,7 @@ class MissionControlBuilder(BuilderBase):
         if self.only_people:
             named = {self.person_id(name) for name in self.only_people}
             return {person for person in everybody if person in named}
-        if self.build_everything:
+        if self.build_all:
             return everybody
         return {p for p in everybody if p == UNASSIGNED or in_the_group(p, self.gtx.get("people", []))}
 

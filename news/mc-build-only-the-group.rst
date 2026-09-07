@@ -1,8 +1,8 @@
 **Added:**
 
-* ``regolith build --build-everything`` builds for everybody rather than only
-  the people currently in the group, for the builders that leave out the
-  people who have left.
+* ``regolith build --all`` builds everything a target has rather than the part
+  of it that is current, for the builders that narrow by default.  It reads
+  the same way as ``--all`` on the listers.
 
 **Changed:**
 

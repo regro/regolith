@@ -752,7 +752,7 @@ def a_group_build(tmp_path, **rc):
         # and not the person who has left
         ({}, ["pei.md", "unassigned.md", "no.md"]),
         # C2: everything asked for, expect the one who has left as well
-        ({"build_everything": True}, ["pei.md", "unassigned.md", "no.md", "has.md"]),
+        ({"build_all": True}, ["pei.md", "unassigned.md", "no.md", "has.md"]),
         # C3: one person named, expect only theirs, whatever their standing.
         # Naming somebody is how their document is built after they leave
         ({"only_people": ["gone"]}, ["has.md"]),
@@ -782,4 +782,4 @@ def test_a_build_says_how_many_documents_it_left_out(tmp_path, capsys):
     builder.render()
     said = capsys.readouterr().out
     assert "1 documents were not built" in said
-    assert "--build-everything" in said
+    assert "--all" in said
