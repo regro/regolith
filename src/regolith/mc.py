@@ -74,6 +74,7 @@ class DocumentError(ValueError):
 HEADING = re.compile(r"^(#+)\s+(.*?)\s*$")
 PROJECT_LINE = re.compile(r"^(\d+)\.\s+\*\*(?P<text>.*?)\*\*\s*(?:\^(?P<id>[\w.-]+))?\s*$")
 DELIVERABLE_LINE = re.compile(r"^\s+deliverable:\s*(?P<text>.*?)\s*$")
+WITH_LINE = re.compile(r"^\s+with:\s*(?P<people>.*?)\s*$")
 GOAL_LINE = re.compile(
     r"^-\s+(?P<number>[\d.]+)?\s*(?P<text>.*?)\s*(?:\^(?P<id>[\w.-]+))?\s*(?:\((?P<note>.*)\))?\s*$"
 )
@@ -213,6 +214,11 @@ class _Reader:
         deliverable = DELIVERABLE_LINE.match(line)
         if deliverable and self.projects:
             self.projects[-1]["project_deliverable"] = deliverable.group("text")
+            return True
+        with_line = WITH_LINE.match(line)
+        if with_line and self.projects:
+            people = [who.strip() for who in with_line.group("people").split(",")]
+            self.projects[-1]["collaborators"] = [who for who in people if who]
             return True
         found = PROJECT_LINE.match(line)
         if not found:

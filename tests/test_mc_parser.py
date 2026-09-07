@@ -185,3 +185,30 @@ def test_a_rendered_document_reads_back_as_what_was_rendered(projects, goals, ta
         assert task["text"] == original["text"]
         assert task["status"] == original["status"]
         assert task.get("parent") == original.get("parent")
+
+
+@pytest.mark.parametrize(
+    "line, expected",
+    [
+        # Test reading back who is on a project, which is written under it
+        # C1: several people, expect them separated
+        ("   with: sgeorge, akabir, seggert", ["sgeorge", "akabir", "seggert"]),
+        # C2: one person, expect a list of one
+        ("   with: sgeorge", ["sgeorge"]),
+        # C3: spacing somebody typed by hand, expect it ignored
+        ("   with:  sgeorge ,akabir ", ["sgeorge", "akabir"]),
+        # C4: a trailing comma, expect no empty person
+        ("   with: sgeorge, akabir,", ["sgeorge", "akabir"]),
+    ],
+)
+def test_who_is_on_a_project_is_read_back(line, expected):
+    text = f"## Projects\n\n1. **p**  ^p1\n{line}\n"
+    assert parse_document(text)["projects"][0]["collaborators"] == expected
+
+
+def test_a_project_read_back_keeps_its_deliverable_and_its_people():
+    # Test that the two lines under a project do not displace one another
+    text = "## Projects\n\n1. **p**  ^p1\n   deliverable: submit it\n   with: sgeorge\n"
+    project = parse_document(text)["projects"][0]
+    assert project["project_deliverable"] == "submit it"
+    assert project["collaborators"] == ["sgeorge"]

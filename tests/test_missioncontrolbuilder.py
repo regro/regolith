@@ -17,6 +17,7 @@ PROJECTS = [
         "_id": "p-pdf",
         "name": "Nanoparticle structure from the PDF",
         "project_deliverable": "Submit the paper",
+        "collaborators": ["ascopatz", "afriend"],
         "lead": "pliu",
         "status": "active",
     },
@@ -401,3 +402,16 @@ def test_a_rolled_goal_is_not_struck_in_the_period_it_moved_to(documents):
     # since it is still to be done
     current = documents["pliu"].split("## Goals — 2026Q3")[1].split("\n##")[0]
     assert "- 1.1  Get the fits converging  ^g-converge  (carried since 2026Q2)" in current
+
+
+def test_a_project_lists_who_is_on_it(documents):
+    # Test that the people on a project are written under it, as a reminder
+    # when talking about it
+    assert "   with: ascopatz, afriend" in documents["pliu"]
+
+
+def test_a_project_with_nobody_on_it_says_nothing(documents):
+    # Test that an empty list leaves the line out rather than writing a bare
+    # heading with nothing after it
+    assert "   with: \n" not in documents["unassigned"]
+    assert "with:" not in documents["unassigned"]

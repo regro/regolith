@@ -273,6 +273,8 @@ class MissionControlBuilder(BuilderBase):
             lines.append(f"{n}. **{project['name']}**  ^{project['_id']}")
             if project.get("project_deliverable"):
                 lines.append(f"   deliverable: {project['project_deliverable']}")
+            if project.get("collaborators"):
+                lines.append(f"   with: {', '.join(project['collaborators'])}")
         lines.append("")
         return lines
 
