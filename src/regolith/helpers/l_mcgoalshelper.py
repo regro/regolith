@@ -8,7 +8,7 @@ somebody agreed to get done this period and how far along it is.
 from gooey import GooeyParser
 
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.mc import CLOSED, HELD
+from regolith.mc import CLOSED, HELD, unassigned
 from regolith.tools import all_docs_from_collection, key_value_pair_filter
 
 TARGET_COLL = "mc_goals"
@@ -61,10 +61,17 @@ class MCGoalsListerHelper(SoutHelperBase):
         goals = key_value_pair_filter(self.gtx[rc.coll], rc.filter) if rc.filter else self.gtx[rc.coll]
         projects = {project["_id"]: project for project in self.gtx["mc_projects"]}
 
+        # a goal of a project belongs to whoever leads the project; one held
+        # on deck or on the wishlist may be of no project yet, and says whose
+        # it is itself
         if rc.lead:
-            goals = [g for g in goals if projects.get(g["project"], {}).get("lead") == rc.lead]
+            goals = [g for g in goals if self.whose(g, projects) == rc.lead]
         if rc.person:
-            goals = [g for g in goals if self.is_on(projects.get(g["project"], {}), rc.person)]
+            goals = [
+                g
+                for g in goals
+                if self.is_on(projects.get(g["project"], {}), rc.person) or self.whose(g, projects) == rc.person
+            ]
         if rc.held:
             goals = [g for g in goals if g.get("status") in HELD]
         elif not rc.all:
@@ -76,14 +83,37 @@ class MCGoalsListerHelper(SoutHelperBase):
             goals = [g for g in goals if g.get("period") == period]
 
         for project_id, its_goals in self.by_project(goals):
-            project = projects.get(project_id, {})
-            print(f"{project_id}  ({project.get('lead', 'nobody')})  {project.get('name', '')}")
+            if project_id not in projects:
+                print(f"{project_id}  (of no project yet)")
+            else:
+                project = projects[project_id]
+                print(f"{project_id}  ({project.get('lead', 'nobody')})  {project.get('name', '')}")
             for goal in its_goals:
                 print(f"    {self.line(goal)}")
                 if rc.verbose and goal.get("notes"):
                     for note in goal["notes"]:
                         print(f"        {note}")
         return
+
+    @staticmethod
+    def whose(goal, projects):
+        """Return whose goal it is, by its project or by itself.
+
+        Parameters
+        ----------
+        goal : dict
+            The goal.
+        projects : dict
+            The projects, keyed by id.
+
+        Returns
+        -------
+        str or None
+            The id of the person whose goal it is.
+        """
+        if unassigned(goal):
+            return goal.get("lead")
+        return projects.get(goal["project"], {}).get("lead")
 
     @staticmethod
     def is_on(project, person):
