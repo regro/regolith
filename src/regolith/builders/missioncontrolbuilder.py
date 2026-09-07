@@ -21,12 +21,14 @@ from pathlib import Path
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates
 from regolith.mc import (
+    KEEP_FINISHED_DAYS,
     DocumentError,
     in_the_group,
     led_by,
     parse_document,
     period_key,
     period_of,
+    retired,
     struck,
     unassigned,
     week_of,
@@ -222,6 +224,8 @@ class MissionControlBuilder(BuilderBase):
     # it, and nobody wants to read through the documents of both.
     only_people = None
     build_all = False
+    # how long a project stays in the document after it is finished
+    keep_finished_days = KEEP_FINISHED_DAYS
 
     def __init__(self, rc):
         super().__init__(rc)
@@ -236,6 +240,7 @@ class MissionControlBuilder(BuilderBase):
         self.periods = getattr(rc, "mission_control_periods", None)
         self.only_people = getattr(rc, "people", None)
         self.build_all = bool(getattr(rc, "build_all", False))
+        self.keep_finished_days = getattr(rc, "mission_control_keep_finished_days", KEEP_FINISHED_DAYS)
 
     @staticmethod
     def owner(person):
@@ -296,6 +301,7 @@ class MissionControlBuilder(BuilderBase):
         read back yet, and writing over it would be the end of it.
         """
         self.mcdir.mkdir(parents=True, exist_ok=True)
+        self.left_out = {}
         wanted = self.whose_documents()
         left_out = 0
         for person, lines in sorted(self.documents(self.existing_orders()).items()):
@@ -306,7 +312,7 @@ class MissionControlBuilder(BuilderBase):
             written = "\n".join(lines) + "\n"
             if path.is_file():
                 existing = path.read_text(encoding="utf-8")
-                lost = would_lose(existing, written)
+                lost = would_lose(existing, written, self.left_out.get(person, ()))
                 if lost:
                     self.refuse(path, lost)
                     continue
@@ -398,6 +404,8 @@ class MissionControlBuilder(BuilderBase):
         people = {led_by(p) or UNASSIGNED for p in self.gtx["mc_projects"]}
         return {person: by_name.get(self.document_name(person), []) for person in people}
 
+    left_out = {}
+
     def documents(self, orders=None):
         """Return the lines of every document, keyed by the person it is
         for.
@@ -431,6 +439,13 @@ class MissionControlBuilder(BuilderBase):
             The lines of the document.
         """
         projects = in_document_order(projects, order, lambda p: p["_id"])
+        # a project finished long ago stays in the collections and leaves the
+        # document, along with everything under it
+        old = (
+            [] if self.build_all else [p for p in projects if retired(p, dt.date.today(), self.keep_finished_days)]
+        )
+        projects = [p for p in projects if p not in old]
+        self.left_out[person] = [p.get("name", "") for p in old]
         number_of = {project["_id"]: n for n, project in enumerate(projects, start=1)}
         # a goal of a project belongs to whoever leads the project; a goal of
         # no project says whose it is itself, and is held on deck or on the
@@ -443,6 +458,8 @@ class MissionControlBuilder(BuilderBase):
         goals = in_document_order(mine, order, lambda g: g["_id"])
         goal_number = self.number_goals(goals, number_of)
         tasks = [t for t in live(self.gtx["mc_tasks"]) if t["goal"] in goal_number]
+        gone = {p["_id"] for p in old}
+        self.left_out[person] += [g["text"] for g in live(self.gtx["mc_goals"]) if g.get("project") in gone]
 
         lines = [f"# Mission control — {self.display_name(person)}", ""]
         lines += self.render_projects(projects)

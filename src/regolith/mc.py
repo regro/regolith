@@ -489,7 +489,7 @@ def said_in(line):
     return " ".join(MARKS.sub("", text).split())
 
 
-def would_lose(existing, written):
+def would_lose(existing, written, also_kept=()):
     """Return what a document says that a new one would not.
 
     A render writes the collections out over the document, so anything
@@ -508,6 +508,10 @@ def would_lose(existing, written):
         The document as it stands.
     written : str
         The document as the render would write it.
+    also_kept : iterable of str, optional
+        What the render left out on purpose, which the collections still
+        hold and so is not lost.  A project finished years ago is left
+        out this way.
 
     Returns
     -------
@@ -516,6 +520,7 @@ def would_lose(existing, written):
         says it.  Empty when nothing would be lost.
     """
     kept = {said_in(line) for _, line in logical_lines(written) if not HEADING_LINE.match(line)}
+    kept |= {said_in(text) for text in also_kept}
     lost = []
     for _, line in logical_lines(existing):
         if not line.strip() or HEADING_LINE.match(line):
@@ -968,6 +973,64 @@ def _close(record, was, today):
 NOBODY = ("", "na", "tbd", "none")
 # a project in one of these is done with, so it cannot be an orphan
 CLOSED = ("finished", "dropped")
+
+
+# how long a finished project stays in the document, when nothing says
+KEEP_FINISHED_DAYS = 365
+
+
+def retired(project, today, days=KEEP_FINISHED_DAYS):
+    """Return True if a project finished long enough ago to leave the
+    document.
+
+    Seeing what has just been finished is worth the room it takes; a
+    project finished years ago is not, and a person who has been in the
+    group a while has many.  It stays in the collections either way, and
+    a build asked for everything writes it out as before.
+
+    The date it finished is its end date, or the date it began when
+    nothing recorded an end.  A finished project with neither stays,
+    since there is nothing to say it is old.
+
+    Parameters
+    ----------
+    project : dict
+        The project.
+    today : datetime.date
+        The day to count back from.
+    days : int, optional
+        How long a finished project is kept.  The default is a year.
+
+    Returns
+    -------
+    bool
+        Whether it has been finished long enough to go.
+    """
+    if project.get("status") != "finished":
+        return False
+    when = as_a_date(project.get("end_date")) or as_a_date(project.get("begin_date"))
+    return bool(when) and (today - when).days > days
+
+
+def as_a_date(value):
+    """Return a date from a date or from what a collection wrote one as.
+
+    Parameters
+    ----------
+    value : datetime.date or str or None
+        The value to read.
+
+    Returns
+    -------
+    datetime.date or None
+        The date, or None when there was nothing to read.
+    """
+    if value is None or isinstance(value, dt.date):
+        return value
+    try:
+        return dt.date.fromisoformat(str(value)[:10])
+    except ValueError:
+        return None
 
 
 def unassigned(goal):

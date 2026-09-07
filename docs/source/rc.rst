@@ -179,6 +179,21 @@ The order the periods are given in does not matter, since they are put in the
 order they come round by the dates. That order is what mission control sorts an
 archive by, rather than the letters of the names, which do not agree with it.
 
+``mission_control_keep_finished_days``
+======================================
+How long a finished project stays in a mission control document, in days. If
+none is provided it defaults to 365.
+
+Seeing what has just been finished is worth the room it takes; a project
+finished years ago is not, and somebody who has been in the group a while has
+many. A project older than this leaves the document and stays in the
+collections, so ``regolith helper l-mcprojects --all`` still lists it and
+``regolith build mission-control --all`` still writes it out.
+
+The date counted from is the project's ``end_date``, or its ``begin_date`` when
+nothing recorded an end. A finished project with neither stays, since there is
+nothing to say it is old.
+
 ``static_source``
 =================
 File path to the static source for ``regolith build html``. If none provided it defaults to "templates"
