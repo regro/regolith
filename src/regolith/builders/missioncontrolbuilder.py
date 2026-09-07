@@ -20,7 +20,7 @@ from pathlib import Path
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates
-from regolith.mc import DocumentError, parse_document, struck, wrap
+from regolith.mc import DocumentError, led_by, parse_document, struck, wrap
 from regolith.tools import all_docs_from_collection
 
 UNASSIGNED = "unassigned"
@@ -254,7 +254,7 @@ class MissionControlBuilder(BuilderBase):
         by_name = {}
         for path in self.mcdir.glob("*.md"):
             by_name[path.stem] = keys_in_document(path.read_text(encoding="utf-8"))
-        people = {p.get("lead") or UNASSIGNED for p in self.gtx["mc_projects"]}
+        people = {led_by(p) or UNASSIGNED for p in self.gtx["mc_projects"]}
         return {person: by_name.get(self.document_name(person), []) for person in people}
 
     def documents(self, orders=None):
@@ -270,7 +270,7 @@ class MissionControlBuilder(BuilderBase):
         orders = orders or {}
         by_person = defaultdict(list)
         for project in live(self.gtx["mc_projects"]):
-            by_person[project.get("lead") or UNASSIGNED].append(project)
+            by_person[led_by(project) or UNASSIGNED].append(project)
         return {
             person: self.render_person(person, projects, orders.get(person, []))
             for person, projects in by_person.items()

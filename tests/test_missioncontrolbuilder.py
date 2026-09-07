@@ -575,3 +575,29 @@ def test_a_document_with_no_ids_still_says_what_order_it_is_in():
 def test_keys_in_document_reads_ids_and_texts(document, expected_keys):
     keys = keys_in_document(document)
     assert [key for key in keys if key in expected_keys] == expected_keys
+
+
+@pytest.mark.parametrize(
+    "lead",
+    [
+        # Test that a placeholder lead is not taken for a person.  The adder
+        # writes tbd into a stub, and projecta wrote na, and neither is
+        # somebody whose document should be written.
+        # C1: the adder's placeholder
+        "tbd",
+        # C2: the one projecta used
+        "na",
+        # C3: what a form leaves behind
+        "",
+    ],
+)
+def test_a_project_nobody_leads_goes_to_the_unassigned_document(lead):
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {
+        "mc_projects": [dict(PROJECTS[0], lead=lead)],
+        "mc_goals": [],
+        "mc_tasks": [],
+        "people": [],
+    }
+    documents = builder.documents()
+    assert list(documents) == ["unassigned"]

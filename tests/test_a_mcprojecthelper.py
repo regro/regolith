@@ -8,7 +8,7 @@ import pytest
 
 from regolith.database import connect
 from regolith.main import main
-from regolith.mc import slug
+from regolith.mc import led_by, slug
 from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
 
 
@@ -49,8 +49,7 @@ def test_adding_a_project_says_whose_it_is(args, expected_in_output, make_db, ca
 
 
 def test_a_project_is_stored_with_what_was_given(make_db):
-    # Test that what the command line carries reaches the collection, and that
-    # what it does not carry is left out rather than stored empty
+    # Test that what the command line carries reaches the collection
     os.chdir(make_db)
     main(
         [
@@ -84,7 +83,8 @@ def test_a_project_is_stored_with_what_was_given(make_db):
     assert project["grants"] == ["dmref15"]
     assert project["project_deliverable"] == "a short paper"
     assert project["status"] == "proposed"
-    assert "project_description" not in project
+    # nothing was said about it, so it says so rather than being left out
+    assert project["project_description"] == "tbd"
 
 
 def test_adding_a_project_that_is_already_there_says_how_to_pick_another(make_db):
@@ -124,3 +124,45 @@ def test_an_id_given_by_hand_is_put_in_the_form_ids_take(given_id, expected_id, 
     filter_databases(rc)
     with connect(rc) as rc.client:
         assert rc.client.get("mc_projects", expected_id) is not None
+
+
+@pytest.mark.parametrize(
+    "field, expected",
+    [
+        # Test that a stub says what is not known yet rather than leaving it
+        # out.  The point of the adder is to write a project down in the
+        # moment it is mentioned, and a tbd in the document is what reminds
+        # somebody to fill it in.
+        # C1: no lead given, expect tbd, which reads as unassigned everywhere
+        ("lead", "tbd"),
+        # C2: nothing said about what it produces
+        ("project_deliverable", "tbd"),
+        # C3: nothing said about what it is
+        ("project_description", "tbd"),
+        # C4: no grant paying for it yet
+        ("grants", ["tbd"]),
+    ],
+)
+def test_a_stub_says_what_is_not_known_yet(field, expected, make_db):
+    os.chdir(make_db)
+    main(["helper", "a_mcproject", f"stub for {field}"])
+    rc = copy.copy(DEFAULT_RC)
+    rc._update(load_rcfile("regolithrc.json"))
+    filter_databases(rc)
+    with connect(rc) as rc.client:
+        assert rc.client.get("mc_projects", f"na-stub-for-{slug(field)}")[field] == expected
+
+
+def test_a_stub_with_no_lead_is_named_and_read_as_nobody_s(make_db):
+    # Test that tbd is a placeholder and not a person: the id says na, the
+    # message says unassigned, and a render puts the project in the unassigned
+    # document rather than making one called tbd
+    os.chdir(make_db)
+    main(["helper", "a_mcproject", "a stub nobody leads"])
+    rc = copy.copy(DEFAULT_RC)
+    rc._update(load_rcfile("regolithrc.json"))
+    filter_databases(rc)
+    with connect(rc) as rc.client:
+        project = rc.client.get("mc_projects", "na-a-stub-nobody-leads")
+    assert project["lead"] == "tbd"
+    assert led_by(project) is None

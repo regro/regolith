@@ -18,11 +18,14 @@ from gooey import GooeyParser
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.mc import UNLED_PREFIX, initials, project_id, slug
+from regolith.mc import UNLED_PREFIX, initials, project_id, slug, unled
 from regolith.schemas import MC_STATI
 from regolith.tools import all_docs_from_collection
 
 TARGET_COLL = "mc_projects"
+# a stub is written down so that it is not forgotten, and what is not known
+# yet says so rather than being left out
+TBD = "tbd"
 HELPER_TARGET = "a_mcproject"
 
 
@@ -35,9 +38,10 @@ def subparser(subpi):
     subpi.add_argument(
         "-l",
         "--lead",
-        help="The id of the person leading it.  Without one the project is "
-        "unassigned, and is written to the unassigned document until somebody "
-        "moves it into theirs.",
+        default=TBD,
+        help=f"The id of the person leading it.  Default is {TBD}, which leaves "
+        f"the project unassigned and writes it to the unassigned document until "
+        f"somebody moves it into theirs.",
     )
     subpi.add_argument(
         "-w",
@@ -46,10 +50,25 @@ def subparser(subpi):
         nargs="+",
         help="The ids of the people on it, group members and others alike.",
     )
-    subpi.add_argument("-g", "--grants", nargs="+", help="The ids of the grants that pay for it.")
+    subpi.add_argument(
+        "-g",
+        "--grants",
+        nargs="+",
+        default=[TBD],
+        help=f"The ids of the grants that pay for it.  Default is {TBD}.",
+    )
     subpi.add_argument("--pi", dest="pi_id", help="The id of the principal investigator.")
-    subpi.add_argument("-d", "--deliverable", help="What the project produces, e.g. submit the paper.")
-    subpi.add_argument("--description", help="What the project is, for the project report.")
+    subpi.add_argument(
+        "-d",
+        "--deliverable",
+        default=TBD,
+        help=f"What the project produces, e.g. submit the paper.  Default is {TBD}.",
+    )
+    subpi.add_argument(
+        "--description",
+        default=TBD,
+        help=f"What the project is, for the project report.  Default is {TBD}.",
+    )
     subpi.add_argument(
         "-s",
         "--status",
@@ -91,7 +110,9 @@ class MCProjectAdderHelper(DbHelperBase):
         """Return the initials a project of this lead's is named
         with."""
         rc = self.rc
-        if not rc.lead:
+        # tbd is a placeholder rather than a person, so it names the project
+        # the way no lead at all does
+        if unled({"lead": rc.lead}):
             return UNLED_PREFIX
         for entry in self.gtx["people"]:
             if entry["_id"] == rc.lead:
@@ -130,6 +151,6 @@ class MCProjectAdderHelper(DbHelperBase):
                 project[key] = value
         rc.client.insert_one(rc.database, rc.coll, project)
 
-        whose = f"to {rc.lead}" if rc.lead else "unassigned"
+        whose = "unassigned" if unled(project) else f"to {rc.lead}"
         print(f'The project "{rc.name}" has been added {whose} as {_id}.')
         return
