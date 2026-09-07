@@ -27,7 +27,7 @@ DOCUMENT = """# Mission control — Adib Kabir
   - [ ] check the Qmax cutoff  ^4mynvu
 - [x] 1.2.1  talk to Simon  ^uxah3a
 
-## Backburner
+## On-deck
 
 - 1.3  port the solver  ^gpu111
 
@@ -60,7 +60,7 @@ def test_the_document_says_who_it_is_for(read):
         # Test what is read out of each part of the document
         # C1: the projects, in the order they are written
         ("projects", ["ak-nano"]),
-        # C2: the goals of the current period, the backburner and the wishlist,
+        # C2: the goals of the current period, the on-deck section and the wishlist,
         # but not the archive, which only says what a past period was
         ("goals", ["a8s8ec", "dab3ap", "gpu111", "tut222"]),
         # C3: the tasks, including the ones nested under another
@@ -79,8 +79,8 @@ def test_each_part_of_the_document_is_read(kind, expected_ids, read):
         ("a8s8ec", "active"),
         # C2: a goal struck through, expect finished
         ("dab3ap", "finished"),
-        # C3: a goal under the backburner heading, expect backburner
-        ("gpu111", "backburner"),
+        # C3: a goal under the on-deck heading, expect it held there
+        ("gpu111", "on-deck"),
         # C4: a goal under the wishlist heading, expect wishlist
         ("tut222", "wishlist"),
     ],
@@ -325,3 +325,28 @@ def test_a_project_does_not_take_an_id_another_one_has():
     text = DOCUMENT.replace("1. **nanodiamond-pdf**  ^ak-nano", "1. **Nanodiamond PDF**")
     project = parse_document(text, taken={"nanodiamond-pdf"})["projects"][0]
     assert project["_id"] == "nanodiamond-pdf-2"
+
+
+@pytest.mark.parametrize(
+    "heading, expected_status",
+    [
+        # Test which heading holds a goal back.  The section was called the
+        # backburner before it was called on-deck, so a document written then
+        # still reads.
+        # C1: the heading the renderer writes now
+        ("On-deck", "on-deck"),
+        # C2: what it used to write
+        ("Backburner", "on-deck"),
+        # C3: written in whatever case somebody typed
+        ("on-deck", "on-deck"),
+        # C4: the other held section, which did not change
+        ("Wishlist", "wishlist"),
+    ],
+)
+def test_a_goal_is_held_by_whichever_heading_it_is_under(heading, expected_status):
+    document = (
+        "# Mission control — Adib Kabir\n\n## Projects\n\n1. **a project**  ^p1\n\n"
+        f"## {heading}\n\n- 1.1  a held goal  ^g1\n"
+    )
+    goal = next(g for g in parse_document(document)["goals"] if g["_id"] == "g1")
+    assert goal["status"] == expected_status

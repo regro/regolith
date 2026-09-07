@@ -53,11 +53,11 @@ def existing(projects=(), goals=(), tasks=()):
         # C2: written plainly, and it was active, expect it stays active
         ("active", "active", "active"),
         # C3: written plainly, and it was held back, expect it has come back
-        ("active", "backburner", "active"),
+        ("active", "on-deck", "active"),
         # C4: struck through, expect finished whatever it was
         ("finished", "proposed", "finished"),
         # C5: written under a holding heading, expect it is held
-        ("backburner", "active", "backburner"),
+        ("on-deck", "active", "on-deck"),
         ("wishlist", "active", "wishlist"),
         # C6: newly typed, expect the default rather than an error
         ("active", None, "active"),

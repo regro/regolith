@@ -115,16 +115,16 @@ def stored(where, collection, _id):
         ),
         # C2: a task ticked, expect it finished
         (lambda t: t.replace("- [ ] 1.1.1", "- [x] 1.1.1"), "mc_tasks", "mct001", "status", "finished"),
-        # C3: a goal moved under the backburner heading, expect it held
+        # C3: a goal moved under the on-deck heading, expect it held
         (
             lambda t: t.replace(
                 "## Goals — 2026Q3\n\n- 1.1  a goal  ^mcg001\n",
-                "## Goals — 2026Q3\n\n## Backburner\n\n- 1.1  a goal  ^mcg001\n",
+                "## Goals — 2026Q3\n\n## On-deck\n\n- 1.1  a goal  ^mcg001\n",
             ),
             "mc_goals",
             "mcg001",
             "status",
-            "backburner",
+            "on-deck",
         ),
         # C4: the wording changed, expect the new wording
         (

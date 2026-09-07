@@ -217,6 +217,10 @@ STRUCK = re.compile(r"^~~(?P<text>.*)~~$")
 MARKER = re.compile(r"^\s*(?:#+\s+|-\s+(?:\[[ xX]\]\s+)?|\d+\.\s+)")
 WIDTH = 79
 GOALS_HEADING = re.compile(r"^Goals\s+—\s+(?P<period>\S+)$")
+# what a section holding a goal back is called.  Backburner is what the
+# heading used to say, and is still read so that a document written before the
+# rename keeps working.
+HELD_HEADINGS = {"on-deck": "on-deck", "backburner": "on-deck", "wishlist": "wishlist"}
 WEEK_HEADING = re.compile(r"^Week of\s+(?P<monday>\d{4}-\d{2}-\d{2})$")
 
 
@@ -412,7 +416,7 @@ class _Reader:
             return
         if self.section == "projects" and self.project(line):
             return
-        if self.section in ("goals", "backburner", "wishlist", "archive") and self.goal(line, number):
+        if self.section in ("goals", "on-deck", "wishlist", "archive") and self.goal(line, number):
             return
         if self.section == "week" and self.task(line, number):
             return
@@ -434,8 +438,8 @@ class _Reader:
         elif week:
             self.section = "week"
             self.monday = dt.date.fromisoformat(week.group("monday"))
-        elif title in ("Backburner", "Wishlist"):
-            self.section = title.lower()
+        elif title.lower() in HELD_HEADINGS:
+            self.section = HELD_HEADINGS[title.lower()]
         elif title == "Archive":
             self.section = "archive"
         else:
@@ -486,7 +490,7 @@ class _Reader:
         project["project_description"] = f"{described} {text}".strip() if described else text
 
     def goal(self, line, number):
-        """Read a line of a goals, backburner, wishlist or archive
+        """Read a line of a goals, on-deck, wishlist or archive
         section."""
         found = GOAL_LINE.match(line)
         if not found or found.group("text") is None:
@@ -522,7 +526,7 @@ class _Reader:
         """Return the status a goal's section and marks give it."""
         if struck_out:
             return "finished"
-        return {"backburner": "backburner", "wishlist": "wishlist"}.get(self.section, "active")
+        return self.section if self.section in HELD else "active"
 
     def task(self, line, number):
         """Read a line of a week section."""
@@ -573,7 +577,7 @@ class _Reader:
         }
 
 
-HELD = ("backburner", "wishlist")
+HELD = ("on-deck", "wishlist")
 OPEN = ("proposed", "active")
 
 
@@ -585,7 +589,7 @@ def settled_status(read_status, existing_status, default="active"):
     goals section reads back as ``active``, so a goal that was
     ``proposed`` would lose that on the first read for no reason anybody
     intended.  What a document does say is when something is finished,
-    when it is held on the backburner or the wishlist, and when it has
+    when it is held on deck or on the wishlist, and when it has
     come back from either.
 
     Parameters

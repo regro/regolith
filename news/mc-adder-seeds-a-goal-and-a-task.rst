@@ -5,7 +5,8 @@
 
 **Changed:**
 
-* <news item>
+* No news: part of mission control, which cannot be used yet.  One item will
+  cover the feature once it works end to end.
 
 **Deprecated:**
 
