@@ -12,7 +12,7 @@ DOCUMENT = """# Mission control — Adib Kabir
 
 ## Projects
 
-1. **nanodiamond-pdf**  ^ak_nano
+1. **nanodiamond-pdf**  ^ak-nano
    deliverable: submit the paper
 
 ## Goals — 2026Q3
@@ -59,7 +59,7 @@ def test_the_document_says_who_it_is_for(read):
     [
         # Test what is read out of each part of the document
         # C1: the projects, in the order they are written
-        ("projects", ["ak_nano"]),
+        ("projects", ["ak-nano"]),
         # C2: the goals of the current period, the backburner and the wishlist,
         # but not the archive, which only says what a past period was
         ("goals", ["a8s8ec", "dab3ap", "gpu111", "tut222"]),

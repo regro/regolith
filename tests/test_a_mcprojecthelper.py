@@ -99,3 +99,26 @@ def test_a_status_that_is_not_one_of_them_lists_the_ones_that_are(make_db):
     os.chdir(make_db)
     with pytest.raises(ValueError, match="should be one of"):
         main(["helper", "a_mcproject", "bad status project", "-s", "nonsense"])
+
+
+@pytest.mark.parametrize(
+    "given_id, expected_id",
+    [
+        # Test that an id given by hand is put in the form ids now take, since
+        # underscores in them are being retired
+        # C1: underscores, expect hyphens
+        ("sg_shock_compressed_wc", "sg-shock-compressed-wc"),
+        # C2: upper case, expect lower
+        ("AB-Upper-Case", "ab-upper-case"),
+        # C3: already in the right form, expect it unchanged
+        ("cd-already-fine", "cd-already-fine"),
+    ],
+)
+def test_an_id_given_by_hand_is_put_in_the_form_ids_take(given_id, expected_id, make_db):
+    os.chdir(make_db)
+    main(["helper", "a_mcproject", f"project for {given_id}", "--id", given_id])
+    rc = copy.copy(DEFAULT_RC)
+    rc._update(load_rcfile("regolithrc.json"))
+    filter_databases(rc)
+    with connect(rc) as rc.client:
+        assert rc.client.get("mc_projects", expected_id) is not None

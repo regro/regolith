@@ -40,6 +40,8 @@ def slug(text):
         The name in lower case with anything but letters, numbers and
         hyphens replaced by a hyphen.
     """
+    # an underscore becomes a hyphen along with everything else that is not a
+    # letter or a number: underscores in ids are being retired
     kept = [c if (c.isalnum() or c == "-") else "-" for c in text.lower()]
     return "-".join(part for part in "".join(kept).split("-") if part)
 
@@ -79,7 +81,12 @@ def subparser(subpi):
         help="The date the project began.  Default is today.",
         **date_kwargs,
     )
-    subpi.add_argument("--id", dest="_id", help="An id for it.  Default is made from the name.")
+    subpi.add_argument(
+        "--id",
+        dest="_id",
+        help="An id for it.  Default is made from the name.  Either way it is put "
+        "in lower case with hyphens, since ids no longer carry underscores.",
+    )
     subpi.add_argument("--database", help="The database to write to.")
     return subpi
 
@@ -102,7 +109,9 @@ class MCProjectAdderHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
         taken = {project["_id"] for project in self.gtx[rc.coll]}
-        _id = rc._id or slug(rc.name) or short_id(taken)
+        # an id given by hand goes through the same slug, so an underscore
+        # cannot get in that way either
+        _id = slug(rc._id) if rc._id else (slug(rc.name) or short_id(taken))
         if _id in taken:
             raise ValueError(
                 f"There is already a project called {_id}. Give it another name, or "
