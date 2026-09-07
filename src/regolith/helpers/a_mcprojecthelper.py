@@ -37,7 +37,7 @@ SEEDED_COLLS = ("mc_goals", "mc_tasks")
 # a stub is written down so that it is not forgotten, and what is not known
 # yet says so rather than being left out
 TBD = "tbd"
-HELPER_TARGET = "a_mcproject"
+HELPER_TARGET = "a-mcproject"
 
 
 def subparser(subpi):

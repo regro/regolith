@@ -34,7 +34,33 @@ class LazyRegistry(Mapping):
         module_name, _, attribute = spec.partition(":")
         return getattr(import_module(module_name), attribute)
 
+    def canonical(self, name):
+        """Return the name an entry is listed under.
+
+        Targets face the user with hyphens and python with underscores,
+        the way argparse has always done it, so a name typed either way
+        finds the entry.  A name that matches nothing is handed back as
+        it was, for whoever asked to report.
+
+        Parameters
+        ----------
+        name : str
+            The name as it was typed.
+
+        Returns
+        -------
+        str
+            The name it is listed under.
+        """
+        if name in self._specs:
+            return name
+        for spelling in (str(name).replace("_", "-"), str(name).replace("-", "_")):
+            if spelling in self._specs:
+                return spelling
+        return name
+
     def __getitem__(self, name):
+        name = self.canonical(name)
         if name not in self._resolved:
             self._resolved[name] = self._resolve(self._specs[name])
         return self._resolved[name]
@@ -42,7 +68,7 @@ class LazyRegistry(Mapping):
     def __contains__(self, name):
         # Answer from the names alone, so that testing for a target does
         # not import it
-        return name in self._specs
+        return self.canonical(name) in self._specs
 
     def __iter__(self):
         return iter(self._specs)

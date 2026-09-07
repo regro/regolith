@@ -314,6 +314,9 @@ def main(args=None):
         if len(rest) == 0:
             p.print_help()
         args2, rest2 = p.parse_known_args(rest, namespace=args0)
+        # a target typed with underscores is the same target as one typed with
+        # hyphens, and everything after this sees the name it is listed under
+        args2.helper_target = HELPERS.canonical(args2.helper_target)
         # it is not apparent from this but the following line calls the subparser in
         #   in the helper module to get the rest of the args.
         HELPERS[args2.helper_target][1](p)

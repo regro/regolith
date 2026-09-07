@@ -33,7 +33,7 @@ from regolith.mc import (
 from regolith.schemas import SCHEMAS, validate
 from regolith.tools import all_docs_from_collection
 
-HELPER_TARGET = "mc_sync"
+HELPER_TARGET = "mc-sync"
 COLLECTIONS = ("mc_projects", "mc_goals", "mc_tasks")
 # a document that has lost more than this share of what it held is more
 # likely to be damaged than edited

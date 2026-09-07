@@ -12,7 +12,7 @@ from regolith.mc import CLOSED, HELD
 from regolith.tools import all_docs_from_collection, key_value_pair_filter
 
 TARGET_COLL = "mc_goals"
-HELPER_TARGET = "l_mcgoals"
+HELPER_TARGET = "l-mcgoals"
 
 
 def subparser(subpi):

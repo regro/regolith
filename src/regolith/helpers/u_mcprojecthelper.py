@@ -17,7 +17,7 @@ from regolith.helpers.basehelper import DbHelperBase
 from regolith.schemas import MC_STATI
 
 TARGET_COLL = "mc_projects"
-HELPER_TARGET = "u_mcproject"
+HELPER_TARGET = "u-mcproject"
 
 # what the command line can set, against the field each one sets.  A list is
 # replaced rather than added to, so that what is given is what is stored.
