@@ -230,3 +230,25 @@ def test_a_project_typed_in_is_stored_under_a_readable_id(mc_repo):
     )
     main(["helper", "mc_sync"])
     assert stored(mc_repo, "mc_projects", "a-second-project")["name"] == "A Second Project"
+
+
+def test_a_document_is_read_even_when_the_collections_hold_nothing_of_its_own(mc_repo):
+    # Test that a document is read on its own account.  Somebody whose project
+    # has gone from the collections still has the document that describes it,
+    # and that document is how they put it back, so working out which
+    # documents to read from the collections would pass over the one that
+    # matters most
+    tmp_path, mcdir = mc_repo
+    dump_yaml(tmp_path / "db" / "mc_projects.yaml", {})
+    main(["helper", "mc_sync"])
+    assert stored(mc_repo, "mc_projects", "mc-a-project")["name"] == "a project"
+
+
+def test_a_document_named_for_nobody_says_so(mc_repo, capsys):
+    # Test that a file nobody is named by is reported rather than passed over
+    # in silence, since a document that is never read looks exactly like one
+    # that had nothing to say
+    _, mcdir = mc_repo
+    (mcdir / "whoever.md").write_text("# Mission control — Whoever\n")
+    main(["helper", "mc_sync"])
+    assert "whoever.md is not named for anybody" in capsys.readouterr().out

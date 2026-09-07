@@ -14,7 +14,12 @@ from pathlib import Path
 
 from gooey import GooeyParser
 
-from regolith.builders.missioncontrolbuilder import UNASSIGNED, MissionControlBuilder, live
+from regolith.builders.missioncontrolbuilder import (
+    UNASSIGNED,
+    UNASSIGNED_NAME,
+    MissionControlBuilder,
+    live,
+)
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.mc import DocumentError, changes, parse_document
 from regolith.schemas import SCHEMAS, validate
@@ -72,17 +77,46 @@ class MCSyncHelper(DbHelperBase):
             print("Run 'regolith build mission-control' to write them first.")
             return
 
-        for person in self.people(renderer):
-            path = mcdir / f"{renderer.document_name(person)}.md"
-            if path.is_file():
-                self.read_one(path, person)
+        for path, person in self.documents(mcdir, renderer):
+            self.read_one(path, person)
         return
 
-    def people(self, renderer):
-        """Return everyone a document could belong to, and the
-        orphans."""
-        leads = {project.get("lead") or UNASSIGNED for project in live(self.gtx["mc_projects"])}
-        return sorted(leads | {UNASSIGNED})
+    def documents(self, mcdir, renderer):
+        """Return each document in the directory, with whose it is.
+
+        The documents are what there is to read, so they are what is
+        read.  Working the list out from the projects in the collections
+        instead would pass over the document of somebody who has no
+        project in them, and that is exactly the person whose document
+        is asking for one to be made.
+
+        Parameters
+        ----------
+        mcdir : pathlib.Path
+            The directory the documents are in.
+        renderer : MissionControlBuilder
+            The builder, which knows what each person's document is
+            called.
+
+        Returns
+        -------
+        list of tuple of (pathlib.Path, str)
+            Each document and the id of the person whose it is.
+        """
+        whose = {UNASSIGNED_NAME: UNASSIGNED}
+        for person in self.gtx["people"]:
+            whose.setdefault(renderer.document_name(person["_id"]), person["_id"])
+        for project in self.gtx["mc_projects"]:
+            if project.get("lead"):
+                whose.setdefault(renderer.document_name(project["lead"]), project["lead"])
+        found = []
+        for path in sorted(mcdir.glob("*.md")):
+            if path.stem in whose:
+                found.append((path, whose[path.stem]))
+            else:
+                print(f"{path.name} is not named for anybody, so nothing was read from it.")
+                print("Name it for the person whose it is, or add them to the people collection.")
+        return found
 
     def mine(self, person):
         """Return the records already stored for one person.
