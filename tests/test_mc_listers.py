@@ -180,3 +180,25 @@ def test_the_projects_are_listed_the_way_that_was_asked_for(args, expected_in_ou
     main(args)
     written = capsys.readouterr().out
     assert all(expected in written for expected in expected_in_output)
+
+
+def test_grouping_by_lead_still_says_more_when_asked():
+    # Test that --verbose and --grp-by-lead work together.  Grouping used to
+    # return before anything was said about a project, so asking for both got
+    # the grouping and nothing else
+    project = {
+        "_id": "hs-solver",
+        "name": "Solver",
+        "lead": "here",
+        "status": "active",
+        "project_deliverable": "Submit the paper",
+        "collaborators": ["ascopatz"],
+    }
+    lines = MCProjectsListerHelper.by_lead([project], verbose=True)
+    assert lines == [
+        "here:",
+        "    hs-solver  (active)  Solver",
+        "        deliverable: Submit the paper",
+        "        with: ascopatz",
+    ]
+    assert MCProjectsListerHelper.by_lead([project]) == ["here:", "    hs-solver  (active)  Solver"]

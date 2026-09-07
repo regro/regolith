@@ -102,7 +102,7 @@ class MCProjectsListerHelper(SoutHelperBase):
 
         projects = sorted(projects, key=lambda p: (p.get("lead") or "", p["_id"]))
         if rc.grp_by_lead:
-            for line in self.by_lead(projects):
+            for line in self.by_lead(projects, rc.verbose):
                 print(line)
             return
         if rc.keys:
@@ -115,14 +115,17 @@ class MCProjectsListerHelper(SoutHelperBase):
                     print(line)
         return
 
-    @staticmethod
-    def by_lead(projects):
+    @classmethod
+    def by_lead(cls, projects, verbose=False):
         """Return the projects written out under whoever leads each one.
 
         Parameters
         ----------
         projects : list of dict
             The projects to write out.
+        verbose : bool, optional
+            Whether to say more about each one, as the ungrouped listing
+            does.  The default is not to.
 
         Returns
         -------
@@ -137,6 +140,10 @@ class MCProjectsListerHelper(SoutHelperBase):
             lines.append(f"{lead}:")
             for project in grouped[lead]:
                 lines.append(f"    {project['_id']}  ({project.get('status', '?')})  {project.get('name', '')}")
+                if verbose:
+                    # what is said about a project sits under it, so it is
+                    # indented one further than the ungrouped listing puts it
+                    lines += [f"    {line}" for line in cls.more(project)]
         return lines
 
     @staticmethod
