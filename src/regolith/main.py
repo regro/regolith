@@ -150,6 +150,14 @@ def create_parser():
         default=None,
     )
     bldp.add_argument(
+        "--build-everything",
+        dest="build_everything",
+        action="store_true",
+        default=False,
+        help="build for everybody rather than only the people currently in the "
+        "group, for the builders that leave out the people who have left",
+    )
+    bldp.add_argument(
         "--kwargs",
         nargs="+",
         dest="kwargs",

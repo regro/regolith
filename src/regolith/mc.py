@@ -1006,11 +1006,14 @@ def in_the_group(person_id, people):
     Returns
     -------
     bool
-        Whether the people collection has them, and has them active.
+        Whether the people collection has them, and has not marked them
+        inactive.  Somebody with no mark either way is in the group: the
+        people schema says active defaults to true, and a record written
+        without it is somebody nobody has had to think about.
     """
     for person in people:
         if person.get("_id") == person_id:
-            return bool(person.get("active"))
+            return bool(person.get("active", True))
     return False
 
 

@@ -719,3 +719,67 @@ def test_a_build_keeps_the_document_it_wrote_over(tmp_path):
     builder.gtx = dict(BUILDABLE, mc_goals=[dict(BUILDABLE["mc_goals"][0], text="a stored goal")])
     builder.render()
     assert (tmp_path / "build" / "mission-control-previous" / "pei.md").read_text() == first
+
+
+GROUP = [
+    {"_id": "pliu", "name": "Pei Liu", "active": True},
+    {"_id": "gone", "name": "Has Left", "active": False},
+    {"_id": "quiet", "name": "No Mark Either Way"},
+]
+THEIR_PROJECTS = [
+    dict(PROJECTS[0], _id="p-pliu", lead="pliu"),
+    dict(PROJECTS[0], _id="p-gone", lead="gone"),
+    dict(PROJECTS[0], _id="p-quiet", lead="quiet"),
+    dict(PROJECTS[1], _id="p-nobody"),
+]
+
+
+def a_group_build(tmp_path, **rc):
+    """Return a builder over a group of three, one of whom has left."""
+    builder = render_into(tmp_path, {**BUILDABLE, "mc_projects": THEIR_PROJECTS, "people": GROUP})
+    for key, value in rc.items():
+        setattr(builder, key, value)
+    return builder
+
+
+@pytest.mark.parametrize(
+    "asked_for, expected_documents",
+    [
+        # Test whose documents a build writes.  A group of any age has more
+        # people who have left than people in it, and reading through the
+        # documents of both is the thing to avoid.
+        # C1: nothing asked for, expect the group and the unassigned document,
+        # and not the person who has left
+        ({}, ["pei.md", "unassigned.md", "no.md"]),
+        # C2: everything asked for, expect the one who has left as well
+        ({"build_everything": True}, ["pei.md", "unassigned.md", "no.md", "has.md"]),
+        # C3: one person named, expect only theirs, whatever their standing.
+        # Naming somebody is how their document is built after they leave
+        ({"only_people": ["gone"]}, ["has.md"]),
+        # C4: named by their name rather than their id
+        ({"only_people": ["Has Left"]}, ["has.md"]),
+    ],
+)
+def test_a_build_is_for_the_people_in_the_group(asked_for, expected_documents, tmp_path):
+    builder = a_group_build(tmp_path, **asked_for)
+    builder.render()
+    assert sorted(p.name for p in builder.mcdir.glob("*.md")) == sorted(expected_documents)
+
+
+def test_somebody_with_no_mark_either_way_is_in_the_group(tmp_path):
+    # Test the default the people schema gives: active is not required and
+    # defaults to true, so a record written without it is somebody nobody has
+    # had to think about rather than somebody who has left
+    builder = a_group_build(tmp_path)
+    builder.render()
+    assert (builder.mcdir / "no.md").is_file()
+
+
+def test_a_build_says_how_many_documents_it_left_out(tmp_path, capsys):
+    # Test that leaving documents out is said rather than silent, since a
+    # document that stops being written looks exactly like one nobody has
+    builder = a_group_build(tmp_path)
+    builder.render()
+    said = capsys.readouterr().out
+    assert "1 documents were not built" in said
+    assert "--build-everything" in said
