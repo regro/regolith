@@ -2,7 +2,16 @@
 
 import pytest
 
-from regolith.mc import ID_ALPHABET, ID_LENGTH, WIDTH, logical_lines, short_id, struck, wrap
+from regolith.mc import (
+    ID_ALPHABET,
+    ID_LENGTH,
+    WIDTH,
+    logical_lines,
+    project_id,
+    short_id,
+    struck,
+    wrap,
+)
 
 
 @pytest.mark.parametrize(
@@ -159,3 +168,34 @@ def test_wrap_writes_nothing_wider_than_the_width():
 )
 def test_logical_lines_joins_what_was_broken(document, expected):
     assert logical_lines(document) == expected
+
+
+@pytest.mark.parametrize(
+    "name, taken, expected_id",
+    [
+        # Test the id a project is given when somebody names one.  It is the
+        # one id here that a person reads and types, naming the project in a
+        # lister and in whatever refers to it later, so it is made from the
+        # name rather than drawn at random.
+        # C1: a plain name, expect it in lower case with hyphens
+        ("Shock compressed WC", (), "shock-compressed-wc"),
+        # C2: a name already used by another project, expect it numbered,
+        # since two projects can be called the same thing
+        ("Shock compressed WC", ("shock-compressed-wc",), "shock-compressed-wc-2"),
+        # C3: a name used twice already, expect the next number
+        (
+            "Shock compressed WC",
+            ("shock-compressed-wc", "shock-compressed-wc-2"),
+            "shock-compressed-wc-3",
+        ),
+        # C4: a name of punctuation, which makes no id at all, expect a short
+        # id rather than nothing
+        ("!!!", (), None),
+    ],
+)
+def test_project_id_is_made_from_the_name(name, taken, expected_id):
+    made = project_id(name, taken)
+    if expected_id is None:
+        assert len(made) == ID_LENGTH and set(made) <= set(ID_ALPHABET)
+    else:
+        assert made == expected_id

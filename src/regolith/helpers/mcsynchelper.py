@@ -111,11 +111,24 @@ class MCSyncHelper(DbHelperBase):
         tasks = {task["_id"]: task for task in live(self.gtx["mc_tasks"]) if task.get("goal") in goals}
         return {"mc_projects": projects, "mc_goals": goals, "mc_tasks": tasks}
 
+    def taken(self):
+        """Return every id mission control holds.
+
+        A project is given an id made from its name, so unlike a drawn
+        id it can be one somebody else's document already has.
+
+        Returns
+        -------
+        set of str
+            The ids in use across the mission control collections.
+        """
+        return {record["_id"] for collection in COLLECTIONS for record in self.gtx[collection]}
+
     def read_one(self, path, person):
         """Read one document and write what it says."""
         rc = self.rc
         try:
-            parsed = parse_document(path.read_text(encoding="utf-8"))
+            parsed = parse_document(path.read_text(encoding="utf-8"), taken=self.taken())
         except DocumentError as error:
             print(f"{path.name} was not read and nothing was written from it: {error}")
             print("Fix the line it names and run this again.")

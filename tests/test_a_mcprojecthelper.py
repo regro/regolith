@@ -7,8 +7,8 @@ import os
 import pytest
 
 from regolith.database import connect
-from regolith.helpers.a_mcprojecthelper import slug
 from regolith.main import main
+from regolith.mc import slug
 from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
 
 
