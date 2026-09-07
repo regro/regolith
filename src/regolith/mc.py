@@ -460,3 +460,77 @@ def _close(record, was, today):
     """Date a record that has just been finished, and only just."""
     if record["status"] == "finished" and was.get("status") != "finished":
         record.setdefault("end_date", today)
+
+
+# what a lead is called when nobody is leading it.  Old projecta wrote "na" or
+# "tbd" by default; a mission control project simply has no lead
+NOBODY = ("", "na", "tbd", "none")
+# a project in one of these is done with, so it cannot be an orphan
+CLOSED = ("finished", "dropped")
+
+
+def unled(project):
+    """Return True if nobody is leading a project.
+
+    Parameters
+    ----------
+    project : dict
+        The project.
+
+    Returns
+    -------
+    bool
+        Whether it has a lead worth the name.
+    """
+    lead = project.get("lead")
+    return not lead or str(lead).strip().lower() in NOBODY
+
+
+def in_the_group(person_id, people):
+    """Return True if somebody is in the group at the moment.
+
+    Somebody who has left is not, which is what makes their unfinished
+    work show up as orphaned without anybody having to reassign it by
+    hand.
+
+    Parameters
+    ----------
+    person_id : str
+        The id to look for.
+    people : iterable of dict
+        The people collection.
+
+    Returns
+    -------
+    bool
+        Whether the people collection has them, and has them active.
+    """
+    for person in people:
+        if person.get("_id") == person_id:
+            return bool(person.get("active"))
+    return False
+
+
+def orphaned(project, people):
+    """Return True if a project has nobody to do it.
+
+    A project is orphaned when it is not finished or dropped, and either
+    nobody leads it or whoever does has left the group.  The second half
+    is what makes somebody's unfinished work reappear when they go,
+    rather than sitting under a name that is no longer around.
+
+    Parameters
+    ----------
+    project : dict
+        The project.
+    people : iterable of dict
+        The people collection.
+
+    Returns
+    -------
+    bool
+        Whether it needs somebody.
+    """
+    if project.get("status") in CLOSED:
+        return False
+    return unled(project) or not in_the_group(project["lead"], people)
