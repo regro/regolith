@@ -69,10 +69,11 @@ def subparser(subpi):
         dest="urls",
         nargs=2,
         action="append",
-        metavar=("NAME", "URL"),
-        help="A link belonging to the project and what it is, e.g. --url paper "
-        "https://example.com/a. Give it more than once for more than one link. "
-        "They replace the links stored.",
+        # no metavar: gooey labels the field with it, and a tuple of them is
+        # not something a label can be made of
+        help="What a link is and the link, e.g. --url paper https://example.com/a. "
+        "Give it more than once for more than one link. They replace the links "
+        "stored.",
     )
     subpi.add_argument("--notes", nargs="+", help="Notes about it, replacing the ones stored.")
     return subpi

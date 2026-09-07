@@ -31,7 +31,7 @@ def stored(_id):
         # project is described, so this is for what the document does not show
         # and for changing one field without touching anything else.
         # C1: the status, which the document cannot say on its own
-        (["-s", "backburner"], "status", "backburner"),
+        (["-s", "on-deck"], "status", "on-deck"),
         # C2: who pays for it
         (["-g", "dmref15", "sym"], "grants", ["dmref15", "sym"]),
         # C3: the principal investigator
