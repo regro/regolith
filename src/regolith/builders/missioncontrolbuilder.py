@@ -329,7 +329,7 @@ class MissionControlBuilder(BuilderBase):
         task : dict
             The task to render.
         number : str
-            The number to print against it.
+            The number to print against it, empty for a sub task.
         children : dict
             The tasks under each task, keyed by parent id.
         order : list of str
@@ -344,10 +344,14 @@ class MissionControlBuilder(BuilderBase):
         """
         box = "x" if task["status"] == "finished" else " "
         indent = "  " * depth
-        lines = [f"{indent}- [{box}] {number}  {struck(task['text'], task['status'])}  ^{task['_id']}"]
+        # Only a task of the week is numbered.  A number says which goal and
+        # which of its tasks, and a sub task is a breakdown of one of them
+        # rather than something anybody points at by number.
+        label = f"{number}  " if number else ""
+        lines = [f"{indent}- [{box}] {label}{struck(task['text'], task['status'])}  ^{task['_id']}"]
         under = in_document_order(children.get(task["_id"], []), order, lambda t: t["_id"])
-        for n, child in enumerate(under, start=1):
-            lines += self.render_task(child, f"{number}.{n}", children, order, depth + 1)
+        for child in under:
+            lines += self.render_task(child, "", children, order, depth + 1)
         return lines
 
     def render_bucket(self, heading, goals, goal_number, status):

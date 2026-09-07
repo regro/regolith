@@ -359,12 +359,13 @@ def nested():
         # deep as they go, since a meeting wanders into sub sub tasks
         # C1: the task itself, at the top level
         "- [ ] 1.1.1  Re-run the fits  ^t-bg",
-        # C2: a sub task, indented once and numbered under its parent
-        "  - [x] 1.1.1.1  ~~Rebuild the background model~~  ^t-sub1",
-        # C3: another sub task, numbered after the first
-        "  - [ ] 1.1.1.2  Check it against the standard  ^t-sub2",
-        # C4: a sub sub task, indented twice
-        "    - [ ] 1.1.1.2.1  Fetch the standard from the archive  ^t-subsub",
+        # C2: a sub task, indented once and not numbered, since a number says
+        # which goal and which of its tasks and a sub task is neither
+        "  - [x] ~~Rebuild the background model~~  ^t-sub1",
+        # C3: another sub task alongside it
+        "  - [ ] Check it against the standard  ^t-sub2",
+        # C4: a sub sub task, indented twice and still not numbered
+        "    - [ ] Fetch the standard from the archive  ^t-subsub",
     ],
 )
 def test_a_task_carries_the_tasks_under_it(expected_line, nested):
@@ -375,4 +376,4 @@ def test_a_sub_task_is_not_listed_as_a_task_of_its_own(nested):
     # Test that a sub task appears once, under its parent, rather than also as
     # one of the week's tasks
     assert nested.count("^t-sub1") == 1
-    assert "- [x] 1.1.2  ~~Rebuild the background model~~" not in nested
+    assert "1.1.2" not in nested
