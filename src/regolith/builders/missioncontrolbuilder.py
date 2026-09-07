@@ -20,7 +20,7 @@ from pathlib import Path
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates
-from regolith.mc import struck
+from regolith.mc import struck, wrap
 from regolith.tools import all_docs_from_collection
 
 UNASSIGNED = "unassigned"
@@ -261,7 +261,7 @@ class MissionControlBuilder(BuilderBase):
         lines += self.render_bucket("Backburner", goals, goal_number, "backburner")
         lines += self.render_bucket("Wishlist", goals, goal_number, "wishlist")
         lines += self.render_archive(goals, goal_number)
-        return lines
+        return [written for line in lines for written in wrap(line)]
 
     @staticmethod
     def number_goals(goals, number_of):
@@ -288,17 +288,23 @@ class MissionControlBuilder(BuilderBase):
 
     @staticmethod
     def render_projects(projects):
-        """Return the lines of the projects section."""
+        """Return the lines of the projects section.
+
+        What is written under a project is separated by blank lines.
+        Markdown reads lines that run together as one paragraph, which
+        would show a project as a single block of text wherever the
+        document is read as markdown rather than as a file.
+        """
         lines = ["## Projects", ""]
         for n, project in enumerate(projects, start=1):
             lines.append(f"{n}. **{project['name']}**  ^{project['_id']}")
             if project.get("project_deliverable"):
-                lines.append(f"   deliverable: {project['project_deliverable']}")
+                lines += ["", f"   deliverable: {project['project_deliverable']}"]
             if project.get("collaborators"):
-                lines.append(f"   with: {', '.join(project['collaborators'])}")
+                lines += ["", f"   with: {', '.join(project['collaborators'])}"]
             if project.get("project_description"):
-                lines.append(f"   {project['project_description']}")
-        lines.append("")
+                lines += ["", f"   {project['project_description']}"]
+            lines.append("")
         return lines
 
     def render_goals(self, goals, goal_number):
