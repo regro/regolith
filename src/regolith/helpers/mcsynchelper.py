@@ -219,22 +219,70 @@ class MCSyncHelper(DbHelperBase):
                     print(f"{path.name}: {record['_id']} does not fit {collection} and was not written.")
                     print(f"  {why}")
                     return
+        new = sum(
+            1 for collection, records in writes.items() for r in records if r["_id"] not in existing[collection]
+        )
         if rc.dry_run:
-            self.report(path, writes, drops, wrote=False)
+            self.report(path, writes, drops, wrote=False, new=new)
             return
         for collection, records in writes.items():
             for record in records:
-                rc.client.update_one(rc.database, collection, {"_id": record["_id"]}, record, upsert=True)
+                where = self.where_it_goes(collection, record["_id"])
+                rc.client.update_one(where, collection, {"_id": record["_id"]}, record, upsert=True)
         for collection, ids in drops.items():
             for _id in ids:
-                rc.client.update_field(rc.database, collection, _id, "status", "dropped")
-        self.report(path, writes, drops, wrote=True)
+                rc.client.update_field(self.where_it_goes(collection, _id), collection, _id, "status", "dropped")
+        self.report(path, writes, drops, wrote=True, new=new)
+
+    def where_it_goes(self, collection, _id):
+        """Return the database a record belongs in.
+
+        A record already stored is written where it is stored, rather
+        than in the first database that happens to be listed, since
+        writing it anywhere else would leave two of it and hide the one
+        that is real.  A record nothing holds yet goes where the
+        collection is, or to rc.database when nothing holds it at all.
+
+        Parameters
+        ----------
+        collection : str
+            The name of the collection.
+        _id : str
+            The id of the record.
+
+        Returns
+        -------
+        str
+            The name of the database to write to.
+        """
+        rc = self.rc
+        sources = rc.client.collection_sources(collection)
+        for database in sources:
+            if rc.client.find_one(database["name"], collection, {"_id": _id}):
+                return database["name"]
+        return sources[0]["name"] if sources else rc.database
 
     @staticmethod
-    def report(path, writes, drops, wrote):
+    def report(path, writes, drops, wrote, new=0):
         """Say what was written, so a surprise is seen rather than
-        found."""
+        found.
+
+        Parameters
+        ----------
+        path : pathlib.Path
+            The document that was read.
+        writes : dict
+            The records written, by collection.
+        drops : dict
+            The ids dropped, by collection.
+        wrote : bool
+            Whether anything was actually written.
+        new : int, optional
+            How many of the records nothing held before, which is what
+            somebody typing into the document wants to see.
+        """
         written = sum(len(records) for records in writes.values())
         dropped = sum(len(ids) for ids in drops.values())
         did = "wrote" if wrote else "would write"
-        print(f"{path.name}: {did} {written}, dropped {dropped}")
+        of_which = f", {new} of them new" if new else ""
+        print(f"{path.name}: {did} {written}{of_which}, dropped {dropped}")

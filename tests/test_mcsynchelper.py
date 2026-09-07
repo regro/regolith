@@ -264,3 +264,28 @@ def test_a_project_nobody_leads_is_named_na(mc_repo):
     )
     main(["helper", "mc_sync"])
     assert stored(mc_repo, "mc_projects", "na-software-maintenance")["status"] == "proposed"
+
+
+def test_the_sync_says_how_many_lines_were_new(mc_repo, capsys):
+    # Test that a sync says what it did in terms somebody typing can check.
+    # "wrote 3" says nothing about whether the lines just typed were among
+    # them, which is the one thing worth knowing after typing into a document
+    _, mcdir = mc_repo
+    path = mcdir / "pei.md"
+    path.write_text(
+        path.read_text().replace("- 1.1  a goal  ^mcg001", "- 1.1  a goal  ^mcg001\n- 1.2  a new goal")
+    )
+    main(["helper", "mc_sync"])
+    assert "1 of them new" in capsys.readouterr().out
+
+
+def test_a_record_is_written_where_it_is_already_stored(mc_repo):
+    # Test that a sync writes a record back to the database holding it rather
+    # than to whichever database is listed first, which would leave a second
+    # copy shadowing the real one
+    tmp_path, mcdir = mc_repo
+    path = mcdir / "pei.md"
+    path.write_text(path.read_text().replace("a goal", "a goal, reworded"))
+    main(["helper", "mc_sync"])
+    stored_in_db = (tmp_path / "db" / "mc_goals.yaml").read_text()
+    assert "a goal, reworded" in stored_in_db
