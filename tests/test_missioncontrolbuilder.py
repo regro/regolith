@@ -177,8 +177,8 @@ def test_a_goal_is_rendered_under_its_status(heading, expected_goal, documents):
         "Get the fits converging  ^g-converge  (carried since 2026Q2)",
         # C2: in the period it came from, expect where it went
         "Get the fits converging  ^g-converge  (→ rolled to 2026Q3)",
-        # C3: a goal that closed, expect when
-        "Reproduce the 2019 result  ^g-repro  (finished 2026-06-30)",
+        # C3: a goal that closed, expect it struck through and dated
+        "~~Reproduce the 2019 result~~  ^g-repro  (finished 2026-06-30)",
     ],
 )
 def test_a_carried_goal_says_so_in_both_periods(expected_line, documents):
@@ -192,8 +192,9 @@ def test_a_carried_goal_says_so_in_both_periods(expected_line, documents):
         # numbered against the goal it belongs to
         # C1: an unfinished task, expect an empty box
         "- [ ] 1.1.1  Re-run the fits  ^t-bg",
-        # C2: a finished task, expect a ticked box
-        "- [x] 1.1.2  Send the convergence plot  ^t-plot",
+        # C2: a finished task, expect a ticked box and a strike through it,
+        # since that is how the group marks something off
+        "- [x] 1.1.2  ~~Send the convergence plot~~  ^t-plot",
     ],
 )
 def test_a_task_is_rendered_with_its_state_and_id(expected_line, documents):
@@ -302,3 +303,77 @@ def test_the_unassigned_document_is_not_named_for_a_person():
     builder = MissionControlBuilder.__new__(MissionControlBuilder)
     builder.gtx = {"mc_projects": PROJECTS, "mc_goals": GOALS, "mc_tasks": TASKS, "people": []}
     assert builder.document_name("unassigned") == "unassigned"
+
+
+SUB_TASKS = [
+    {
+        "_id": "t-bg",
+        "goal": "g-converge",
+        "due_date": "2026-09-11",
+        "first_due_date": "2026-09-11",
+        "text": "Re-run the fits",
+        "status": "active",
+    },
+    {
+        "_id": "t-sub1",
+        "goal": "g-converge",
+        "parent": "t-bg",
+        "due_date": "2026-09-11",
+        "first_due_date": "2026-09-11",
+        "text": "Rebuild the background model",
+        "status": "finished",
+    },
+    {
+        "_id": "t-sub2",
+        "goal": "g-converge",
+        "parent": "t-bg",
+        "due_date": "2026-09-11",
+        "first_due_date": "2026-09-11",
+        "text": "Check it against the standard",
+        "status": "active",
+    },
+    {
+        "_id": "t-subsub",
+        "goal": "g-converge",
+        "parent": "t-sub2",
+        "due_date": "2026-09-11",
+        "first_due_date": "2026-09-11",
+        "text": "Fetch the standard from the archive",
+        "status": "active",
+    },
+]
+
+
+@pytest.fixture
+def nested():
+    """Return a document whose tasks are nested two deep."""
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": GOALS, "mc_tasks": SUB_TASKS}
+    return "\n".join(builder.documents()["pliu"])
+
+
+@pytest.mark.parametrize(
+    "expected_line",
+    [
+        # Test that sub tasks are written under the task they belong to, as
+        # deep as they go, since a meeting wanders into sub sub tasks
+        # C1: the task itself, at the top level
+        "- [ ] 1.1.1  Re-run the fits  ^t-bg",
+        # C2: a sub task, indented once and not numbered, since a number says
+        # which goal and which of its tasks and a sub task is neither
+        "  - [x] ~~Rebuild the background model~~  ^t-sub1",
+        # C3: another sub task alongside it
+        "  - [ ] Check it against the standard  ^t-sub2",
+        # C4: a sub sub task, indented twice and still not numbered
+        "    - [ ] Fetch the standard from the archive  ^t-subsub",
+    ],
+)
+def test_a_task_carries_the_tasks_under_it(expected_line, nested):
+    assert expected_line in nested
+
+
+def test_a_sub_task_is_not_listed_as_a_task_of_its_own(nested):
+    # Test that a sub task appears once, under its parent, rather than also as
+    # one of the week's tasks
+    assert nested.count("^t-sub1") == 1
+    assert "1.1.2" not in nested

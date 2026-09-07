@@ -20,6 +20,7 @@ from pathlib import Path
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates
+from regolith.mc import struck
 from regolith.tools import all_docs_from_collection
 
 UNASSIGNED = "unassigned"
@@ -235,7 +236,7 @@ class MissionControlBuilder(BuilderBase):
         lines = [f"# Mission control — {self.display_name(person)}", ""]
         lines += self.render_projects(projects)
         lines += self.render_goals(goals, goal_number)
-        lines += self.render_weeks(tasks, goal_number)
+        lines += self.render_weeks(tasks, goal_number, order)
         lines += self.render_bucket("Backburner", goals, goal_number, "backburner")
         lines += self.render_bucket("Wishlist", goals, goal_number, "wishlist")
         lines += self.render_archive(goals, goal_number)
@@ -286,39 +287,72 @@ class MissionControlBuilder(BuilderBase):
             if goal["period"] != current or goal["status"] in HELD_STATI:
                 continue
             lines.append(
-                f"- {goal_number[goal['_id']]}  {goal['text']}  ^{goal['_id']}"
-                f"{self.carried(goal)}{self.outcome(goal, current)}"
+                f"- {goal_number[goal['_id']]}  {struck(goal['text'], goal['status'])}  "
+                f"^{goal['_id']}{self.carried(goal)}{self.outcome(goal, current)}"
             )
         lines.append("")
         return lines
 
-    def render_weeks(self, tasks, goal_number):
-        """Return the lines of one section per week that has tasks."""
-        by_week = defaultdict(list)
+    def render_weeks(self, tasks, goal_number, order=()):
+        """Return the lines of one section per week that has tasks.
+
+        A task with no parent is one of the week's tasks and the rest
+        hang under it, indented, as deep as they were written.  A week
+        is chosen by the due date of the task at the top, so a sub task
+        stays with the one it belongs to.
+        """
+        children = defaultdict(list)
         for task in tasks:
+            children[task.get("parent")].append(task)
+        by_week = defaultdict(list)
+        for task in children[None]:
             due = as_date(task.get("due_date"))
             if due is not None:
                 by_week[week_of(due)].append(task)
         lines = []
         for monday in sorted(by_week, reverse=True):
             lines += [f"## Week of {monday.isoformat()}", ""]
-            numbered = self.number_tasks(by_week[monday], goal_number)
-            for task in sorted(by_week[monday], key=lambda t: numbered[t["_id"]]):
-                box = "x" if task["status"] == "finished" else " "
-                lines.append(f"- [{box}] {numbered[task['_id']]}  {task['text']}  ^{task['_id']}")
+            counts = defaultdict(int)
+            roots = in_document_order(by_week[monday], order, lambda t: t["_id"])
+            for task in sorted(roots, key=lambda t: goal_number[t["goal"]]):
+                counts[task["goal"]] += 1
+                number = f"{goal_number[task['goal']]}.{counts[task['goal']]}"
+                lines += self.render_task(task, number, children, order, depth=0)
             lines.append("")
         return lines
 
-    @staticmethod
-    def number_tasks(tasks, goal_number):
-        """Return the number to print against each task, e.g.
-        ``1.2.1``."""
-        numbers = {}
-        counts = defaultdict(int)
-        for task in sorted(tasks, key=lambda t: (goal_number[t["goal"]], t["_id"])):
-            counts[task["goal"]] += 1
-            numbers[task["_id"]] = f"{goal_number[task['goal']]}.{counts[task['goal']]}"
-        return numbers
+    def render_task(self, task, number, children, order, depth):
+        """Return the lines of a task and everything under it.
+
+        Parameters
+        ----------
+        task : dict
+            The task to render.
+        number : str
+            The number to print against it, empty for a sub task.
+        children : dict
+            The tasks under each task, keyed by parent id.
+        order : list of str
+            The ids the document carries, in order.
+        depth : int
+            How far under a top level task it sits.
+
+        Returns
+        -------
+        list of str
+            The lines, indented by depth.
+        """
+        box = "x" if task["status"] == "finished" else " "
+        indent = "  " * depth
+        # Only a task of the week is numbered.  A number says which goal and
+        # which of its tasks, and a sub task is a breakdown of one of them
+        # rather than something anybody points at by number.
+        label = f"{number}  " if number else ""
+        lines = [f"{indent}- [{box}] {label}{struck(task['text'], task['status'])}  ^{task['_id']}"]
+        under = in_document_order(children.get(task["_id"], []), order, lambda t: t["_id"])
+        for child in under:
+            lines += self.render_task(child, "", children, order, depth + 1)
+        return lines
 
     def render_bucket(self, heading, goals, goal_number, status):
         """Return the lines of the backburner or wishlist section."""
@@ -327,7 +361,7 @@ class MissionControlBuilder(BuilderBase):
             return []
         lines = [f"## {heading}", ""]
         for goal in held:
-            lines.append(f"- {goal_number[goal['_id']]}  {goal['text']}  ^{goal['_id']}")
+            lines.append(f"- {goal_number[goal['_id']]}  {struck(goal['text'], goal['status'])}  ^{goal['_id']}")
         lines.append("")
         return lines
 
@@ -351,7 +385,8 @@ class MissionControlBuilder(BuilderBase):
             lines += [f"### Goals — {period}", ""]
             for goal in shown:
                 lines.append(
-                    f"- {goal_number[goal['_id']]}  {goal['text']}  ^{goal['_id']}" f"{self.outcome(goal, period)}"
+                    f"- {goal_number[goal['_id']]}  {struck(goal['text'], goal['status'])}  "
+                    f"^{goal['_id']}{self.outcome(goal, period)}"
                 )
             lines.append("")
         return lines

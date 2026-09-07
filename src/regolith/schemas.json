@@ -1460,6 +1460,11 @@
             "required": true,
             "type": "string"
         },
+        "parent": {
+            "description": "The id of the task this one is a sub task of, when it is one.  A task with no parent is one of the week's tasks; the rest hang under it, as deep as they are written.",
+            "required": false,
+            "type": "string"
+        },
         "due_date": {
             "description": "When the task is due.  Moving this is how a task rolls forward, and it decides which week the task is rendered under.",
             "required": true,
