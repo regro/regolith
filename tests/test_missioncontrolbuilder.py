@@ -415,3 +415,13 @@ def test_a_project_with_nobody_on_it_says_nothing(documents):
     # heading with nothing after it
     assert "   with: \n" not in documents["unassigned"]
     assert "with:" not in documents["unassigned"]
+
+
+def test_what_a_project_is_about_is_written_under_it():
+    # Test that the description goes back into the document, so that reading
+    # one and writing it again does not lose the paragraph somebody typed
+    described = dict(PROJECTS[0], project_description="what this project is about")
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": [described], "mc_goals": [], "mc_tasks": []}
+    document = "\n".join(builder.documents()["pliu"])
+    assert "   what this project is about" in document
