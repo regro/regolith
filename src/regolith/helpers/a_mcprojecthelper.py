@@ -18,32 +18,12 @@ from gooey import GooeyParser
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.mc import short_id
+from regolith.mc import short_id, slug
 from regolith.schemas import MC_STATI
 from regolith.tools import all_docs_from_collection
 
 TARGET_COLL = "mc_projects"
 HELPER_TARGET = "a_mcproject"
-
-
-def slug(text):
-    """Return a name as an id someone would be willing to type.
-
-    Parameters
-    ----------
-    text : str
-        The name of the project.
-
-    Returns
-    -------
-    str
-        The name in lower case with anything but letters, numbers and
-        hyphens replaced by a hyphen.
-    """
-    # an underscore becomes a hyphen along with everything else that is not a
-    # letter or a number: underscores in ids are being retired
-    kept = [c if (c.isalnum() or c == "-") else "-" for c in text.lower()]
-    return "-".join(part for part in "".join(kept).split("-") if part)
 
 
 def subparser(subpi):

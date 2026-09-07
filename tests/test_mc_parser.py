@@ -308,3 +308,20 @@ def test_going_deeper_and_back_out_again_follows_the_indent():
     assert tasks["t3"]["parent"] == "t2"
     assert tasks["t4"]["parent"] == "t1"
     assert "parent" not in tasks["t5"]
+
+
+def test_a_project_typed_into_a_document_is_named_by_its_name():
+    # Test that typing a project in gives it the same readable id the adder
+    # helper would give it.  A project id is the one id somebody reads and
+    # types, so a drawn one would make the collections hard to work with
+    text = DOCUMENT.replace("1. **nanodiamond-pdf**  ^ak-nano", "1. **Nanodiamond PDF**")
+    project = parse_document(text)["projects"][0]
+    assert project["_id"] == "nanodiamond-pdf"
+
+
+def test_a_project_does_not_take_an_id_another_one_has():
+    # Test that a name somebody else has used already is numbered rather than
+    # written over, since two people can name a project the same thing
+    text = DOCUMENT.replace("1. **nanodiamond-pdf**  ^ak-nano", "1. **Nanodiamond PDF**")
+    project = parse_document(text, taken={"nanodiamond-pdf"})["projects"][0]
+    assert project["_id"] == "nanodiamond-pdf-2"

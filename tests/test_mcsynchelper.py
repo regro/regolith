@@ -214,3 +214,19 @@ def test_what_was_dropped_is_not_dropped_again(mc_repo, capsys):
     main(["helper", "mc_sync"])
     assert "dropped 0" in capsys.readouterr().out
     assert stored(mc_repo, "mc_tasks", "mct001")["status"] == "dropped"
+
+
+def test_a_project_typed_in_is_stored_under_a_readable_id(mc_repo):
+    # Test that a project somebody types into their document gets the same
+    # readable id the adder helper gives one, since a project id is what names
+    # it in a lister and in whatever refers to it later
+    _, mcdir = mc_repo
+    path = mcdir / "pei.md"
+    path.write_text(
+        path.read_text().replace(
+            "1. **a project**  ^mc-a-project",
+            "1. **a project**  ^mc-a-project\n\n2. **A Second Project**",
+        )
+    )
+    main(["helper", "mc_sync"])
+    assert stored(mc_repo, "mc_projects", "a-second-project")["name"] == "A Second Project"

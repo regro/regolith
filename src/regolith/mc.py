@@ -44,6 +44,59 @@ def short_id(taken=(), length=ID_LENGTH):
             return candidate
 
 
+def slug(text):
+    """Return a name as an id someone would be willing to type.
+
+    Parameters
+    ----------
+    text : str
+        The name of the project.
+
+    Returns
+    -------
+    str
+        The name in lower case with anything but letters, numbers and
+        hyphens replaced by a hyphen.
+    """
+    # an underscore becomes a hyphen along with everything else that is not a
+    # letter or a number: underscores in ids are being retired
+    kept = [c if (c.isalnum() or c == "-") else "-" for c in text.lower()]
+    return "-".join(part for part in "".join(kept).split("-") if part)
+
+
+def project_id(name, taken=()):
+    """Return the id to give a project somebody has just named.
+
+    A project id is the one id here that a person reads and types: it
+    names the project in a lister, in a grant, and in whatever refers to
+    it later.  So it is made from the name rather than drawn at random,
+    the way the adder helper makes one, and a name that two projects
+    share is numbered rather than made unreadable.
+
+    Parameters
+    ----------
+    name : str
+        The name of the project.
+    taken : iterable of str, optional
+        The ids already in use.
+
+    Returns
+    -------
+    str
+        The id, or a short one when the name makes no id at all.
+    """
+    taken = set(taken)
+    stem = slug(name)
+    if not stem:
+        return short_id(taken)
+    if stem not in taken:
+        return stem
+    nth = 2
+    while f"{stem}-{nth}" in taken:
+        nth += 1
+    return f"{stem}-{nth}"
+
+
 def struck(text, status):
     """Return the text struck through when the thing is finished.
 
@@ -215,7 +268,9 @@ def parse_document(text, taken=()):
 
     A line with no ``^id`` is something somebody typed, and is given one.
     Ids are the only thing here that is not the person's to write, so
-    they are minted rather than demanded.
+    they are minted rather than demanded.  A project is given an id made
+    from its name, since that is the one id anybody reads or types; a
+    goal or a task is given a short one.
 
     Parameters
     ----------
@@ -263,6 +318,13 @@ class _Reader:
 
     def mint(self):
         _id = short_id(self.ids)
+        self.ids.add(_id)
+        return _id
+
+    def mint_project(self, name):
+        """Return an id made from a project's name, as the adder makes
+        one."""
+        _id = project_id(name, self.ids)
         self.ids.add(_id)
         return _id
 
@@ -331,7 +393,7 @@ class _Reader:
             return False
         text, struck_out = read_text(found.group("text"))
         project = {
-            "_id": found.group("id") or self.mint(),
+            "_id": found.group("id") or self.mint_project(text),
             "name": text,
             "status": "finished" if struck_out else "active",
         }
