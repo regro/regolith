@@ -16,7 +16,7 @@ from regolith.mc import CLOSED, orphaned, unled
 from regolith.tools import all_docs_from_collection, collection_str, key_value_pair_filter
 
 TARGET_COLL = "mc_projects"
-HELPER_TARGET = "l_mcprojects"
+HELPER_TARGET = "l-mcprojects"
 
 
 def subparser(subpi):

@@ -12,11 +12,11 @@ UPDATER_HELPER_SPECS = {
         "regolith.helpers.a_expensehelper:ExpenseAdderHelper",
         "regolith.helpers.a_expensehelper:subparser",
     ),
-    "mc_sync": (
+    "mc-sync": (
         "regolith.helpers.mcsynchelper:MCSyncHelper",
         "regolith.helpers.mcsynchelper:subparser",
     ),
-    "a_mcproject": (
+    "a-mcproject": (
         "regolith.helpers.a_mcprojecthelper:MCProjectAdderHelper",
         "regolith.helpers.a_mcprojecthelper:subparser",
     ),
@@ -97,15 +97,15 @@ LISTER_HELPER_SPECS = {
         "regolith.helpers.l_grantshelper:GrantsListerHelper",
         "regolith.helpers.l_grantshelper:subparser",
     ),
-    "u_mcproject": (
+    "u-mcproject": (
         "regolith.helpers.u_mcprojecthelper:MCProjectUpdaterHelper",
         "regolith.helpers.u_mcprojecthelper:subparser",
     ),
-    "l_mcgoals": (
+    "l-mcgoals": (
         "regolith.helpers.l_mcgoalshelper:MCGoalsListerHelper",
         "regolith.helpers.l_mcgoalshelper:subparser",
     ),
-    "l_mcprojects": (
+    "l-mcprojects": (
         "regolith.helpers.l_mcprojectshelper:MCProjectsListerHelper",
         "regolith.helpers.l_mcprojectshelper:subparser",
     ),

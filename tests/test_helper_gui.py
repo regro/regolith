@@ -45,3 +45,28 @@ def test_no_argument_is_labelled_with_a_tuple(target):
             f"{target} labels {action.dest} with a tuple. Give it no metavar, or "
             f"one string, so that the helper GUI can label the field."
         )
+
+
+@pytest.mark.parametrize(
+    "typed, expected_target",
+    [
+        # Test that a target is found however it is spelled.  Targets face the
+        # user with hyphens now, the way argparse has always spelled an
+        # argument, and the underscored spelling keeps working so that nobody
+        # has to retype an alias.
+        # C1: the name as it is listed
+        ("mc-sync", "mc-sync"),
+        # C2: the same target with underscores
+        ("mc_sync", "mc-sync"),
+        # C3: a target still listed with underscores, typed as it is listed
+        ("l_todo", "l_todo"),
+        # C4: that one typed with hyphens
+        ("l-todo", "l_todo"),
+        # C5: a name that is no target at all, expect it handed back so that
+        # whoever asked can say so
+        ("no-such-helper", "no-such-helper"),
+    ],
+)
+def test_a_target_is_found_however_it_is_spelled(typed, expected_target):
+    assert HELPERS.canonical(typed) == expected_target
+    assert (typed in HELPERS) == (expected_target in HELPERS)
