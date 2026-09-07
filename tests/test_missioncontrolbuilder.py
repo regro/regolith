@@ -9,6 +9,7 @@ from regolith.builders.missioncontrolbuilder import (
     as_date,
     ids_in_document,
     in_document_order,
+    keys_in_document,
     week_of,
 )
 from regolith.mc import WIDTH, parse_document
@@ -512,3 +513,65 @@ def test_a_wrapped_document_reads_back_the_same():
     assert read["goals"][0]["text"] == LONG
     assert [task["text"] for task in read["tasks"]] == [LONG, f"a sub task, {LONG}"]
     assert read["tasks"][1]["parent"] == read["tasks"][0]["_id"]
+
+
+TYPED_BY_HAND = """# Mission control — Pei Liu
+
+## Projects
+
+1. **GPU solver**
+
+2. **Nanoparticle structure from the PDF**
+
+## Goals — 2026Q3
+
+- 2.1  Draft the methods section
+- 2.2  Get the fits converging
+"""
+
+
+def test_a_document_with_no_ids_still_says_what_order_it_is_in():
+    # Test that a document somebody typed keeps the order they typed.  A line
+    # carries an id only once a render has put one there, so until then the
+    # text of the line is what says which thing it is, and without that a
+    # render sorts by id and hands back an order nobody chose
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {
+        "mc_projects": [dict(p, lead="pliu") for p in PROJECTS],
+        "mc_goals": GOALS,
+        "mc_tasks": TASKS,
+    }
+    document = "\n".join(builder.documents({"pliu": keys_in_document(TYPED_BY_HAND)})["pliu"])
+    assert "1. **GPU solver**  ^p-orphan" in document
+    assert "2. **Nanoparticle structure from the PDF**  ^p-pdf" in document
+    assert "- 2.1  Draft the methods section  ^g-methods" in document
+
+
+@pytest.mark.parametrize(
+    "document, expected_keys",
+    [
+        # Test what a document is read as naming, which is what a render puts
+        # back in order.
+        # C1: lines carrying ids, expect the ids and the texts both, so that
+        # either finds the thing again
+        (
+            "## Projects\n\n1. **A project**  ^p1\n",
+            ["p1", "A project"],
+        ),
+        # C2: a line carrying no id, expect its text, since that is all it
+        # says about which thing it is
+        (
+            "## Projects\n\n1. **A project**\n",
+            ["A project"],
+        ),
+        # C3: a document that cannot be read at all, expect the ids it carries
+        # rather than nothing, since a broken file still says something
+        (
+            "## Goals — 2026Q3\n\n- 9.9  a goal of no project  ^g9\n",
+            ["g9"],
+        ),
+    ],
+)
+def test_keys_in_document_reads_ids_and_texts(document, expected_keys):
+    keys = keys_in_document(document)
+    assert [key for key in keys if key in expected_keys] == expected_keys
