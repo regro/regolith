@@ -44,6 +44,38 @@ def short_id(taken=(), length=ID_LENGTH):
             return candidate
 
 
+def week_of(date):
+    """Return the Monday of the week a date falls in.
+
+    Parameters
+    ----------
+    date : datetime.date
+        The date to place.
+
+    Returns
+    -------
+    datetime.date
+        The Monday of that week.
+    """
+    return date - dt.timedelta(days=date.weekday())
+
+
+def quarter_of(date):
+    """Return the period a date falls in, as the documents write one.
+
+    Parameters
+    ----------
+    date : datetime.date
+        The date to place.
+
+    Returns
+    -------
+    str
+        The quarter, e.g. ``2026Q3``.
+    """
+    return f"{date.year}Q{(date.month - 1) // 3 + 1}"
+
+
 def slug(text):
     """Return a name as an id someone would be willing to type.
 

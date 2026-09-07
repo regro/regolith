@@ -10,9 +10,8 @@ from regolith.builders.missioncontrolbuilder import (
     ids_in_document,
     in_document_order,
     keys_in_document,
-    week_of,
 )
-from regolith.mc import WIDTH, parse_document
+from regolith.mc import WIDTH, parse_document, week_of
 
 PROJECTS = [
     {

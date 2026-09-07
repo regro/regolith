@@ -20,7 +20,7 @@ from pathlib import Path
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates
-from regolith.mc import DocumentError, led_by, parse_document, struck, wrap
+from regolith.mc import DocumentError, led_by, parse_document, struck, week_of, wrap
 from regolith.tools import all_docs_from_collection
 
 UNASSIGNED = "unassigned"
@@ -144,22 +144,6 @@ def in_document_order(items, order, fallback_key):
     known = sorted((i for i in items if where(i) is not None), key=where)
     unknown = sorted((i for i in items if where(i) is None), key=fallback_key)
     return known + unknown
-
-
-def week_of(date):
-    """Return the Monday of the week a date falls in.
-
-    Parameters
-    ----------
-    date : datetime.date
-        The date to place.
-
-    Returns
-    -------
-    datetime.date
-        The Monday of that week.
-    """
-    return date - dt.timedelta(days=date.weekday())
 
 
 def as_date(value):
