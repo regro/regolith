@@ -4,8 +4,8 @@
 
 **Changed:**
 
-* No news: part of mission control, which cannot be used yet.  One item will
-  cover the feature once it works end to end.
+* No news: part of mission control, summarised in
+  consolidate-mission-control-news.
 
 **Deprecated:**
 
