@@ -652,3 +652,70 @@ def test_the_archive_reads_in_the_order_the_periods_came_round():
     # the latest period is the current one, so it heads the document rather
     # than the archive
     assert "## Goals — 2027winter" in document
+
+
+def render_into(tmp_path, gtx):
+    """Return a builder writing into a directory."""
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = gtx
+    builder.mcdir = tmp_path / "mission-control"
+    builder.bldir = str(tmp_path / "build")
+    return builder
+
+
+BUILDABLE = {
+    "mc_projects": [{"_id": "p1", "name": "a project", "status": "active", "lead": "pliu"}],
+    "mc_goals": [
+        {
+            "_id": "g1",
+            "project": "p1",
+            "period": "2026fall",
+            "first_period": "2026fall",
+            "text": "a stored goal",
+            "status": "active",
+        }
+    ],
+    "mc_tasks": [],
+    "people": [{"_id": "pliu", "name": "Pei Liu"}],
+}
+
+
+def test_a_build_writes_a_document_that_holds_nothing_new(tmp_path):
+    # Test the ordinary build: the document says what the collections say, so
+    # writing it over loses nothing and it is written
+    builder = render_into(tmp_path, BUILDABLE)
+    builder.render()
+    written = (builder.mcdir / "pei.md").read_text()
+    assert "^g1" in written
+    builder.render()
+    assert (builder.mcdir / "pei.md").read_text() == written
+
+
+def test_a_build_leaves_a_document_that_holds_work_of_its_own(tmp_path, capsys):
+    # Test the promise the whole design rests on: a build writes the
+    # collections out over the document, so a document holding anything the
+    # collections do not have is left alone rather than written over.  Simon
+    # lost a morning's work to this, typed into the file and never synced
+    builder = render_into(tmp_path, BUILDABLE)
+    builder.render()
+    path = builder.mcdir / "pei.md"
+    typed = path.read_text().replace("## On-deck", "ask about the beamtime\n\n## On-deck")
+    path.write_text(typed)
+
+    builder.render()
+    assert path.read_text() == typed
+    said = capsys.readouterr().out
+    assert "was left alone" in said
+    assert "ask about the beamtime" in said
+    assert "mc_sync" in said
+
+
+def test_a_build_keeps_the_document_it_wrote_over(tmp_path):
+    # Test that a document written over is still recoverable, since a render
+    # that loses nothing by its own reckoning may still surprise somebody
+    builder = render_into(tmp_path, BUILDABLE)
+    builder.render()
+    first = (builder.mcdir / "pei.md").read_text()
+    builder.gtx = dict(BUILDABLE, mc_goals=[dict(BUILDABLE["mc_goals"][0], text="a stored goal")])
+    builder.render()
+    assert (tmp_path / "build" / "mission-control-previous" / "pei.md").read_text() == first
