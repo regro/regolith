@@ -175,8 +175,9 @@ def test_a_goal_is_rendered_under_its_status(heading, expected_goal, documents):
         # record, since a goal that moves period is one record that moved
         # C1: in the current period, expect how long it has been carried
         "Get the fits converging  ^g-converge  (carried since 2026Q2)",
-        # C2: in the period it came from, expect where it went
-        "Get the fits converging  ^g-converge  (→ rolled to 2026Q3)",
+        # C2: in the period it came from, expect it struck through and where
+        # it went, since that period is done with it
+        "~~Get the fits converging~~  ^g-converge  (→ rolled to 2026Q3)",
         # C3: a goal that closed, expect it struck through and dated
         "~~Reproduce the 2019 result~~  ^g-repro  (finished 2026-06-30)",
     ],
@@ -377,3 +378,26 @@ def test_a_sub_task_is_not_listed_as_a_task_of_its_own(nested):
     # one of the week's tasks
     assert nested.count("^t-sub1") == 1
     assert "1.1.2" not in nested
+
+
+@pytest.mark.parametrize(
+    "expected_line",
+    [
+        # Test that the archive strikes through everything a past period is
+        # done with, which is what finished in it and what rolled out of it
+        # C1: a goal that finished in that period
+        "- 1.4  ~~Reproduce the 2019 result~~  ^g-repro  (finished 2026-06-30)",
+        # C2: a goal that rolled out of it, which that period is equally done
+        # with even though the goal itself is still going
+        "- 1.1  ~~Get the fits converging~~  ^g-converge  (→ rolled to 2026Q3)",
+    ],
+)
+def test_the_archive_strikes_through_what_left_the_period(expected_line, documents):
+    assert expected_line in documents["pliu"]
+
+
+def test_a_rolled_goal_is_not_struck_in_the_period_it_moved_to(documents):
+    # Test that striking it in the archive does not strike it where it is now,
+    # since it is still to be done
+    current = documents["pliu"].split("## Goals — 2026Q3")[1].split("\n##")[0]
+    assert "- 1.1  Get the fits converging  ^g-converge  (carried since 2026Q2)" in current

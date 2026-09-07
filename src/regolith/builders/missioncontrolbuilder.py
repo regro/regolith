@@ -385,7 +385,7 @@ class MissionControlBuilder(BuilderBase):
             lines += [f"### Goals — {period}", ""]
             for goal in shown:
                 lines.append(
-                    f"- {goal_number[goal['_id']]}  {struck(goal['text'], goal['status'])}  "
+                    f"- {goal_number[goal['_id']]}  {self.archived_text(goal, period)}  "
                     f"^{goal['_id']}{self.outcome(goal, period)}"
                 )
             lines.append("")
@@ -408,6 +408,17 @@ class MissionControlBuilder(BuilderBase):
         if goal["first_period"] != goal["period"]:
             return f"  (carried since {goal['first_period']})"
         return ""
+
+    @staticmethod
+    def archived_text(goal, period):
+        """Return a goal's text as the archive should show it.
+
+        A period is over, so anything that left it is struck through:
+        what finished in it, and what rolled out of it, both being done
+        with as far as that period is concerned.
+        """
+        done = goal["status"] == "finished" or goal["period"] != period
+        return struck(goal["text"], "finished" if done else goal["status"])
 
     @staticmethod
     def outcome(goal, period):

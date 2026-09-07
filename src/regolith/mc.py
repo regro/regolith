@@ -4,6 +4,8 @@ Kept apart from ``regolith.tools`` so that reading or writing a mission
 control document does not import the rest of it.
 """
 
+import datetime as dt
+import re
 import secrets
 
 # Lowercase base32 without the characters that are read for one another, so
@@ -59,3 +61,247 @@ def struck(text, status):
         The text, struck through when it is finished.
     """
     return f"~~{text}~~" if status == "finished" else text
+
+
+class DocumentError(ValueError):
+    """Raised when a mission control document cannot be read.
+
+    Carries the line it gave up on, so a person can be told where to
+    look rather than that their file is bad.
+    """
+
+
+HEADING = re.compile(r"^(#+)\s+(.*?)\s*$")
+PROJECT_LINE = re.compile(r"^(\d+)\.\s+\*\*(?P<text>.*?)\*\*\s*(?:\^(?P<id>[\w.-]+))?\s*$")
+DELIVERABLE_LINE = re.compile(r"^\s+deliverable:\s*(?P<text>.*?)\s*$")
+GOAL_LINE = re.compile(
+    r"^-\s+(?P<number>[\d.]+)?\s*(?P<text>.*?)\s*(?:\^(?P<id>[\w.-]+))?\s*(?:\((?P<note>.*)\))?\s*$"
+)
+TASK_LINE = re.compile(
+    r"^(?P<indent>\s*)-\s+\[(?P<box>[ xX])\]\s+(?P<number>[\d.]+)?\s*"
+    r"(?P<text>.*?)\s*(?:\^(?P<id>[\w.-]+))?\s*$"
+)
+STRUCK = re.compile(r"^~~(?P<text>.*)~~$")
+GOALS_HEADING = re.compile(r"^Goals\s+—\s+(?P<period>\S+)$")
+WEEK_HEADING = re.compile(r"^Week of\s+(?P<monday>\d{4}-\d{2}-\d{2})$")
+
+
+def read_text(raw):
+    """Return the text of a line and what its marks say about its
+    status.
+
+    A finished line is struck through, and a task is also ticked.  When
+    the two disagree the strike is believed: the box is what gets
+    forgotten.
+
+    Parameters
+    ----------
+    raw : str
+        The text as written, possibly struck through.
+
+    Returns
+    -------
+    tuple of (str, bool)
+        The text without its marks, and whether it is struck.
+    """
+    struck_out = STRUCK.match(raw)
+    return (struck_out.group("text").strip(), True) if struck_out else (raw.strip(), False)
+
+
+def parse_document(text, taken=()):
+    """Return the projects, goals and tasks a mission control document
+    describes.
+
+    The document is what people type into, so it is read forgivingly: a
+    line that is not one of the shapes below is left alone rather than
+    treated as an error.  What it does insist on is that the shapes it
+    does recognise make sense, since a task under no goal, or a goal
+    under no project, cannot be stored.
+
+    A line with no ``^id`` is something somebody typed, and is given one.
+    Ids are the only thing here that is not the person's to write, so
+    they are minted rather than demanded.
+
+    Parameters
+    ----------
+    text : str
+        The document.
+    taken : iterable of str, optional
+        Ids in use elsewhere, so a newly minted one does not collide with
+        another person's document.
+
+    Returns
+    -------
+    dict
+        ``person``, and ``projects``, ``goals`` and ``tasks`` as lists of
+        records in the order the document put them.
+
+    Raises
+    ------
+    DocumentError
+        When a recognised line cannot be placed, naming the line.
+    """
+    ids = set(taken) | set(re.findall(r"\^([\w.-]+)", text))
+    state = _Reader(ids)
+    for number, line in enumerate(text.splitlines(), start=1):
+        state.read(line, number)
+    return state.result()
+
+
+class _Reader:
+    """Reads a document a line at a time, holding where it has got
+    to."""
+
+    def __init__(self, ids):
+        self.ids = set(ids)
+        self.person = None
+        self.projects = []
+        self.goals = []
+        self.tasks = []
+        self.section = None
+        self.period = None
+        self.monday = None
+        self.by_number = {}
+        self.stack = []
+
+    def mint(self):
+        _id = short_id(self.ids)
+        self.ids.add(_id)
+        return _id
+
+    def read(self, line, number):
+        """Take one line of the document."""
+        heading = HEADING.match(line)
+        if heading:
+            self.enter(heading.group(1), heading.group(2))
+            return
+        if not line.strip():
+            return
+        if self.section == "projects" and self.project(line):
+            return
+        if self.section in ("goals", "backburner", "wishlist", "archive") and self.goal(line, number):
+            return
+        if self.section == "week" and self.task(line, number):
+            return
+
+    def enter(self, hashes, title):
+        """Note which section of the document we have reached."""
+        if len(hashes) == 1:
+            self.person = title.split("—")[-1].strip()
+            return
+        self.stack = []
+        goals = GOALS_HEADING.match(title)
+        week = WEEK_HEADING.match(title)
+        if title == "Projects":
+            self.section = "projects"
+        elif goals:
+            # a goals heading inside the archive is a period that has passed
+            self.section = "archive" if self.section == "archive" else "goals"
+            self.period = goals.group("period")
+        elif week:
+            self.section = "week"
+            self.monday = dt.date.fromisoformat(week.group("monday"))
+        elif title in ("Backburner", "Wishlist"):
+            self.section = title.lower()
+        elif title == "Archive":
+            self.section = "archive"
+        else:
+            self.section = None
+
+    def project(self, line):
+        """Read a line of the projects section."""
+        deliverable = DELIVERABLE_LINE.match(line)
+        if deliverable and self.projects:
+            self.projects[-1]["project_deliverable"] = deliverable.group("text")
+            return True
+        found = PROJECT_LINE.match(line)
+        if not found:
+            return False
+        text, struck_out = read_text(found.group("text"))
+        project = {
+            "_id": found.group("id") or self.mint(),
+            "name": text,
+            "status": "finished" if struck_out else "active",
+        }
+        self.projects.append(project)
+        self.by_number[found.group(1)] = project["_id"]
+        return True
+
+    def goal(self, line, number):
+        """Read a line of a goals, backburner, wishlist or archive
+        section."""
+        found = GOAL_LINE.match(line)
+        if not found or found.group("text") is None:
+            return False
+        text, struck_out = read_text(found.group("text"))
+        if not text:
+            return False
+        goal_number = found.group("number")
+        if goal_number is None:
+            raise DocumentError(f"line {number}: a goal needs a number saying which project it is of")
+        project_number = goal_number.split(".")[0]
+        if project_number not in self.by_number:
+            raise DocumentError(f"line {number}: there is no project {project_number}")
+        # the archive says what a period was; the current sections say what is
+        _id = found.group("id") or self.mint()
+        if self.section == "archive":
+            return True
+        goal = {
+            "_id": _id,
+            "project": self.by_number[project_number],
+            "period": self.period,
+            "text": text,
+            "status": self.goal_status(struck_out),
+        }
+        self.goals.append(goal)
+        self.by_number[goal_number] = _id
+        return True
+
+    def goal_status(self, struck_out):
+        """Return the status a goal's section and marks give it."""
+        if struck_out:
+            return "finished"
+        return {"backburner": "backburner", "wishlist": "wishlist"}.get(self.section, "active")
+
+    def task(self, line, number):
+        """Read a line of a week section."""
+        found = TASK_LINE.match(line)
+        if not found:
+            return False
+        text, struck_out = read_text(found.group("text"))
+        depth = len(found.group("indent")) // 2
+        ticked = found.group("box").lower() == "x"
+        task = {
+            "_id": found.group("id") or self.mint(),
+            # a strike is believed over a box, since the box is what gets forgotten
+            "status": "finished" if (struck_out or ticked) else "active",
+            "text": text,
+            "due_date": self.monday,
+        }
+        del self.stack[depth:]
+        if depth:
+            if not self.stack:
+                raise DocumentError(f"line {number}: this is indented under nothing")
+            parent = self.stack[-1]
+            task["parent"] = parent["_id"]
+            task["goal"] = parent["goal"]
+        else:
+            task_number = found.group("number")
+            if task_number is None:
+                raise DocumentError(f"line {number}: a task needs a number saying which goal it is of")
+            goal_number = ".".join(task_number.split(".")[:-1])
+            if goal_number not in self.by_number:
+                raise DocumentError(f"line {number}: there is no goal {goal_number}")
+            task["goal"] = self.by_number[goal_number]
+        self.stack.append(task)
+        self.tasks.append(task)
+        return True
+
+    def result(self):
+        """Return what was read."""
+        return {
+            "person": self.person,
+            "projects": self.projects,
+            "goals": self.goals,
+            "tasks": self.tasks,
+        }
