@@ -1,9 +1,12 @@
 """Tests for listing the mission control projects and goals."""
 
+import os
+
 import pytest
 
 from regolith.helpers.l_mcgoalshelper import MCGoalsListerHelper
 from regolith.helpers.l_mcprojectshelper import MCProjectsListerHelper, as_list
+from regolith.main import main
 from regolith.mc import in_the_group, orphaned, unled
 
 PEOPLE = [
@@ -132,3 +135,48 @@ def test_goals_are_grouped_under_their_project():
     grouped = MCGoalsListerHelper.by_project(goals)
     assert [project for project, _ in grouped] == ["p1", "p2"]
     assert [g["_id"] for g in grouped[0][1]] == ["g1", "g2"]
+
+
+def test_projects_are_grouped_under_their_lead():
+    # Test the grouping that gets read out in a meeting: whose work is it, and
+    # what of it is there.  A project nobody leads is written under nobody
+    # rather than left out
+    lines = MCProjectsListerHelper.by_lead(
+        [
+            {"_id": "hs-solver", "name": "Solver", "lead": "here", "status": "active"},
+            {"_id": "hs-fits", "name": "Fits", "lead": "here", "status": "proposed"},
+            {"_id": "na-idea", "name": "An idea", "status": "proposed"},
+        ]
+    )
+    assert lines == [
+        "here:",
+        "    hs-solver  (active)  Solver",
+        "    hs-fits  (proposed)  Fits",
+        "nobody:",
+        "    na-idea  (proposed)  An idea",
+    ]
+
+
+@pytest.mark.parametrize(
+    "args, expected_in_output",
+    [
+        # Test the two ways of listing that read differently from one line per
+        # project, driven through the command line so that the arguments
+        # themselves are covered.  The database is shared with the tests that
+        # add projects to it, so each case looks for what it asked for rather
+        # than for the whole of what comes back.
+        # C1: grouped under the lead, expect the lead written as a heading and
+        # their project indented under it
+        (["helper", "l_mcprojects", "--grp-by-lead"], ["sbillinge:", "    sb-nanoparticle-pdf  (active)"]),
+        # C2: the spelling l_projecta took, expect it works the same, since
+        # people have been typing it for years
+        (["helper", "l_mcprojects", "--grp_by_lead"], ["sbillinge:", "    sb-nanoparticle-pdf  (active)"]),
+        # C3: named keys, expect the id and those keys and nothing else
+        (["helper", "l_mcprojects", "-k", "status"], ["sb-nanoparticle-pdf    status: active"]),
+    ],
+)
+def test_the_projects_are_listed_the_way_that_was_asked_for(args, expected_in_output, make_db, capsys):
+    os.chdir(make_db)
+    main(args)
+    written = capsys.readouterr().out
+    assert all(expected in written for expected in expected_in_output)
