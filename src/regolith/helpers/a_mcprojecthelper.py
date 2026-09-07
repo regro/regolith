@@ -18,7 +18,7 @@ from gooey import GooeyParser
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.mc import short_id, slug
+from regolith.mc import UNLED_PREFIX, initials, project_id, slug
 from regolith.schemas import MC_STATI
 from regolith.tools import all_docs_from_collection
 
@@ -75,7 +75,7 @@ class MCProjectAdderHelper(DbHelperBase):
     """Add a project to mission control."""
 
     btype = HELPER_TARGET
-    needed_colls = [f"{TARGET_COLL}"]
+    needed_colls = [f"{TARGET_COLL}", "people"]
 
     def construct_global_ctx(self):
         """Constructs the global context."""
@@ -85,13 +85,25 @@ class MCProjectAdderHelper(DbHelperBase):
         if not rc.database:
             rc.database = rc.databases[0]["name"]
         self.gtx[rc.coll] = sorted(all_docs_from_collection(rc.client, rc.coll), key=_id_key)
+        self.gtx["people"] = list(all_docs_from_collection(rc.client, "people"))
+
+    def prefix(self):
+        """Return the initials a project of this lead's is named
+        with."""
+        rc = self.rc
+        if not rc.lead:
+            return UNLED_PREFIX
+        for entry in self.gtx["people"]:
+            if entry["_id"] == rc.lead:
+                return initials(entry.get("name") or rc.lead)
+        return slug(rc.lead)
 
     def db_updater(self):
         rc = self.rc
         taken = {project["_id"] for project in self.gtx[rc.coll]}
         # an id given by hand goes through the same slug, so an underscore
         # cannot get in that way either
-        _id = slug(rc._id) if rc._id else (slug(rc.name) or short_id(taken))
+        _id = slug(rc._id) if rc._id else project_id(rc.name, prefix=self.prefix())
         if _id in taken:
             raise ValueError(
                 f"There is already a project called {_id}. Give it another name, or "
