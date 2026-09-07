@@ -76,7 +76,9 @@ def test_a_project_is_stored_with_what_was_given(make_db):
     rc._update(load_rcfile("regolithrc.json"))
     filter_databases(rc)
     with connect(rc) as rc.client:
-        project = rc.client.get("mc_projects", "grain-boundaries")
+        # the id carries whose project it is, so that two people naming a
+        # project the same thing do not clash
+        project = rc.client.get("mc_projects", "sb-grain-boundaries")
     assert project["lead"] == "sbillinge"
     assert project["collaborators"] == ["ascopatz", "afriend"]
     assert project["grants"] == ["dmref15"]

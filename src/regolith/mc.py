@@ -64,7 +64,34 @@ def slug(text):
     return "-".join(part for part in "".join(kept).split("-") if part)
 
 
-def project_id(name, taken=()):
+UNLED_PREFIX = "na"
+
+
+def initials(name):
+    """Return the initials a project of somebody's is named with.
+
+    Parameters
+    ----------
+    name : str
+        The name of the person, as the people collection has it.
+
+    Returns
+    -------
+    str
+        The first letter of their first name and of their last, in lower
+        case, which is how the group has always shortened a name.  A
+        middle name is passed over, so that Simon J. L. Billinge is sb
+        rather than sjlb.
+    """
+    parts = name.split()
+    if not parts:
+        return ""
+    if len(parts) == 1:
+        return parts[0][0].lower()
+    return f"{parts[0][0]}{parts[-1][0]}".lower()
+
+
+def project_id(name, taken=(), prefix=None):
     """Return the id to give a project somebody has just named.
 
     A project id is the one id here that a person reads and types: it
@@ -73,12 +100,21 @@ def project_id(name, taken=()):
     the way the adder helper makes one, and a name that two projects
     share is numbered rather than made unreadable.
 
+    Whose project it is comes first, as the initials of the person
+    leading it.  Group members name their projects alike -- there is a
+    software maintenance in most of them -- so without that the second
+    one to be written down would be the first one numbered, and neither
+    id would say whose it was.
+
     Parameters
     ----------
     name : str
         The name of the project.
     taken : iterable of str, optional
         The ids already in use.
+    prefix : str, optional
+        What to put in front, which is the initials of whoever leads it,
+        or ``na`` for a project nobody leads.
 
     Returns
     -------
@@ -87,6 +123,8 @@ def project_id(name, taken=()):
     """
     taken = set(taken)
     stem = slug(name)
+    if stem and prefix:
+        stem = f"{slug(prefix)}-{stem}"
     if not stem:
         return short_id(taken)
     if stem not in taken:
@@ -256,7 +294,7 @@ def logical_lines(text):
     return joined
 
 
-def parse_document(text, taken=()):
+def parse_document(text, taken=(), prefix=None):
     """Return the projects, goals and tasks a mission control document
     describes.
 
@@ -279,6 +317,9 @@ def parse_document(text, taken=()):
     taken : iterable of str, optional
         Ids in use elsewhere, so a newly minted one does not collide with
         another person's document.
+    prefix : str, optional
+        What to put in front of the id of a project typed in here, which
+        is the initials of whoever the document belongs to.
 
     Returns
     -------
@@ -293,7 +334,7 @@ def parse_document(text, taken=()):
         When a recognised line cannot be placed, naming the line.
     """
     ids = set(taken) | set(re.findall(r"\^([\w.-]+)", text))
-    state = _Reader(ids)
+    state = _Reader(ids, prefix)
     for number, line in logical_lines(text):
         state.read(line, number)
     return state.result()
@@ -303,8 +344,9 @@ class _Reader:
     """Reads a document a line at a time, holding where it has got
     to."""
 
-    def __init__(self, ids):
+    def __init__(self, ids, prefix=None):
         self.ids = set(ids)
+        self.prefix = prefix
         self.person = None
         self.projects = []
         self.goals = []
@@ -324,7 +366,7 @@ class _Reader:
     def mint_project(self, name):
         """Return an id made from a project's name, as the adder makes
         one."""
-        _id = project_id(name, self.ids)
+        _id = project_id(name, self.ids, self.prefix)
         self.ids.add(_id)
         return _id
 

@@ -229,7 +229,7 @@ def test_a_project_typed_in_is_stored_under_a_readable_id(mc_repo):
         )
     )
     main(["helper", "mc_sync"])
-    assert stored(mc_repo, "mc_projects", "a-second-project")["name"] == "A Second Project"
+    assert stored(mc_repo, "mc_projects", "pl-a-second-project")["name"] == "A Second Project"
 
 
 def test_a_document_is_read_even_when_the_collections_hold_nothing_of_its_own(mc_repo):
@@ -252,3 +252,15 @@ def test_a_document_named_for_nobody_says_so(mc_repo, capsys):
     (mcdir / "whoever.md").write_text("# Mission control — Whoever\n")
     main(["helper", "mc_sync"])
     assert "whoever.md is not named for anybody" in capsys.readouterr().out
+
+
+def test_a_project_nobody_leads_is_named_na(mc_repo):
+    # Test that a project typed into the unassigned document is named na, so
+    # that it reads as nobody's until somebody picks it up, and does not clash
+    # with a project of the same name that somebody leads
+    _, mcdir = mc_repo
+    (mcdir / "unassigned.md").write_text(
+        "# Mission control — unassigned\n\n## Projects\n\n1. **Software maintenance**\n"
+    )
+    main(["helper", "mc_sync"])
+    assert stored(mc_repo, "mc_projects", "na-software-maintenance")["status"] == "proposed"

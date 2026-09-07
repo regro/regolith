@@ -21,7 +21,7 @@ from regolith.builders.missioncontrolbuilder import (
     live,
 )
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.mc import DocumentError, changes, parse_document
+from regolith.mc import UNLED_PREFIX, DocumentError, changes, initials, parse_document, slug
 from regolith.schemas import SCHEMAS, validate
 from regolith.tools import all_docs_from_collection
 
@@ -158,11 +158,34 @@ class MCSyncHelper(DbHelperBase):
         """
         return {record["_id"] for collection in COLLECTIONS for record in self.gtx[collection]}
 
+    def prefix(self, person):
+        """Return what a project typed into one document is named with.
+
+        Parameters
+        ----------
+        person : str
+            The id of the person whose document it is, or
+            ``unassigned``.
+
+        Returns
+        -------
+        str
+            Their initials, or ``na`` for the document of nobody.
+        """
+        if person == UNASSIGNED:
+            return UNLED_PREFIX
+        for entry in self.gtx["people"]:
+            if entry["_id"] == person:
+                return initials(entry.get("name") or person)
+        return slug(person)
+
     def read_one(self, path, person):
         """Read one document and write what it says."""
         rc = self.rc
         try:
-            parsed = parse_document(path.read_text(encoding="utf-8"), taken=self.taken())
+            parsed = parse_document(
+                path.read_text(encoding="utf-8"), taken=self.taken(), prefix=self.prefix(person)
+            )
         except DocumentError as error:
             print(f"{path.name} was not read and nothing was written from it: {error}")
             print("Fix the line it names and run this again.")

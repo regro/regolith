@@ -6,6 +6,7 @@ from regolith.mc import (
     ID_ALPHABET,
     ID_LENGTH,
     WIDTH,
+    initials,
     logical_lines,
     project_id,
     short_id,
@@ -199,3 +200,52 @@ def test_project_id_is_made_from_the_name(name, taken, expected_id):
         assert len(made) == ID_LENGTH and set(made) <= set(ID_ALPHABET)
     else:
         assert made == expected_id
+
+
+@pytest.mark.parametrize(
+    "name, expected_initials",
+    [
+        # Test how a name is shortened for the front of a project id, which is
+        # how the group has always shortened one
+        # C1: a first name and a last, expect the first letter of each
+        ("Adib Kabir", "ak"),
+        # C2: middle names as well, expect them passed over rather than piled
+        # up, so that Simon J. L. Billinge is sb
+        ("Simon J. L. Billinge", "sb"),
+        # C3: one name only, expect the one letter
+        ("Prince", "p"),
+        # C4: no name at all, expect nothing rather than an error
+        ("", ""),
+    ],
+)
+def test_initials_shorten_a_name_the_way_the_group_does(name, expected_initials):
+    assert initials(name) == expected_initials
+
+
+@pytest.mark.parametrize(
+    "name, taken, prefix, expected_id",
+    [
+        # Test that a project id says whose project it is.  Group members name
+        # their projects alike, so without that the second software
+        # maintenance to be written down would be the first one numbered, and
+        # neither id would say whose it was.
+        # C1: a lead, expect their initials in front
+        ("Software maintenance", (), "ak", "ak-software-maintenance"),
+        # C2: nobody leading it, expect na in front, since it is nobody's
+        # until somebody picks it up
+        ("Software maintenance", (), "na", "na-software-maintenance"),
+        # C3: the same name led by somebody else, expect no clash at all
+        ("Software maintenance", ("ak-software-maintenance",), "sb", "sb-software-maintenance"),
+        # C4: the same name led by the same person, expect it numbered
+        (
+            "Software maintenance",
+            ("ak-software-maintenance",),
+            "ak",
+            "ak-software-maintenance-2",
+        ),
+        # C5: no prefix given, expect the name alone
+        ("Software maintenance", (), None, "software-maintenance"),
+    ],
+)
+def test_a_project_id_says_whose_project_it_is(name, taken, prefix, expected_id):
+    assert project_id(name, taken, prefix) == expected_id
