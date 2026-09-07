@@ -313,3 +313,150 @@ class _Reader:
             "goals": self.goals,
             "tasks": self.tasks,
         }
+
+
+HELD = ("backburner", "wishlist")
+OPEN = ("proposed", "active")
+
+
+def settled_status(read_status, existing_status, default="active"):
+    """Return the status a record should have after its document was
+    read.
+
+    A document does not say everything a status does.  Everything in the
+    goals section reads back as ``active``, so a goal that was
+    ``proposed`` would lose that on the first read for no reason anybody
+    intended.  What a document does say is when something is finished,
+    when it is held on the backburner or the wishlist, and when it has
+    come back from either.
+
+    Parameters
+    ----------
+    read_status : str
+        What the document said.
+    existing_status : str or None
+        What the record said, or None for something newly typed.
+    default : str, optional
+        The status for something newly typed that the document does not
+        pin down.  The default is ``active``.
+
+    Returns
+    -------
+    str
+        The status to store.
+    """
+    if read_status in ("finished",) + HELD:
+        return read_status
+    if existing_status is None:
+        return default
+    # it is in the ordinary sections, so it is not held and not finished
+    return existing_status if existing_status in OPEN else "active"
+
+
+def adopt(read, existing, claimed):
+    """Return the record a read line belongs to, matching on text if
+    need be.
+
+    The likeliest damage to a document is a lost id: a paste, an
+    autocorrect, somebody retyping a line.  Left alone that would store a
+    second copy of something that is already there and drop the first.
+    So a line whose id is not known is offered to a record with the same
+    text that nothing else has claimed.
+
+    Parameters
+    ----------
+    read : dict
+        The line as read, carrying an id the parser may have just minted.
+    existing : dict
+        The records already stored, keyed by id.
+    claimed : set
+        The ids already taken by other lines of this document.
+
+    Returns
+    -------
+    dict
+        The record it belongs to, empty for something genuinely new.
+    """
+    if read["_id"] in existing:
+        return existing[read["_id"]]
+    for _id, record in existing.items():
+        same = record.get("text") == read.get("text") and record.get("name") == read.get("name")
+        if _id not in claimed and same:
+            read["_id"] = _id
+            return record
+    return {}
+
+
+def changes(parsed, person, existing, today=None):
+    """Return the records a document says to write, and the ids to drop.
+
+    Nothing is deleted.  A line somebody removed sets the record's status
+    to ``dropped``, so a document wrecked by accident costs nothing that
+    a render cannot put back.
+
+    Parameters
+    ----------
+    parsed : dict
+        What ``parse_document`` read.
+    person : str or None
+        The id of the person whose document it is, which is what makes
+        them the lead of the projects in it.  None for the unassigned
+        document.
+    existing : dict
+        The records already stored for that person, as
+        ``{collection: {id: record}}``.
+    today : datetime.date, optional
+        The date to close things on.  The default is today.
+
+    Returns
+    -------
+    tuple of (dict, dict)
+        The records to write and the ids to drop, both as
+        ``{collection: [...]}``.
+    """
+    today = today or dt.date.today()
+    writes = {"mc_projects": [], "mc_goals": [], "mc_tasks": []}
+    seen = {"mc_projects": set(), "mc_goals": set(), "mc_tasks": set()}
+
+    for read in parsed["projects"]:
+        was = adopt(read, existing["mc_projects"], seen["mc_projects"])
+        record = dict(was)
+        record.update({k: v for k, v in read.items() if k != "status"})
+        record["status"] = settled_status(read["status"], was.get("status"), default="proposed")
+        record["lead"] = person if person else None
+        if record["lead"] is None:
+            record.pop("lead", None)
+        record.setdefault("begin_date", today)
+        _close(record, was, today)
+        writes["mc_projects"].append(record)
+        seen["mc_projects"].add(record["_id"])
+
+    for read in parsed["goals"]:
+        was = adopt(read, existing["mc_goals"], seen["mc_goals"])
+        record = dict(was)
+        record.update({k: v for k, v in read.items() if k != "status"})
+        record["status"] = settled_status(read["status"], was.get("status"))
+        # written once, so how long a goal has been carried is knowable
+        record.setdefault("first_period", read["period"])
+        _close(record, was, today)
+        writes["mc_goals"].append(record)
+        seen["mc_goals"].add(record["_id"])
+
+    for read in parsed["tasks"]:
+        was = adopt(read, existing["mc_tasks"], seen["mc_tasks"])
+        record = dict(was)
+        record.update({k: v for k, v in read.items() if k != "status"})
+        record["status"] = settled_status(read["status"], was.get("status"))
+        record.setdefault("first_due_date", read["due_date"])
+        _close(record, was, today)
+        writes["mc_tasks"].append(record)
+        seen["mc_tasks"].add(record["_id"])
+
+    drops = {collection: sorted(set(records) - seen[collection]) for collection, records in existing.items()}
+    return writes, drops
+
+
+def _close(record, was, today):
+    """Date a record that has just been finished, and only just."""
+    if record["status"] == "finished" and was.get("status") != "finished":
+        record.setdefault("end_date", today)
