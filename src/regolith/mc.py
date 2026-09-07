@@ -300,7 +300,9 @@ class _Reader:
         if not found:
             return False
         text, struck_out = read_text(found.group("text"))
-        depth = len(found.group("indent")) // 2
+        # any indent at all puts a task under the one above it.  People do not
+        # count spaces, so what matters is deeper or not, never how much
+        indent = len(found.group("indent").expandtabs(4))
         ticked = found.group("box").lower() == "x"
         task = {
             "_id": found.group("id") or self.mint(),
@@ -309,22 +311,24 @@ class _Reader:
             "text": text,
             "due_date": self.monday,
         }
-        del self.stack[depth:]
-        if depth:
-            if not self.stack:
-                raise DocumentError(f"line {number}: this is indented under nothing")
-            parent = self.stack[-1]
+        while self.stack and self.stack[-1][0] >= indent:
+            self.stack.pop()
+        if self.stack:
+            parent = self.stack[-1][1]
             task["parent"] = parent["_id"]
             task["goal"] = parent["goal"]
         else:
             task_number = found.group("number")
             if task_number is None:
-                raise DocumentError(f"line {number}: a task needs a number saying which goal it is of")
+                raise DocumentError(
+                    f"line {number}: this task is not under another one, so it needs a "
+                    f"number saying which goal it belongs to, such as 1.1.1"
+                )
             goal_number = ".".join(task_number.split(".")[:-1])
             if goal_number not in self.by_number:
                 raise DocumentError(f"line {number}: there is no goal {goal_number}")
             task["goal"] = self.by_number[goal_number]
-        self.stack.append(task)
+        self.stack.append((indent, task))
         self.tasks.append(task)
         return True
 

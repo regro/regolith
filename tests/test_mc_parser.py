@@ -142,10 +142,11 @@ def test_something_typed_without_an_id_is_given_one(read):
         # rather than being stored somewhere wrong
         # C1: a task under no goal that exists
         ("- [ ] 9.9.9  orphan task  ^zzz999", "there is no goal 9.9"),
-        # C2: a task indented under nothing
-        ("  - [ ] orphan sub task  ^zzz999", "indented under nothing"),
-        # C3: a task with no number at the top level
+        # C2: a task with nothing above it to belong to, and no number saying
+        # which goal it is of.  An indent alone does not place it, since there
+        # is nothing there to indent it under.
         ("- [ ] no number  ^zzz999", "needs a number"),
+        ("  - [ ] indented under nothing  ^zzz999", "needs a number"),
     ],
 )
 def test_a_line_that_cannot_be_placed_says_which(line, expected_message):
@@ -253,3 +254,57 @@ def test_a_project_with_nothing_written_under_it_has_no_description():
     # Test that a project nobody has described does not gain an empty one
     project = parse_document("## Projects\n\n1. **p**  ^p1\n")["projects"][0]
     assert "project_description" not in project
+
+
+HEAD = "## Projects\n\n1. **p**  ^p1\n\n## Goals — 2026Q3\n\n- 1.1  g  ^g1\n\n## Week of 2026-09-07\n\n"
+
+
+@pytest.mark.parametrize(
+    "indent",
+    [
+        # Test that any indent puts a task under the one above it.  Nobody
+        # counts spaces while typing in a meeting, so what matters is deeper
+        # or not, never how much deeper.
+        # C1: one space, which is what a hurried hand produces
+        " ",
+        # C2: two, which is what the renderer writes
+        "  ",
+        # C3: three, from a stray keypress
+        "   ",
+        # C4: four, which an editor may insert
+        "    ",
+        # C5: a tab
+        "\t",
+    ],
+)
+def test_any_indent_makes_a_sub_task(indent):
+    text = HEAD + "- [ ] 1.1.1  a task  ^t1\n" + f"{indent}- [ ] a sub task  ^t2\n"
+    tasks = {t["_id"]: t for t in parse_document(text)["tasks"]}
+    assert tasks["t2"]["parent"] == "t1"
+    assert tasks["t2"]["goal"] == tasks["t1"]["goal"]
+
+
+def test_sub_tasks_at_the_same_indent_are_siblings():
+    # Test that two lines indented the same both hang off the task above them
+    text = HEAD + "- [ ] 1.1.1  a task  ^t1\n - [ ] one  ^t2\n - [ ] two  ^t3\n"
+    tasks = {t["_id"]: t for t in parse_document(text)["tasks"]}
+    assert tasks["t2"]["parent"] == "t1"
+    assert tasks["t3"]["parent"] == "t1"
+
+
+def test_going_deeper_and_back_out_again_follows_the_indent():
+    # Test that an indent that grows and shrinks nests and unnests, however
+    # many spaces somebody happened to use
+    text = (
+        HEAD
+        + "- [ ] 1.1.1  a task  ^t1\n"
+        + "  - [ ] under it  ^t2\n"
+        + "      - [ ] under that  ^t3\n"
+        + "  - [ ] back out again  ^t4\n"
+        + "- [ ] 1.1.2  another task  ^t5\n"
+    )
+    tasks = {t["_id"]: t for t in parse_document(text)["tasks"]}
+    assert tasks["t2"]["parent"] == "t1"
+    assert tasks["t3"]["parent"] == "t2"
+    assert tasks["t4"]["parent"] == "t1"
+    assert "parent" not in tasks["t5"]
