@@ -29,6 +29,27 @@ HELD_STATI = ("backburner", "wishlist")
 ID_IN_DOCUMENT = re.compile(r"\^([\w.-]+)")
 
 
+def live(records):
+    """Return the records a document should still show.
+
+    Deleting a line is how somebody deletes a thing, and the sync marks
+    what they deleted ``dropped`` rather than removing it, so that an
+    accident can be undone.  The document is what they deleted it from,
+    so it is the one place a dropped record does not come back.
+
+    Parameters
+    ----------
+    records : iterable of dict
+        The records to sift.
+
+    Returns
+    -------
+    list of dict
+        The records that are not dropped.
+    """
+    return [record for record in records if record.get("status") != "dropped"]
+
+
 def ids_in_document(text):
     """Return the ids a document carries, in the order they appear.
 
@@ -203,7 +224,7 @@ class MissionControlBuilder(BuilderBase):
         """
         orders = orders or {}
         by_person = defaultdict(list)
-        for project in self.gtx["mc_projects"]:
+        for project in live(self.gtx["mc_projects"]):
             by_person[project.get("lead") or UNASSIGNED].append(project)
         return {
             person: self.render_person(person, projects, orders.get(person, []))
@@ -228,10 +249,10 @@ class MissionControlBuilder(BuilderBase):
         projects = in_document_order(projects, order, lambda p: p["_id"])
         number_of = {project["_id"]: n for n, project in enumerate(projects, start=1)}
         goals = in_document_order(
-            [g for g in self.gtx["mc_goals"] if g["project"] in number_of], order, lambda g: g["_id"]
+            [g for g in live(self.gtx["mc_goals"]) if g["project"] in number_of], order, lambda g: g["_id"]
         )
         goal_number = self.number_goals(goals, number_of)
-        tasks = [t for t in self.gtx["mc_tasks"] if t["goal"] in goal_number]
+        tasks = [t for t in live(self.gtx["mc_tasks"]) if t["goal"] in goal_number]
 
         lines = [f"# Mission control — {self.display_name(person)}", ""]
         lines += self.render_projects(projects)
@@ -305,9 +326,13 @@ class MissionControlBuilder(BuilderBase):
         is chosen by the due date of the task at the top, so a sub task
         stays with the one it belongs to.
         """
+        shown = {task["_id"] for task in tasks}
         children = defaultdict(list)
         for task in tasks:
-            children[task.get("parent")].append(task)
+            # a sub task whose task has gone is shown in its own right, rather
+            # than hanging off something that is no longer there
+            parent = task.get("parent")
+            children[parent if parent in shown else None].append(task)
         by_week = defaultdict(list)
         for task in children[None]:
             due = as_date(task.get("due_date"))
@@ -433,6 +458,4 @@ class MissionControlBuilder(BuilderBase):
         if goal["status"] == "finished":
             end = as_date(goal.get("end_date"))
             return f"  (finished {end.isoformat()})" if end else "  (finished)"
-        if goal["status"] == "dropped":
-            return "  (dropped)"
         return ""

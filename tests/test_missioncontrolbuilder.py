@@ -425,3 +425,49 @@ def test_what_a_project_is_about_is_written_under_it():
     builder.gtx = {"mc_projects": [described], "mc_goals": [], "mc_tasks": []}
     document = "\n".join(builder.documents()["pliu"])
     assert "   what this project is about" in document
+
+
+@pytest.mark.parametrize(
+    "collection, dropped_id, gone, kept",
+    [
+        # Test that a thing somebody deleted from their document does not come
+        # back the next time the document is built.  Deleting a line is how a
+        # thing is deleted, and the sync marks it dropped rather than removing
+        # it, so the render is what has to honour the deletion.
+        # C1: a project was dropped, expect the document without it
+        ("mc_projects", "p-orphan", "^p-orphan", "^p-pdf"),
+        # C2: a goal was dropped, expect the document without it
+        ("mc_goals", "g-methods", "^g-methods", "^g-converge"),
+        # C3: a task was dropped, expect the document without it
+        ("mc_tasks", "t-bg", "^t-bg", "^t-plot"),
+    ],
+)
+def test_a_dropped_thing_does_not_come_back(collection, dropped_id, gone, kept):
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    records = {
+        "mc_projects": [dict(p, lead="pliu") for p in PROJECTS],
+        "mc_goals": GOALS,
+        "mc_tasks": TASKS,
+    }
+    builder.gtx = {
+        name: [dict(r, status="dropped") if r["_id"] == dropped_id else r for r in rs]
+        for name, rs in records.items()
+    }
+    document = "\n".join(builder.documents()["pliu"])
+    assert gone not in document
+    assert kept in document
+
+
+def test_a_sub_task_outlives_the_task_it_hung_off():
+    # Test that deleting a task does not silently take an unrelated sub task
+    # with it.  A sub task with no task above it is shown in its own right,
+    # numbered like any other, rather than disappearing from the document
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {
+        "mc_projects": PROJECTS,
+        "mc_goals": GOALS,
+        "mc_tasks": [dict(t, status="dropped") if t["_id"] == "t-bg" else t for t in SUB_TASKS],
+    }
+    document = "\n".join(builder.documents()["pliu"])
+    assert "^t-bg" not in document
+    assert "\n- [x] 1.1.1  ~~Rebuild the background model~~  ^t-sub1" in document
