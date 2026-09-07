@@ -175,3 +175,29 @@ def test_a_goal_only_the_archive_shows_is_not_deleted():
     writes, drops = changes(document, "pliu", existing(goals=[stored(_id="g-live"), archived]), today=TODAY)
     assert drops["mc_goals"] == []
     assert [g["_id"] for g in writes["mc_goals"]] == ["g-live"]
+
+
+@pytest.mark.parametrize(
+    "person, was, expected_status",
+    [
+        # Test the status a project gets from the document it was typed into.
+        # Which document it is in is what says whether anybody is doing it, so
+        # it is what sets the status of a project nobody has stored yet.
+        # C1: newly typed into somebody's document, expect it is active,
+        # because somebody leads it and it is on their agenda
+        ("pliu", None, "active"),
+        # C2: newly typed into the unassigned document, expect it is proposed,
+        # which is what the adder helper makes as well
+        (None, None, "proposed"),
+        # C3: already stored and proposed, expect it keeps that whichever
+        # document it is in, since only a new project takes the default
+        ("pliu", "proposed", "proposed"),
+        # C4: already stored and active, expect it keeps that
+        (None, "active", "active"),
+    ],
+)
+def test_a_project_takes_its_status_from_whose_document_it_is_in(person, was, expected_status):
+    typed = {"_id": "p1", "name": "a project", "status": "active"}
+    stored_projects = [dict(typed, status=was)] if was else []
+    writes, _ = changes(parsed(projects=[typed]), person, existing(projects=stored_projects), today=TODAY)
+    assert writes["mc_projects"][0]["status"] == expected_status

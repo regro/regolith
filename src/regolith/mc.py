@@ -584,8 +584,9 @@ def changes(parsed, person, existing, today=None):
         What ``parse_document`` read.
     person : str or None
         The id of the person whose document it is, which is what makes
-        them the lead of the projects in it.  None for the unassigned
-        document.
+        them the lead of the projects in it, and what makes a project
+        newly typed into it active rather than proposed.  None for the
+        unassigned document.
     existing : dict
         The records already stored for that person, as
         ``{collection: {id: record}}``.
@@ -606,7 +607,12 @@ def changes(parsed, person, existing, today=None):
         was = adopt(read, existing["mc_projects"], seen["mc_projects"])
         record = dict(was)
         record.update({k: v for k, v in read.items() if k != "status"})
-        record["status"] = settled_status(read["status"], was.get("status"), default="proposed")
+        # a project written into somebody's document is one that somebody is
+        # doing.  One in the unassigned document is one nobody has picked up
+        # yet, which is what the adder helper makes as well
+        record["status"] = settled_status(
+            read["status"], was.get("status"), default="active" if person else "proposed"
+        )
         record["lead"] = person if person else None
         if record["lead"] is None:
             record.pop("lead", None)
