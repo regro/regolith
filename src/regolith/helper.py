@@ -12,6 +12,10 @@ UPDATER_HELPER_SPECS = {
         "regolith.helpers.a_expensehelper:ExpenseAdderHelper",
         "regolith.helpers.a_expensehelper:subparser",
     ),
+    "mc_sync": (
+        "regolith.helpers.mcsynchelper:MCSyncHelper",
+        "regolith.helpers.mcsynchelper:subparser",
+    ),
     "a_mcproject": (
         "regolith.helpers.a_mcprojecthelper:MCProjectAdderHelper",
         "regolith.helpers.a_mcprojecthelper:subparser",
