@@ -164,12 +164,37 @@ def test_a_line_taken_out_is_dropped(mc_repo):
 
 def test_a_document_that_lost_most_of_itself_is_left_alone(mc_repo, capsys):
     # Test the guard against damage: a document missing most of what it held
-    # is more likely broken than edited, so nothing is written from it
+    # is more likely broken than edited, so nothing is written from it.  It
+    # still says what a mission control document says, so this is the guard
+    # that --force is for
     _, mcdir = mc_repo
-    (mcdir / "pei.md").write_text("# Mission control — Pei Liu\n")
+    path = mcdir / "pei.md"
+    kept = path.read_text().split("## Goals")[0]
+    path.write_text(kept)
     main(["helper", "mc_sync"])
-    assert "more like damage than editing" in capsys.readouterr().out
+    said = capsys.readouterr().out
+    assert "more like damage than editing" in said
+    # what is at stake is named, not just counted
+    assert "mct001  a task" in said
     assert stored(mc_repo, "mc_tasks", "mct001")["status"] == "active"
+
+
+def test_a_document_that_stopped_being_one_is_left_alone_even_forced(mc_repo, capsys):
+    # Test the file Simon lost his work to.  An editor saved his document as
+    # plain text, so its headings and bullets went, and every line in it
+    # became unreadable at once.  That is not somebody deleting their work,
+    # and --force must not treat it as though it were: there is nothing in the
+    # document to apply
+    _, mcdir = mc_repo
+    path = mcdir / "pei.md"
+    stripped = path.read_text().replace("#", "").replace("- ", "").replace("[ ]", "").replace("**", "")
+    path.write_text(stripped)
+    main(["helper", "mc_sync", "--force"])
+    said = capsys.readouterr().out
+    assert "nothing in it that a mission control document has" in said
+    assert "with or without --force" in said
+    for collection, _id in [("mc_projects", "mc-a-project"), ("mc_goals", "mcg001"), ("mc_tasks", "mct001")]:
+        assert stored(mc_repo, collection, _id)["status"] != "dropped"
 
 
 def test_a_document_that_cannot_be_read_is_skipped_whole(mc_repo, capsys):

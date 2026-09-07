@@ -204,11 +204,25 @@ class MCSyncHelper(DbHelperBase):
         writes, drops = changes(parsed, None if person == UNASSIGNED else person, existing)
         held = sum(len(records) for records in existing.values())
         dropped = sum(len(ids) for ids in drops.values())
+        read = sum(len(parsed[kind]) for kind in ("projects", "goals", "tasks"))
+        if held and not read:
+            # nothing in it was recognised at all.  That is not somebody
+            # deleting their work, it is a file that has stopped being a
+            # mission control document, and --force does not apply to it:
+            # there is nothing in it to apply
+            print(f"{path.name} has nothing in it that a mission control document has.")
+            print("Its headings and its bullets have gone, which is what an editor does to a")
+            print("file when it saves it as plain text rather than as markdown.")
+            self.name_what_is_at_risk(existing, drops)
+            print("Nothing was written from it, with or without --force.")
+            print(f"Put the document back from your file history, or from {self.copies()}.")
+            return
         if held and dropped > held * DROP_SHARE and not rc.force:
             print(
                 f"{path.name} no longer holds {dropped} of the {held} things it had, which "
                 f"is more like damage than editing, so nothing was written from it."
             )
+            self.name_what_is_at_risk(existing, drops)
             print("Check the document, or run this again with --force to apply it anyway.")
             return
 
@@ -229,6 +243,30 @@ class MCSyncHelper(DbHelperBase):
             for _id in ids:
                 rc.client.update_field(rc.database, collection, _id, "status", "dropped")
         self.report(path, writes, drops, wrote=True)
+
+    def copies(self):
+        """Return where a render keeps the copy it took."""
+        return f"{self.rc.builddir}/mission-control-previous"
+
+    @staticmethod
+    def name_what_is_at_risk(existing, drops):
+        """Say which things a document no longer holds.
+
+        A count says how much is at stake and not what, and what is what
+        somebody needs in order to tell whether the document is right.
+
+        Parameters
+        ----------
+        existing : dict
+            The records stored, as ``{collection: {id: record}}``.
+        drops : dict
+            The ids no longer in the document, by collection.
+        """
+        for collection, ids in drops.items():
+            for _id in ids:
+                record = existing[collection].get(_id, {})
+                said = record.get("name") or record.get("text") or ""
+                print(f"    {_id}  {said}")
 
     @staticmethod
     def report(path, writes, drops, wrote):
