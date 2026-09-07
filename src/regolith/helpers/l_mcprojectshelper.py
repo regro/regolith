@@ -7,11 +7,13 @@ the group.  Nobody has to remember to reassign anything when somebody
 goes.
 """
 
+from collections import defaultdict
+
 from gooey import GooeyParser
 
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.mc import CLOSED, orphaned, unled
-from regolith.tools import all_docs_from_collection, key_value_pair_filter
+from regolith.tools import all_docs_from_collection, collection_str, key_value_pair_filter
 
 TARGET_COLL = "mc_projects"
 HELPER_TARGET = "l_mcprojects"
@@ -35,12 +37,28 @@ def subparser(subpi):
         action="store_true",
         help=f"Include the projects that are {' and '.join(CLOSED)}, which are left out by default.",
     )
+    subpi.add_argument(
+        "--grp-by-lead",
+        # the underscore spelling is what l_projecta took, and is kept so that
+        # nobody has to retype an alias they have used for years
+        "--grp_by_lead",
+        dest="grp_by_lead",
+        action="store_true",
+        help="Group the projects under whoever leads each one.",
+    )
     subpi.add_argument("-v", "--verbose", action="store_true", help="Say more about each one.")
     subpi.add_argument(
         "-f",
         "--filter",
         nargs="+",
         help="Search the collection by giving key value pairs.",
+    )
+    subpi.add_argument(
+        "-k",
+        "--keys",
+        nargs="+",
+        help="The keys to print the values of, e.g. -k status project_deliverable. "
+        "The id is printed whether it is asked for or not.",
     )
     return subpi
 
@@ -82,12 +100,44 @@ class MCProjectsListerHelper(SoutHelperBase):
         if rc.grant:
             projects = [p for p in projects if rc.grant in as_list(p.get("grants"))]
 
-        for project in sorted(projects, key=lambda p: (p.get("lead") or "", p["_id"])):
+        projects = sorted(projects, key=lambda p: (p.get("lead") or "", p["_id"]))
+        if rc.grp_by_lead:
+            for line in self.by_lead(projects):
+                print(line)
+            return
+        if rc.keys:
+            print(collection_str(projects, rc.keys), end="")
+            return
+        for project in projects:
             print(self.line(project))
             if rc.verbose:
                 for line in self.more(project):
                     print(line)
         return
+
+    @staticmethod
+    def by_lead(projects):
+        """Return the projects written out under whoever leads each one.
+
+        Parameters
+        ----------
+        projects : list of dict
+            The projects to write out.
+
+        Returns
+        -------
+        list of str
+            The lines, a lead and then what they lead.
+        """
+        grouped = defaultdict(list)
+        for project in projects:
+            grouped["nobody" if unled(project) else project["lead"]].append(project)
+        lines = []
+        for lead in sorted(grouped):
+            lines.append(f"{lead}:")
+            for project in grouped[lead]:
+                lines.append(f"    {project['_id']}  ({project.get('status', '?')})  {project.get('name', '')}")
+        return lines
 
     @staticmethod
     def line(project):
