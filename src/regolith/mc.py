@@ -7,6 +7,7 @@ control document does not import the rest of it.
 import datetime as dt
 import re
 import secrets
+import textwrap
 
 # Lowercase base32 without the characters that are read for one another, so
 # an id can be said aloud in a meeting and typed back correctly
@@ -88,6 +89,10 @@ TASK_LINE = re.compile(
     r"(?P<text>.*?)\s*(?:\^(?P<id>[\w.-]+))?\s*$"
 )
 STRUCK = re.compile(r"^~~(?P<text>.*)~~$")
+# what starts something rather than carrying on the line above: a heading, a
+# bullet, a task box or a numbered project
+MARKER = re.compile(r"^\s*(?:#+\s+|-\s+(?:\[[ xX]\]\s+)?|\d+\.\s+)")
+WIDTH = 79
 GOALS_HEADING = re.compile(r"^Goals\s+—\s+(?P<period>\S+)$")
 WEEK_HEADING = re.compile(r"^Week of\s+(?P<monday>\d{4}-\d{2}-\d{2})$")
 
@@ -112,6 +117,90 @@ def read_text(raw):
     """
     struck_out = STRUCK.match(raw)
     return (struck_out.group("text").strip(), True) if struck_out else (raw.strip(), False)
+
+
+def indent_of(line):
+    """Return how far a line is indented, counting a tab as four."""
+    return len(line[: len(line) - len(line.lstrip())].expandtabs(4))
+
+
+def wrap(line, width=WIDTH):
+    """Return a rendered line broken to fit a plain text editor.
+
+    A goal or a task can run to a paragraph, and a document is read in an
+    editor that does not fold, where finding the end of a long line is a
+    chore.  So a written line is broken, and what carries on from it is
+    indented two further than the line it belongs to: enough for
+    ``join_wrapped`` to know it for a continuation, and few enough that
+    markdown still reads it as the same paragraph rather than as a code
+    block.
+
+    A heading and the line naming a project are left alone.  Neither can
+    be joined back up, the first because it must stay one line to be a
+    heading and the second because the indented lines under a project are
+    what the project is about.
+
+    Parameters
+    ----------
+    line : str
+        The line as rendered.
+    width : int, optional
+        The longest line to write.  The default is 79.
+
+    Returns
+    -------
+    list of str
+        The line, broken into as many as it needs.
+    """
+    if len(line) <= width or HEADING.match(line) or PROJECT_LINE.match(line):
+        return [line]
+    return textwrap.wrap(
+        line,
+        width=width,
+        subsequent_indent=" " * (indent_of(line) + 2),
+        break_long_words=False,
+        break_on_hyphens=False,
+    ) or [line]
+
+
+def logical_lines(text):
+    """Return the document's lines with every broken one joined back up.
+
+    A line that is indented further than the line above it and does not
+    start something of its own is the rest of that line.  That is the
+    shape ``wrap`` writes, and it is also what somebody typing a
+    paragraph under a task does by hand, so both read the same way.
+
+    A line under the line naming a project is left alone, since that is
+    the project's description and not the rest of its name.
+
+    Parameters
+    ----------
+    text : str
+        The document as written.
+
+    Returns
+    -------
+    list of tuple of (int, str)
+        One line per thing the document says, each with the line of the
+        file it started on, so that an error names a line the writer can
+        find.
+    """
+    joined = []
+    for number, line in enumerate(text.splitlines(), start=1):
+        carries_on = (
+            joined
+            and line.strip()
+            and joined[-1][1].strip()
+            and not MARKER.match(line)
+            and indent_of(line) > indent_of(joined[-1][1])
+            and not PROJECT_LINE.match(joined[-1][1])
+        )
+        if carries_on:
+            joined[-1] = (joined[-1][0], f"{joined[-1][1].rstrip()} {line.strip()}")
+        else:
+            joined.append((number, line))
+    return joined
 
 
 def parse_document(text, taken=()):
@@ -149,7 +238,7 @@ def parse_document(text, taken=()):
     """
     ids = set(taken) | set(re.findall(r"\^([\w.-]+)", text))
     state = _Reader(ids)
-    for number, line in enumerate(text.splitlines(), start=1):
+    for number, line in logical_lines(text):
         state.read(line, number)
     return state.result()
 

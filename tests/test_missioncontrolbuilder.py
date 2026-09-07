@@ -11,6 +11,7 @@ from regolith.builders.missioncontrolbuilder import (
     in_document_order,
     week_of,
 )
+from regolith.mc import WIDTH, parse_document
 
 PROJECTS = [
     {
@@ -425,3 +426,43 @@ def test_what_a_project_is_about_is_written_under_it():
     builder.gtx = {"mc_projects": [described], "mc_goals": [], "mc_tasks": []}
     document = "\n".join(builder.documents()["pliu"])
     assert "   what this project is about" in document
+
+
+def test_a_project_is_written_as_paragraphs_markdown_can_render():
+    # Test that what is written under a project is separated by blank lines.
+    # Markdown runs consecutive lines into one paragraph, so without them a
+    # project reads as a single block wherever the document is rendered
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    described = dict(PROJECTS[0], project_description="what this project is about")
+    builder.gtx = {"mc_projects": [described], "mc_goals": [], "mc_tasks": []}
+    document = "\n".join(builder.documents()["pliu"])
+    assert "^p-pdf\n\n   deliverable: Submit the paper\n\n   with: " in document
+    assert "ascopatz, afriend\n\n   what this project is about\n" in document
+
+
+LONG = (
+    "build an AI campaign using simple models such as random forest to predict "
+    "which of the samples in the matrix are worth measuring at the beamline"
+)
+
+
+def test_a_wrapped_document_reads_back_the_same():
+    # Test the two halves against each other over text long enough to be
+    # broken several times: a project's description, a goal, a task and the sub
+    # task under it all come back whole, and no line is wider than the width
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {
+        "mc_projects": [dict(PROJECTS[0], project_description=LONG)],
+        "mc_goals": [dict(GOALS[0], text=LONG)],
+        "mc_tasks": [
+            dict(TASKS[0], text=LONG),
+            dict(TASKS[0], _id="t-sub", parent="t-bg", text=f"a sub task, {LONG}"),
+        ],
+    }
+    lines = builder.documents()["pliu"]
+    read = parse_document("\n".join(lines) + "\n")
+    assert max(len(line) for line in lines) <= WIDTH
+    assert read["projects"][0]["project_description"] == LONG
+    assert read["goals"][0]["text"] == LONG
+    assert [task["text"] for task in read["tasks"]] == [LONG, f"a sub task, {LONG}"]
+    assert read["tasks"][1]["parent"] == read["tasks"][0]["_id"]
