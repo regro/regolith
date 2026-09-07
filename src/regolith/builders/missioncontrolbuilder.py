@@ -275,6 +275,8 @@ class MissionControlBuilder(BuilderBase):
                 lines.append(f"   deliverable: {project['project_deliverable']}")
             if project.get("collaborators"):
                 lines.append(f"   with: {', '.join(project['collaborators'])}")
+            if project.get("project_description"):
+                lines.append(f"   {project['project_description']}")
         lines.append("")
         return lines
 

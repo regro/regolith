@@ -77,6 +77,9 @@ HEADING = re.compile(r"^(#+)\s+(.*?)\s*$")
 PROJECT_LINE = re.compile(r"^(\d+)\.\s+\*\*(?P<text>.*?)\*\*\s*(?:\^(?P<id>[\w.-]+))?\s*$")
 DELIVERABLE_LINE = re.compile(r"^\s+deliverable:\s*(?P<text>.*?)\s*$")
 WITH_LINE = re.compile(r"^\s+with:\s*(?P<people>.*?)\s*$")
+DESCRIPTION_LINE = re.compile(r"^\s+description:\s*(?P<text>.*?)\s*$")
+# anything else written under a project is what the project is about
+PROSE_LINE = re.compile(r"^\s+(?P<text>\S.*?)\s*$")
 GOAL_LINE = re.compile(
     r"^-\s+(?P<number>[\d.]+)?\s*(?P<text>.*?)\s*(?:\^(?P<id>[\w.-]+))?\s*(?:\((?P<note>.*)\))?\s*$"
 )
@@ -222,8 +225,18 @@ class _Reader:
             people = [who.strip() for who in with_line.group("people").split(",")]
             self.projects[-1]["collaborators"] = [who for who in people if who]
             return True
+        described = DESCRIPTION_LINE.match(line)
+        if described and self.projects:
+            self.describe(described.group("text"))
+            return True
         found = PROJECT_LINE.match(line)
         if not found:
+            # prose under a project is what the project is about, whether or
+            # not anybody wrote "description:" in front of it
+            prose = PROSE_LINE.match(line)
+            if prose and self.projects:
+                self.describe(prose.group("text"))
+                return True
             return False
         text, struck_out = read_text(found.group("text"))
         project = {
@@ -234,6 +247,16 @@ class _Reader:
         self.projects.append(project)
         self.by_number[found.group(1)] = project["_id"]
         return True
+
+    def describe(self, text):
+        """Add a line of prose to what the last project is about.
+
+        Somebody writing a paragraph will wrap it over several lines, so
+        they are joined rather than the last one winning.
+        """
+        project = self.projects[-1]
+        described = project.get("project_description")
+        project["project_description"] = f"{described} {text}".strip() if described else text
 
     def goal(self, line, number):
         """Read a line of a goals, backburner, wishlist or archive

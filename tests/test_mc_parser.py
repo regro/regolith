@@ -212,3 +212,44 @@ def test_a_project_read_back_keeps_its_deliverable_and_its_people():
     project = parse_document(text)["projects"][0]
     assert project["project_deliverable"] == "submit it"
     assert project["collaborators"] == ["sgeorge"]
+
+
+@pytest.mark.parametrize(
+    "under_the_project, expected",
+    [
+        # Test how what a project is about is written.  People type a
+        # paragraph under the project without labelling it, so that is what a
+        # bare line means, and an explicit label works too.
+        # C1: prose with no label, which is what people type
+        ("   it is about the friction of things", "it is about the friction of things"),
+        # C2: the same with a label, for anybody who prefers to be explicit
+        ("   description: it is about the friction of things", "it is about the friction of things"),
+        # C3: a paragraph wrapped over lines, expect it joined rather than the
+        # last line winning
+        ("   it is about the friction\n   of things", "it is about the friction of things"),
+    ],
+)
+def test_what_a_project_is_about_is_read(under_the_project, expected):
+    text = f"## Projects\n\n1. **p**  ^p1\n{under_the_project}\n"
+    assert parse_document(text)["projects"][0]["project_description"] == expected
+
+
+def test_the_labelled_lines_are_not_mistaken_for_prose():
+    # Test that the two labelled lines keep their meaning rather than being
+    # swallowed into the description
+    text = (
+        "## Projects\n\n1. **p**  ^p1\n"
+        "   deliverable: submit it\n"
+        "   with: sgeorge\n"
+        "   and this is what it is about\n"
+    )
+    project = parse_document(text)["projects"][0]
+    assert project["project_deliverable"] == "submit it"
+    assert project["collaborators"] == ["sgeorge"]
+    assert project["project_description"] == "and this is what it is about"
+
+
+def test_a_project_with_nothing_written_under_it_has_no_description():
+    # Test that a project nobody has described does not gain an empty one
+    project = parse_document("## Projects\n\n1. **p**  ^p1\n")["projects"][0]
+    assert "project_description" not in project
