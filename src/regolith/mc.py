@@ -644,9 +644,17 @@ def changes(parsed, person, existing, today=None):
     today = today or dt.date.today()
     writes = {"mc_projects": [], "mc_goals": [], "mc_tasks": []}
     seen = {"mc_projects": set(), "mc_goals": set(), "mc_tasks": set()}
+    # what a line was given while reading, against what it turned out to be.
+    # A goal says which project it is of by the id the reader gave that
+    # project, so when the project turns out to be one already stored, every
+    # reference to it has to follow it
+    adopted = {}
 
     for read in parsed["projects"]:
+        given = read["_id"]
         was = adopt(read, existing["mc_projects"], seen["mc_projects"])
+        if read["_id"] != given:
+            adopted[given] = read["_id"]
         record = dict(was)
         record.update({k: v for k, v in read.items() if k != "status"})
         # a project written into somebody's document is one that somebody is
@@ -664,7 +672,11 @@ def changes(parsed, person, existing, today=None):
         seen["mc_projects"].add(record["_id"])
 
     for read in parsed["goals"]:
+        given = read["_id"]
+        read["project"] = adopted.get(read["project"], read["project"])
         was = adopt(read, existing["mc_goals"], seen["mc_goals"])
+        if read["_id"] != given:
+            adopted[given] = read["_id"]
         record = dict(was)
         record.update({k: v for k, v in read.items() if k != "status"})
         record["status"] = settled_status(read["status"], was.get("status"))
@@ -675,7 +687,13 @@ def changes(parsed, person, existing, today=None):
         seen["mc_goals"].add(record["_id"])
 
     for read in parsed["tasks"]:
+        given = read["_id"]
+        read["goal"] = adopted.get(read["goal"], read["goal"])
+        if read.get("parent"):
+            read["parent"] = adopted.get(read["parent"], read["parent"])
         was = adopt(read, existing["mc_tasks"], seen["mc_tasks"])
+        if read["_id"] != given:
+            adopted[given] = read["_id"]
         record = dict(was)
         record.update({k: v for k, v in read.items() if k != "status"})
         record["status"] = settled_status(read["status"], was.get("status"))

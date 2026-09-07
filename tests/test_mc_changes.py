@@ -201,3 +201,80 @@ def test_a_project_takes_its_status_from_whose_document_it_is_in(person, was, ex
     stored_projects = [dict(typed, status=was)] if was else []
     writes, _ = changes(parsed(projects=[typed]), person, existing(projects=stored_projects), today=TODAY)
     assert writes["mc_projects"][0]["status"] == expected_status
+
+
+def read_project(**kw):
+    """Return a project line as the parser hands it over."""
+    base = {"_id": "minted-p", "name": "shock", "status": "active"}
+    base.update(kw)
+    return base
+
+
+def read_task(**kw):
+    """Return a task line as the parser hands it over."""
+    base = {
+        "_id": "minted-t",
+        "goal": "minted-g",
+        "text": "a task",
+        "status": "active",
+        "due_date": dt.date(2026, 9, 14),
+    }
+    base.update(kw)
+    return base
+
+
+STORED_PROJECT = {"_id": "pl-shock", "name": "shock", "status": "active", "lead": "pliu"}
+STORED_TASK = {"_id": "t-old", "goal": "g-old", "text": "a task", "status": "active"}
+
+
+def written(writes, collection):
+    """Return what was written to one collection, keyed by id."""
+    return {record["_id"]: record for record in writes[collection]}
+
+
+def test_a_reference_follows_the_line_it_points_at():
+    # Test a document typed by hand, where no line carries an id.  The reader
+    # gives every line a new one and adopt then matches each to what is
+    # already stored, so a goal saying which project it is of, and a task
+    # saying which goal, are pointing at ids that turned out to be somebody
+    # else's.  Left alone the goal and the task hang off nothing and vanish
+    # from the next render.
+    document = parsed(
+        projects=[read_project()],
+        goals=[read(_id="minted-g", project="minted-p")],
+        tasks=[read_task()],
+    )
+    writes, drops = changes(
+        document,
+        "pliu",
+        existing(
+            projects=[STORED_PROJECT],
+            goals=[stored(_id="g-old", project="pl-shock")],
+            tasks=[STORED_TASK],
+        ),
+        today=TODAY,
+    )
+    assert written(writes, "mc_goals")["g-old"]["project"] == "pl-shock"
+    assert written(writes, "mc_tasks")["t-old"]["goal"] == "g-old"
+    assert drops == {"mc_projects": [], "mc_goals": [], "mc_tasks": []}
+
+
+def test_a_sub_task_follows_the_task_it_hangs_off():
+    # Test the same for a sub task, which says which task it is under rather
+    # than which goal
+    document = parsed(
+        projects=[read_project()],
+        goals=[read(_id="minted-g", project="minted-p")],
+        tasks=[read_task(), read_task(_id="minted-sub", parent="minted-t", text="a sub task")],
+    )
+    writes, _ = changes(
+        document,
+        "pliu",
+        existing(
+            projects=[STORED_PROJECT],
+            goals=[stored(_id="g-old", project="pl-shock")],
+            tasks=[STORED_TASK, dict(STORED_TASK, _id="t-sub", parent="t-old", text="a sub task")],
+        ),
+        today=TODAY,
+    )
+    assert written(writes, "mc_tasks")["t-sub"]["parent"] == "t-old"
