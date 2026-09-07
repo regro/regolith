@@ -10,6 +10,8 @@ import secrets
 
 # Lowercase base32 without the characters that are read for one another, so
 # an id can be said aloud in a meeting and typed back correctly
+# No underscore: ids are written with hyphens.  The patterns below still read
+# one, so a document written before that stays readable.
 ID_ALPHABET = "abcdefghijkmnpqrstuvwxyz23456789"
 ID_LENGTH = 6
 
