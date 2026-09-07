@@ -828,3 +828,87 @@ def test_a_held_thing_goes_to_the_document_of_whoever_wrote_it():
     documents = builder.documents()
     assert "^g-idea" in "\n".join(documents["pliu"])
     assert "^g-idea" not in "\n".join(documents["ascopatz"])
+
+
+LONG_AGO = "2020-06-30"
+RECENTLY = (dt.date.today() - dt.timedelta(days=30)).isoformat()
+
+
+def a_finished_build(tmp_path, **rc):
+    """Return a builder over one old finished project and one just
+    finished."""
+    projects = [
+        dict(
+            PROJECTS[0],
+            _id="p-old",
+            name="An old finished project",
+            lead="pliu",
+            status="finished",
+            end_date=LONG_AGO,
+        ),
+        dict(
+            PROJECTS[0],
+            _id="p-new",
+            name="A just finished project",
+            lead="pliu",
+            status="finished",
+            end_date=RECENTLY,
+        ),
+        dict(PROJECTS[0], _id="p-live", name="A live project", lead="pliu", status="active"),
+    ]
+    goals = [dict(GOALS[0], _id="g-old", project="p-old", text="a goal of the old project")]
+    builder = render_into(
+        tmp_path,
+        {
+            "mc_projects": projects,
+            "mc_goals": goals,
+            "mc_tasks": [],
+            # pliu is in the group, so that render writes their document
+            "people": [{"_id": "pliu", "name": "Pei Liu", "active": True}],
+        },
+    )
+    for key, value in rc.items():
+        setattr(builder, key, value)
+    return builder
+
+
+@pytest.mark.parametrize(
+    "asked_for, expected_in, expected_out",
+    [
+        # Test which finished projects a document keeps.  Seeing what has just
+        # been finished is worth the room it takes; a project finished years
+        # ago is not, and somebody who has been in the group a while has many.
+        # C1: nothing asked for, expect the recent one and not the old one
+        ({}, ["^p-new", "^p-live"], ["^p-old", "a goal of the old project"]),
+        # C2: everything asked for, expect the old one back
+        ({"build_all": True}, ["^p-new", "^p-live", "^p-old"], []),
+        # C3: a longer memory asked for in the runcontrol, expect it kept
+        ({"keep_finished_days": 10000}, ["^p-old"], []),
+        # C4: no memory at all, expect even the recent one goes
+        ({"keep_finished_days": 0}, ["^p-live"], ["^p-old", "^p-new"]),
+    ],
+)
+def test_a_project_finished_long_ago_leaves_the_document(asked_for, expected_in, expected_out, tmp_path):
+    builder = a_finished_build(tmp_path, **asked_for)
+    document = "\n".join(builder.documents()["pliu"])
+    for expected in expected_in:
+        assert expected in document
+    for gone in expected_out:
+        assert gone not in document
+
+
+def test_retiring_a_project_is_not_taken_for_losing_it(tmp_path):
+    # Test the two guards against each other.  A build refuses to write over a
+    # document holding anything the collections do not have, and a retired
+    # project is in the collections, so writing the document without it must
+    # not read as losing it
+    builder = a_finished_build(tmp_path, build_all=True)
+    builder.render()
+    path = builder.mcdir / "pei.md"
+    assert "^p-old" in path.read_text()
+
+    builder = a_finished_build(tmp_path)
+    builder.render()
+    written = path.read_text()
+    assert "^p-old" not in written
+    assert "^p-new" in written
