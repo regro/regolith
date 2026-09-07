@@ -162,3 +162,16 @@ def test_adopting_leaves_something_genuinely_new_alone():
     read_line = {"_id": "minted", "text": "something else"}
     assert adopt(read_line, {"realid": {"_id": "realid", "text": "a goal"}}, set()) == {}
     assert read_line["_id"] == "minted"
+
+
+def test_a_goal_only_the_archive_shows_is_not_deleted():
+    # Test that history is not read as a deletion.  The archive shows a goal
+    # from a period that has passed and says nothing to store about it, so it
+    # appears in no other section, and taking that for a deleted line would
+    # have every sync drop everything anybody ever finished
+    archived = stored(_id="g-old", period="2026Q2", first_period="2026Q2", status="finished")
+    document = parsed(goals=[read(_id="g-live")], tasks=())
+    document["mentioned"] = ["g-old"]
+    writes, drops = changes(document, "pliu", existing(goals=[stored(_id="g-live"), archived]), today=TODAY)
+    assert drops["mc_goals"] == []
+    assert [g["_id"] for g in writes["mc_goals"]] == ["g-live"]

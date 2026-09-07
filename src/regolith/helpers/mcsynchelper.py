@@ -14,7 +14,7 @@ from pathlib import Path
 
 from gooey import GooeyParser
 
-from regolith.builders.missioncontrolbuilder import UNASSIGNED, MissionControlBuilder
+from regolith.builders.missioncontrolbuilder import UNASSIGNED, MissionControlBuilder, live
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.mc import DocumentError, changes, parse_document
 from regolith.schemas import SCHEMAS, validate
@@ -81,7 +81,7 @@ class MCSyncHelper(DbHelperBase):
     def people(self, renderer):
         """Return everyone a document could belong to, and the
         orphans."""
-        leads = {project.get("lead") or UNASSIGNED for project in self.gtx["mc_projects"]}
+        leads = {project.get("lead") or UNASSIGNED for project in live(self.gtx["mc_projects"])}
         return sorted(leads | {UNASSIGNED})
 
     def mine(self, person):
@@ -96,11 +96,19 @@ class MCSyncHelper(DbHelperBase):
         -------
         dict
             ``{collection: {id: record}}`` for what is theirs.
+
+        Notes
+        -----
+        What was dropped is left out.  It is not in their document, so
+        counting it would have every sync drop it again and read as a
+        document losing more than it holds.
         """
         lead = None if person == UNASSIGNED else person
-        projects = {project["_id"]: project for project in self.gtx["mc_projects"] if project.get("lead") == lead}
-        goals = {goal["_id"]: goal for goal in self.gtx["mc_goals"] if goal.get("project") in projects}
-        tasks = {task["_id"]: task for task in self.gtx["mc_tasks"] if task.get("goal") in goals}
+        projects = {
+            project["_id"]: project for project in live(self.gtx["mc_projects"]) if project.get("lead") == lead
+        }
+        goals = {goal["_id"]: goal for goal in live(self.gtx["mc_goals"]) if goal.get("project") in projects}
+        tasks = {task["_id"]: task for task in live(self.gtx["mc_tasks"]) if task.get("goal") in goals}
         return {"mc_projects": projects, "mc_goals": goals, "mc_tasks": tasks}
 
     def read_one(self, path, person):

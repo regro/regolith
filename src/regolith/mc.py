@@ -229,7 +229,8 @@ def parse_document(text, taken=()):
     -------
     dict
         ``person``, and ``projects``, ``goals`` and ``tasks`` as lists of
-        records in the order the document put them.
+        records in the order the document put them, plus ``mentioned``,
+        the ids the document showed without saying anything to store.
 
     Raises
     ------
@@ -258,6 +259,7 @@ class _Reader:
         self.monday = None
         self.by_number = {}
         self.stack = []
+        self.mentioned = []
 
     def mint(self):
         _id = short_id(self.ids)
@@ -365,6 +367,9 @@ class _Reader:
         # the archive says what a period was; the current sections say what is
         _id = found.group("id") or self.mint()
         if self.section == "archive":
+            # nothing in the archive is written back, but a line that is there
+            # is a line nobody deleted, so it must not read as one
+            self.mentioned.append(_id)
             return True
         goal = {
             "_id": _id,
@@ -428,6 +433,7 @@ class _Reader:
             "projects": self.projects,
             "goals": self.goals,
             "tasks": self.tasks,
+            "mentioned": self.mentioned,
         }
 
 
@@ -568,6 +574,9 @@ def changes(parsed, person, existing, today=None):
         writes["mc_tasks"].append(record)
         seen["mc_tasks"].add(record["_id"])
 
+    # the archive shows a goal without saying anything to store about it, so
+    # what it shows is neither written nor taken for deleted
+    seen["mc_goals"].update(parsed.get("mentioned", ()))
     drops = {collection: sorted(set(records) - seen[collection]) for collection, records in existing.items()}
     return writes, drops
 

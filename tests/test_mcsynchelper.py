@@ -200,3 +200,17 @@ def test_a_document_that_says_nothing_new_changes_nothing(mc_repo):
     before = stored(mc_repo, "mc_goals", "mcg001")
     main(["helper", "mc_sync"])
     assert stored(mc_repo, "mc_goals", "mcg001") == before
+
+
+def test_what_was_dropped_is_not_dropped_again(mc_repo, capsys):
+    # Test that a deletion settles.  What was dropped is no longer in the
+    # document, so counting it again would have every later sync report a
+    # deletion nobody made, and enough of them would read as a damaged file
+    _, mcdir = mc_repo
+    path = mcdir / "pei.md"
+    path.write_text(path.read_text().replace("- [ ] 1.1.1  a task  ^mct001\n", ""))
+    main(["helper", "mc_sync"])
+    capsys.readouterr()
+    main(["helper", "mc_sync"])
+    assert "dropped 0" in capsys.readouterr().out
+    assert stored(mc_repo, "mc_tasks", "mct001")["status"] == "dropped"
