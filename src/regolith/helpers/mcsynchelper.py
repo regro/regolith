@@ -29,6 +29,7 @@ from regolith.mc import (
     led_by,
     parse_document,
     slug,
+    unassigned,
 )
 from regolith.schemas import SCHEMAS, validate
 from regolith.tools import all_docs_from_collection
@@ -150,7 +151,13 @@ class MCSyncHelper(DbHelperBase):
         projects = {
             project["_id"]: project for project in live(self.gtx["mc_projects"]) if led_by(project) == lead
         }
-        goals = {goal["_id"]: goal for goal in live(self.gtx["mc_goals"]) if goal.get("project") in projects}
+        goals = {
+            goal["_id"]: goal
+            for goal in live(self.gtx["mc_goals"])
+            # a goal of no project is not reached through a project, so it is
+            # found by whose it is, or it would read as deleted every sync
+            if goal.get("project") in projects or (unassigned(goal) and goal.get("lead") == lead)
+        }
         tasks = {task["_id"]: task for task in live(self.gtx["mc_tasks"]) if task.get("goal") in goals}
         return {"mc_projects": projects, "mc_goals": goals, "mc_tasks": tasks}
 

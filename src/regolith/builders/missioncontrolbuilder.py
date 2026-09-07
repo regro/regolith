@@ -27,6 +27,7 @@ from regolith.mc import (
     period_key,
     period_of,
     struck,
+    unassigned,
     week_of,
     would_lose,
     wrap,
@@ -228,6 +229,12 @@ class MissionControlBuilder(BuilderBase):
         # goal belongs to and the order the archive reads in
         self.periods = getattr(rc, "mission_control_periods", None)
 
+    @staticmethod
+    def owner(person):
+        """Return the id a goal of no project carries, or None for the
+        unassigned document."""
+        return None if person == UNASSIGNED else person
+
     def display_name(self, person):
         """Return the name to head a person's document with."""
         for entry in self.gtx.get("people", []):
@@ -363,9 +370,15 @@ class MissionControlBuilder(BuilderBase):
         """
         projects = in_document_order(projects, order, lambda p: p["_id"])
         number_of = {project["_id"]: n for n, project in enumerate(projects, start=1)}
-        goals = in_document_order(
-            [g for g in live(self.gtx["mc_goals"]) if g["project"] in number_of], order, lambda g: g["_id"]
-        )
+        # a goal of a project belongs to whoever leads the project; a goal of
+        # no project says whose it is itself, and is held on deck or on the
+        # wishlist until somebody gives it a project
+        mine = [
+            g
+            for g in live(self.gtx["mc_goals"])
+            if g["project"] in number_of or (unassigned(g) and g.get("lead") == self.owner(person))
+        ]
+        goals = in_document_order(mine, order, lambda g: g["_id"])
         goal_number = self.number_goals(goals, number_of)
         tasks = [t for t in live(self.gtx["mc_tasks"]) if t["goal"] in goal_number]
 
@@ -396,7 +409,10 @@ class MissionControlBuilder(BuilderBase):
         """
         numbers = {}
         counts = defaultdict(int)
-        for goal in sorted(goals, key=lambda g: number_of[g["project"]]):
+        # a goal of no project has no number: the number says which project it
+        # is of, and that is the thing nobody has decided yet
+        of_a_project = [goal for goal in goals if goal["project"] in number_of]
+        for goal in sorted(of_a_project, key=lambda g: number_of[g["project"]]):
             counts[goal["project"]] += 1
             numbers[goal["_id"]] = f"{number_of[goal['project']]}.{counts[goal['project']]}"
         return numbers
@@ -429,6 +445,10 @@ class MissionControlBuilder(BuilderBase):
         lines = [f"## Goals — {current}", ""]
         for goal in self.in_order(goals, goal_number):
             if goal["period"] != current or goal["status"] in HELD_STATI:
+                continue
+            if goal["_id"] not in goal_number:
+                # of no project, so it belongs in a holding section rather
+                # than among the goals of the period
                 continue
             lines.append(
                 f"- {goal_number[goal['_id']]}  {struck(goal['text'], goal['status'])}  "
@@ -512,7 +532,8 @@ class MissionControlBuilder(BuilderBase):
         held = [g for g in self.in_order(goals, goal_number) if g["status"] == status]
         lines = [f"## {heading}", ""]
         for goal in held:
-            lines.append(f"- {goal_number[goal['_id']]}  {struck(goal['text'], goal['status'])}  ^{goal['_id']}")
+            number = f"{goal_number[goal['_id']]}  " if goal["_id"] in goal_number else ""
+            lines.append(f"- {number}{struck(goal['text'], goal['status'])}  ^{goal['_id']}")
         lines.append("")
         return lines
 
@@ -532,7 +553,8 @@ class MissionControlBuilder(BuilderBase):
             shown = [
                 g
                 for g in self.in_order(goals, goal_number)
-                if self.period_key(g["first_period"]) <= self.period_key(period) <= self.period_key(g["period"])
+                if g["_id"] in goal_number
+                and self.period_key(g["first_period"]) <= self.period_key(period) <= self.period_key(g["period"])
             ]
             if not shown:
                 continue
@@ -547,8 +569,15 @@ class MissionControlBuilder(BuilderBase):
 
     @staticmethod
     def in_order(goals, goal_number):
-        """Return the goals in the order their numbers read."""
-        return sorted(goals, key=lambda g: [int(n) for n in goal_number[g["_id"]].split(".")])
+        """Return the goals in the order their numbers read.
+
+        A goal with no number is of no project yet, and goes after the
+        ones that are, in the order the document already had them.
+        """
+        numbered = [g for g in goals if g["_id"] in goal_number]
+        unnumbered = [g for g in goals if g["_id"] not in goal_number]
+        in_number_order = sorted(numbered, key=lambda g: [int(n) for n in goal_number[g["_id"]].split(".")])
+        return in_number_order + unnumbered
 
     def period_key(self, period):
         """Return a key putting periods in the order they came round."""

@@ -350,3 +350,54 @@ def test_a_goal_is_held_by_whichever_heading_it_is_under(heading, expected_statu
     )
     goal = next(g for g in parse_document(document)["goals"] if g["_id"] == "g1")
     assert goal["status"] == expected_status
+
+
+HELD_DOCUMENT = """# Mission control — Adib Kabir
+
+## Projects
+
+1. **a project**  ^p1
+
+## Goals — 2026fall
+
+- 1.1  a goal of the project  ^g1
+
+## On-deck
+
+- an idea nobody has taken on
+- 1.2  one that is of the project  ^g2
+
+## Wishlist
+
+- something for one day
+"""
+
+
+@pytest.mark.parametrize(
+    "text, expected_project",
+    [
+        # Test that a thing held on deck or on the wishlist need not say which
+        # project it is of.  It is an idea somebody wrote down rather than
+        # work anybody has taken on, and making them number it is what stops
+        # them writing it down at all.
+        # C1: no number, expect it is of no project yet
+        ("an idea nobody has taken on", "tbd"),
+        # C2: a number, expect it is of that project, so that an idea can be
+        # taken on by giving it one
+        ("one that is of the project", "p1"),
+        # C3: the wishlist reads the same way as on-deck
+        ("something for one day", "tbd"),
+    ],
+)
+def test_a_held_thing_need_not_be_of_a_project(text, expected_project):
+    goal = next(g for g in parse_document(HELD_DOCUMENT)["goals"] if g["text"] == text)
+    assert goal["project"] == expected_project
+
+
+def test_a_goal_of_the_period_still_needs_its_number():
+    # Test that only the holding sections take a line with no number.  A goal
+    # of the period is work somebody is doing, and which project it is of is
+    # the thing that says who is doing it
+    without = HELD_DOCUMENT.replace("- 1.1  a goal of the project  ^g1", "- a goal with no number")
+    with pytest.raises(DocumentError, match="needs a number saying which project"):
+        parse_document(without)

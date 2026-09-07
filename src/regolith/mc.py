@@ -349,6 +349,8 @@ GOALS_HEADING = re.compile(r"^Goals\s+—\s+(?P<period>\S+)$")
 # heading used to say, and is still read so that a document written before the
 # rename keeps working.
 HELD_HEADINGS = {"on-deck": "on-deck", "backburner": "on-deck", "wishlist": "wishlist"}
+# what a goal says instead of a project when it is not of one yet
+UNASSIGNED_PROJECT = "tbd"
 WEEK_HEADING = re.compile(r"^Week of\s+(?P<monday>\d{4}-\d{2}-\d{2})$")
 
 
@@ -694,10 +696,17 @@ class _Reader:
             return False
         goal_number = found.group("number")
         if goal_number is None:
-            raise DocumentError(f"line {number}: a goal needs a number saying which project it is of")
-        project_number = goal_number.split(".")[0]
-        if project_number not in self.by_number:
-            raise DocumentError(f"line {number}: there is no project {project_number}")
+            if self.section not in HELD:
+                raise DocumentError(f"line {number}: a goal needs a number saying which project it is of")
+            # a thing held on deck or on the wishlist is an idea that has not
+            # been made anybody's work yet, so it does not have to say which
+            # project it is of.  It says so when somebody gives it a number
+            project = UNASSIGNED_PROJECT
+        else:
+            project_number = goal_number.split(".")[0]
+            if project_number not in self.by_number:
+                raise DocumentError(f"line {number}: there is no project {project_number}")
+            project = self.by_number[project_number]
         # the archive says what a period was; the current sections say what is
         _id = found.group("id") or self.mint()
         if self.section == "archive":
@@ -707,13 +716,14 @@ class _Reader:
             return True
         goal = {
             "_id": _id,
-            "project": self.by_number[project_number],
+            "project": project,
             "period": self.period,
             "text": text,
             "status": self.goal_status(struck_out),
         }
         self.goals.append(goal)
-        self.by_number[goal_number] = _id
+        if goal_number is not None:
+            self.by_number[goal_number] = _id
         return True
 
     def goal_status(self, struck_out):
@@ -912,6 +922,14 @@ def changes(parsed, person, existing, today=None):
         record["status"] = settled_status(read["status"], was.get("status"))
         # written once, so how long a goal has been carried is knowable
         record.setdefault("first_period", read["period"])
+        # a goal of no project has no project to say whose it is, so it says
+        # so itself: it belongs to whoever's document it was written in
+        if unassigned(record):
+            record["lead"] = person
+            if person is None:
+                record.pop("lead", None)
+        else:
+            record.pop("lead", None)
         _close(record, was, today)
         writes["mc_goals"].append(record)
         seen["mc_goals"].add(record["_id"])
@@ -950,6 +968,27 @@ def _close(record, was, today):
 NOBODY = ("", "na", "tbd", "none")
 # a project in one of these is done with, so it cannot be an orphan
 CLOSED = ("finished", "dropped")
+
+
+def unassigned(goal):
+    """Return True if a goal is not of any project yet.
+
+    Something held on deck or on the wishlist is an idea somebody wrote
+    down, not work anybody has taken on, so it need not say which
+    project it belongs to.  It says so when they give it a number.
+
+    Parameters
+    ----------
+    goal : dict
+        The goal.
+
+    Returns
+    -------
+    bool
+        Whether it belongs to a project.
+    """
+    project = goal.get("project")
+    return not project or str(project).strip().lower() in NOBODY
 
 
 def unled(project):

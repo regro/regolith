@@ -719,3 +719,48 @@ def test_a_build_keeps_the_document_it_wrote_over(tmp_path):
     builder.gtx = dict(BUILDABLE, mc_goals=[dict(BUILDABLE["mc_goals"][0], text="a stored goal")])
     builder.render()
     assert (tmp_path / "build" / "mission-control-previous" / "pei.md").read_text() == first
+
+
+IDEA = {
+    "_id": "g-idea",
+    "project": "tbd",
+    "lead": "pliu",
+    "period": "2026fall",
+    "first_period": "2026fall",
+    "text": "write the OpEd about instrument access",
+    "status": "on-deck",
+}
+
+
+def test_a_held_thing_of_no_project_is_written_without_a_number():
+    # Test that an idea nobody has taken on is written back as it was typed.
+    # A number says which project a goal is of, and that is the thing nobody
+    # has decided, so printing one would be making it up
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {
+        "mc_projects": [dict(PROJECTS[0], lead="pliu")],
+        "mc_goals": GOALS + [IDEA],
+        "mc_tasks": [],
+        "people": [],
+    }
+    document = "\n".join(builder.documents()["pliu"])
+    assert "- write the OpEd about instrument access  ^g-idea" in document
+    # and it is under the holding heading, not among the goals of the period
+    on_deck = document.split("## On-deck")[1]
+    assert "^g-idea" in on_deck.split("## Wishlist")[0]
+
+
+def test_a_held_thing_goes_to_the_document_of_whoever_wrote_it():
+    # Test that an idea of no project still knows whose it is.  It cannot be
+    # reached through a project, so without this it would belong to nobody and
+    # appear in no document at all
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {
+        "mc_projects": [dict(PROJECTS[0], lead="pliu"), dict(PROJECTS[1], lead="ascopatz")],
+        "mc_goals": [IDEA],
+        "mc_tasks": [],
+        "people": [],
+    }
+    documents = builder.documents()
+    assert "^g-idea" in "\n".join(documents["pliu"])
+    assert "^g-idea" not in "\n".join(documents["ascopatz"])
