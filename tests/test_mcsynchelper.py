@@ -335,3 +335,53 @@ def test_a_held_thing_of_no_project_is_not_dropped_on_the_next_sync(mc_repo):
 
     main(["helper", "mc_sync"])
     assert stored(mc_repo, "mc_goals", idea["_id"])["status"] == "on-deck"
+
+
+def test_a_project_the_document_leaves_out_is_not_read_as_deleted(mc_repo, capsys):
+    # Test the two halves of the round trip against each other.  A build
+    # leaves a project finished long ago out of the document; a sync reading
+    # that document must not take the missing lines for lines somebody
+    # deleted.  Estefania's document held 5 of her 34 things for this reason,
+    # and the sync called it damage and refused
+    tmp_path, mcdir = mc_repo
+    dump_yaml(
+        tmp_path / "db" / "mc_projects.yaml",
+        {
+            "mc-a-project": {"_id": "mc-a-project", "name": "a project", "lead": "pliu", "status": "active"},
+            "mc-an-old-one": {
+                "_id": "mc-an-old-one",
+                "name": "a project finished long ago",
+                "lead": "pliu",
+                "status": "finished",
+                "end_date": "2020-06-30",
+            },
+        },
+    )
+    dump_yaml(
+        tmp_path / "db" / "mc_goals.yaml",
+        {
+            "mcg001": {
+                "_id": "mcg001",
+                "project": "mc-a-project",
+                "period": "2026Q3",
+                "first_period": "2026Q3",
+                "text": "a goal",
+                "status": "active",
+            },
+            "mcg002": {
+                "_id": "mcg002",
+                "project": "mc-an-old-one",
+                "period": "2020summer",
+                "first_period": "2020summer",
+                "text": "a goal of the old project",
+                "status": "finished",
+            },
+        },
+    )
+    main(["helper", "mc_sync"])
+    said = capsys.readouterr().out
+    assert "more like damage than editing" not in said
+    # the old project and its goal are neither written nor dropped: the
+    # document says nothing about them either way
+    assert stored(mc_repo, "mc_projects", "mc-an-old-one")["status"] == "finished"
+    assert stored(mc_repo, "mc_goals", "mcg002")["status"] == "finished"

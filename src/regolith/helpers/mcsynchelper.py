@@ -10,6 +10,7 @@ render cannot put back, and a document that cannot be read at all is
 skipped whole rather than half applied.
 """
 
+import datetime as dt
 from pathlib import Path
 
 from gooey import GooeyParser
@@ -22,12 +23,14 @@ from regolith.builders.missioncontrolbuilder import (
 )
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.mc import (
+    KEEP_FINISHED_DAYS,
     UNLED_PREFIX,
     DocumentError,
     changes,
     initials,
     led_by,
     parse_document,
+    retired,
     slug,
     unassigned,
 )
@@ -174,6 +177,30 @@ class MCSyncHelper(DbHelperBase):
         """
         return {record["_id"] for collection in COLLECTIONS for record in self.gtx[collection]}
 
+    def left_out_of_documents(self, existing):
+        """Return the ids a document is not written with.
+
+        A project finished longer ago than the runcontrol keeps them is
+        left out of the document by the builder, and so are its goals
+        and their tasks.
+
+        Parameters
+        ----------
+        existing : dict
+            The records stored, as ``{collection: {id: record}}``.
+
+        Returns
+        -------
+        list of str
+            The ids the document is not expected to hold.
+        """
+        days = getattr(self.rc, "mission_control_keep_finished_days", KEEP_FINISHED_DAYS)
+        today = dt.date.today()
+        projects = [_id for _id, p in existing["mc_projects"].items() if retired(p, today, days)]
+        goals = [_id for _id, g in existing["mc_goals"].items() if g.get("project") in projects]
+        tasks = [_id for _id, t in existing["mc_tasks"].items() if t.get("goal") in goals]
+        return projects + goals + tasks
+
     def prefix(self, person):
         """Return what a project typed into one document is named with.
 
@@ -208,6 +235,11 @@ class MCSyncHelper(DbHelperBase):
             return
 
         existing = self.mine(person)
+        # a document is not written with everything the collections hold, so
+        # what it leaves out on purpose must not read as a line somebody
+        # deleted.  The record is neither written nor dropped: the document
+        # says nothing about it either way
+        parsed["mentioned"] = list(parsed.get("mentioned", ())) + self.left_out_of_documents(existing)
         writes, drops = changes(parsed, None if person == UNASSIGNED else person, existing)
         held = sum(len(records) for records in existing.values())
         dropped = sum(len(ids) for ids in drops.values())
