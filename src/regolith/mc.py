@@ -562,8 +562,9 @@ def parse_document(text, taken=(), prefix=None):
     -------
     dict
         ``person``, and ``projects``, ``goals`` and ``tasks`` as lists of
-        records in the order the document put them, plus ``mentioned``,
-        the ids the document showed without saying anything to store.
+        records in the order the document put them, plus ``mentioned``
+        and ``mentioned_text``, the ids and the words of what the
+        document showed without saying anything to store.
 
     Raises
     ------
@@ -594,6 +595,7 @@ class _Reader:
         self.by_number = {}
         self.stack = []
         self.mentioned = []
+        self.mentioned_text = []
 
     def mint(self):
         _id = short_id(self.ids)
@@ -716,8 +718,12 @@ class _Reader:
         _id = found.group("id") or self.mint()
         if self.section == "archive":
             # nothing in the archive is written back, but a line that is there
-            # is a line nobody deleted, so it must not read as one
+            # is a line nobody deleted, so it must not read as one.  The text
+            # goes with the id because a line that has lost its id would
+            # otherwise protect an id nobody has, and the record it was
+            # written for would be dropped
             self.mentioned.append(_id)
+            self.mentioned_text.append(text)
             return True
         goal = {
             "_id": _id,
@@ -783,6 +789,7 @@ class _Reader:
             "goals": self.goals,
             "tasks": self.tasks,
             "mentioned": self.mentioned,
+            "mentioned_text": self.mentioned_text,
         }
 
 
@@ -961,6 +968,13 @@ def changes(parsed, person, existing, today=None):
     # taken for deleted
     for collection in seen:
         seen[collection].update(parsed.get("mentioned", ()))
+    # a line that has lost its id is still a line nobody deleted, so what the
+    # archive showed is matched by what it said as well as by the id it
+    # carried.  Two goals of one person can say the same thing, and then one
+    # line shields both: erring towards keeping a record nobody asked to keep
+    # is the way round to err, since the other way loses work
+    shown = set(parsed.get("mentioned_text", ()))
+    seen["mc_goals"].update(_id for _id, goal in existing["mc_goals"].items() if goal.get("text") in shown)
     drops = {collection: sorted(set(records) - seen[collection]) for collection, records in existing.items()}
     return writes, drops
 
