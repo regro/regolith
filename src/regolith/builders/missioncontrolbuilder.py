@@ -115,6 +115,25 @@ def one_blank_between(lines):
     return tidied
 
 
+def number_key(number):
+    """Return a key putting numbers in the order they are read aloud.
+
+    ``1.10`` comes after ``1.9`` and before ``1.11``, which sorting the
+    text of it does not do.
+
+    Parameters
+    ----------
+    number : str
+        The number, e.g. ``1.2`` or ``1.2.3``.
+
+    Returns
+    -------
+    list of int
+        The parts of it, as numbers.
+    """
+    return [int(part) for part in number.split(".")]
+
+
 def label(item):
     """Return what a record is called, which is how a document names it
     when it carries no id."""
@@ -562,7 +581,7 @@ class MissionControlBuilder(BuilderBase):
             lines += [f"## Week of {monday.isoformat()}", ""]
             counts = defaultdict(int)
             roots = in_document_order(by_week[monday], order, lambda t: t["_id"])
-            for task in sorted(roots, key=lambda t: goal_number[t["goal"]]):
+            for task in sorted(roots, key=lambda t: number_key(goal_number[t["goal"]])):
                 counts[task["goal"]] += 1
                 number = f"{goal_number[task['goal']]}.{counts[task['goal']]}"
                 lines += self.render_task(task, number, children, order, depth=0)
@@ -655,7 +674,7 @@ class MissionControlBuilder(BuilderBase):
         """
         numbered = [g for g in goals if g["_id"] in goal_number]
         unnumbered = [g for g in goals if g["_id"] not in goal_number]
-        in_number_order = sorted(numbered, key=lambda g: [int(n) for n in goal_number[g["_id"]].split(".")])
+        in_number_order = sorted(numbered, key=lambda g: number_key(goal_number[g["_id"]]))
         return in_number_order + unnumbered
 
     def period_key(self, period):
