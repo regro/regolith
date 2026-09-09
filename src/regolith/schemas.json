@@ -1350,6 +1350,11 @@
             "description": "The id of the person whose goal it is, for a goal that is not of any project yet. A goal of a project belongs to whoever leads the project, and does not carry this.",
             "required": false,
             "type": "string"
+        },
+        "parent": {
+            "description": "The id of the goal this one is a piece of, for a breakdown written under a goal held on deck or on the wishlist. A goal of its own does not carry this.",
+            "required": false,
+            "type": "string"
         }
     },
     "mc_projects": {

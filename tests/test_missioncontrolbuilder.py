@@ -171,6 +171,30 @@ def test_a_goal_is_rendered_under_its_status(heading, expected_goal, documents):
     assert expected_goal in section
 
 
+def test_a_held_goal_carries_its_breakdown():
+    # Test that a wishlist entry written as a list with a list under it comes
+    # back that way.  A piece of a goal is written under it, unnumbered and
+    # with a box, since the number says which project a goal is of and a piece
+    # is of whatever its goal is
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    held = dict(GOALS[0], _id="g-wish", text="Relaunch with these", status="wishlist", first_period="2026Q3")
+    builder.gtx = {
+        "mc_projects": [dict(PROJECTS[0], lead="pliu")],
+        "mc_goals": [
+            held,
+            dict(held, _id="g-one", text="XANESCalculator", parent="g-wish"),
+            dict(held, _id="g-two", text="LJCalculator", parent="g-wish", status="finished"),
+        ],
+        "mc_tasks": [],
+        "people": [],
+    }
+    document = "\n".join(builder.documents()["pliu"])
+    wishlist = document.split("## Wishlist")[1]
+    assert "- 1.1  Relaunch with these  ^g-wish" in wishlist
+    assert "  - [ ] XANESCalculator  ^g-one" in wishlist
+    assert "  - [x] ~~LJCalculator~~  ^g-two" in wishlist
+
+
 @pytest.mark.parametrize(
     "expected_line",
     [
