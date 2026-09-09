@@ -10,6 +10,7 @@ from regolith.builders.missioncontrolbuilder import (
     ids_in_document,
     in_document_order,
     keys_in_document,
+    number_key,
 )
 from regolith.mc import WIDTH, parse_document, week_of
 
@@ -279,6 +280,45 @@ def test_ids_in_document_reads_the_order(text, expected_ids):
 def test_in_document_order_puts_the_document_first(order, expected_ids):
     ordered = in_document_order(PROJECTS, order, lambda p: p["_id"])
     assert [p["_id"] for p in ordered] == expected_ids
+
+
+def test_moving_a_project_renumbers_everything_under_it():
+    # Test the meeting workflow: somebody cuts a project and pastes it above
+    # another, and everything follows.  The numbers are positional, so the
+    # projects, their goals and the tasks of the week all renumber, and none
+    # of it touches the collections
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {
+        "mc_projects": [dict(p, lead="pliu") for p in PROJECTS],
+        "mc_goals": GOALS,
+        "mc_tasks": TASKS,
+        "people": [],
+    }
+    first = "\n".join(builder.documents({"pliu": ["p-pdf", "p-orphan"]})["pliu"])
+    assert "1. **Nanoparticle structure from the PDF**" in first
+    assert "- 1.1  Get the fits converging" in first
+
+    moved = "\n".join(builder.documents({"pliu": ["p-orphan", "p-pdf"]})["pliu"])
+    assert "1. **GPU solver**" in moved
+    assert "2. **Nanoparticle structure from the PDF**" in moved
+    assert "- 2.1  Get the fits converging" in moved
+    assert "- [ ] 2.1.1  Re-run the fits" in moved
+
+
+@pytest.mark.parametrize(
+    "numbers, expected_order",
+    [
+        # Test that numbers order the way they are read aloud rather than the
+        # way their text sorts.  A person with ten goals of one project had
+        # the week of 1.10 written above the week of 1.2.
+        # C1: past the first nine, where text and number part company
+        (["1.2", "1.10", "1.9"], ["1.2", "1.9", "1.10"]),
+        # C2: three deep, as a task of a goal of a project is
+        (["1.2.10", "1.2.2", "1.10.1"], ["1.2.2", "1.2.10", "1.10.1"]),
+    ],
+)
+def test_numbers_order_as_numbers(numbers, expected_order):
+    assert sorted(numbers, key=number_key) == expected_order
 
 
 def test_a_render_keeps_the_order_the_document_chose():
