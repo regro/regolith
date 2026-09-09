@@ -458,8 +458,7 @@ class MissionControlBuilder(BuilderBase):
         goals = in_document_order(mine, order, lambda g: g["_id"])
         goal_number = self.number_goals(goals, number_of)
         tasks = [t for t in live(self.gtx["mc_tasks"]) if t["goal"] in goal_number]
-        gone = {p["_id"] for p in old}
-        self.left_out[person] += [g["text"] for g in live(self.gtx["mc_goals"]) if g.get("project") in gone]
+        self.left_out[person] = self.not_written(person, {p["_id"] for p in projects}, goal_number, tasks)
 
         lines = [f"# Mission control — {self.display_name(person)}", ""]
         lines += self.render_projects(projects)
@@ -657,6 +656,50 @@ class MissionControlBuilder(BuilderBase):
         unnumbered = [g for g in goals if g["_id"] not in goal_number]
         in_number_order = sorted(numbered, key=lambda g: [int(n) for n in goal_number[g["_id"]].split(".")])
         return in_number_order + unnumbered
+
+    def not_written(self, person, shown, goal_number, tasks):
+        """Return what the collections hold for somebody and the
+        document does not say.
+
+        A document is not written with everything: a project finished
+        long ago is left out, and so is anything dropped.  None of it is
+        lost, because the collections still hold it, so a document that
+        still names it is not a document holding the only copy.
+
+        Parameters
+        ----------
+        person : str
+            The id of the person, or ``unassigned``.
+        shown : set of str
+            The ids of the projects the document is written with.
+        goal_number : dict
+            The goals the document is written with, keyed by id.
+        tasks : list of dict
+            The tasks the document is written with.
+
+        Returns
+        -------
+        list of str
+            What each of them says, for a render to account for.
+        """
+        owner = self.owner(person)
+        mine = [p for p in self.gtx["mc_projects"] if (led_by(p) or UNASSIGNED) == (owner or UNASSIGNED)]
+        theirs = {p["_id"] for p in mine}
+        goals = [
+            g
+            for g in self.gtx["mc_goals"]
+            if g.get("project") in theirs or (unassigned(g) and g.get("lead") == owner)
+        ]
+        written = {t["_id"] for t in tasks}
+        return (
+            [p.get("name", "") for p in mine if p["_id"] not in shown]
+            + [g.get("text", "") for g in goals if g["_id"] not in goal_number]
+            + [
+                t.get("text", "")
+                for t in self.gtx["mc_tasks"]
+                if t.get("goal") in {g["_id"] for g in goals} and t["_id"] not in written
+            ]
+        )
 
     def period_key(self, period):
         """Return a key putting periods in the order they came round."""

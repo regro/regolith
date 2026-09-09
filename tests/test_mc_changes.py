@@ -278,3 +278,27 @@ def test_a_sub_task_follows_the_task_it_hangs_off():
         today=TODAY,
     )
     assert written(writes, "mc_tasks")["t-sub"]["parent"] == "t-old"
+
+
+def test_an_archive_line_that_lost_its_id_still_shields_its_goal():
+    # Test the line that cost Steven a goal.  An archive line carries an id,
+    # and when that id goes the reader mints a new one, so the line protected
+    # an id nobody had and the goal it was written for was dropped.  What the
+    # line says protects it too
+    document = parsed(projects=[read_project()], goals=[])
+    document["mentioned"] = ["a-minted-id-nothing-has"]
+    document["mentioned_text"] = ["a goal shown only in the archive"]
+    stored_goals = [stored(_id="g-archived", text="a goal shown only in the archive")]
+    _, drops = changes(document, "pliu", existing(projects=[STORED_PROJECT], goals=stored_goals), today=TODAY)
+    assert drops["mc_goals"] == []
+
+
+def test_a_goal_the_archive_does_not_show_is_still_dropped():
+    # Test that the shielding is not a blanket: a goal in neither the sections
+    # nor the archive is a goal somebody took out, and still goes
+    document = parsed(projects=[read_project()], goals=[])
+    document["mentioned"] = []
+    document["mentioned_text"] = ["something else entirely"]
+    stored_goals = [stored(_id="g-deleted", text="a goal somebody took out")]
+    _, drops = changes(document, "pliu", existing(projects=[STORED_PROJECT], goals=stored_goals), today=TODAY)
+    assert drops["mc_goals"] == ["g-deleted"]
