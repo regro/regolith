@@ -394,6 +394,55 @@ def test_a_held_thing_need_not_be_of_a_project(text, expected_project):
     assert goal["project"] == expected_project
 
 
+BREAKDOWN = """# Mission control — Caden Myers
+
+## Projects
+
+1. **diffpy.cmi relaunch**  ^p1
+
+## Wishlist
+
+- [ ] 1. Relaunch with these from the wishlist:
+  - [ ] XANESCalculator
+  - [x] LJCalculator
+- 1. Merge the ase adapter (please update the below, copied from the old MC)
+"""
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        # Test a wishlist somebody wrote as a list with a list under it, which
+        # is how anybody writes one down.  Every indented line used to be
+        # passed over in silence, so a build would not write the document and
+        # a sync would not store what was in it.
+        # C1: the line the others hang under, which is of the project it names
+        ("Relaunch with these from the wishlist:", {"project": "p1", "parent": None, "status": "wishlist"}),
+        # C2: a piece of it, which is of whatever its goal is and says which
+        # goal by hanging off it rather than by carrying a number
+        ("XANESCalculator", {"project": "p1", "parent": "the one above", "status": "wishlist"}),
+        # C3: a piece somebody has ticked, which is done whatever section it
+        # is in, the way a ticked task is
+        ("LJCalculator", {"project": "p1", "parent": "the one above", "status": "finished"}),
+        # C4: a line ending in a parenthesis of its own, which is what
+        # somebody typed and not the note a render writes there
+        (
+            "Merge the ase adapter (please update the below, copied from the old MC)",
+            {"project": "p1", "parent": None, "status": "wishlist"},
+        ),
+    ],
+)
+def test_a_held_thing_can_have_a_breakdown_under_it(text, expected):
+    goals = {g["text"]: g for g in parse_document(BREAKDOWN)["goals"]}
+    goal = goals[text]
+    assert goal["project"] == expected["project"]
+    assert goal["status"] == expected["status"]
+    if expected["parent"] is None:
+        assert "parent" not in goal
+    else:
+        assert goal["parent"] == goals["Relaunch with these from the wishlist:"]["_id"]
+
+
 def test_a_goal_of_the_period_still_needs_its_number():
     # Test that only the holding sections take a line with no number.  A goal
     # of the period is work somebody is doing, and which project it is of is

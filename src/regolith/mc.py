@@ -332,8 +332,14 @@ WITH_LINE = re.compile(r"^\s+with:\s*(?P<people>.*?)\s*$")
 DESCRIPTION_LINE = re.compile(r"^\s+description:\s*(?P<text>.*?)\s*$")
 # anything else written under a project is what the project is about
 PROSE_LINE = re.compile(r"^\s+(?P<text>\S.*?)\s*$")
+# A goal may be indented, to put it under the goal above, and may carry a box,
+# since somebody writing a list of things to do writes boxes beside them.  The
+# note at the end is only read as one when it says what a render writes there;
+# any other parenthesis is what somebody typed and stays in the text.
 GOAL_LINE = re.compile(
-    r"^-\s+(?P<number>[\d.]+)?\s*(?P<text>.*?)\s*(?:\^(?P<id>[\w.-]+))?\s*(?:\((?P<note>.*)\))?\s*$"
+    r"^(?P<indent>\s*)-\s+(?:\[(?P<box>[ xX])\]\s+)?(?P<number>\d+(?:\.\d+)*\.?)?\s*"
+    r"(?P<text>.*?)\s*(?:\^(?P<id>[\w.-]+))?"
+    r"\s*(?:\((?P<note>(?:carried since|finished|dropped|→ rolled to)[^)]*)\))?\s*$"
 )
 TASK_LINE = re.compile(
     r"^(?P<indent>\s*)-\s+\[(?P<box>[ xX])\]\s+(?P<number>[\d.]+)?\s*"
@@ -593,6 +599,7 @@ class _Reader:
         self.monday = None
         self.by_number = {}
         self.stack = []
+        self.goal_stack = []
         self.mentioned = []
 
     def mint(self):
@@ -628,6 +635,7 @@ class _Reader:
             self.person = title.split("—")[-1].strip()
             return
         self.stack = []
+        self.goal_stack = []
         goals = GOALS_HEADING.match(title)
         week = WEEK_HEADING.match(title)
         if title == "Projects":
@@ -699,8 +707,21 @@ class _Reader:
         text, struck_out = read_text(found.group("text"))
         if not text:
             return False
+        # a goal indented under another is a piece of it, the way a sub task is
+        # a piece of a task.  Only the holding sections take one: a goal of the
+        # period is somebody's work and says which project it is of
+        indent = len(found.group("indent").expandtabs(4))
+        under = None
+        if self.section in HELD:
+            while self.goal_stack and self.goal_stack[-1][0] >= indent:
+                self.goal_stack.pop()
+            if self.goal_stack:
+                under = self.goal_stack[-1][1]
         goal_number = found.group("number")
-        if goal_number is None:
+        if under is not None:
+            # a piece of the goal above, so it is of whatever that is of
+            project = under["project"]
+        elif goal_number is None:
             if self.section not in HELD:
                 raise DocumentError(f"line {number}: a goal needs a number saying which project it is of")
             # a thing held on deck or on the wishlist is an idea that has not
@@ -719,14 +740,20 @@ class _Reader:
             # is a line nobody deleted, so it must not read as one
             self.mentioned.append(_id)
             return True
+        ticked = (found.group("box") or " ").lower() == "x"
         goal = {
             "_id": _id,
             "project": project,
             "period": self.period,
             "text": text,
-            "status": self.goal_status(struck_out),
+            # a strike is believed over a box, since the box is what gets forgotten
+            "status": "finished" if (struck_out or ticked) else self.goal_status(struck_out),
         }
+        if under is not None:
+            goal["parent"] = under["_id"]
         self.goals.append(goal)
+        if self.section in HELD:
+            self.goal_stack.append((indent, goal))
         if goal_number is not None:
             self.by_number[goal_number] = _id
         return True

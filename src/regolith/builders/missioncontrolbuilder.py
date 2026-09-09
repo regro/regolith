@@ -489,8 +489,9 @@ class MissionControlBuilder(BuilderBase):
         numbers = {}
         counts = defaultdict(int)
         # a goal of no project has no number: the number says which project it
-        # is of, and that is the thing nobody has decided yet
-        of_a_project = [goal for goal in goals if goal["project"] in number_of]
+        # is of, and that is the thing nobody has decided yet.  Nor does a
+        # piece of another goal, which is of whatever its goal is
+        of_a_project = [goal for goal in goals if goal["project"] in number_of and not goal.get("parent")]
         for goal in sorted(of_a_project, key=lambda g: number_of[g["project"]]):
             counts[goal["project"]] += 1
             numbers[goal["_id"]] = f"{number_of[goal['project']]}.{counts[goal['project']]}"
@@ -608,12 +609,61 @@ class MissionControlBuilder(BuilderBase):
         The heading is written whether or not there is anything under
         it, so that a document has somewhere to move a goal to.
         """
-        held = [g for g in self.in_order(goals, goal_number) if g["status"] == status]
+        ordered = self.in_order(goals, goal_number)
+        held = [g for g in ordered if g["status"] == status]
+        # a piece of a held goal is written under it whatever it says itself:
+        # ticking one off does not take it out of the list it is a piece of
+        theirs = {g["_id"] for g in held}
+        for goal in ordered:
+            parent = goal.get("parent")
+            while parent and parent not in theirs and parent in {g["_id"] for g in ordered}:
+                parent = next((g.get("parent") for g in ordered if g["_id"] == parent), None)
+            if parent in theirs and goal["_id"] not in theirs:
+                held.append(goal)
+                theirs.add(goal["_id"])
+        held = [g for g in ordered if g["_id"] in theirs]
+        under = defaultdict(list)
+        for goal in held:
+            under[goal.get("parent")].append(goal)
+        shown = {goal["_id"] for goal in held}
         lines = [f"## {heading}", ""]
         for goal in held:
-            number = f"{goal_number[goal['_id']]}  " if goal["_id"] in goal_number else ""
-            lines.append(f"- {number}{struck(goal['text'], goal['status'])}  ^{goal['_id']}")
+            # a piece of a goal is written under it rather than in its own
+            # right, and one whose goal has gone is written in its own right
+            # rather than not at all
+            if goal.get("parent") in shown:
+                continue
+            lines += self.render_held(goal, goal_number, under, depth=0)
         lines.append("")
+        return lines
+
+    def render_held(self, goal, goal_number, under, depth):
+        """Return the lines of a held goal and the breakdown under it.
+
+        Parameters
+        ----------
+        goal : dict
+            The goal to write.
+        goal_number : dict
+            The number of each goal that has one, keyed by id.
+        under : dict
+            The goals under each goal, keyed by parent id.
+        depth : int
+            How far under a goal of its own it sits.
+
+        Returns
+        -------
+        list of str
+            The lines, indented by depth.
+        """
+        # only a goal of its own is numbered: the number says which project it
+        # is of, and a piece of a goal is of whatever its goal is
+        number = f"{goal_number[goal['_id']]}  " if not depth and goal["_id"] in goal_number else ""
+        indent = "  " * depth
+        box = "[x] " if goal["status"] == "finished" and depth else "[ ] " if depth else ""
+        lines = [f"{indent}- {box}{number}{struck(goal['text'], goal['status'])}  ^{goal['_id']}"]
+        for piece in under.get(goal["_id"], []):
+            lines += self.render_held(piece, goal_number, under, depth + 1)
         return lines
 
     def render_archive(self, goals, goal_number):
