@@ -962,9 +962,12 @@ def changes(parsed, person, existing, today=None):
         writes["mc_tasks"].append(record)
         seen["mc_tasks"].add(record["_id"])
 
-    # the archive shows a goal without saying anything to store about it, so
-    # what it shows is neither written nor taken for deleted
-    seen["mc_goals"].update(parsed.get("mentioned", ()))
+    # some things a document does not say anything about: the archive shows a
+    # goal without saying what to store, and a project finished long ago is
+    # left out of the document altogether.  Neither is written, and neither is
+    # taken for deleted
+    for collection in seen:
+        seen[collection].update(parsed.get("mentioned", ()))
     # a line that has lost its id is still a line nobody deleted, so what the
     # archive showed is matched by what it said as well as by the id it
     # carried.  Two goals of one person can say the same thing, and then one
