@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+import cProfile
+
+from regolith.main import main
+
+# the namespace is given rather than left to globals(), so that what is
+# profiled is plainly the main that was imported
+cProfile.runctx("main()", {"main": main}, {}, sort="cumtime")

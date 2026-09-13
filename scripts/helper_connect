@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+print("helper_connect is now helper-connect. The old name still works for now.")
 from regolith.helper_connect_main import main
 
 main()
