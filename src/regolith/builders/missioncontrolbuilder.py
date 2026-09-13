@@ -860,8 +860,21 @@ class MissionControlBuilder(BuilderBase):
             if g.get("project") in theirs or (unassigned(g) and g.get("lead") == owner)
         ]
         written = {t["_id"] for t in tasks}
+        # a project the document does not carry in full leaves its description
+        # and its deliverable out as well as itself, and a document written
+        # before it was finished still has both.  The collections hold them,
+        # so they are not lost, and a report still builds from them
+        in_part = []
+        for project in mine:
+            if project["_id"] in shown:
+                continue
+            if project.get("project_description"):
+                in_part.append(project["project_description"])
+            if project.get("project_deliverable"):
+                in_part.append(f"deliverable: {project['project_deliverable']}")
         return (
-            [p.get("name", "") for p in mine if p["_id"] not in shown]
+            in_part
+            + [p.get("name", "") for p in mine if p["_id"] not in shown]
             + [g.get("text", "") for g in goals if g["_id"] not in goal_number]
             + [
                 t.get("text", "")
