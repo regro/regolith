@@ -8,6 +8,7 @@ import habanero
 import pytest
 import requests_mock
 
+from regolith import tools
 from regolith.runcontrol import DEFAULT_RC
 from regolith.tools import (
     MISSING_INFO,
@@ -361,6 +362,19 @@ def test_filter_publications(args, kwargs, expected):
 def test_author_publications():
     citations = [{"author": ["CJ", "SJLB"]}, {"editor": "SJLB"}]
     filter_publications(citations, {"SJLB"})
+
+
+def test_a_missing_bibtexparser_says_so(tmp_path, monkeypatch):
+    # Test that a bibliography nobody can write says why.  bibtexparser 2
+    # dropped the modules regolith writes with, so an unpinned install left
+    # HAVE_BIBTEX_PARSER false, and make_bibtex_file returned without writing
+    # and without a word: the CV came out with no bibliography and the test
+    # suite said only that a file was not generated
+    monkeypatch.setattr(tools, "HAVE_BIBTEX_PARSER", False)
+    with pytest.warns(RuntimeWarning, match="bibtexparser"):
+        written = tools.make_bibtex_file([], "scopatz", person_dir=str(tmp_path))
+    assert written is None
+    assert not list(tmp_path.glob("*.bib"))
 
 
 def test_fuzzy_retrieval():

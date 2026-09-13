@@ -14,6 +14,7 @@ import uuid
 from copy import copy, deepcopy
 from datetime import date, datetime
 from urllib.parse import urlparse
+from warnings import warn
 
 import requests
 from dateutil import parser as date_parser
@@ -32,6 +33,9 @@ from regolith.schemas import alloweds
 from regolith.sorters import doc_date_key_high, ene_date_key, id_key
 
 try:
+    # bibtexparser 2 dropped both of these, and regolith has not been moved to
+    # its writer yet, so the requirements ask for 1.x.  A 2.x that gets in
+    # anyway lands here rather than at the call site
     from bibtexparser.bibdatabase import BibDatabase
     from bibtexparser.bwriter import BibTexWriter
 
@@ -975,6 +979,13 @@ def make_bibtex_file(pubs, pid, person_dir="."):
         The person's directory
     """
     if not HAVE_BIBTEX_PARSER:
+        # saying so beats writing a document with the bibliography missing and
+        # nothing to say why
+        warn(
+            f"No {pid}.bib was written: bibtexparser is not installed, or is a "
+            f"version regolith cannot use. Install bibtexparser 1.x.",
+            RuntimeWarning,
+        )
         return None
     skip_keys = {"ID", "ENTRYTYPE", "author"}
     bibdb = BibDatabase()
