@@ -7,14 +7,6 @@ from itertools import groupby
 
 from jinja2 import Environment, FileSystemLoader
 
-try:
-    from bibtexparser.bibdatabase import BibDatabase
-    from bibtexparser.bwriter import BibTexWriter
-
-    HAVE_BIBTEX_PARSER = True
-except ImportError:
-    HAVE_BIBTEX_PARSER = False
-
 from regolith.sorters import category_val, date_key, doc_date_key, level_val
 from regolith.tools import LATEX_OPTS, date_to_rfc822, gets, latex_safe, latex_safe_url, month_and_year, rfc822now
 
@@ -96,9 +88,6 @@ class LatexBuilderBase(BuilderBase):
     def __init__(self, rc):
         super().__init__(rc)
         self.cmds = ["latex", "clean"]
-        if HAVE_BIBTEX_PARSER:
-            self.bibdb = BibDatabase()
-            self.bibwriter = BibTexWriter()
 
     def construct_global_ctx(self):
         super().construct_global_ctx()

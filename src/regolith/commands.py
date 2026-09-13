@@ -41,34 +41,27 @@ def add_cmd(rc):
 
 def _ingest_citations(rc):
     import bibtexparser
-    from bibtexparser.bparser import BibTexParser
-    from bibtexparser.customization import getnames
+    from bibtexparser import middlewares
 
-    parser = BibTexParser()
-    parser.ignore_nonstandard_types = False
-
-    def customizations(record):
-        for n in ["author", "editor"]:
-            if n in record:
-                a = [i for i in record[n].replace("\n", " ").split(", ")]
-                b = [i.split(" and ") for i in a]
-                c = [item for sublist in b for item in sublist]
-                d = [i.strip() for i in c]
-                record[n] = getnames(d)
-
-        return record
-
-    parser.customization = customizations
     with open(rc.filename, "r", encoding="utf-8") as f:
-        bibs = bibtexparser.load(f, parser=parser)
-    for bib in bibs.entries:
-        bibid = bib.pop("ID")
-        bib["entrytype"] = bib.pop("ENTRYTYPE")
+        library = bibtexparser.parse_string(
+            f.read(),
+            # each name field comes out as a list of "Last, First" strings,
+            # which is what the citations collection holds
+            append_middleware=[
+                middlewares.SeparateCoAuthors(),
+                middlewares.SplitNameParts(),
+                middlewares.MergeNameParts("last"),
+            ],
+        )
+    for entry in library.entries:
+        bib = {field.key: field.value for field in entry.fields}
+        bib["entrytype"] = entry.entry_type
         if "author" in bib:
             bib["author"] = [a.strip() for b in bib["author"] for a in RE_AND.split(b)]
         if "title" in bib:
             bib["title"] = RE_SPACE.sub(" ", bib["title"])
-        rc.client.update_one(rc.db, rc.coll, {"_id": bibid}, bib, upsert=True)
+        rc.client.update_one(rc.db, rc.coll, {"_id": entry.key}, bib, upsert=True)
 
 
 def _determine_ingest_coll(rc):
