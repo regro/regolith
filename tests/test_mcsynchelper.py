@@ -6,7 +6,7 @@ import os
 import pytest
 
 from regolith.database import connect
-from regolith.fsclient import dump_yaml
+from regolith.fsclient import dump_yaml, load_yaml
 from regolith.main import main
 from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
 
@@ -267,6 +267,45 @@ def test_a_document_is_read_even_when_the_collections_hold_nothing_of_its_own(mc
     dump_yaml(tmp_path / "db" / "mc_projects.yaml", {})
     main(["helper", "mc_sync"])
     assert stored(mc_repo, "mc_projects", "mc-a-project")["name"] == "a project"
+
+
+def test_somebody_with_work_and_no_document_is_named(mc_repo, capsys):
+    # Test the gap Simon fell into.  A sync reads documents and does not write
+    # them, so a student whose first project has just been stored has nothing
+    # on disk and the sync passed over them without a word.  Making a blank
+    # file by hand and syncing that is the wrong way round: the guard sees
+    # everything they have as deleted
+    tmp_path, mcdir = mc_repo
+    dump_yaml(
+        tmp_path / "db" / "people.yaml",
+        {
+            "pliu": {"_id": "pliu", "name": "Pei Liu", "active": True},
+            "ayang": {"_id": "ayang", "name": "Andrew Yang", "active": True},
+            "gone": {"_id": "gone", "name": "Has Left", "active": False},
+        },
+    )
+    projects = load_yaml(tmp_path / "db" / "mc_projects.yaml")
+    projects["ay-a-project"] = {
+        "_id": "ay-a-project",
+        "name": "a project of andrew's",
+        "lead": "ayang",
+        "status": "active",
+    }
+    projects["gone-a-project"] = {
+        "_id": "gone-a-project",
+        "name": "a project of somebody who left",
+        "lead": "gone",
+        "status": "active",
+    }
+    dump_yaml(tmp_path / "db" / "mc_projects.yaml", projects)
+
+    main(["helper", "mc_sync"])
+    said = capsys.readouterr().out
+    assert "ayang has work stored and no document" in said
+    assert "andrew.md is not there" in said
+    assert "build mission-control" in said
+    # somebody who has left gets no document either, and is not worth saying so
+    assert "gone has work stored" not in said
 
 
 def test_a_document_named_for_nobody_says_so(mc_repo, capsys):

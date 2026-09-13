@@ -27,6 +27,7 @@ from regolith.mc import (
     UNLED_PREFIX,
     DocumentError,
     changes,
+    in_the_group,
     initials,
     led_by,
     parse_document,
@@ -89,9 +90,42 @@ class MCSyncHelper(DbHelperBase):
             print("Run 'regolith build mission-control' to write them first.")
             return
 
-        for path, person in self.documents(mcdir, renderer):
+        found = self.documents(mcdir, renderer)
+        for path, person in found:
             self.read_one(path, person)
+        self.say_who_is_missing(mcdir, renderer, {person for _, person in found})
         return
+
+    def say_who_is_missing(self, mcdir, renderer, read):
+        """Say who has work stored and no document to read it from.
+
+        A sync reads documents; it does not write them.  Somebody whose
+        first project has just been stored has nothing on disk yet, so a
+        sync passes over them in silence and they look forgotten.
+
+        Parameters
+        ----------
+        mcdir : pathlib.Path
+            The directory the documents are in.
+        renderer : MissionControlBuilder
+            The builder, which knows what each document is called.
+        read : set of str
+            The people whose documents were read.
+        """
+        days = getattr(self.rc, "mission_control_keep_finished_days", KEEP_FINISHED_DAYS)
+        today = dt.date.today()
+        people = self.gtx["people"]
+        waiting = {
+            lead
+            for project in live(self.gtx["mc_projects"])
+            for lead in [led_by(project)]
+            if lead and lead not in read and in_the_group(lead, people) and not retired(project, today, days)
+        }
+        for person in sorted(waiting):
+            name = renderer.document_name(person)
+            print(f"{person} has work stored and no document: {mcdir / (name + '.md')} is not there.")
+        if waiting:
+            print("Run 'regolith build mission-control' to write it, then edit that rather than a new file.")
 
     def documents(self, mcdir, renderer):
         """Return each document in the directory, with whose it is.
