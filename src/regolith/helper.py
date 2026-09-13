@@ -97,6 +97,10 @@ LISTER_HELPER_SPECS = {
         "regolith.helpers.l_grantshelper:GrantsListerHelper",
         "regolith.helpers.l_grantshelper:subparser",
     ),
+    "f-mcproject": (
+        "regolith.helpers.f_mcprojecthelper:MCProjectFinisherHelper",
+        "regolith.helpers.f_mcprojecthelper:subparser",
+    ),
     "u-mcproject": (
         "regolith.helpers.u_mcprojecthelper:MCProjectUpdaterHelper",
         "regolith.helpers.u_mcprojecthelper:subparser",
