@@ -376,6 +376,25 @@ def test_a_held_thing_of_no_project_is_not_dropped_on_the_next_sync(mc_repo):
     assert stored(mc_repo, "mc_goals", idea["_id"])["status"] == "on-deck"
 
 
+def test_a_finished_project_keeps_its_goals_though_the_document_drops_them(mc_repo, capsys):
+    # Test the archive rule from the sync's side.  A project that is finished
+    # is one line in the archive and its goals are not written at all, so the
+    # sync must not read their absence as somebody deleting them
+    tmp_path, mcdir = mc_repo
+    projects = load_yaml(tmp_path / "db" / "mc_projects.yaml")
+    projects["mc-a-project"].update({"status": "finished", "end_date": "2026-09-01"})
+    dump_yaml(tmp_path / "db" / "mc_projects.yaml", projects)
+    (mcdir / "pei.md").write_text(
+        "# Mission control — Pei Liu\n\n## Projects\n\n## Archive\n\n"
+        "- ~~a project~~  (finished 2026-09-01)  ^mc-a-project\n"
+    )
+    main(["helper", "mc_sync"])
+    said = capsys.readouterr().out
+    assert "more like damage than editing" not in said
+    assert stored(mc_repo, "mc_goals", "mcg001")["status"] != "dropped"
+    assert stored(mc_repo, "mc_tasks", "mct001")["status"] != "dropped"
+
+
 def test_a_project_the_document_leaves_out_is_not_read_as_deleted(mc_repo, capsys):
     # Test the two halves of the round trip against each other.  A build
     # leaves a project finished long ago out of the document; a sync reading

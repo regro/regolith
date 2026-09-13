@@ -503,7 +503,12 @@ class MissionControlBuilder(BuilderBase):
             [] if self.build_all else [p for p in projects if retired(p, dt.date.today(), self.keep_finished_days)]
         )
         projects = [p for p in projects if p not in old]
-        self.left_out[person] = [p.get("name", "") for p in old]
+        # a project that is finished is over: it goes to the archive as one
+        # struck line and takes its goals and tasks out of the document with
+        # it.  Only what is still being worked on is numbered, so the numbers
+        # read from the top
+        done = [p for p in projects if p["status"] == "finished"]
+        projects = [p for p in projects if p not in done]
         number_of = {project["_id"]: n for n, project in enumerate(projects, start=1)}
         # a goal of a project belongs to whoever leads the project; a goal of
         # no project says whose it is itself, and is held on deck or on the
@@ -515,7 +520,13 @@ class MissionControlBuilder(BuilderBase):
         ]
         goals = in_document_order(mine, order, lambda g: g["_id"])
         goal_number = self.number_goals(goals, number_of)
-        tasks = [t for t in live(self.gtx["mc_tasks"]) if t["goal"] in goal_number]
+        # what hangs under something finished goes with it: a finished goal
+        # keeps no tasks, and a finished task keeps no sub tasks
+        finished_goals = {g["_id"] for g in goals if g["status"] == "finished"}
+        tasks = [
+            t for t in live(self.gtx["mc_tasks"]) if t["goal"] in goal_number and t["goal"] not in finished_goals
+        ]
+        tasks = [t for t in tasks if not self.under_something_finished(t, tasks)]
         self.left_out[person] = self.not_written(person, {p["_id"] for p in projects}, goal_number, tasks)
 
         lines = [f"# Mission control — {self.display_name(person)}", ""]
@@ -524,8 +535,34 @@ class MissionControlBuilder(BuilderBase):
         lines += self.render_weeks(tasks, goal_number, order)
         lines += self.render_bucket("On-deck", goals, goal_number, "on-deck")
         lines += self.render_bucket("Wishlist", goals, goal_number, "wishlist")
-        lines += self.render_archive(goals, goal_number)
+        lines += self.render_archive(goals, goal_number, done)
         return [written for line in one_blank_between(lines) for written in wrap(line)]
+
+    @staticmethod
+    def under_something_finished(task, tasks):
+        """Return True if a task hangs off one that is finished.
+
+        Parameters
+        ----------
+        task : dict
+            The task to place.
+        tasks : list of dict
+            The tasks it could hang off.
+
+        Returns
+        -------
+        bool
+            Whether anything above it is finished.
+        """
+        by_id = {t["_id"]: t for t in tasks}
+        seen = set()
+        parent = task.get("parent")
+        while parent in by_id and parent not in seen:
+            if by_id[parent]["status"] == "finished":
+                return True
+            seen.add(parent)
+            parent = by_id[parent].get("parent")
+        return False
 
     @staticmethod
     def number_goals(goals, number_of):
@@ -723,18 +760,42 @@ class MissionControlBuilder(BuilderBase):
             lines += self.render_held(piece, goal_number, under, depth + 1)
         return lines
 
-    def render_archive(self, goals, goal_number):
-        """Return the lines of the archive, one section per past period.
+    def render_archive(self, goals, goal_number, done=()):
+        """Return the lines of the archive.
 
-        A goal that has moved on from a period is still shown under it,
-        marked with where it went, so the record of what was agreed then
-        stays truthful without a second document.
+        What is finished comes first: one struck line for each project
+        that is over, so that a meeting can see what was done without
+        reading the work that did it.  The goals of a finished project
+        are not shown -- the project being over says it -- and neither is
+        what it was to deliver or what it was about, both of which are
+        still in the collections for a report to build from.
+
+        Under that, the goals of the projects still running, a section
+        per period that has passed.  A goal that has moved on from a
+        period is shown under it, marked with where it went, so the
+        record of what was agreed then stays truthful.
+
+        Parameters
+        ----------
+        goals : list of dict
+            The goals of the projects still running.
+        goal_number : dict
+            The number of each goal that has one.
+        done : list of dict, optional
+            The projects that are finished.
         """
         current = self.current_period(goals)
         seen = {g["first_period"] for g in goals} | {g["period"] for g in goals}
         periods = sorted(seen, key=self.period_key, reverse=True)
         past = [p for p in periods if self.period_key(p) < self.period_key(current)]
         lines = ["## Archive", ""]
+        for project in sorted(done, key=lambda p: str(as_date(p.get("end_date")) or ""), reverse=True):
+            end = as_date(project.get("end_date"))
+            when = f"  (finished {end.isoformat()})" if end else "  (finished)"
+            lines.append(f"- ~~{project['name']}~~{when}  ^{project['_id']}")
+            if project.get("collaborators"):
+                lines += ["", f"  with: {', '.join(project['collaborators'])}"]
+            lines.append("")
         for period in past:
             shown = [
                 g

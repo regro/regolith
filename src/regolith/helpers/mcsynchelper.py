@@ -247,10 +247,32 @@ class MCSyncHelper(DbHelperBase):
         """
         days = getattr(self.rc, "mission_control_keep_finished_days", KEEP_FINISHED_DAYS)
         today = dt.date.today()
-        projects = [_id for _id, p in existing["mc_projects"].items() if retired(p, today, days)]
-        goals = [_id for _id, g in existing["mc_goals"].items() if g.get("project") in projects]
-        tasks = [_id for _id, t in existing["mc_tasks"].items() if t.get("goal") in goals]
-        return projects + goals + tasks
+        # a project finished long ago is not written at all, and one finished
+        # at any time is written as a line in the archive without its goals
+        gone = {
+            _id
+            for _id, project in existing["mc_projects"].items()
+            if retired(project, today, days) or project.get("status") == "finished"
+        }
+        # what hangs under something finished goes with it
+        goals = {
+            _id
+            for _id, goal in existing["mc_goals"].items()
+            if goal.get("project") in gone or goal.get("status") == "finished"
+        }
+        tasks = set()
+        for _id, task in existing["mc_tasks"].items():
+            if task.get("goal") in goals or task.get("status") == "finished":
+                tasks.add(_id)
+        # and a sub task of one that has gone goes too, however deep
+        changing = True
+        while changing:
+            changing = False
+            for _id, task in existing["mc_tasks"].items():
+                if _id not in tasks and task.get("parent") in tasks:
+                    tasks.add(_id)
+                    changing = True
+        return sorted(gone) + sorted(goals) + sorted(tasks)
 
     def prefix(self, person):
         """Return what a project typed into one document is named with.
