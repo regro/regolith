@@ -23,7 +23,7 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "todos"
-HELPER_TARGET = "l_todo"
+HELPER_TARGET = "l-todo"
 Importance = [3, 2, 1, 0, -1, -2]  # eisenhower matrix (important|urgent) tt=3, tf=2, ft=1, ff=0
 STATI = ["accepted", "downloaded", "inprep"]
 

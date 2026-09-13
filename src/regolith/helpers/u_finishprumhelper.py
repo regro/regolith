@@ -39,7 +39,7 @@ class FinishprumUpdaterHelper(DbHelperBase):
     """Helper for finishing prum in the projecta collection."""
 
     # btype must be the same as helper target in helper.py
-    btype = "f_prum"
+    btype = "f-prum"
     needed_colls = [f"{TARGET_COLL}"]
 
     def construct_global_ctx(self):

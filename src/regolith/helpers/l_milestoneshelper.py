@@ -20,7 +20,7 @@ from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, 
 
 PROJECTUM_STATI = alloweds.get("PROJECTUM_STATI")
 TARGET_COLL = "projecta"
-HELPER_TARGET = "l_milestones"
+HELPER_TARGET = "l-milestones"
 PROJECTUM_STATI.append("all")
 INACTIVE_STATI = PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
 ROLES = ["pi", "lead", "group_members", "collaborators"]

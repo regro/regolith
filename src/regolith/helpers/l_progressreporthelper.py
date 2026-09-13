@@ -16,7 +16,7 @@ from regolith.schemas import PROJECTUM_ACTIVE_STATI, PROJECTUM_FINISHED_STATI, a
 from regolith.tools import all_docs_from_collection, get_pi_id, key_value_pair_filter, strip_str
 
 TARGET_COLL = "projecta"
-HELPER_TARGET = "l_progress"
+HELPER_TARGET = "l-progress"
 
 PROJECTUM_STATI = alloweds.get("PROJECTUM_STATI")
 

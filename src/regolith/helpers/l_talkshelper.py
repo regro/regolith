@@ -13,7 +13,7 @@ from regolith.helpers.basehelper import SoutHelperBase
 from regolith.tools import all_docs_from_collection, get_person_contact, strip_str
 
 TARGET_COLL = "talks"
-HELPER_TARGET = "l_talks"
+HELPER_TARGET = "l-talks"
 
 
 def subparser(subpi):

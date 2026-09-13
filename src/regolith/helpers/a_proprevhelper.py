@@ -43,7 +43,7 @@ def subparser(subpi):
 class PropRevAdderHelper(DbHelperBase):
     """Build a helper."""
 
-    btype = "a_proprev"
+    btype = "a-proprev"
     needed_colls = ["proposalReviews"]
 
     def construct_global_ctx(self):

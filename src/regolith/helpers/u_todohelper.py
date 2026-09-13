@@ -132,7 +132,7 @@ class TodoUpdaterHelper(DbHelperBase):
     """Helper for updating a task in todos of todos collection."""
 
     # btype must be the same as helper target in helper.py
-    btype = "u_todo"
+    btype = "u-todo"
     needed_colls = [f"{TARGET_COLL}"]
 
     def construct_global_ctx(self):

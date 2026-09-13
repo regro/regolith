@@ -88,7 +88,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
     """Helper for updating milestones to the projecta collection."""
 
     # btype must be the same as helper target in helper.py
-    btype = "u_milestone"
+    btype = "u-milestone"
     needed_colls = [f"{TARGET_COLL}"]
 
     def construct_global_ctx(self):

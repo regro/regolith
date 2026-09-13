@@ -14,7 +14,7 @@ from regolith.helpers.basehelper import SoutHelperBase
 from regolith.tools import all_docs_from_collection, fuzzy_retrieval, get_pi_id, search_collection
 
 TARGET_COLL = "contacts"
-HELPER_TARGET = "l_contacts"
+HELPER_TARGET = "l-contacts"
 
 
 def subparser(subpi):

@@ -85,7 +85,7 @@ class ProjectumAdderHelper(DbHelperBase):
     """
 
     # btype must be the same as helper target in helper.py
-    btype = "a_projectum"
+    btype = "a-projectum"
     needed_colls = [f"{TARGET_COLL}", "groups", "people"]
 
     def construct_global_ctx(self):

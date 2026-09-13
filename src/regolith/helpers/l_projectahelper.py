@@ -20,7 +20,7 @@ from regolith.schemas import (
 from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, key_value_pair_filter, strip_str
 
 TARGET_COLL = "projecta"
-HELPER_TARGET = "l_projecta"
+HELPER_TARGET = "l-projecta"
 INACTIVE_STATI = PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI
 
 
