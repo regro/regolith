@@ -165,6 +165,23 @@ class MCSyncHelper(DbHelperBase):
                 print("Name it for the person whose it is, or add them to the people collection.")
         return found
 
+    def everything(self):
+        """Return every record of every collection, keyed by id.
+
+        A document may name something that is stored and is not the
+        person's, which is what a project whose lead was changed looks
+        like from the document it used to be in.  Read against this it
+        is recognised rather than made again.
+
+        Returns
+        -------
+        dict
+            ``{collection: {id: record}}`` for everything stored.
+        """
+        return {
+            collection: {record["_id"]: record for record in self.gtx[collection]} for collection in COLLECTIONS
+        }
+
     def mine(self, person):
         """Return the records already stored for one person.
 
@@ -274,7 +291,9 @@ class MCSyncHelper(DbHelperBase):
         # deleted.  The record is neither written nor dropped: the document
         # says nothing about it either way
         parsed["mentioned"] = list(parsed.get("mentioned", ())) + self.left_out_of_documents(existing)
-        writes, drops = changes(parsed, None if person == UNASSIGNED else person, existing)
+        writes, drops = changes(
+            parsed, None if person == UNASSIGNED else person, existing, elsewhere=self.everything()
+        )
         held = sum(len(records) for records in existing.values())
         dropped = sum(len(ids) for ids in drops.values())
         read = sum(len(parsed[kind]) for kind in ("projects", "goals", "tasks"))

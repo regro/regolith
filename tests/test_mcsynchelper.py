@@ -424,3 +424,24 @@ def test_a_project_the_document_leaves_out_is_not_read_as_deleted(mc_repo, capsy
     # document says nothing about them either way
     assert stored(mc_repo, "mc_projects", "mc-an-old-one")["status"] == "finished"
     assert stored(mc_repo, "mc_goals", "mcg002")["status"] == "finished"
+
+
+def test_a_document_that_has_not_caught_up_does_not_remake_what_moved(mc_repo):
+    # Test the sync end to end after a project's lead was changed in the
+    # collections.  unassigned.md still lists it until the next build, and
+    # reading that document must not rebuild the project out of the one line
+    # it has: its status, the day it began and the grant paying for it are
+    # nowhere in the document
+    tmp_path, mcdir = mc_repo
+    projects = load_yaml(tmp_path / "db" / "mc_projects.yaml")
+    projects["mc-a-project"].update({"lead": "ayang", "begin_date": "2024-01-15", "grants": ["dmref15"]})
+    dump_yaml(tmp_path / "db" / "mc_projects.yaml", projects)
+    # the document it used to be in, written before the lead was changed
+    (mcdir / "unassigned.md").write_text(
+        "# Mission control — unassigned\n\n## Projects\n\n1. **a project**  ^mc-a-project\n"
+    )
+    main(["helper", "mc_sync"])
+    project = stored(mc_repo, "mc_projects", "mc-a-project")
+    assert project["begin_date"] == "2024-01-15"
+    assert project["grants"] == ["dmref15"]
+    assert project["status"] == "active"
