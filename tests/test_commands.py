@@ -4,9 +4,11 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
+from regolith import commands
 from regolith.database import connect
 from regolith.dates import convert_doc_iso_to_date
 from regolith.main import main
@@ -116,3 +118,50 @@ def replace_rc_dbs(repo):
         json.dump(data, f, indent=4)
         f.truncate()
     os.chdir(cwd)
+
+
+CITATIONS_BIB = """@article{meurer2016sympy,
+ author = {Meurer, Aaron and Smith, Christopher P and van der Walt, Stefan},
+ editor = {Scopatz, Anthony},
+ title = {SymPy: Symbolic
+          computing in Python},
+ journal = {PeerJ Computer Science},
+ year = {2017}
+}
+
+@misc{a_dataset,
+ author = {Billinge, Simon J. L.},
+ title = {A dataset},
+ year = {2026}
+}
+"""
+
+
+def test_ingesting_citations_reads_a_bib_file(tmp_path, monkeypatch):
+    # Test reading a bibtex file into the citations collection.  Nothing
+    # covered this, and the reader is the half of bibtexparser that regolith
+    # does not write with, so a change of version could break it in silence
+    # until somebody ingested a file
+    path = tmp_path / "refs.bib"
+    path.write_text(CITATIONS_BIB, encoding="utf-8")
+    written = {}
+
+    class FakeClient:
+        def update_one(self, db, coll, filter, doc, upsert=False):
+            written[filter["_id"]] = doc
+
+    rc = SimpleNamespace(filename=str(path), db="test", coll="citations", client=FakeClient())
+    commands._ingest_citations(rc)
+
+    assert sorted(written) == ["a_dataset", "meurer2016sympy"]
+    article = written["meurer2016sympy"]
+    # the entry type is a field of the record rather than the entry
+    assert article["entrytype"] == "article"
+    # every name field is a list, one "Last, First" to an author, however the
+    # file wrote them
+    assert article["author"] == ["Meurer, Aaron", "Smith, Christopher P", "van der Walt, Stefan"]
+    assert article["editor"] == ["Scopatz, Anthony"]
+    # a title wrapped over two lines in the file is one line in the record
+    assert article["title"] == "SymPy: Symbolic computing in Python"
+    # an entry type bibtex does not standardise is read like any other
+    assert written["a_dataset"]["entrytype"] == "misc"

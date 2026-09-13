@@ -33,17 +33,22 @@ from regolith.schemas import alloweds
 from regolith.sorters import doc_date_key_high, ene_date_key, id_key
 
 try:
-    # bibtexparser 2 dropped both of these, and regolith has not been moved to
-    # its writer yet, so the requirements ask for 1.x.  A 2.x that gets in
-    # anyway lands here rather than at the call site
-    from bibtexparser.bibdatabase import BibDatabase
-    from bibtexparser.bwriter import BibTexWriter
+    import bibtexparser
+    from bibtexparser.model import Entry, Field
 
     HAVE_BIBTEX_PARSER = True
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
+
+if HAVE_BIBTEX_PARSER:
+    # how the bibtex files regolith has always written are laid out: one space
+    # in front of each field, and no comma after the last of them
+    _BIBTEX_FORMAT = bibtexparser.BibtexFormat()
+    _BIBTEX_FORMAT.indent = " "
+    _BIBTEX_FORMAT.trailing_comma = False
+    _BIBTEX_FORMAT.block_separator = "\n"
 
 DEFAULT_ENCODING = sys.getdefaultencoding()
 
@@ -983,40 +988,57 @@ def make_bibtex_file(pubs, pid, person_dir="."):
         # nothing to say why
         warn(
             f"No {pid}.bib was written: bibtexparser is not installed, or is a "
-            f"version regolith cannot use. Install bibtexparser 1.x.",
+            f"version regolith cannot use. Install bibtexparser 2.",
             RuntimeWarning,
         )
         return None
-    skip_keys = {"ID", "ENTRYTYPE", "author"}
-    bibdb = BibDatabase()
-    bibwriter = BibTexWriter()
-    bibdb.entries = ents = []
-    for pub in pubs:
-        ent = dict(pub)
-        ent["ID"] = ent.pop("_id")
-        ent["ENTRYTYPE"] = ent.pop("entrytype")
-        if ent.get("doi") == "tbd":
-            del ent["doi"]
-        if ent.get("supplementary_info_urls"):
-            ent.update({"supplementary_info_urls": ", ".join(ent.get("supplementary_info_urls"))})
-        if isinstance(ent.get("editor"), list):
-            for n in ["author", "editor"]:
-                if n in ent:
-                    ent[n] = " and ".join(ent[n])
-        else:
-            if "author" in ent:
-                ent["author"] = " and ".join(ent["author"])
-        for key in ent.keys():
-            if key in skip_keys:
-                continue
-            # don't think I want the bibfile entries to be latex safe
-            # ent[key] = latex_safe(ent[key])
-            ent[key] = str(ent[key])
-        ents.append(ent)
+    library = bibtexparser.Library()
+    for _id, entrytype, fields in sorted(_bibtex_entries(pubs)):
+        library.add(Entry(entrytype, _id, [Field(key, value) for key, value in fields]))
     fname = os.path.join(person_dir, pid) + ".bib"
     with open(fname, "w", encoding="utf-8") as f:
-        f.write(bibwriter.write(bibdb))
+        f.write(bibtexparser.write_string(library, bibtex_format=_BIBTEX_FORMAT))
     return fname
+
+
+def _bibtex_entries(pubs):
+    """Yield each publication as the pieces a bibtex entry is written
+    from.
+
+    Parameters
+    ----------
+    pubs : list of dict
+        The publications.
+
+    Yields
+    ------
+    tuple of (str, str, list of tuple of (str, str))
+        The key of the entry, its type, and its fields in the order they
+        are written, which is alphabetical.
+    """
+    # the author is joined into one string above rather than written out, and
+    # the id and the type are the entry rather than fields of it
+    skip_keys = {"ID", "ENTRYTYPE", "author"}
+    for pub in pubs:
+        entry = dict(pub)
+        _id = entry.pop("_id")
+        entrytype = entry.pop("entrytype")
+        if entry.get("doi") == "tbd":
+            del entry["doi"]
+        if entry.get("supplementary_info_urls"):
+            entry["supplementary_info_urls"] = ", ".join(entry["supplementary_info_urls"])
+        if isinstance(entry.get("editor"), list):
+            for name in ["author", "editor"]:
+                if name in entry:
+                    entry[name] = " and ".join(entry[name])
+        elif "author" in entry:
+            entry["author"] = " and ".join(entry["author"])
+        for key in entry:
+            if key not in skip_keys:
+                # don't think I want the bibfile entries to be latex safe
+                # entry[key] = latex_safe(entry[key])
+                entry[key] = str(entry[key])
+        yield _id, entrytype, sorted(entry.items())
 
 
 def document_by_value(documents, address, value):
