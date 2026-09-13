@@ -1,5 +1,5 @@
 ruamel.yaml
-bibtexparser
+bibtexparser<2
 docutils
 jinja2
 cerberus
