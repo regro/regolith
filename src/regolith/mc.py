@@ -858,7 +858,7 @@ def settled_status(read_status, existing_status, default="active"):
     return existing_status if existing_status in OPEN else "active"
 
 
-def adopt(read, existing, claimed):
+def adopt(read, existing, claimed, elsewhere=None):
     """Return the record a read line belongs to, matching on text if
     need be.
 
@@ -868,14 +868,30 @@ def adopt(read, existing, claimed):
     So a line whose id is not known is offered to a record with the same
     text that nothing else has claimed.
 
+    A line may also name something that is stored and is not this
+    person's: a project whose lead was changed is in somebody else's
+    document from then on, and a document written before that still
+    lists it.  It is found by its id wherever it is, so that reading a
+    document that has not caught up rewrites a line rather than making
+    the record again from what that one line happens to say.
+
+    Matching on text is not done across everything, only among this
+    person's records.  Two people's goals say the same thing often --
+    "introduce project to the lead" is on hundreds of them -- and a line
+    that has lost its id should find its way home, not into somebody
+    else's work.
+
     Parameters
     ----------
     read : dict
         The line as read, carrying an id the parser may have just minted.
     existing : dict
-        The records already stored, keyed by id.
+        The records already stored for this person, keyed by id.
     claimed : set
         The ids already taken by other lines of this document.
+    elsewhere : dict, optional
+        Every record of the collection, keyed by id, for finding one
+        that is stored and is not this person's.
 
     Returns
     -------
@@ -884,6 +900,8 @@ def adopt(read, existing, claimed):
     """
     if read["_id"] in existing:
         return existing[read["_id"]]
+    if elsewhere and read["_id"] in elsewhere:
+        return elsewhere[read["_id"]]
     for _id, record in existing.items():
         same = record.get("text") == read.get("text") and record.get("name") == read.get("name")
         if _id not in claimed and same:
@@ -892,7 +910,7 @@ def adopt(read, existing, claimed):
     return {}
 
 
-def changes(parsed, person, existing, today=None):
+def changes(parsed, person, existing, today=None, elsewhere=None):
     """Return the records a document says to write, and the ids to drop.
 
     Nothing is deleted.  A line somebody removed sets the record's status
@@ -913,6 +931,10 @@ def changes(parsed, person, existing, today=None):
         ``{collection: {id: record}}``.
     today : datetime.date, optional
         The date to close things on.  The default is today.
+    elsewhere : dict, optional
+        Every record of each collection, as ``{collection: {id: record}}``,
+        for finding one that is stored and is not this person's.  Without
+        it a line naming such a record is read as a new one.
 
     Returns
     -------
@@ -921,6 +943,7 @@ def changes(parsed, person, existing, today=None):
         ``{collection: [...]}``.
     """
     today = today or dt.date.today()
+    elsewhere = elsewhere or {}
     writes = {"mc_projects": [], "mc_goals": [], "mc_tasks": []}
     seen = {"mc_projects": set(), "mc_goals": set(), "mc_tasks": set()}
     # what a line was given while reading, against what it turned out to be.
@@ -931,7 +954,7 @@ def changes(parsed, person, existing, today=None):
 
     for read in parsed["projects"]:
         given = read["_id"]
-        was = adopt(read, existing["mc_projects"], seen["mc_projects"])
+        was = adopt(read, existing["mc_projects"], seen["mc_projects"], elsewhere.get("mc_projects"))
         if read["_id"] != given:
             adopted[given] = read["_id"]
         record = dict(was)
@@ -953,7 +976,7 @@ def changes(parsed, person, existing, today=None):
     for read in parsed["goals"]:
         given = read["_id"]
         read["project"] = adopted.get(read["project"], read["project"])
-        was = adopt(read, existing["mc_goals"], seen["mc_goals"])
+        was = adopt(read, existing["mc_goals"], seen["mc_goals"], elsewhere.get("mc_goals"))
         if read["_id"] != given:
             adopted[given] = read["_id"]
         record = dict(was)
@@ -978,7 +1001,7 @@ def changes(parsed, person, existing, today=None):
         read["goal"] = adopted.get(read["goal"], read["goal"])
         if read.get("parent"):
             read["parent"] = adopted.get(read["parent"], read["parent"])
-        was = adopt(read, existing["mc_tasks"], seen["mc_tasks"])
+        was = adopt(read, existing["mc_tasks"], seen["mc_tasks"], elsewhere.get("mc_tasks"))
         if read["_id"] != given:
             adopted[given] = read["_id"]
         record = dict(was)

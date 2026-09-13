@@ -232,6 +232,64 @@ def written(writes, collection):
     return {record["_id"]: record for record in writes[collection]}
 
 
+@pytest.mark.parametrize(
+    "shown_everything, expected",
+    [
+        # Test a document that has not caught up.  A project whose lead was
+        # changed belongs to somebody else's document from then on, and the
+        # one it used to be in still lists it.  Read against everything
+        # stored, that line is the record it names; read against only this
+        # person's records, it is a record nobody has, and the sync makes one
+        # again out of what the single line happens to say.
+        # C1: everything stored is offered, expect what is stored kept
+        (True, {"status": "active", "begin_date": "2024-01-15", "grants": ["dmref15"]}),
+        # C2: only this person's, expect it made again from the line alone,
+        # which is what this fixes
+        (False, {"status": "proposed", "begin_date": TODAY, "grants": None}),
+    ],
+)
+def test_a_line_naming_something_stored_elsewhere_is_that_thing(shown_everything, expected):
+    moved = {
+        "_id": "p-moved",
+        "name": "a project that moved",
+        "status": "active",
+        "lead": "ayang",
+        "begin_date": "2024-01-15",
+        "grants": ["dmref15"],
+    }
+    document = parsed(projects=[{"_id": "p-moved", "name": "a project that moved", "status": "active"}])
+    everything = {"mc_projects": {"p-moved": moved}, "mc_goals": {}, "mc_tasks": {}}
+    writes, _ = changes(
+        document,
+        None,
+        existing(),
+        today=TODAY,
+        elsewhere=everything if shown_everything else None,
+    )
+    written = writes["mc_projects"][0]
+    assert written["status"] == expected["status"]
+    assert written["begin_date"] == expected["begin_date"]
+    assert written.get("grants") == expected["grants"]
+
+
+def test_a_line_that_lost_its_id_does_not_go_to_somebody_else():
+    # Test that matching on text stays within this person's records.  Two
+    # people's goals say the same thing all the time -- "introduce project to
+    # the lead" is on hundreds of them -- so a line that has lost its id must
+    # find its way home rather than into somebody else's work
+    theirs = stored(_id="g-theirs", text="introduce project to the lead")
+    mine = stored(_id="g-mine", text="introduce project to the lead")
+    document = parsed(goals=[read(_id="a-minted-id", text="introduce project to the lead")])
+    writes, _ = changes(
+        document,
+        "pliu",
+        existing(goals=[mine]),
+        today=TODAY,
+        elsewhere={"mc_projects": {}, "mc_goals": {"g-theirs": theirs}, "mc_tasks": {}},
+    )
+    assert writes["mc_goals"][0]["_id"] == "g-mine"
+
+
 def test_a_reference_follows_the_line_it_points_at():
     # Test a document typed by hand, where no line carries an id.  The reader
     # gives every line a new one and adopt then matches each to what is
