@@ -38,11 +38,12 @@ classifiers = [
 script-files = [
     "scripts/regolith",
     "scripts/helper-gui",
-    # the old spelling, which says where it went and then runs
+    "scripts/helper-connect",
+    # the old spellings, which say where they went and then run
     "scripts/helper_gui",
     "scripts/helper_connect",
-    "scripts/profile_regolith",
-    "scripts/profile_helper_gui",
+    "scripts/profile-regolith",
+    "scripts/profile-helper-gui",
 ]
 
 [project.urls]

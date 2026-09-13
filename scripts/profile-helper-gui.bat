@@ -1,9 +1,9 @@
 @echo off
 call :s_which py.exe
 if not "%_path%" == "" (
-  py -3 -m profile_regolith %*
+  py -3 -m regolith.helper_gui_main %*
 ) else (
-  python -m profile_regolith %*
+  python -m regolith.helper_gui_main %*
 )
 
 goto :eof
