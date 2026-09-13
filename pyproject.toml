@@ -37,9 +37,10 @@ classifiers = [
 [tool.setuptools]
 script-files = [
     "scripts/regolith",
-    "scripts/helper_gui",
+    "scripts/helper-gui",
     "scripts/helper-connect",
-    # the old spelling, which says where it went and then runs
+    # the old spellings, which say where they went and then run
+    "scripts/helper_gui",
     "scripts/helper_connect",
     "scripts/profile-regolith",
     "scripts/profile-helper-gui",
