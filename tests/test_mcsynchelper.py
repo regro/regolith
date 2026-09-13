@@ -148,7 +148,7 @@ def test_an_edit_reaches_the_collection(edit, collection, _id, field, expected, 
     _, mcdir = mc_repo
     path = mcdir / "pei.md"
     path.write_text(edit(path.read_text()))
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     assert stored(mc_repo, collection, _id)[field] == expected
 
 
@@ -158,7 +158,7 @@ def test_a_line_taken_out_is_dropped(mc_repo):
     _, mcdir = mc_repo
     path = mcdir / "pei.md"
     path.write_text(path.read_text().replace("- [ ] 1.1.1  a task  ^mct001\n", ""))
-    main(["helper", "mc_sync", "--force"])
+    main(["helper", "u-mcsync", "--force"])
     assert stored(mc_repo, "mc_tasks", "mct001")["status"] == "dropped"
 
 
@@ -171,7 +171,7 @@ def test_a_document_that_lost_most_of_itself_is_left_alone(mc_repo, capsys):
     path = mcdir / "pei.md"
     kept = path.read_text().split("## Goals")[0]
     path.write_text(kept)
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     said = capsys.readouterr().out
     assert "more like damage than editing" in said
     # what is at stake is named, not just counted
@@ -189,7 +189,7 @@ def test_a_document_that_stopped_being_one_is_left_alone_even_forced(mc_repo, ca
     path = mcdir / "pei.md"
     stripped = path.read_text().replace("#", "").replace("- ", "").replace("[ ]", "").replace("**", "")
     path.write_text(stripped)
-    main(["helper", "mc_sync", "--force"])
+    main(["helper", "u-mcsync", "--force"])
     said = capsys.readouterr().out
     assert "nothing in it that a mission control document has" in said
     assert "with or without --force" in said
@@ -203,7 +203,7 @@ def test_a_document_that_cannot_be_read_is_skipped_whole(mc_repo, capsys):
     _, mcdir = mc_repo
     path = mcdir / "pei.md"
     path.write_text(path.read_text() + "- [ ] 9.9.9  a task under nothing  ^mct999\n")
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     out = capsys.readouterr().out
     assert "was not read" in out and "there is no goal 9.9" in out
     assert stored(mc_repo, "mc_tasks", "mct999") is None
@@ -214,7 +214,7 @@ def test_a_dry_run_says_what_it_would_do_and_does_nothing(mc_repo, capsys):
     _, mcdir = mc_repo
     path = mcdir / "pei.md"
     path.write_text(path.read_text().replace("a task  ^mct001", "~~a task~~  ^mct001"))
-    main(["helper", "mc_sync", "--dry-run"])
+    main(["helper", "u-mcsync", "--dry-run"])
     assert "would write" in capsys.readouterr().out
     assert stored(mc_repo, "mc_tasks", "mct001")["status"] == "active"
 
@@ -223,7 +223,7 @@ def test_a_document_that_says_nothing_new_changes_nothing(mc_repo):
     # Test that reading a document straight after rendering it is a no-op,
     # which is what makes syncing on every read safe
     before = stored(mc_repo, "mc_goals", "mcg001")
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     assert stored(mc_repo, "mc_goals", "mcg001") == before
 
 
@@ -234,9 +234,9 @@ def test_what_was_dropped_is_not_dropped_again(mc_repo, capsys):
     _, mcdir = mc_repo
     path = mcdir / "pei.md"
     path.write_text(path.read_text().replace("- [ ] 1.1.1  a task  ^mct001\n", ""))
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     capsys.readouterr()
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     assert "dropped 0" in capsys.readouterr().out
     assert stored(mc_repo, "mc_tasks", "mct001")["status"] == "dropped"
 
@@ -253,7 +253,7 @@ def test_a_project_typed_in_is_stored_under_a_readable_id(mc_repo):
             "1. **a project**  ^mc-a-project\n\n2. **A Second Project**",
         )
     )
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     assert stored(mc_repo, "mc_projects", "pl-a-second-project")["name"] == "A Second Project"
 
 
@@ -265,7 +265,7 @@ def test_a_document_is_read_even_when_the_collections_hold_nothing_of_its_own(mc
     # matters most
     tmp_path, mcdir = mc_repo
     dump_yaml(tmp_path / "db" / "mc_projects.yaml", {})
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     assert stored(mc_repo, "mc_projects", "mc-a-project")["name"] == "a project"
 
 
@@ -299,7 +299,7 @@ def test_somebody_with_work_and_no_document_is_named(mc_repo, capsys):
     }
     dump_yaml(tmp_path / "db" / "mc_projects.yaml", projects)
 
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     said = capsys.readouterr().out
     assert "ayang has work stored and no document" in said
     assert "andrew.md is not there" in said
@@ -314,7 +314,7 @@ def test_a_document_named_for_nobody_says_so(mc_repo, capsys):
     # that had nothing to say
     _, mcdir = mc_repo
     (mcdir / "whoever.md").write_text("# Mission control — Whoever\n")
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     assert "whoever.md is not named for anybody" in capsys.readouterr().out
 
 
@@ -326,7 +326,7 @@ def test_a_project_nobody_leads_is_named_na(mc_repo):
     (mcdir / "unassigned.md").write_text(
         "# Mission control — unassigned\n\n## Projects\n\n1. **Software maintenance**\n"
     )
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     assert stored(mc_repo, "mc_projects", "na-software-maintenance")["status"] == "proposed"
 
 
@@ -339,7 +339,7 @@ def test_the_sync_says_how_many_lines_were_new(mc_repo, capsys):
     path.write_text(
         path.read_text().replace("- 1.1  a goal  ^mcg001", "- 1.1  a goal  ^mcg001\n- 1.2  a new goal")
     )
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     assert "1 of them new" in capsys.readouterr().out
 
 
@@ -350,7 +350,7 @@ def test_a_record_is_written_where_it_is_already_stored(mc_repo):
     tmp_path, mcdir = mc_repo
     path = mcdir / "pei.md"
     path.write_text(path.read_text().replace("a goal", "a goal, reworded"))
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     stored_in_db = (tmp_path / "db" / "mc_goals.yaml").read_text()
     assert "a goal, reworded" in stored_in_db
 
@@ -362,7 +362,7 @@ def test_a_held_thing_of_no_project_is_not_dropped_on_the_next_sync(mc_repo):
     _, mcdir = mc_repo
     path = mcdir / "pei.md"
     path.write_text(path.read_text() + "\n## On-deck\n\n- an idea nobody has taken on\n")
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     rc = copy.copy(DEFAULT_RC)
     rc._update(load_rcfile("regolithrc.json"))
     filter_databases(rc)
@@ -372,7 +372,7 @@ def test_a_held_thing_of_no_project_is_not_dropped_on_the_next_sync(mc_repo):
     assert idea["lead"] == "pliu"
     assert idea["status"] == "on-deck"
 
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     assert stored(mc_repo, "mc_goals", idea["_id"])["status"] == "on-deck"
 
 
@@ -417,7 +417,7 @@ def test_a_project_the_document_leaves_out_is_not_read_as_deleted(mc_repo, capsy
             },
         },
     )
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     said = capsys.readouterr().out
     assert "more like damage than editing" not in said
     # the old project and its goal are neither written nor dropped: the

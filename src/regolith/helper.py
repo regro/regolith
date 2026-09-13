@@ -159,6 +159,10 @@ UPDATER_HELPER_SPECS = {
         "regolith.helpers.u_mcprojecthelper:MCProjectUpdaterHelper",
         "regolith.helpers.u_mcprojecthelper:subparser",
     ),
+    "u-mcsync": (
+        "regolith.helpers.mcsynchelper:MCSyncHelper",
+        "regolith.helpers.mcsynchelper:subparser",
+    ),
     "u-milestone": (
         "regolith.helpers.u_milestonehelper:MilestoneUpdaterHelper",
         "regolith.helpers.u_milestonehelper:subparser",
@@ -166,11 +170,6 @@ UPDATER_HELPER_SPECS = {
     "u-todo": (
         "regolith.helpers.u_todohelper:TodoUpdaterHelper",
         "regolith.helpers.u_todohelper:subparser",
-    ),
-    # read the mission control documents back into the collections
-    "mc-sync": (
-        "regolith.helpers.mcsynchelper:MCSyncHelper",
-        "regolith.helpers.mcsynchelper:subparser",
     ),
 }
 

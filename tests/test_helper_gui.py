@@ -112,9 +112,9 @@ def test_no_argument_is_labelled_with_a_tuple(target):
         # argument, and the underscored spelling keeps working so that nobody
         # has to retype an alias.
         # C1: the name as it is listed
-        ("mc-sync", "mc-sync"),
-        # C2: the same target with underscores
-        ("mc_sync", "mc-sync"),
+        ("u-mcsync", "u-mcsync"),
+        # C2: a target typed with underscores
+        ("u_mcsync", "u-mcsync"),
         # C3: another target, typed the way it is listed
         ("l-todo", "l-todo"),
         # C4: that one typed the way it used to be spelled

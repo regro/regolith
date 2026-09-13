@@ -436,7 +436,7 @@ class MissionControlBuilder(BuilderBase):
             print(f"    {said}")
         if len(lost) > SHOWN_WHEN_REFUSING:
             print(f"    ... and {len(lost) - SHOWN_WHEN_REFUSING} more")
-        print("Run 'regolith helper mc_sync' to read them in, then build again.")
+        print("Run 'regolith helper u-mcsync' to read them in, then build again.")
         print(
             "A line still named after a sync is one the collections cannot hold as "
             "it is: put it under a goal or a project, or take it out."
