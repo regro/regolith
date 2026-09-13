@@ -179,6 +179,25 @@ The order the periods are given in does not matter, since they are put in the
 order they come round by the dates. That order is what mission control sorts an
 archive by, rather than the letters of the names, which do not agree with it.
 
+``mission_control_also_build``
+==============================
+The people to write a mission control document for besides the group's own
+members, as a list of ids, names or akas.
+
+``active`` in the people collection says whether somebody is in the group, and
+that is all it says. Somebody who has graduated and is still collaborating is
+not in the group, so an ordinary build passes over them; naming them here
+writes their document with everybody else's, without marking them active and
+making one field mean two things.
+
+.. code-block:: json
+
+    "mission_control_also_build": ["ayang"]
+
+``regolith build mission-control --people ayang`` writes one person's document
+whatever their standing, for a one-off. This setting is for the ones that keep
+coming round.
+
 ``mission_control_keep_finished_days``
 ======================================
 How long a finished project stays in a mission control document, in days. If

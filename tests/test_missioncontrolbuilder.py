@@ -1,6 +1,7 @@
 """Tests for rendering the mission control documents."""
 
 import datetime as dt
+from types import SimpleNamespace
 
 import pytest
 
@@ -826,6 +827,33 @@ def a_group_build(tmp_path, **rc):
 )
 def test_a_build_is_for_the_people_in_the_group(asked_for, expected_documents, tmp_path):
     builder = a_group_build(tmp_path, **asked_for)
+    builder.render()
+    assert sorted(p.name for p in builder.mcdir.glob("*.md")) == sorted(expected_documents)
+
+
+@pytest.mark.parametrize(
+    "named, expected_documents",
+    [
+        # Test the people a group writes for besides its own.  active says
+        # whether somebody is in the group and should say nothing else, so
+        # somebody who has graduated and is still collaborating is named here
+        # rather than marked active.
+        # C1: nobody named, expect the group and the unassigned document
+        ([], ["pei.md", "unassigned.md", "no.md"]),
+        # C2: the one who has left named by id, expect their document too
+        (["gone"], ["pei.md", "unassigned.md", "no.md", "has.md"]),
+        # C3: named by their name rather than their id, as --people takes them
+        (["Has Left"], ["pei.md", "unassigned.md", "no.md", "has.md"]),
+        # C4: somebody named who is in the group anyway, expect no change and
+        # no complaint
+        (["pliu"], ["pei.md", "unassigned.md", "no.md"]),
+        # C5: a name nothing knows, expect it passed over rather than an error
+        (["nobody-of-that-name"], ["pei.md", "unassigned.md", "no.md"]),
+    ],
+)
+def test_a_group_writes_for_the_people_it_names_as_well(named, expected_documents, tmp_path):
+    builder = a_group_build(tmp_path)
+    builder.rc = SimpleNamespace(mission_control_also_build=named)
     builder.render()
     assert sorted(p.name for p in builder.mcdir.glob("*.md")) == sorted(expected_documents)
 

@@ -115,6 +115,36 @@ def one_blank_between(lines):
     return tidied
 
 
+def also_built(rc, people):
+    """Return the people a group writes documents for besides its own.
+
+    ``active`` says whether somebody is in the group, and that is all it
+    should have to say.  Somebody who has left and is still collaborating
+    is not in the group, and still needs their document written, so a
+    group lists them in ``mission_control_also_build`` rather than
+    marking them active and making one field mean two things.
+
+    Parameters
+    ----------
+    rc : runcontrol
+        The runcontrol, which may name them.
+    people : iterable of dict
+        The people collection, for naming them by name or by an aka
+        rather than by id.
+
+    Returns
+    -------
+    set of str
+        The ids of the people to write for anyway.
+    """
+    named = getattr(rc, "mission_control_also_build", None) or []
+    found = set()
+    for name in named:
+        person = fuzzy_retrieval(people, ["_id", "name", "aka"], name, case_sensitive=False)
+        found.add(person["_id"] if person else name)
+    return found
+
+
 def number_key(number):
     """Return a key putting numbers in the order they are read aloud.
 
@@ -243,6 +273,9 @@ class MissionControlBuilder(BuilderBase):
     # it, and nobody wants to read through the documents of both.
     only_people = None
     build_all = False
+    # the people a group writes for besides its own members are read from
+    # mission_control_also_build when the people collection is there to name
+    # them by, which is not yet when a builder is made
     # how long a project stays in the document after it is finished
     keep_finished_days = KEEP_FINISHED_DAYS
 
@@ -362,7 +395,13 @@ class MissionControlBuilder(BuilderBase):
             return {person for person in everybody if person in named}
         if self.build_all:
             return everybody
-        return {p for p in everybody if p == UNASSIGNED or in_the_group(p, self.gtx.get("people", []))}
+        people = self.gtx.get("people", [])
+        anyway = also_built(getattr(self, "rc", None), people)
+        return {
+            person
+            for person in everybody
+            if person == UNASSIGNED or person in anyway or in_the_group(person, people)
+        }
 
     def documents_by_person(self):
         """Return the projects of each person, keyed by whose they
