@@ -964,6 +964,42 @@ def a_finished_build(tmp_path, **rc):
     return builder
 
 
+def test_a_finished_project_is_one_struck_line_in_the_archive(tmp_path):
+    # Test what a project that is over looks like.  It is done with, so it
+    # does not take a number at the top or carry the goals that got it there;
+    # it is one line saying it happened, and what it was to deliver and what
+    # it was about are in the collections for a report to build from
+    builder = a_finished_build(tmp_path)
+    document = "\n".join(builder.documents()["pliu"])
+    archive = document.split("## Archive")[1]
+    assert "- ~~A just finished project~~  (finished" in archive
+    assert "^p-new" in archive
+    # it is not among the projects being worked on, and the live one is 1
+    assert "1. **A live project**  ^p-live" in document
+    assert "**A just finished project**" not in document.split("## Archive")[0]
+    # and its goals went with it
+    assert "a goal of the old project" not in document
+
+
+def test_a_finished_goal_keeps_no_tasks(tmp_path):
+    # Test the same rule one level down: what hangs under something finished
+    # goes with it, so a finished goal does not keep a week's tasks under it
+    builder = render_into(
+        tmp_path,
+        {
+            "mc_projects": [dict(PROJECTS[0], lead="pliu")],
+            "mc_goals": [dict(GOALS[0], _id="g-done", text="a finished goal", status="finished")],
+            "mc_tasks": [
+                dict(TASKS[0], _id="t-under", goal="g-done", text="a task of the finished goal"),
+            ],
+            "people": [{"_id": "pliu", "name": "Pei Liu", "active": True}],
+        },
+    )
+    document = "\n".join(builder.documents()["pliu"])
+    assert "~~a finished goal~~" in document
+    assert "a task of the finished goal" not in document
+
+
 @pytest.mark.parametrize(
     "asked_for, expected_in, expected_out",
     [

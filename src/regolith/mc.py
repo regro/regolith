@@ -709,6 +709,20 @@ class _Reader:
         text, struck_out = read_text(found.group("text"))
         if not text:
             return False
+        # the archive says what a period was; the current sections say what is.
+        # Nothing in it is written back, so nothing in it has to say which
+        # project it is of: a project that is over is one line there, with no
+        # number of its own
+        if self.section == "archive":
+            # a line that is there is a line nobody deleted, so it must not
+            # read as one.  The text goes with the id because a line that has
+            # lost its id would otherwise protect an id nobody has, and the
+            # record it was written for would be dropped
+            _id = found.group("id") or self.mint()
+            self.mentioned.append(_id)
+            self.mentioned_text.append(text)
+            return True
+
         # a goal indented under another is a piece of it, the way a sub task is
         # a piece of a task.  Only the holding sections take one: a goal of the
         # period is somebody's work and says which project it is of
@@ -735,20 +749,9 @@ class _Reader:
             if project_number not in self.by_number:
                 raise DocumentError(f"line {number}: there is no project {project_number}")
             project = self.by_number[project_number]
-        # the archive says what a period was; the current sections say what is
-        _id = found.group("id") or self.mint()
-        if self.section == "archive":
-            # nothing in the archive is written back, but a line that is there
-            # is a line nobody deleted, so it must not read as one.  The text
-            # goes with the id because a line that has lost its id would
-            # otherwise protect an id nobody has, and the record it was
-            # written for would be dropped
-            self.mentioned.append(_id)
-            self.mentioned_text.append(text)
-            return True
         ticked = (found.group("box") or " ").lower() == "x"
         goal = {
-            "_id": _id,
+            "_id": found.group("id") or self.mint(),
             "project": project,
             "period": self.period,
             "text": text,
@@ -761,7 +764,7 @@ class _Reader:
         if self.section in HELD:
             self.goal_stack.append((indent, goal))
         if goal_number is not None:
-            self.by_number[goal_number] = _id
+            self.by_number[goal_number] = goal["_id"]
         return True
 
     def goal_status(self, struck_out):
