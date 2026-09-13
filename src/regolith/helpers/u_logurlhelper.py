@@ -37,7 +37,7 @@ class LogUrlUpdaterHelper(DbHelperBase):
     doesn't yet exist."""
 
     # btype must be the same as helper target in helper.py
-    btype = "u_logurl"
+    btype = "u-logurl"
     needed_colls = [f"{TARGET_COLL}"]
 
     def construct_global_ctx(self):

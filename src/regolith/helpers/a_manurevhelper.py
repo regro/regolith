@@ -49,7 +49,7 @@ def subparser(subpi):
 
 
 class ManuRevAdderHelper(DbHelperBase):
-    btype = "a_manurev"
+    btype = "a-manurev"
     needed_colls = ["refereeReports"]
 
     def construct_global_ctx(self):

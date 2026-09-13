@@ -317,7 +317,7 @@ def subparser(subpi):
 
 
 class ExpenseAdderHelper(DbHelperBase):
-    btype = "a_expense"
+    btype = "a-expense"
     needed_colls = [f"{TARGET_COLL}", "people", "groups"]
 
     def construct_global_ctx(self):

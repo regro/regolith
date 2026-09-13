@@ -85,7 +85,7 @@ class ContactUpdaterHelper(DbHelperBase):
     """Helper for adding a new person to the contacts collection."""
 
     # btype must be the same as helper target in helper.py
-    btype = "u_contact"
+    btype = "u-contact"
     needed_colls = [f"{TARGET_COLL}"]
 
     def construct_global_ctx(self):

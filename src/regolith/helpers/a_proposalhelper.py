@@ -126,7 +126,7 @@ class ProposalAdderHelper(DbHelperBase):
     """
 
     # btype must be the same as helper target in helper.py
-    btype = "a_proposal"
+    btype = "a-proposal"
     needed_colls = [f"{TARGET_COLL}", "people", "groups"]
 
     def construct_global_ctx(self):

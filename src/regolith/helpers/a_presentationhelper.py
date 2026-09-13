@@ -138,7 +138,7 @@ class PresentationAdderHelper(DbHelperBase):
     """Helper for adding presentations"."""
 
     # btype must be the same as helper target in helper.py
-    btype = "a_presentation"
+    btype = "a-presentation"
     needed_colls = [f"{TARGET_COLL}", "groups", "people", "expenses"]
 
     def construct_global_ctx(self):

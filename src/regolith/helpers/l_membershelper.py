@@ -14,7 +14,7 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "people"
-HELPER_TARGET = "l_members"
+HELPER_TARGET = "l-members"
 ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "cancelled"]
 
 

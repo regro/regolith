@@ -17,7 +17,7 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "grants"
-HELPER_TARGET = "l_grants"
+HELPER_TARGET = "l-grants"
 BLACKLIST = ["they_pay", "collgf", "physmatch", "ta", "chemmatch", "summer@seas"]
 
 

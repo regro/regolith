@@ -12,7 +12,7 @@ from regolith.helpers.basehelper import SoutHelperBase
 from regolith.tools import all_docs_from_collection, strip_str
 
 TARGET_COLL = "slides"
-HELPER_TARGET = "l_slides"
+HELPER_TARGET = "l-slides"
 
 
 def subparser(subpi):

@@ -14,7 +14,7 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "presentations"
-HELPER_TARGET = "l_abstract"
+HELPER_TARGET = "l-abstract"
 
 
 def subparser(subpi):

@@ -116,7 +116,7 @@ class TodoAdderHelper(DbHelperBase):
     """Helper for adding a todo task to todos.yml."""
 
     # btype must be the same as helper target in helper.py
-    btype = "a_todo"
+    btype = "a-todo"
     needed_colls = [f"{TARGET_COLL}", "projecta"]
 
     def construct_global_ctx(self):

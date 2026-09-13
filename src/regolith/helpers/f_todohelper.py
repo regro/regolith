@@ -71,7 +71,7 @@ class TodoFinisherHelper(DbHelperBase):
     """Helper for marking a task as finished in todos collection."""
 
     # btype must be the same as helper target in helper.py
-    btype = "f_todo"
+    btype = "f-todo"
     needed_colls = [f"{TARGET_COLL}"]
 
     def construct_global_ctx(self):

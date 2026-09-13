@@ -55,6 +55,40 @@ def test_the_old_helper_gui_name_still_runs():
     assert "from regolith.helper_gui_main import main" in old
 
 
+def test_the_targets_are_listed_in_the_order_they_are_read_in():
+    # Test the order the helper GUI shows, which is the order of the registry.
+    # It is a list somebody reads down to find the helper they want, so it is
+    # grouped by what the helpers do and sorted within each group.  Adding one
+    # in the wrong place is how it stopped being either
+    listed = list(HELPERS)
+    groups = {"l-": [], "a-": [], "f-": [], "u-": []}
+    unprefixed = []
+    for name in listed:
+        for prefix in groups:
+            if name.startswith(prefix):
+                groups[prefix].append(name)
+                break
+        else:
+            unprefixed.append(name)
+    for prefix, names in groups.items():
+        assert names == sorted(names), f"the {prefix} helpers are not in order"
+        # each group is together rather than scattered through the list
+        where = [listed.index(name) for name in names]
+        assert where == list(range(where[0], where[0] + len(where))), f"the {prefix} helpers are not together"
+    # and the groups come in the order somebody works in: find it, add it,
+    # finish it, change it
+    assert [listed.index(groups[p][0]) for p in ("l-", "a-", "f-", "u-")] == sorted(
+        listed.index(groups[p][0]) for p in ("l-", "a-", "f-", "u-")
+    )
+
+
+def test_every_target_is_spelled_with_hyphens():
+    # Test that no target has an underscore in it.  argparse has spelled a
+    # user-facing name with hyphens since forever, and regolith followed it
+    # for arguments and not for the targets beside them
+    assert [name for name in HELPERS if "_" in name] == []
+
+
 @pytest.mark.parametrize("target", sorted(HELPERS))
 def test_no_argument_is_labelled_with_a_tuple(target):
     # Test that no argument gives gooey a metavar it cannot make a label out
@@ -81,10 +115,10 @@ def test_no_argument_is_labelled_with_a_tuple(target):
         ("mc-sync", "mc-sync"),
         # C2: the same target with underscores
         ("mc_sync", "mc-sync"),
-        # C3: a target still listed with underscores, typed as it is listed
-        ("l_todo", "l_todo"),
-        # C4: that one typed with hyphens
-        ("l-todo", "l_todo"),
+        # C3: another target, typed the way it is listed
+        ("l-todo", "l-todo"),
+        # C4: that one typed the way it used to be spelled
+        ("l_todo", "l-todo"),
         # C5: a name that is no target at all, expect it handed back so that
         # whoever asked can say so
         ("no-such-helper", "no-such-helper"),
