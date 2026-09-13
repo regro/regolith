@@ -981,6 +981,45 @@ def test_a_finished_project_is_one_struck_line_in_the_archive(tmp_path):
     assert "a goal of the old project" not in document
 
 
+def test_a_document_written_before_a_project_finished_is_still_written_over(tmp_path):
+    # Test the build against a document from before the project was finished.
+    # The archive line leaves out what the project was to deliver and what it
+    # was about, and the old document has both, so without accounting for them
+    # the build reads them as work the collections do not have and refuses --
+    # for good, since a sync cannot store them either
+    def build(status):
+        project = dict(
+            PROJECTS[0],
+            _id="p-one",
+            name="The one project",
+            lead="pliu",
+            status=status,
+            end_date="2026-09-01",
+            project_description="what this project was about",
+            project_deliverable="Submit the paper",
+        )
+        builder = render_into(
+            tmp_path,
+            {
+                "mc_projects": [project],
+                "mc_goals": [],
+                "mc_tasks": [],
+                "people": [{"_id": "pliu", "name": "Pei Liu", "active": True}],
+            },
+        )
+        builder.render()
+        return (builder.mcdir / "pei.md").read_text()
+
+    before = build("active")
+    assert "deliverable: Submit the paper" in before
+    assert "what this project was about" in before
+
+    after = build("finished")
+    assert "- ~~The one project~~  (finished 2026-09-01)" in after
+    assert "deliverable: Submit the paper" not in after
+    assert "what this project was about" not in after
+
+
 def test_a_finished_goal_keeps_no_tasks(tmp_path):
     # Test the same rule one level down: what hangs under something finished
     # goes with it, so a finished goal does not keep a week's tasks under it

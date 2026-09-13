@@ -388,7 +388,7 @@ def test_a_finished_project_keeps_its_goals_though_the_document_drops_them(mc_re
         "# Mission control — Pei Liu\n\n## Projects\n\n## Archive\n\n"
         "- ~~a project~~  (finished 2026-09-01)  ^mc-a-project\n"
     )
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     said = capsys.readouterr().out
     assert "more like damage than editing" not in said
     assert stored(mc_repo, "mc_goals", "mcg001")["status"] != "dropped"
@@ -459,7 +459,7 @@ def test_a_document_that_has_not_caught_up_does_not_remake_what_moved(mc_repo):
     (mcdir / "unassigned.md").write_text(
         "# Mission control — unassigned\n\n## Projects\n\n1. **a project**  ^mc-a-project\n"
     )
-    main(["helper", "mc_sync"])
+    main(["helper", "u-mcsync"])
     project = stored(mc_repo, "mc_projects", "mc-a-project")
     assert project["begin_date"] == "2024-01-15"
     assert project["grants"] == ["dmref15"]
