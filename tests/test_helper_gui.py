@@ -7,6 +7,8 @@ checked directly, which is what these do.
 """
 
 import argparse
+import pathlib
+import tomllib
 
 import pytest
 
@@ -30,6 +32,27 @@ def parser_for(target):
     # the registry resolves the import when it is asked for the helper
     HELPERS[target][1](parser)
     return parser
+
+
+def test_every_script_the_package_installs_is_there():
+    # Test that script-files names files that exist.  setuptools installs what
+    # it is given without checking, so a script renamed on one line and not
+    # the other goes missing from the install rather than failing to build
+    root = pathlib.Path(__file__).resolve().parent.parent
+    listed = tomllib.loads((root / "pyproject.toml").read_text())["tool"]["setuptools"]["script-files"]
+    missing = [name for name in listed if not (root / name).is_file()]
+    assert missing == []
+
+
+def test_the_old_helper_gui_name_still_runs():
+    # Test that helper_gui keeps working while people move to helper-gui.  It
+    # is what anybody who has used regolith has in their fingers, and a
+    # command that stops existing is a worse way to learn of a rename than a
+    # line of output
+    root = pathlib.Path(__file__).resolve().parent.parent
+    old = (root / "scripts" / "helper_gui").read_text()
+    assert "helper-gui" in old
+    assert "from regolith.helper_gui_main import main" in old
 
 
 @pytest.mark.parametrize("target", sorted(HELPERS))

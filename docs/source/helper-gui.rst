@@ -1,13 +1,13 @@
-helper_gui
+helper-gui
 ==========
 Regolith helpers can add to, list from, or update existing collections in your databases. While helpers can be accessed through command line/terminal, the Helper gui is a more comfortable and accessible way to use them.
 
-As with regular regolith, `helper_gui`  must be run from a directory containing a regolithrc.json file and it will use the config parameters it finds in there.  To use the gui, navigate to such a directory and type `regolith_helper`, e.g.,
+As with regular regolith, `helper-gui` must be run from a directory containing a regolithrc.json file and it will use the config parameters it finds in there.  To use the gui, navigate to such a directory and type `helper-gui`, e.g.,
 
 .. code-block:: sh
 
     $ cd path/to/database/local
-    $ helper_gui
+    $ helper-gui
 
 Layout
 ======

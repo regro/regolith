@@ -35,7 +35,15 @@ classifiers = [
 ]
 
 [tool.setuptools]
-script-files = ["scripts/regolith", "scripts/helper_gui", "scripts/helper_connect", "scripts/profile_regolith", "scripts/profile_helper_gui"]
+script-files = [
+    "scripts/regolith",
+    "scripts/helper-gui",
+    # the old spelling, which says where it went and then runs
+    "scripts/helper_gui",
+    "scripts/helper_connect",
+    "scripts/profile_regolith",
+    "scripts/profile_helper_gui",
+]
 
 [project.urls]
 Homepage = "https://github.com/regro/regolith/"
