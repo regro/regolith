@@ -10,6 +10,8 @@
 * The helper GUI lists the helpers grouped by what they do and sorted within
   each group: the listers first, then the adders, the finishers and the
   updaters.
+* ``mc_sync`` is now ``u-mcsync``.  It writes to the collections, so it is
+  named and grouped as the updater it is.
 
 **Deprecated:**
 

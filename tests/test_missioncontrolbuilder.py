@@ -772,7 +772,7 @@ def test_a_build_leaves_a_document_that_holds_work_of_its_own(tmp_path, capsys):
     said = capsys.readouterr().out
     assert "was left alone" in said
     assert "ask about the beamtime" in said
-    assert "mc_sync" in said
+    assert "u-mcsync" in said
 
 
 def test_a_build_keeps_the_document_it_wrote_over(tmp_path):
