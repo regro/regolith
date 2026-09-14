@@ -381,3 +381,33 @@ BUILT = """# Mission control — Simon Billinge
 )
 def test_would_lose_finds_what_a_render_would_write_over(typed, expected_lost):
     assert would_lose(typed, BUILT) == expected_lost
+
+
+@pytest.mark.parametrize(
+    "typed, expected_lost",
+    [
+        # Test that the archive is not read as work.  It is written from the
+        # collections and nothing in it is read back, so a line there is a
+        # copy: if the collections do not have it, a sync could not store it
+        # either, and refusing to build over it would be a standoff nothing
+        # could end.
+        # C1: an archive line the collections do not have, expect nothing
+        # lost.  Simon's had drifted by a capital letter after he edited the
+        # live line, and the build refused over it
+        (BUILT.replace("## Archive", "## Archive\n\n- 1.1  ~~a stored goal, reworded~~"), []),
+        # C2: the same line above the archive, where work does live, expect it
+        # caught as before
+        (
+            BUILT.replace("- 1.1  a stored goal  ^g1", "- 1.1  a stored goal  ^g1\n- 1.2  a reworded goal"),
+            ["a reworded goal"],
+        ),
+        # C3: a heading of the same rank ends the archive, so what comes under
+        # that is work again
+        (
+            BUILT.replace("## Archive", "## Archive\n\n- 1.1  ~~archived~~\n\n## Notes\n\n- something typed"),
+            ["something typed"],
+        ),
+    ],
+)
+def test_the_archive_is_not_taken_for_work(typed, expected_lost):
+    assert would_lose(typed, BUILT) == expected_lost

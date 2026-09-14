@@ -466,7 +466,10 @@ def logical_lines(text):
     return joined
 
 
-HEADING_LINE = re.compile(r"^\s*#+\s")
+HEADING_LINE = re.compile(r"^\s*(?P<hashes>#+)\s")
+# the archive is written from the collections and nothing in it is read back,
+# so a line there is a copy rather than anything anybody would lose
+ARCHIVE_HEADING = re.compile(r"^\s*##\s+Archive\s*$")
 # what a render may add to or take off a line without the line having changed
 LEADING = re.compile(r"^\s*(?:[-*]\s+(?:\[[ xX]\]\s+)?)?(?:\d+(?:\.\d+)*\.?\s+)?")
 NOTE = re.compile(r"\((?:carried since|finished|dropped|→ rolled to)[^)]*\)")
@@ -528,8 +531,16 @@ def would_lose(existing, written, also_kept=()):
     kept = {said_in(line) for _, line in logical_lines(written) if not HEADING_LINE.match(line)}
     kept |= {said_in(text) for text in also_kept}
     lost = []
+    in_the_archive = False
     for _, line in logical_lines(existing):
-        if not line.strip() or HEADING_LINE.match(line):
+        heading = HEADING_LINE.match(line)
+        if heading:
+            # everything under the archive heading, until a heading of the
+            # same rank, is the archive
+            in_the_archive = ARCHIVE_HEADING.match(line) is not None or (
+                in_the_archive and len(heading.group(0).strip()) > 2
+            )
+        if not line.strip() or heading or in_the_archive:
             continue
         said = said_in(line)
         if said and said not in kept and said not in lost:
