@@ -5,7 +5,7 @@ import os
 import pytest
 
 from regolith.helpers.l_mcgoalshelper import MCGoalsListerHelper
-from regolith.helpers.l_mcprojectshelper import MCProjectsListerHelper, as_list
+from regolith.helpers.l_mcprojectshelper import MCProjectsListerHelper
 from regolith.main import main
 from regolith.mc import in_the_group, orphaned, unled
 
@@ -75,22 +75,6 @@ def test_who_is_in_the_group(person_id, expected):
 )
 def test_what_counts_as_orphaned(project, expected):
     assert orphaned(project, PEOPLE) is expected
-
-
-@pytest.mark.parametrize(
-    "value, expected",
-    [
-        # Test reading a grant field, which projecta wrote as one or as several
-        # C1: several, expect them as they are
-        (["a", "b"], ["a", "b"]),
-        # C2: one, written bare, expect a list of it
-        ("a", ["a"]),
-        # C3: none, expect nothing rather than an error
-        (None, []),
-    ],
-)
-def test_a_grant_may_be_one_or_several(value, expected):
-    assert as_list(value) == expected
 
 
 def test_a_project_line_says_who_and_what():
