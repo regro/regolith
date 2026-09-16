@@ -913,8 +913,8 @@
     "mc_goals": {
         "_id": "g-converging-fits",
         "project": "sb-nanoparticle-pdf",
-        "period": "2026Q3",
-        "first_period": "2026Q2",
+        "period": "2026fall",
+        "first_period": "2026summer",
         "text": "Get the fits converging on the test set.",
         "status": "active",
         "notes": [
@@ -932,7 +932,7 @@
             "ascopatz",
             "afriend"
         ],
-        "grants": "dmref15",
+        "grants": ["dmref15"],
         "pi_id": "scopatz",
         "status": "active",
         "begin_date": "2026-07-01",

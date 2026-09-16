@@ -126,7 +126,7 @@ class MCProjectUpdaterHelper(DbHelperBase):
         if dbname is None:
             raise ValueError(
                 f"There is no project called {rc._id}. Please check the id, which "
-                f"'regolith helper l_mcprojects' will list."
+                f"'regolith helper l-mcprojects' will list."
             )
         rc.client.update_one(dbname, rc.coll, {"_id": rc._id}, given)
         print(f"{rc._id} updated:")

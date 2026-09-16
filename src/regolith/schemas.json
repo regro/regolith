@@ -1310,7 +1310,7 @@
             "type": "string"
         },
         "period": {
-            "description": "The period the goal is currently in, e.g. 2026Q3.  Sortable, and works for cadences other than quarterly.",
+            "description": "The period the goal is currently in, as the year and the name of one of the group's periods, e.g. 2026fall.  The names and their dates come from mission_control_periods in the runcontrol, so semesters, quarters or anything else will do.",
             "required": true,
             "type": "string"
         },
@@ -1397,10 +1397,10 @@
         "grants": {
             "description": "The ids of the grants that support the project.",
             "required": false,
-            "anyof_type": [
-                "string",
-                "list"
-            ]
+            "type": "list",
+            "schema": {
+                "type": "string"
+            }
         },
         "pi_id": {
             "description": "The id of the principal investigator.  Kept rather than derived from the grant, since a grant can have several.",

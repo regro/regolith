@@ -98,7 +98,7 @@ class MCProjectsListerHelper(SoutHelperBase):
                 p for p in projects if p.get("lead") == rc.person or rc.person in p.get("collaborators", [])
             ]
         if rc.grant:
-            projects = [p for p in projects if rc.grant in as_list(p.get("grants"))]
+            projects = [p for p in projects if rc.grant in p.get("grants", [])]
 
         projects = sorted(projects, key=lambda p: (p.get("lead") or "", p["_id"]))
         if rc.grp_by_lead:
@@ -165,12 +165,5 @@ class MCProjectsListerHelper(SoutHelperBase):
         if project.get("collaborators"):
             lines.append(f"    with: {', '.join(project['collaborators'])}")
         if project.get("grants"):
-            lines.append(f"    grants: {', '.join(as_list(project['grants']))}")
+            lines.append(f"    grants: {', '.join(project['grants'])}")
         return lines
-
-
-def as_list(value):
-    """Return a value as a list, since a grant may be one or several."""
-    if not value:
-        return []
-    return [value] if isinstance(value, str) else list(value)

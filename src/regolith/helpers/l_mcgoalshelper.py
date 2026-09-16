@@ -20,7 +20,7 @@ def subparser(subpi):
         pass
     subpi.add_argument("-l", "--lead", help="List the goals of the projects this person leads, by id.")
     subpi.add_argument("-p", "--person", help="List the goals of the projects this person is on, by id.")
-    subpi.add_argument("--period", help="List the goals of this period, e.g. 2026Q3.")
+    subpi.add_argument("--period", help="List the goals of this period, e.g. 2026fall.")
     subpi.add_argument(
         "--carried",
         action="store_true",
