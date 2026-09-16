@@ -109,6 +109,30 @@ def test_a_goal_line_says_how_long_it_has_been_carried(goal, expected_ending):
     assert MCGoalsListerHelper.line(goal).endswith(expected_ending)
 
 
+@pytest.mark.parametrize(
+    "goals, periods, expected_latest",
+    [
+        # Test that the period shown by default is the latest one any goal is
+        # in, found by when it came round rather than by the text of its name
+        # C1: default semesters, fall after summer, expect fall although summer
+        # sorts after it as text
+        ([{"period": "2026summer"}, {"period": "2026fall"}], None, "2026fall"),
+        # C2: a later year, expect the year to win over the name
+        ([{"period": "2026fall"}, {"period": "2027spring"}], None, "2027spring"),
+        # C3: a group on quarters, expect its own order to be used
+        (
+            [{"period": "2026fall"}, {"period": "2026winter"}],
+            {"winter": "01-01", "spring": "04-01", "summer": "07-01", "fall": "10-01"},
+            "2026fall",
+        ),
+        # C4: no goal has a period, expect None
+        ([{"_id": "g1"}], None, None),
+    ],
+)
+def test_the_latest_period_is_the_one_that_came_round_last(goals, periods, expected_latest):
+    assert MCGoalsListerHelper.latest(goals, periods) == expected_latest
+
+
 def test_goals_are_grouped_under_their_project():
     # Test that goals are read project by project, the way the meeting goes
     goals = [
