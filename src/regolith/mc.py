@@ -614,10 +614,38 @@ class _Reader:
         self.goal_stack = []
         self.mentioned = []
         self.mentioned_text = []
+        # the ids of the lines stored so far, as against the archive, which
+        # only mentions what it shows
+        self.stored = set()
 
     def mint(self):
         _id = short_id(self.ids)
         self.ids.add(_id)
+        return _id
+
+    def own_id(self, carried, mint):
+        """Return the id a line is stored under.
+
+        A line carries the id it was written with, unless another line
+        of the document has already taken it.  That is somebody copying a
+        line to make a new one, id and all, and left alone the second
+        would be stored over the first and the first lost for good.  So
+        the first keeps it, and the copy is given one of its own.
+
+        Parameters
+        ----------
+        carried : str or None
+            The id written on the line, if any.
+        mint : callable
+            How to make a new one.
+
+        Returns
+        -------
+        str
+            The id to store it under.
+        """
+        _id = carried if carried and carried not in self.stored else mint()
+        self.stored.add(_id)
         return _id
 
     def mint_project(self, name):
@@ -693,7 +721,7 @@ class _Reader:
             return False
         text, struck_out = read_text(found.group("text"))
         project = {
-            "_id": found.group("id") or self.mint_project(text),
+            "_id": self.own_id(found.group("id"), lambda: self.mint_project(text)),
             "name": text,
             "status": "finished" if struck_out else "active",
         }
@@ -762,7 +790,7 @@ class _Reader:
             project = self.by_number[project_number]
         ticked = (found.group("box") or " ").lower() == "x"
         goal = {
-            "_id": found.group("id") or self.mint(),
+            "_id": self.own_id(found.group("id"), self.mint),
             "project": project,
             "period": self.period,
             "text": text,
@@ -795,7 +823,7 @@ class _Reader:
         indent = len(found.group("indent").expandtabs(4))
         ticked = found.group("box").lower() == "x"
         task = {
-            "_id": found.group("id") or self.mint(),
+            "_id": self.own_id(found.group("id"), self.mint),
             # a strike is believed over a box, since the box is what gets forgotten
             "status": "finished" if (struck_out or ticked) else "active",
             "text": text,

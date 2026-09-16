@@ -135,6 +135,66 @@ def test_something_typed_without_an_id_is_given_one(read):
     assert new["_id"] and new["_id"] not in DOCUMENT
 
 
+COPIED = """# Mission control — Caden Myers
+
+## Projects
+
+1. **one**  ^p1
+
+2. **two**  ^p1
+
+## Goals — 2026fall
+
+- 1.1  separate the srreal from the srfit  ^g1
+- 1.2  add a few features  ^g1
+
+## Week of 2026-09-14
+
+- [ ] 1.1.1  a task  ^t1
+- [ ] 1.1.2  a task copied from it  ^t1
+
+## Archive
+
+### Goals — 2026summer
+
+- 1.1  ~~separate the srreal from the srfit~~  ^g1  (→ rolled to 2026fall)
+"""
+
+
+@pytest.mark.parametrize(
+    "kind, expected_texts",
+    [
+        # Test a line copied to make a new one, id and all.  Left alone both
+        # were stored under the one id, the second over the first, and Caden's
+        # "separate the srreal from the srfit" was lost from the collections;
+        # only the build refusing to write over it kept its last copy.  The
+        # first keeps the id and the copy is given one of its own.
+        # C1: a goal
+        ("goals", ["separate the srreal from the srfit", "add a few features"]),
+        # C2: a task
+        ("tasks", ["a task", "a task copied from it"]),
+        # C3: a project
+        ("projects", ["one", "two"]),
+    ],
+)
+def test_a_copied_line_is_stored_as_its_own_thing(kind, expected_texts):
+    read = parse_document(COPIED)[kind]
+    assert [r.get("text") or r.get("name") for r in read] == expected_texts
+    ids = [r["_id"] for r in read]
+    assert len(set(ids)) == len(ids)
+    # the line written first keeps the id it was written with
+    assert ids[0] in ("g1", "t1", "p1")
+
+
+def test_a_rolled_goal_in_the_archive_is_not_taken_for_a_copy():
+    # Test that the archive may repeat an id.  A goal that rolled is shown in
+    # the period it left as well as the one it is in, under the same id on
+    # purpose, and the archive only mentions what it shows
+    read = parse_document(COPIED)
+    assert "g1" in read["mentioned"]
+    assert read["goals"][0]["_id"] == "g1"
+
+
 @pytest.mark.parametrize(
     "line, expected_message",
     [
