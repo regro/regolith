@@ -154,6 +154,17 @@ would allow the names of people to also be
 
 See the collections for a complete list of the schemas.
 
+``mission_control_dir``
+=======================
+Where the mission control documents are written, one markdown file per person.
+This is usually a folder people can reach from anywhere, such as a shared Box
+folder, since the documents are edited in meetings and read back from there. If
+none is provided they go under ``builddir/mission-control``.
+
+.. code-block:: json
+
+    "mission_control_dir": "C:/Users/simon/Box/group/mission-control"
+
 ``mission_control_periods``
 ===========================
 What the periods of the year are called and the day each one starts, as
