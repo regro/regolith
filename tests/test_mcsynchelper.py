@@ -308,6 +308,55 @@ def test_somebody_with_work_and_no_document_is_named(mc_repo, capsys):
     assert "gone has work stored" not in said
 
 
+@pytest.mark.parametrize(
+    "copied_line, expected_said, expected_written",
+    [
+        # Test what somebody running the sync is told when they have copied a
+        # line and left the id on it, and whether anything is written.
+        # C1: a copy of the goal with new words, so the original is the one
+        # still saying what is stored, expect the sync to say which kept the id
+        # and which is new, to write both, and to leave the original's words
+        (
+            "- 1.2  a new goal copied from it  ^mcg001",
+            "keeps it, being what was stored under it",
+            {"mcg001": "a goal", "new": "a new goal copied from it"},
+        ),
+        # C2: the original reworded as well, so neither says what is stored,
+        # expect the sync to say it cannot tell them apart, to name the id to
+        # take off the new line, and to write nothing from the document
+        (
+            "- 1.2  a new goal copied from it  ^mcg001",
+            "there is no telling",
+            None,
+        ),
+    ],
+)
+def test_a_copied_line_is_settled_or_refused(copied_line, expected_said, expected_written, mc_repo, capsys):
+    _, mcdir = mc_repo
+    path = mcdir / "pei.md"
+    original = "- 1.1  a goal  ^mcg001"
+    if expected_written is None:
+        # reword the original too, so that neither line says what is stored
+        document = path.read_text().replace(original, "- 1.1  a goal, reworded  ^mcg001\n" + copied_line)
+    else:
+        document = path.read_text().replace(original, original + "\n" + copied_line)
+    path.write_text(document)
+
+    main(["helper", "u-mcsync"])
+    said = capsys.readouterr().out
+    assert expected_said in said
+
+    goals = {g["text"]: g["_id"] for g in load_yaml(mc_repo[0] / "db" / "mc_goals.yaml").values()}
+    if expected_written is None:
+        assert "Take ^mcg001 off the line that is new" in said
+        assert "a new goal copied from it" not in goals
+        assert goals["a goal"] == "mcg001"
+    else:
+        assert goals["a goal"] == "mcg001"
+        assert "a new goal copied from it" in goals
+        assert goals["a new goal copied from it"] != "mcg001"
+
+
 def test_a_document_named_for_nobody_says_so(mc_repo, capsys):
     # Test that a file nobody is named by is reported rather than passed over
     # in silence, since a document that is never read looks exactly like one

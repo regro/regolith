@@ -135,6 +135,74 @@ def test_something_typed_without_an_id_is_given_one(read):
     assert new["_id"] and new["_id"] not in DOCUMENT
 
 
+COPIED = """# Mission control — Caden Myers
+
+## Projects
+
+1. **one**  ^p1
+
+2. **two**  ^p1
+
+## Goals — 2026fall
+
+- 1.1  separate the srreal from the srfit  ^g1
+- 1.2  add a few features  ^g1
+
+## Week of 2026-09-14
+
+- [ ] 1.1.1  a task  ^t1
+- [ ] 1.1.2  a task copied from it  ^t1
+
+## Archive
+
+### Goals — 2026summer
+
+- 1.1  ~~separate the srreal from the srfit~~  ^g1  (→ rolled to 2026fall)
+"""
+
+
+@pytest.mark.parametrize(
+    "kind, expected_texts, collection",
+    [
+        # Test how the reader handles two lines that carry the same id, which
+        # is what somebody leaves behind when they copy a line to make a new
+        # one and forget to take the id off.  The reader cannot tell which of
+        # the two was there first -- that needs the collections -- so it keeps
+        # both, gives the second an id of its own, and notes the pair for
+        # changes to settle.
+        # C1: two goals share an id, expect both read, the second under a new
+        # id, and the pair noted as goals
+        ("goals", ["separate the srreal from the srfit", "add a few features"], "mc_goals"),
+        # C2: two tasks share an id, expect the same for tasks
+        ("tasks", ["a task", "a task copied from it"], "mc_tasks"),
+        # C3: two projects share an id, expect the same for projects
+        ("projects", ["one", "two"], "mc_projects"),
+    ],
+)
+def test_two_lines_sharing_an_id_are_both_read(kind, expected_texts, collection):
+    read = parse_document(COPIED)
+    records = read[kind]
+    assert [r.get("text") or r.get("name") for r in records] == expected_texts
+    ids = [r["_id"] for r in records]
+    assert len(set(ids)) == len(ids)
+    noted = [c for c in read["copied"] if c["collection"] == collection]
+    assert len(noted) == 1
+    assert noted[0]["id"] == ids[0]
+    assert noted[0]["copy"] == ids[1]
+
+
+def test_a_rolled_goal_in_the_archive_is_not_taken_for_a_copy():
+    # Test that a goal shown in the archive under the same id as its live line
+    # is not noted as a copy.  A goal that rolled appears in the period it left
+    # and in the period it is in, under one id on purpose, and the archive only
+    # mentions what it shows.
+    # Expect the live line to keep the id and the archive line not to be noted.
+    read = parse_document(COPIED)
+    assert "g1" in read["mentioned"]
+    assert read["goals"][0]["_id"] == "g1"
+    assert [c["id"] for c in read["copied"] if c["collection"] == "mc_goals"] == ["g1"]
+
+
 @pytest.mark.parametrize(
     "line, expected_message",
     [
