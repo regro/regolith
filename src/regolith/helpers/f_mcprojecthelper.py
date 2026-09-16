@@ -17,13 +17,12 @@ from dateutil import parser as date_parser
 from gooey import GooeyParser
 
 from regolith.helpers.basehelper import DbHelperBase
+from regolith.mc import CLOSED
 from regolith.tools import all_docs_from_collection, fragment_retrieval, strip_str
 
 TARGET_COLL = "mc_projects"
 HELPER_TARGET = "f-mcproject"
 COLLECTIONS = (TARGET_COLL, "mc_goals", "mc_tasks")
-# what is over already, and is not finished again
-CLOSED = ("finished", "dropped")
 
 
 def subparser(subpi):
@@ -88,7 +87,7 @@ class MCProjectFinisherHelper(DbHelperBase):
             return
         for collection, record in open_now:
             rc.client.update_one(
-                self.where_it_lives(collection, record["_id"]), collection, {"_id": record["_id"]}, record
+                self.where_stored(collection, record["_id"]), collection, {"_id": record["_id"]}, record
             )
         self.report(project, open_now, finishing, wrote=True)
         return
@@ -122,32 +121,6 @@ class MCProjectFinisherHelper(DbHelperBase):
             print(f"    {project['_id']}  ({project.get('status', '?')})  {project.get('name', '')}")
         print("Please run this again with the whole id of the one you mean.")
         return None
-
-    def where_it_lives(self, collection, _id):
-        """Return the database holding a record.
-
-        A record is written where it is stored rather than in the first
-        database that happens to be listed, since writing it anywhere
-        else would leave two of it and hide the one that is real.
-
-        Parameters
-        ----------
-        collection : str
-            The name of the collection.
-        _id : str
-            The id of the record.
-
-        Returns
-        -------
-        str
-            The name of the database to write to.
-        """
-        rc = self.rc
-        sources = rc.client.collection_sources(collection)
-        for database in sources:
-            if rc.client.find_one(database["name"], collection, {"_id": _id}):
-                return database["name"]
-        return sources[0]["name"] if sources else rc.database
 
     @staticmethod
     def report(project, finished, all_of_it, wrote):

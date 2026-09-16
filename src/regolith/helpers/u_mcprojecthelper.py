@@ -122,7 +122,7 @@ class MCProjectUpdaterHelper(DbHelperBase):
             # the collection holds a link and what it is, rather than a bare link
             given["urls"] = [{"name": name, "url": url} for name, url in given["urls"]]
 
-        dbname = self.where_it_is(rc._id)
+        dbname = self.where_stored(rc.coll, rc._id)
         if dbname is None:
             raise ValueError(
                 f"There is no project called {rc._id}. Please check the id, which "
@@ -133,29 +133,3 @@ class MCProjectUpdaterHelper(DbHelperBase):
         for field, value in given.items():
             print(f"    {field}: {said(value)}")
         return
-
-    def where_it_is(self, _id):
-        """Return the database holding a project.
-
-        A project is updated where it is stored rather than in the first
-        database that happens to be listed, since writing it anywhere
-        else would leave two of it and hide the one that is real.  That
-        is why ``rc.database`` is not used: the runcontrol fills it in
-        with the first database before any updater runs.
-
-        Parameters
-        ----------
-        _id : str
-            The id of the project.
-
-        Returns
-        -------
-        str or None
-            The name of the database holding it, or None when nothing
-            holds it.
-        """
-        rc = self.rc
-        for database in rc.client.collection_sources(rc.coll):
-            if rc.client.find_one(database["name"], rc.coll, {"_id": _id}):
-                return database["name"]
-        return None
