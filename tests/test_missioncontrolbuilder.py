@@ -7,13 +7,12 @@ import pytest
 
 from regolith.builders.missioncontrolbuilder import (
     MissionControlBuilder,
-    as_date,
     ids_in_document,
     in_document_order,
     keys_in_document,
     number_key,
 )
-from regolith.mc import WIDTH, parse_document, week_of
+from regolith.mc import WIDTH, as_a_date, parse_document, week_of
 
 PROJECTS = [
     {
@@ -140,8 +139,8 @@ def test_week_of_places_a_date_in_its_week(date, expected_monday):
         (None, None),
     ],
 )
-def test_as_date_reads_either_backend(value, expected):
-    assert as_date(value) == expected
+def test_as_a_date_reads_either_backend(value, expected):
+    assert as_a_date(value) == expected
 
 
 def test_a_project_with_no_lead_goes_to_the_unassigned_document(documents):

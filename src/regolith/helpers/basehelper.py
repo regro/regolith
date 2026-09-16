@@ -96,6 +96,40 @@ class DbHelperBase(HelperBase):
         super().__init__(rc)
         self.cmds = ["db_updater"]
 
+    def where_stored(self, collection, _id):
+        """Return the name of the database holding a record, or None.
+
+        A record is written where it is stored rather than in the first
+        database that happens to be listed, since writing it anywhere
+        else would leave two of it and hide the one that is real.
+
+        Parameters
+        ----------
+        collection : str
+            The name of the collection.
+        _id : str
+            The id of the record.
+
+        Returns
+        -------
+        str or None
+            The name of the database holding it, or None when nothing
+            does.
+        """
+        for database in self.rc.client.collection_sources(collection):
+            if self.rc.client.find_one(database["name"], collection, {"_id": _id}):
+                return database["name"]
+        return None
+
+    def first_source(self, collection):
+        """Return the database a new record of a collection goes to.
+
+        The first database holding the collection, or ``rc.database``
+        when nothing holds it at all.
+        """
+        sources = self.rc.client.collection_sources(collection)
+        return sources[0]["name"] if sources else self.rc.database
+
 
 class LatexHelperBase(HelperBase):
     """Base class for Latex builders."""

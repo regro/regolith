@@ -18,17 +18,7 @@ from gooey import GooeyParser
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.mc import (
-    UNLED_PREFIX,
-    initials,
-    next_period,
-    period_of,
-    project_id,
-    short_id,
-    slug,
-    unled,
-    week_of,
-)
+from regolith.mc import next_period, period_of, project_id, project_prefix, short_id, slug, unled, week_of
 from regolith.schemas import MC_STATI
 from regolith.tools import all_docs_from_collection
 
@@ -133,25 +123,12 @@ class MCProjectAdderHelper(DbHelperBase):
         for collection in SEEDED_COLLS:
             self.gtx[collection] = list(all_docs_from_collection(rc.client, collection))
 
-    def prefix(self):
-        """Return the initials a project of this lead's is named
-        with."""
-        rc = self.rc
-        # tbd is a placeholder rather than a person, so it names the project
-        # the way no lead at all does
-        if unled({"lead": rc.lead}):
-            return UNLED_PREFIX
-        for entry in self.gtx["people"]:
-            if entry["_id"] == rc.lead:
-                return initials(entry.get("name") or rc.lead)
-        return slug(rc.lead)
-
     def db_updater(self):
         rc = self.rc
         taken = {project["_id"] for project in self.gtx[rc.coll]}
         # an id given by hand goes through the same slug, so an underscore
         # cannot get in that way either
-        _id = slug(rc._id) if rc._id else project_id(rc.name, prefix=self.prefix())
+        _id = slug(rc._id) if rc._id else project_id(rc.name, prefix=project_prefix(rc.lead, self.gtx["people"]))
         if _id in taken:
             raise ValueError(
                 f"There is already a project called {_id}. Give it another name, or "

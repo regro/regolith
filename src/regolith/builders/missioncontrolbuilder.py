@@ -19,10 +19,14 @@ from collections import defaultdict
 from pathlib import Path
 
 from regolith.builders.basebuilder import BuilderBase
-from regolith.dates import get_dates
 from regolith.mc import (
+    HELD,
     KEEP_FINISHED_DAYS,
+    UNASSIGNED,
     DocumentError,
+    as_a_date,
+    display_name,
+    document_name,
     in_the_group,
     led_by,
     parse_document,
@@ -37,12 +41,9 @@ from regolith.mc import (
 )
 from regolith.tools import all_docs_from_collection, fuzzy_retrieval
 
-UNASSIGNED = "unassigned"
 # how many of the things a document would lose to name before saying how many
 # more there are
 SHOWN_WHEN_REFUSING = 10
-UNASSIGNED_NAME = "unassigned"
-HELD_STATI = ("on-deck", "wishlist")
 ID_IN_DOCUMENT = re.compile(r"\^([\w.-]+)")
 
 
@@ -236,27 +237,6 @@ def in_document_order(items, order, fallback_key):
     return known + unknown
 
 
-def as_date(value):
-    """Return a date from either a date or an iso string.
-
-    A collection can be backed by mongo, which stores dates as iso
-    strings, or by the filesystem, which stores them as dates.
-
-    Parameters
-    ----------
-    value : datetime.date or str or None
-        The value to read.
-
-    Returns
-    -------
-    datetime.date or None
-        The date, or None when there was nothing to read.
-    """
-    if value is None or isinstance(value, dt.date):
-        return value
-    return get_dates({"date": value}).get("date")
-
-
 class MissionControlBuilder(BuilderBase):
     """Render the mission control document of every person."""
 
@@ -302,36 +282,12 @@ class MissionControlBuilder(BuilderBase):
 
     def display_name(self, person):
         """Return the name to head a person's document with."""
-        for entry in self.gtx.get("people", []):
-            if entry["_id"] == person:
-                return entry.get("name") or person
-        return person
+        return display_name(person, self.gtx.get("people", []))
 
     def document_name(self, person):
-        """Return the file name to write a person's document to.
-
-        A person is known to the database by an id, but the document is
-        for them to open, so it is named for them.  Their first name if
-        the people collection knows it, and their id if it does not.
-
-        Parameters
-        ----------
-        person : str
-            The id of the person, or ``unassigned``.
-
-        Returns
-        -------
-        str
-            The file name, without a suffix.
-        """
-        if person == UNASSIGNED:
-            return UNASSIGNED_NAME
-        for entry in self.gtx.get("people", []):
-            if entry["_id"] == person:
-                first = str(entry.get("name", "")).split()[0:1]
-                if first:
-                    return first[0].lower().replace(" ", "-")
-        return person
+        """Return the file name of a person's document, without a
+        suffix."""
+        return document_name(person, self.gtx.get("people", []))
 
     def construct_global_ctx(self):
         """Constructs the global context."""
@@ -618,7 +574,7 @@ class MissionControlBuilder(BuilderBase):
         current = self.current_period(goals)
         lines = [f"## Goals — {current}", ""]
         for goal in self.in_order(goals, goal_number):
-            if goal["period"] != current or goal["status"] in HELD_STATI:
+            if goal["period"] != current or goal["status"] in HELD:
                 continue
             if goal["_id"] not in goal_number:
                 # of no project, so it belongs in a holding section rather
@@ -648,7 +604,7 @@ class MissionControlBuilder(BuilderBase):
             children[parent if parent in shown else None].append(task)
         by_week = defaultdict(list)
         for task in children[None]:
-            due = as_date(task.get("due_date"))
+            due = as_a_date(task.get("due_date"))
             if due is not None:
                 by_week[week_of(due)].append(task)
         lines = []
@@ -789,8 +745,8 @@ class MissionControlBuilder(BuilderBase):
         periods = sorted(seen, key=self.period_key, reverse=True)
         past = [p for p in periods if self.period_key(p) < self.period_key(current)]
         lines = ["## Archive", ""]
-        for project in sorted(done, key=lambda p: str(as_date(p.get("end_date")) or ""), reverse=True):
-            end = as_date(project.get("end_date"))
+        for project in sorted(done, key=lambda p: str(as_a_date(p.get("end_date")) or ""), reverse=True):
+            end = as_a_date(project.get("end_date"))
             when = f"  (finished {end.isoformat()})" if end else "  (finished)"
             lines.append(f"- ~~{project['name']}~~{when}  ^{project['_id']}")
             if project.get("collaborators"):
@@ -924,6 +880,6 @@ class MissionControlBuilder(BuilderBase):
         if goal["period"] != period:
             return f"  (→ rolled to {goal['period']})"
         if goal["status"] == "finished":
-            end = as_date(goal.get("end_date"))
+            end = as_a_date(goal.get("end_date"))
             return f"  (finished {end.isoformat()})" if end else "  (finished)"
         return ""
