@@ -16,7 +16,8 @@
 
 **Fixed:**
 
-* ``regolith helper l-mcgoals`` shows the period that came round last by default, rather than the one whose name sorts last as text, which showed summer's goals all fall.
+* No news: part of mission control, summarised in
+  consolidate-mission-control-news.
 
 **Security:**
 
