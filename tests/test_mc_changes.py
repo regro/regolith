@@ -272,6 +272,128 @@ def test_a_line_naming_something_stored_elsewhere_is_that_thing(shown_everything
     assert written.get("grants") == expected["grants"]
 
 
+@pytest.mark.parametrize(
+    "first_text, second_text, stored_text, expected_owner, expected_new, expected_sure",
+    [
+        # Test which of two lines sharing an id keeps it, when somebody copies a
+        # line to make a new one and leaves the id on.  The one that says what
+        # the collections already hold under the id is the original, so it
+        # keeps the id and the history stored with it; the other is stored as
+        # new.  Which line came first says nothing, since a copy is pasted
+        # above the original as often as below it.
+        # C1: the original written first and the copy below it, expect the
+        # original to keep the id, the copy to be new, and the settlement sure
+        (
+            "the original goal",
+            "a brand new goal",
+            "the original goal",
+            "the original goal",
+            "a brand new goal",
+            True,
+        ),
+        # C2: the copy pasted above the original, expect the original still to
+        # keep the id and the copy still to be new, though it came first
+        (
+            "a brand new goal",
+            "the original goal",
+            "the original goal",
+            "the original goal",
+            "a brand new goal",
+            True,
+        ),
+        # C3: a sync already stored the copy over the original, which is how
+        # Caden's goal was lost, expect what is stored now to keep the id and
+        # the lost goal to come back as new, so that neither is lost
+        (
+            "separate the srreal from the srfit",
+            "add a few features",
+            "add a few features",
+            "add a few features",
+            "separate the srreal from the srfit",
+            True,
+        ),
+        # C4: both lines edited, so neither says what is stored, expect the
+        # first to keep the id for now and the settlement not sure, which is
+        # what stops the sync writing anything from the document
+        (
+            "reworded one way",
+            "reworded another",
+            "the original goal",
+            "reworded one way",
+            "reworded another",
+            False,
+        ),
+        # C5: both lines still say what is stored, so there is still nothing to
+        # tell them apart by, expect the same as C4
+        (
+            "the original goal",
+            "the original goal",
+            "the original goal",
+            "the original goal",
+            "the original goal",
+            False,
+        ),
+    ],
+)
+def test_the_copy_of_a_line_is_told_from_its_original(
+    first_text, second_text, stored_text, expected_owner, expected_new, expected_sure
+):
+    document = parsed(
+        projects=[read_project(_id="pl-shock")],
+        goals=[
+            read(_id="g-shared", project="pl-shock", text=first_text),
+            read(_id="g-minted", project="pl-shock", text=second_text),
+        ],
+    )
+    document["copied"] = [{"collection": "mc_goals", "id": "g-shared", "copy": "g-minted"}]
+    stored_goal = stored(_id="g-shared", project="pl-shock", text=stored_text, first_period="2026Q2")
+    writes, drops = changes(
+        document, "pliu", existing(projects=[STORED_PROJECT], goals=[stored_goal]), today=TODAY
+    )
+
+    copy = document["copied"][0]
+    assert copy["kept"] == expected_owner
+    assert copy["new"] == expected_new
+    assert copy["sure"] is expected_sure
+    # looked up by id rather than by text, since in C5 both say the same thing
+    written = {g["_id"]: g for g in writes["mc_goals"]}
+    # the one keeping the id keeps its history with it, and nothing is dropped
+    assert written["g-shared"]["text"] == expected_owner
+    assert written["g-shared"]["first_period"] == "2026Q2"
+    assert drops["mc_goals"] == []
+
+
+def test_a_task_under_a_copied_goal_stays_under_the_one_it_was_written_under():
+    # Test that tasks follow when the two goals exchange ids.  A task written
+    # under the copy points at the id the reader gave the copy, and after the
+    # exchange that id belongs to the original.
+    # Expect each task to end up under the goal it was written under.
+    document = parsed(
+        projects=[read_project(_id="pl-shock")],
+        goals=[
+            read(_id="g-shared", project="pl-shock", text="a brand new goal"),
+            read(_id="g-minted", project="pl-shock", text="the original goal"),
+        ],
+        tasks=[
+            read_task(_id="t-new", goal="g-shared", text="a task of the new goal"),
+            read_task(_id="t-old", goal="g-minted", text="a task of the original"),
+        ],
+    )
+    document["copied"] = [{"collection": "mc_goals", "id": "g-shared", "copy": "g-minted"}]
+    writes, _ = changes(
+        document,
+        "pliu",
+        existing(
+            projects=[STORED_PROJECT], goals=[stored(_id="g-shared", project="pl-shock", text="the original goal")]
+        ),
+        today=TODAY,
+    )
+    goal_of = {g["_id"]: g["text"] for g in writes["mc_goals"]}
+    task_goal = {t["text"]: goal_of[t["goal"]] for t in writes["mc_tasks"]}
+    assert task_goal["a task of the original"] == "the original goal"
+    assert task_goal["a task of the new goal"] == "a brand new goal"
+
+
 def test_a_line_that_lost_its_id_does_not_go_to_somebody_else():
     # Test that matching on text stays within this person's records.  Two
     # people's goals say the same thing all the time -- "introduce project to

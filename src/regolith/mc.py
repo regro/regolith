@@ -617,20 +617,25 @@ class _Reader:
         # the ids of the lines stored so far, as against the archive, which
         # only mentions what it shows
         self.stored = set()
+        # lines that carried an id another line had already taken
+        self.copied = []
 
     def mint(self):
         _id = short_id(self.ids)
         self.ids.add(_id)
         return _id
 
-    def own_id(self, carried, mint):
+    def own_id(self, carried, mint, collection):
         """Return the id a line is stored under.
 
         A line carries the id it was written with, unless another line
         of the document has already taken it.  That is somebody copying a
         line to make a new one, id and all, and left alone the second
-        would be stored over the first and the first lost for good.  So
-        the first keeps it, and the copy is given one of its own.
+        would be stored over the first.  So the second is given an id of
+        its own for now, and the pair is noted: which of the two the old
+        id belongs to is decided against the collections, by
+        ``changes``, since that depends on what is stored rather than on
+        which line came first.
 
         Parameters
         ----------
@@ -638,13 +643,20 @@ class _Reader:
             The id written on the line, if any.
         mint : callable
             How to make a new one.
+        collection : str
+            The collection the line belongs to.
 
         Returns
         -------
         str
             The id to store it under.
         """
-        _id = carried if carried and carried not in self.stored else mint()
+        if carried and carried in self.stored:
+            fresh = mint()
+            self.copied.append({"collection": collection, "id": carried, "copy": fresh})
+            self.stored.add(fresh)
+            return fresh
+        _id = carried or mint()
         self.stored.add(_id)
         return _id
 
@@ -721,7 +733,7 @@ class _Reader:
             return False
         text, struck_out = read_text(found.group("text"))
         project = {
-            "_id": self.own_id(found.group("id"), lambda: self.mint_project(text)),
+            "_id": self.own_id(found.group("id"), lambda: self.mint_project(text), "mc_projects"),
             "name": text,
             "status": "finished" if struck_out else "active",
         }
@@ -790,7 +802,7 @@ class _Reader:
             project = self.by_number[project_number]
         ticked = (found.group("box") or " ").lower() == "x"
         goal = {
-            "_id": self.own_id(found.group("id"), self.mint),
+            "_id": self.own_id(found.group("id"), self.mint, "mc_goals"),
             "project": project,
             "period": self.period,
             "text": text,
@@ -823,7 +835,7 @@ class _Reader:
         indent = len(found.group("indent").expandtabs(4))
         ticked = found.group("box").lower() == "x"
         task = {
-            "_id": self.own_id(found.group("id"), self.mint),
+            "_id": self.own_id(found.group("id"), self.mint, "mc_tasks"),
             # a strike is believed over a box, since the box is what gets forgotten
             "status": "finished" if (struck_out or ticked) else "active",
             "text": text,
@@ -859,6 +871,7 @@ class _Reader:
             "tasks": self.tasks,
             "mentioned": self.mentioned,
             "mentioned_text": self.mentioned_text,
+            "copied": self.copied,
         }
 
 
@@ -993,6 +1006,11 @@ def changes(parsed, person, existing, today=None, elsewhere=None):
     # project, so when the project turns out to be one already stored, every
     # reference to it has to follow it
     adopted = {}
+    # two lines that carried the same id: the id goes to whichever says what
+    # is already stored under it, and the other is new.  References follow,
+    # both ways, since a task written under either may point at it
+    for copy in parsed.get("copied", ()):
+        _settle_copy(copy, parsed, existing, elsewhere, adopted)
 
     for read in parsed["projects"]:
         given = read["_id"]
@@ -1069,6 +1087,62 @@ def changes(parsed, person, existing, today=None, elsewhere=None):
     seen["mc_goals"].update(_id for _id, goal in existing["mc_goals"].items() if goal.get("text") in shown)
     drops = {collection: sorted(set(records) - seen[collection]) for collection, records in existing.items()}
     return writes, drops
+
+
+PARSED_KIND = {"mc_projects": "projects", "mc_goals": "goals", "mc_tasks": "tasks"}
+
+
+def _settle_copy(copy, parsed, existing, elsewhere, adopted):
+    """Decide which of two lines sharing an id the id belongs to.
+
+    Somebody copies a line to make a new one and forgets to take the id
+    off.  Whichever of the two says what the collections already hold
+    under that id is the one that was there, and keeps it, with its
+    history; the other is new.  The copy may be pasted above the
+    original as easily as below it, so which came first says nothing.
+
+    When the collections hold nothing under the id, or both lines or
+    neither say what is stored, there is nothing to tell them apart by,
+    and the one written first keeps it.  The decision is written onto
+    ``copy`` so that whoever runs the sync can be told, and can put it
+    right before a build writes it back.
+
+    Parameters
+    ----------
+    copy : dict
+        The two ids, as the parser noted them: ``id``, the one both lines
+        carried, and ``copy``, the one the second was given.  ``kept``,
+        ``new`` and ``sure`` are written onto it.
+    parsed : dict
+        What ``parse_document`` read, whose records may have their ids
+        exchanged.
+    existing : dict
+        The records stored for this person.
+    elsewhere : dict
+        Every record stored.
+    adopted : dict
+        The ids records turned out to have, for references to follow.
+    """
+    records = parsed[PARSED_KIND[copy["collection"]]]
+    first = next(r for r in records if r["_id"] == copy["id"])
+    later = next(r for r in records if r["_id"] == copy["copy"])
+    stored = existing[copy["collection"]].get(copy["id"]) or (elsewhere.get(copy["collection"]) or {}).get(
+        copy["id"]
+    )
+
+    def says(record):
+        return record.get("text") or record.get("name")
+
+    first_matches = bool(stored) and says(first) == says(stored)
+    later_matches = bool(stored) and says(later) == says(stored)
+    copy["sure"] = first_matches != later_matches
+    if later_matches and not first_matches:
+        first["_id"], later["_id"] = copy["copy"], copy["id"]
+        adopted[copy["id"]] = copy["copy"]
+        adopted[copy["copy"]] = copy["id"]
+        copy["kept"], copy["new"] = says(later), says(first)
+    else:
+        copy["kept"], copy["new"] = says(first), says(later)
 
 
 def _close(record, was, today):

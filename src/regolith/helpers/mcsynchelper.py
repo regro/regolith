@@ -228,6 +228,50 @@ class MCSyncHelper(DbHelperBase):
         """
         return {record["_id"] for collection in COLLECTIONS for record in self.gtx[collection]}
 
+    @staticmethod
+    def copies_are_settled(path, parsed):
+        """Say what became of lines that shared an id, and whether to go
+        on.
+
+        Somebody who copies a line to make a new one often leaves the id
+        on it.  Where one of the two says what is stored under that id,
+        that one is the original and keeps it, and the other is stored as
+        new: that is said, and the sync goes on.  Where neither does, or
+        both do, there is nothing to tell them apart by, and nothing is
+        written from the document, so that a guess cannot reach a build.
+
+        Parameters
+        ----------
+        path : pathlib.Path
+            The document that was read.
+        parsed : dict
+            What was read from it, after ``changes`` has settled the ids.
+
+        Returns
+        -------
+        bool
+            Whether the sync may write what the document says.
+        """
+        settled = True
+        for copy in parsed.get("copied", ()):
+            kind = copy["collection"].replace("mc_", "")[:-1]
+            if copy["sure"]:
+                print(
+                    f"{path.name}: two lines carried the id {copy['id']}. "
+                    f'"{copy["kept"]}" keeps it, being what was stored under it, and '
+                    f'"{copy["new"]}" is stored as a new {kind}. The next build writes '
+                    f"its new id into the document."
+                )
+                continue
+            settled = False
+            print(
+                f"{path.name}: two lines carry the id {copy['id']}, and there is no telling "
+                f'which is the {kind} already stored: "{copy["kept"]}" or "{copy["new"]}". '
+                f"Nothing was written from {path.name}."
+            )
+            print(f"Take ^{copy['id']} off the line that is new, then sync again.")
+        return settled
+
     def left_out_of_documents(self, existing):
         """Return the ids a document is not written with.
 
@@ -316,6 +360,8 @@ class MCSyncHelper(DbHelperBase):
         writes, drops = changes(
             parsed, None if person == UNASSIGNED else person, existing, elsewhere=self.everything()
         )
+        if not self.copies_are_settled(path, parsed):
+            return
         held = sum(len(records) for records in existing.values())
         dropped = sum(len(ids) for ids in drops.values())
         read = sum(len(parsed[kind]) for kind in ("projects", "goals", "tasks"))
