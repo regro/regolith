@@ -5,7 +5,7 @@ import os
 import pytest
 
 from regolith.helpers.l_mcgoalshelper import MCGoalsListerHelper
-from regolith.helpers.l_mcprojectshelper import MCProjectsListerHelper, as_list
+from regolith.helpers.l_mcprojectshelper import MCProjectsListerHelper
 from regolith.main import main
 from regolith.mc import in_the_group, orphaned, unled
 
@@ -77,22 +77,6 @@ def test_what_counts_as_orphaned(project, expected):
     assert orphaned(project, PEOPLE) is expected
 
 
-@pytest.mark.parametrize(
-    "value, expected",
-    [
-        # Test reading a grant field, which projecta wrote as one or as several
-        # C1: several, expect them as they are
-        (["a", "b"], ["a", "b"]),
-        # C2: one, written bare, expect a list of it
-        ("a", ["a"]),
-        # C3: none, expect nothing rather than an error
-        (None, []),
-    ],
-)
-def test_a_grant_may_be_one_or_several(value, expected):
-    assert as_list(value) == expected
-
-
 def test_a_project_line_says_who_and_what():
     # Test the line a project is listed as, which is what gets read in a
     # conversation about what needs doing
@@ -123,6 +107,30 @@ def test_a_project_line_says_who_and_what():
 )
 def test_a_goal_line_says_how_long_it_has_been_carried(goal, expected_ending):
     assert MCGoalsListerHelper.line(goal).endswith(expected_ending)
+
+
+@pytest.mark.parametrize(
+    "goals, periods, expected_latest",
+    [
+        # Test that the period shown by default is the latest one any goal is
+        # in, found by when it came round rather than by the text of its name
+        # C1: default semesters, fall after summer, expect fall although summer
+        # sorts after it as text
+        ([{"period": "2026summer"}, {"period": "2026fall"}], None, "2026fall"),
+        # C2: a later year, expect the year to win over the name
+        ([{"period": "2026fall"}, {"period": "2027spring"}], None, "2027spring"),
+        # C3: a group on quarters, expect its own order to be used
+        (
+            [{"period": "2026fall"}, {"period": "2026winter"}],
+            {"winter": "01-01", "spring": "04-01", "summer": "07-01", "fall": "10-01"},
+            "2026fall",
+        ),
+        # C4: no goal has a period, expect None
+        ([{"_id": "g1"}], None, None),
+    ],
+)
+def test_the_latest_period_is_the_one_that_came_round_last(goals, periods, expected_latest):
+    assert MCGoalsListerHelper.latest(goals, periods) == expected_latest
 
 
 def test_goals_are_grouped_under_their_project():

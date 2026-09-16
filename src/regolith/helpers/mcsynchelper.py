@@ -15,25 +15,20 @@ from pathlib import Path
 
 from gooey import GooeyParser
 
-from regolith.builders.missioncontrolbuilder import (
-    UNASSIGNED,
-    UNASSIGNED_NAME,
-    MissionControlBuilder,
-    live,
-)
+from regolith.builders.missioncontrolbuilder import live
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.mc import (
     KEEP_FINISHED_DAYS,
-    UNLED_PREFIX,
+    UNASSIGNED,
     DocumentError,
     changes,
+    document_name,
     in_the_group,
-    initials,
     led_by,
     parse_document,
     period_of,
+    project_prefix,
     retired,
-    slug,
     unassigned,
 )
 from regolith.schemas import SCHEMAS, validate
@@ -83,21 +78,18 @@ class MCSyncHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
-        renderer = MissionControlBuilder.__new__(MissionControlBuilder)
-        renderer.gtx = self.gtx
         mcdir = Path(getattr(rc, "mission_control_dir", None) or f"{rc.builddir}/mission-control")
         if not mcdir.is_dir():
             print(f"There are no mission control documents in {mcdir}.")
             print("Run 'regolith build mission-control' to write them first.")
             return
 
-        found = self.documents(mcdir, renderer)
+        found = self.documents(mcdir)
         for path, person in found:
             self.read_one(path, person)
-        self.say_who_is_missing(mcdir, renderer, {person for _, person in found})
-        return
+        self.say_who_is_missing(mcdir, {person for _, person in found})
 
-    def say_who_is_missing(self, mcdir, renderer, read):
+    def say_who_is_missing(self, mcdir, read):
         """Say who has work stored and no document to read it from.
 
         A sync reads documents; it does not write them.  Somebody whose
@@ -108,8 +100,6 @@ class MCSyncHelper(DbHelperBase):
         ----------
         mcdir : pathlib.Path
             The directory the documents are in.
-        renderer : MissionControlBuilder
-            The builder, which knows what each document is called.
         read : set of str
             The people whose documents were read.
         """
@@ -123,12 +113,12 @@ class MCSyncHelper(DbHelperBase):
             if lead and lead not in read and in_the_group(lead, people) and not retired(project, today, days)
         }
         for person in sorted(waiting):
-            name = renderer.document_name(person)
+            name = document_name(person, people)
             print(f"{person} has work stored and no document: {mcdir / (name + '.md')} is not there.")
         if waiting:
             print("Run 'regolith build mission-control' to write it, then edit that rather than a new file.")
 
-    def documents(self, mcdir, renderer):
+    def documents(self, mcdir):
         """Return each document in the directory, with whose it is.
 
         The documents are what there is to read, so they are what is
@@ -141,22 +131,20 @@ class MCSyncHelper(DbHelperBase):
         ----------
         mcdir : pathlib.Path
             The directory the documents are in.
-        renderer : MissionControlBuilder
-            The builder, which knows what each person's document is
-            called.
 
         Returns
         -------
         list of tuple of (pathlib.Path, str)
             Each document and the id of the person whose it is.
         """
-        whose = {UNASSIGNED_NAME: UNASSIGNED}
-        for person in self.gtx["people"]:
-            whose.setdefault(renderer.document_name(person["_id"]), person["_id"])
+        people = self.gtx["people"]
+        whose = {UNASSIGNED: UNASSIGNED}
+        for person in people:
+            whose.setdefault(document_name(person["_id"], people), person["_id"])
         for project in self.gtx["mc_projects"]:
             lead = led_by(project)
             if lead:
-                whose.setdefault(renderer.document_name(lead), lead)
+                whose.setdefault(document_name(lead, people), lead)
         found = []
         for path in sorted(mcdir.glob("*.md")):
             if path.stem in whose:
@@ -319,35 +307,15 @@ class MCSyncHelper(DbHelperBase):
                     changing = True
         return sorted(gone) + sorted(goals) + sorted(tasks)
 
-    def prefix(self, person):
-        """Return what a project typed into one document is named with.
-
-        Parameters
-        ----------
-        person : str
-            The id of the person whose document it is, or
-            ``unassigned``.
-
-        Returns
-        -------
-        str
-            Their initials, or ``na`` for the document of nobody.
-        """
-        if person == UNASSIGNED:
-            return UNLED_PREFIX
-        for entry in self.gtx["people"]:
-            if entry["_id"] == person:
-                return initials(entry.get("name") or person)
-        return slug(person)
-
     def read_one(self, path, person):
         """Read one document and write what it says."""
         rc = self.rc
+        lead = None if person == UNASSIGNED else person
         try:
             parsed = parse_document(
                 path.read_text(encoding="utf-8"),
                 taken=self.taken(),
-                prefix=self.prefix(person),
+                prefix=project_prefix(lead, self.gtx["people"]),
                 period=period_of(dt.date.today(), getattr(rc, "mission_control_periods", None)),
             )
         except DocumentError as error:
@@ -361,9 +329,7 @@ class MCSyncHelper(DbHelperBase):
         # deleted.  The record is neither written nor dropped: the document
         # says nothing about it either way
         parsed["mentioned"] = list(parsed.get("mentioned", ())) + self.left_out_of_documents(existing)
-        writes, drops = changes(
-            parsed, None if person == UNASSIGNED else person, existing, elsewhere=self.everything()
-        )
+        writes, drops = changes(parsed, lead, existing, elsewhere=self.everything())
         if not self.copies_are_settled(path, parsed):
             return
         held = sum(len(records) for records in existing.values())
@@ -405,40 +371,13 @@ class MCSyncHelper(DbHelperBase):
             return
         for collection, records in writes.items():
             for record in records:
-                where = self.where_it_goes(collection, record["_id"])
+                where = self.where_stored(collection, record["_id"]) or self.first_source(collection)
                 rc.client.update_one(where, collection, {"_id": record["_id"]}, record, upsert=True)
         for collection, ids in drops.items():
             for _id in ids:
-                rc.client.update_field(self.where_it_goes(collection, _id), collection, _id, "status", "dropped")
+                where = self.where_stored(collection, _id) or self.first_source(collection)
+                rc.client.update_field(where, collection, _id, "status", "dropped")
         self.report(path, writes, drops, wrote=True, new=new)
-
-    def where_it_goes(self, collection, _id):
-        """Return the database a record belongs in.
-
-        A record already stored is written where it is stored, rather
-        than in the first database that happens to be listed, since
-        writing it anywhere else would leave two of it and hide the one
-        that is real.  A record nothing holds yet goes where the
-        collection is, or to rc.database when nothing holds it at all.
-
-        Parameters
-        ----------
-        collection : str
-            The name of the collection.
-        _id : str
-            The id of the record.
-
-        Returns
-        -------
-        str
-            The name of the database to write to.
-        """
-        rc = self.rc
-        sources = rc.client.collection_sources(collection)
-        for database in sources:
-            if rc.client.find_one(database["name"], collection, {"_id": _id}):
-                return database["name"]
-        return sources[0]["name"] if sources else rc.database
 
     def copies(self):
         """Return where a render keeps the copy it took."""

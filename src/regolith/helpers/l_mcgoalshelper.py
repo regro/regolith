@@ -8,7 +8,7 @@ somebody agreed to get done this period and how far along it is.
 from gooey import GooeyParser
 
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.mc import CLOSED, HELD, unassigned
+from regolith.mc import CLOSED, HELD, period_key, unassigned
 from regolith.tools import all_docs_from_collection, key_value_pair_filter
 
 TARGET_COLL = "mc_goals"
@@ -20,7 +20,7 @@ def subparser(subpi):
         pass
     subpi.add_argument("-l", "--lead", help="List the goals of the projects this person leads, by id.")
     subpi.add_argument("-p", "--person", help="List the goals of the projects this person is on, by id.")
-    subpi.add_argument("--period", help="List the goals of this period, e.g. 2026Q3.")
+    subpi.add_argument("--period", help="List the goals of this period, e.g. 2026fall.")
     subpi.add_argument(
         "--carried",
         action="store_true",
@@ -78,7 +78,9 @@ class MCGoalsListerHelper(SoutHelperBase):
             goals = [g for g in goals if g.get("status") not in CLOSED + HELD]
         if rc.carried:
             goals = [g for g in goals if g.get("first_period") != g.get("period")]
-        period = rc.period or (None if rc.all else self.latest(goals))
+        period = rc.period or (
+            None if rc.all else self.latest(goals, getattr(rc, "mission_control_periods", None))
+        )
         if period:
             goals = [g for g in goals if g.get("period") == period]
 
@@ -121,10 +123,30 @@ class MCGoalsListerHelper(SoutHelperBase):
         return project.get("lead") == person or person in project.get("collaborators", [])
 
     @staticmethod
-    def latest(goals):
-        """Return the most recent period any of these goals is in."""
-        periods = [g.get("period") for g in goals if g.get("period")]
-        return max(periods) if periods else None
+    def latest(goals, periods=None):
+        """Return the most recent period any of these goals is in.
+
+        The names of the periods do not sort into the order they happen
+        -- fall comes before summer in the alphabet and after it in the
+        year -- so the latest is found by when it came round, as the
+        builder finds it, rather than by its text.
+
+        Parameters
+        ----------
+        goals : list of dict
+            The goals to look through.
+        periods : dict, optional
+            The periods of the year as ``{name: "MM-DD"}``, from
+            ``mission_control_periods`` in the runcontrol.  The default
+            is semesters.
+
+        Returns
+        -------
+        str or None
+            The latest period, or None when no goal has one.
+        """
+        found = [g.get("period") for g in goals if g.get("period")]
+        return max(found, key=lambda period: period_key(period, periods)) if found else None
 
     @staticmethod
     def by_project(goals):

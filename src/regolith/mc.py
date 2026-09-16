@@ -225,6 +225,8 @@ def slug(text):
 
 
 UNLED_PREFIX = "na"
+# the document of the projects nobody leads, and the id it stands under
+UNASSIGNED = "unassigned"
 
 
 def initials(name):
@@ -249,6 +251,67 @@ def initials(name):
     if len(parts) == 1:
         return parts[0][0].lower()
     return f"{parts[0][0]}{parts[-1][0]}".lower()
+
+
+def project_prefix(lead, people):
+    """Return what a project of somebody's is named with.
+
+    Parameters
+    ----------
+    lead : str or None
+        The id of whoever leads it, or a placeholder such as ``tbd``, or
+        None for nobody.
+    people : iterable of dict
+        The people collection, for their name.
+
+    Returns
+    -------
+    str
+        Their initials, or ``na`` for a project nobody leads.
+    """
+    if unled({"lead": lead}):
+        return UNLED_PREFIX
+    for entry in people:
+        if entry["_id"] == lead:
+            return initials(entry.get("name") or lead)
+    return slug(lead)
+
+
+def display_name(person, people):
+    """Return the name to head a person's document with."""
+    for entry in people:
+        if entry["_id"] == person:
+            return entry.get("name") or person
+    return person
+
+
+def document_name(person, people):
+    """Return the file name of a person's document, without a suffix.
+
+    A person is known to the database by an id, but the document is for
+    them to open, so it is named for them: their first name if the
+    people collection knows it, and their id if it does not.
+
+    Parameters
+    ----------
+    person : str
+        The id of the person, or ``unassigned``.
+    people : iterable of dict
+        The people collection.
+
+    Returns
+    -------
+    str
+        The file name.
+    """
+    if person == UNASSIGNED:
+        return UNASSIGNED
+    for entry in people:
+        if entry["_id"] == person:
+            first = str(entry.get("name", "")).split()[0:1]
+            if first:
+                return first[0].lower().replace(" ", "-")
+    return person
 
 
 def project_id(name, taken=(), prefix=None):

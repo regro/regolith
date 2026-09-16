@@ -686,6 +686,15 @@ Tutorials
 
     tutorials/index
 
+Mission Control
+===============
+Running the group from a document per person, read back into the database.
+
+.. toctree::
+    :maxdepth: 1
+
+    mission-control
+
 Run Control
 ===========
 
