@@ -611,7 +611,7 @@ def would_lose(existing, written, also_kept=()):
     return lost
 
 
-def parse_document(text, taken=(), prefix=None):
+def parse_document(text, taken=(), prefix=None, period=None):
     """Return the projects, goals and tasks a mission control document
     describes.
 
@@ -637,6 +637,10 @@ def parse_document(text, taken=(), prefix=None):
     prefix : str, optional
         What to put in front of the id of a project typed in here, which
         is the initials of whoever the document belongs to.
+    period : str, optional
+        The period a line held on deck or on the wishlist is given,
+        since a holding section has no heading saying one.  The default
+        is the period today falls in, by the default periods.
 
     Returns
     -------
@@ -652,7 +656,7 @@ def parse_document(text, taken=(), prefix=None):
         When a recognised line cannot be placed, naming the line.
     """
     ids = set(taken) | set(re.findall(r"\^([\w.-]+)", text))
-    state = _Reader(ids, prefix)
+    state = _Reader(ids, prefix, period or period_of(dt.date.today()))
     for number, line in logical_lines(text):
         state.read(line, number)
     return state.result()
@@ -662,9 +666,12 @@ class _Reader:
     """Reads a document a line at a time, holding where it has got
     to."""
 
-    def __init__(self, ids, prefix=None):
+    def __init__(self, ids, prefix=None, held_period=None):
         self.ids = set(ids)
         self.prefix = prefix
+        # what a line held on deck or on the wishlist is stamped with: those
+        # sections have no heading saying a period, and the record needs one
+        self.held_period = held_period
         self.person = None
         self.projects = []
         self.goals = []
@@ -867,7 +874,7 @@ class _Reader:
         goal = {
             "_id": self.own_id(found.group("id"), self.mint, "mc_goals"),
             "project": project,
-            "period": self.period,
+            "period": self.held_period if self.section in HELD else self.period,
             "text": text,
             # a strike is believed over a box, since the box is what gets forgotten
             "status": "finished" if (struck_out or ticked) else self.goal_status(struck_out),

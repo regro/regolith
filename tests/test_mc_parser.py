@@ -5,7 +5,7 @@ import datetime as dt
 import pytest
 
 from regolith.builders.missioncontrolbuilder import MissionControlBuilder
-from regolith.mc import DocumentError, parse_document
+from regolith.mc import DocumentError, parse_document, period_of
 from tests.test_missioncontrolbuilder import GOALS, PROJECTS, SUB_TASKS, TASKS
 
 DOCUMENT = """# Mission control — Adib Kabir
@@ -69,6 +69,47 @@ def test_the_document_says_who_it_is_for(read):
 )
 def test_each_part_of_the_document_is_read(kind, expected_ids, read):
     assert [item["_id"] for item in read[kind]] == expected_ids
+
+
+HELD_ABOVE_AND_BELOW = """# Mission control — Adib Kabir
+
+## Projects
+
+1. **nanodiamond-pdf**  ^ak-nano
+
+## Wishlist
+
+- 1.4  a tutorial  ^tut222
+
+## Goals — 2026Q3
+
+- 1.1  get clean PDFs  ^a8s8ec
+
+## On-deck
+
+- 1.3  port the solver  ^gpu111
+"""
+
+
+@pytest.mark.parametrize(
+    "period, expected_periods",
+    [
+        # Test the period a held line is given.  A holding section has no
+        # heading saying one, so it must not depend on which heading happens
+        # to come before it: above the goals it would get none, and none does
+        # not validate
+        # C1: a period given, expect it on the wishlist line above the goals and
+        # the on-deck line below them alike, and the goals heading's on its own
+        ("2026Q4", {"tut222": "2026Q4", "a8s8ec": "2026Q3", "gpu111": "2026Q4"}),
+        # C2: none given, expect the period today falls in
+        (None, {"tut222": "today", "a8s8ec": "2026Q3", "gpu111": "today"}),
+    ],
+)
+def test_a_held_line_is_given_a_period_whatever_heading_came_before(period, expected_periods):
+    today = period_of(dt.date.today())
+    read = parse_document(HELD_ABOVE_AND_BELOW, period=period)
+    periods = {goal["_id"]: goal["period"] for goal in read["goals"]}
+    assert periods == {_id: (today if p == "today" else p) for _id, p in expected_periods.items()}
 
 
 @pytest.mark.parametrize(

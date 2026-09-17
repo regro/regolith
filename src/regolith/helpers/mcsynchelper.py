@@ -26,6 +26,7 @@ from regolith.mc import (
     in_the_group,
     led_by,
     parse_document,
+    period_of,
     project_prefix,
     retired,
     unassigned,
@@ -315,6 +316,7 @@ class MCSyncHelper(DbHelperBase):
                 path.read_text(encoding="utf-8"),
                 taken=self.taken(),
                 prefix=project_prefix(lead, self.gtx["people"]),
+                period=period_of(dt.date.today(), getattr(rc, "mission_control_periods", None)),
             )
         except DocumentError as error:
             print(f"{path.name} was not read and nothing was written from it: {error}")
