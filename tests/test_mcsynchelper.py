@@ -357,6 +357,33 @@ def test_a_copied_line_is_settled_or_refused(copied_line, expected_said, expecte
         assert goals["a new goal copied from it"] != "mcg001"
 
 
+def test_a_task_copied_into_the_coming_week_is_rolled(mc_repo, capsys):
+    # Test the roll somebody does by hand: copy the task's line into the coming
+    # week and leave the old one, id and all.  Expect the task to move to the
+    # new week keeping its history, the sync to say so, and the next build to
+    # take the old line out rather than refuse the document.
+    repo, mcdir = mc_repo
+    path = mcdir / "pei.md"
+    old_week = "## Week of 2026-09-07"
+    path.write_text(
+        path.read_text().replace(old_week, f"## Week of 2026-09-14\n\n- [ ] 1.1.1  a task  ^mct001\n\n{old_week}")
+    )
+
+    main(["helper", "u-mcsync"])
+    said = capsys.readouterr().out
+    assert "rolled to 2026-09-14" in said
+    assert "Take ^mct001 off" not in said
+    tasks = load_yaml(repo / "db" / "mc_tasks.yaml")
+    assert list(tasks) == ["mct001"]
+    assert str(tasks["mct001"]["due_date"]) == "2026-09-14"
+    assert str(tasks["mct001"]["first_due_date"]) == "2026-09-07"
+
+    main(["build", "mission-control"])
+    built = path.read_text()
+    assert built.count("a task  ^mct001") == 1
+    assert old_week not in built
+
+
 def test_a_document_named_for_nobody_says_so(mc_repo, capsys):
     # Test that a file nobody is named by is reported rather than passed over
     # in silence, since a document that is never read looks exactly like one

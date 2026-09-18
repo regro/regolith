@@ -1199,20 +1199,64 @@ def _settle_copy(copy, parsed, existing, elsewhere, adopted):
     stored = existing[copy["collection"]].get(copy["id"]) or (elsewhere.get(copy["collection"]) or {}).get(
         copy["id"]
     )
-
-    def says(record):
-        return record.get("text") or record.get("name")
-
-    first_matches = bool(stored) and says(first) == says(stored)
-    later_matches = bool(stored) and says(later) == says(stored)
+    if _rolled(copy, first, later, records, adopted):
+        return
+    first_matches = bool(stored) and _said(first) == _said(stored)
+    later_matches = bool(stored) and _said(later) == _said(stored)
     copy["sure"] = first_matches != later_matches
     if later_matches and not first_matches:
         first["_id"], later["_id"] = copy["copy"], copy["id"]
         adopted[copy["id"]] = copy["copy"]
         adopted[copy["copy"]] = copy["id"]
-        copy["kept"], copy["new"] = says(later), says(first)
+        copy["kept"], copy["new"] = _said(later), _said(first)
     else:
-        copy["kept"], copy["new"] = says(first), says(later)
+        copy["kept"], copy["new"] = _said(first), _said(later)
+
+
+def _said(record):
+    """Return the words of a record, whichever field holds them."""
+    return record.get("text") or record.get("name")
+
+
+def _rolled(copy, first, later, records, adopted):
+    """Settle two lines sharing an id as a task rolled to another week,
+    when that is what they are.
+
+    Rolling a task by hand is copying its line into the coming week and
+    leaving the old one where it was, id and all.  Two lines saying the
+    same thing under different weeks are that and nothing else, so the
+    one under the later week is the task, moved, and the other is the
+    week it left: it is not stored, and the next build takes it out.
+    Anything written under either line follows the task.
+
+    Parameters
+    ----------
+    copy : dict
+        The two ids, as the parser noted them.  ``kept``, ``sure``,
+        ``rolled_from`` and ``rolled_to`` are written onto it.
+    first, later : dict
+        The two lines, the first carrying ``copy["id"]`` and the later
+        the id it was given instead.
+    records : list of dict
+        The lines of the collection, which the stale one is taken out
+        of.
+    adopted : dict
+        The ids records turned out to have, for references to follow.
+
+    Returns
+    -------
+    bool
+        Whether the two lines were a roll, and have been settled as one.
+    """
+    weeks = [as_a_date(line.get("due_date")) for line in (first, later)]
+    if _said(first) != _said(later) or None in weeks or weeks[0] == weeks[1]:
+        return False
+    rolled, stale = (later, first) if weeks[1] > weeks[0] else (first, later)
+    rolled["_id"] = copy["id"]
+    records.remove(stale)
+    adopted[copy["copy"]] = copy["id"]
+    copy.update(sure=True, kept=_said(rolled), new=None, rolled_from=min(weeks), rolled_to=max(weeks))
+    return True
 
 
 def _close(record, was, today):
