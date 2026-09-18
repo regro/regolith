@@ -10,6 +10,7 @@ from regolith.builders.missioncontrolbuilder import (
     ids_in_document,
     in_document_order,
     keys_in_document,
+    mark_read,
     number_key,
 )
 from regolith.mc import WIDTH, as_a_date, parse_document, week_of
@@ -772,6 +773,29 @@ def test_a_build_leaves_a_document_that_holds_work_of_its_own(tmp_path, capsys):
     assert "was left alone" in said
     assert "ask about the beamtime" in said
     assert "u-mcsync" in said
+
+
+def test_a_build_leaves_a_document_edited_since_it_was_read(tmp_path, capsys):
+    # Test the guard the words cannot give: a tick, a strike, a move or a
+    # deletion changes no words, so a document holding one is known to be
+    # waiting on a sync only by its having changed at all since it was last
+    # read or written.  Simon lost a set of deletions to this, the sync having
+    # refused the document and the build then writing the lines back
+    builder = render_into(tmp_path, BUILDABLE)
+    builder.render()
+    path = builder.mcdir / "pei.md"
+    deleted = "\n".join(line for line in path.read_text().splitlines() if "^g1" not in line) + "\n"
+    path.write_text(deleted)
+
+    builder.render()
+    assert path.read_text() == deleted
+    said = capsys.readouterr().out
+    assert "edited since it was last read" in said
+    assert "u-mcsync" in said
+    # once the sync has read it, the build goes ahead
+    mark_read(builder.bldir, "pei.md", deleted)
+    builder.render()
+    assert "^g1" in path.read_text()
 
 
 def test_a_build_keeps_the_document_it_wrote_over(tmp_path):

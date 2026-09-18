@@ -384,6 +384,44 @@ def test_a_task_copied_into_the_coming_week_is_rolled(mc_repo, capsys):
     assert old_week not in built
 
 
+@pytest.mark.parametrize(
+    "edited_line, expected_after",
+    [
+        # Test that a build never writes over an edit the sync has not read,
+        # whatever kind it is.  Simon deleted lines, the sync refused the
+        # document, and the build put the lines back.
+        # C1: a box ticked, which changes no words, expect the build to refuse
+        # until the sync has read it, and the tick to come through the build
+        # after that as a finished task
+        ("- [x] 1.1.1  a task  ^mct001", "- [x] 1.1.1  ~~a task~~  ^mct001"),
+        # C2: the number taken off the task, which changes no words and leaves
+        # a task under no goal that the sync refuses, expect the build to
+        # refuse as well and the file to stay exactly as edited
+        ("- [ ] a task  ^mct001", None),
+    ],
+)
+def test_a_build_waits_for_the_sync_to_read_an_edit(edited_line, expected_after, mc_repo, capsys):
+    _, mcdir = mc_repo
+    path = mcdir / "pei.md"
+    # read and written once, so the build knows the document as it stands
+    main(["helper", "u-mcsync"])
+    main(["build", "mission-control"])
+    capsys.readouterr()
+    edited = path.read_text().replace("- [ ] 1.1.1  a task  ^mct001", edited_line)
+    path.write_text(edited)
+
+    main(["build", "mission-control"])
+    assert path.read_text() == edited
+    assert "edited since it was last read" in capsys.readouterr().out
+
+    main(["helper", "u-mcsync"])
+    main(["build", "mission-control"])
+    if expected_after is None:
+        assert path.read_text() == edited
+    else:
+        assert expected_after in path.read_text()
+
+
 def test_a_document_named_for_nobody_says_so(mc_repo, capsys):
     # Test that a file nobody is named by is reported rather than passed over
     # in silence, since a document that is never read looks exactly like one

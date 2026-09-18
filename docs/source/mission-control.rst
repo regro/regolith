@@ -171,7 +171,11 @@ database does not have yet**: it leaves the file alone and names the lines,
 because writing would lose them. Run the sync, then build again. A line still
 named after a sync is one the database cannot hold as it is — a goal under no
 project, a task under no goal — so put it under one or take it out. The copy
-a build did write over is kept in ``<builddir>/mission-control-previous/``.
+a build did write over is kept in ``<builddir>/mission-control/mission-control-previous/``.
+Nor will it write over a document that has changed since the sync last read it,
+however small the change -- a box ticked, a line deleted -- since a sync that
+refused the document would otherwise be followed by a build that undid the
+edits. Run the sync, read what it says, then build.
 
 ``--all`` writes for everybody who ever led a project, and ``--people`` names
 whoever should be written whatever their standing. ``mission_control_also_build``
@@ -235,5 +239,5 @@ When something goes wrong
 
 Records are never deleted, only marked ``dropped``, so recovery is a matter of
 setting a status back. A document that was damaged can be put back from the
-shared folder's version history or from ``<builddir>/mission-control-previous/``,
+shared folder's version history or from ``<builddir>/mission-control/mission-control-previous/``,
 and then read again. And the database is always right: if in doubt, build.
