@@ -15,7 +15,7 @@ from pathlib import Path
 
 from gooey import GooeyParser
 
-from regolith.builders.missioncontrolbuilder import live
+from regolith.builders.missioncontrolbuilder import MissionControlBuilder, kept_copies, live, mark_read
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.mc import (
     KEEP_FINISHED_DAYS,
@@ -320,9 +320,10 @@ class MCSyncHelper(DbHelperBase):
         """Read one document and write what it says."""
         rc = self.rc
         lead = None if person == UNASSIGNED else person
+        text = path.read_text(encoding="utf-8")
         try:
             parsed = parse_document(
-                path.read_text(encoding="utf-8"),
+                text,
                 taken=self.taken(),
                 prefix=project_prefix(lead, self.gtx["people"]),
                 period=period_of(dt.date.today(), getattr(rc, "mission_control_periods", None)),
@@ -386,11 +387,18 @@ class MCSyncHelper(DbHelperBase):
             for _id in ids:
                 where = self.where_stored(collection, _id) or self.first_source(collection)
                 rc.client.update_field(where, collection, _id, "status", "dropped")
+        # read in full, so a build may write over it as it stands
+        mark_read(self.build_dir(), path.name, text)
         self.report(path, writes, drops, wrote=True, new=new)
+
+    def build_dir(self):
+        """Return the build directory of the mission control builder,
+        which is not this helper's."""
+        return Path(self.rc.builddir) / MissionControlBuilder.btype
 
     def copies(self):
         """Return where a render keeps the copy it took."""
-        return f"{self.rc.builddir}/mission-control-previous"
+        return str(kept_copies(self.build_dir()))
 
     @staticmethod
     def name_what_is_at_risk(existing, drops):

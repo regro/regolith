@@ -14,6 +14,8 @@ See ~/dev/regolith-notes/plan-mission-control.md for the design.
 """
 
 import datetime as dt
+import hashlib
+import json
 import re
 from collections import defaultdict
 from pathlib import Path
@@ -44,6 +46,70 @@ from regolith.tools import all_docs_from_collection, fuzzy_retrieval
 # how many of the things a document would lose to name before saying how many
 # more there are
 SHOWN_WHEN_REFUSING = 10
+# where, under the build directory, a build keeps the document it wrote over
+# and the marks of what has been read
+KEPT = "mission-control-previous"
+MARKS = "synced.json"
+
+
+def kept_copies(bldir):
+    """Return the directory a build keeps its copies and its marks
+    in."""
+    return Path(bldir) / KEPT
+
+
+def fingerprint(text):
+    """Return a fingerprint of a document, for telling whether it has
+    changed."""
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def read_marks(bldir):
+    """Return the fingerprint of each document as it was last read or
+    written.
+
+    A build writes the collections out over a document, so it must not
+    write over anything a sync has not read.  Comparing the words tells
+    it about a line typed in; it cannot tell it about a box ticked, a
+    line struck, moved or deleted, since none of those changes a word.
+    So a sync marks each document it reads, and a build each one it
+    writes, and a document that has changed since is one waiting on a
+    sync.
+
+    Parameters
+    ----------
+    bldir : str or pathlib.Path
+        The build directory.
+
+    Returns
+    -------
+    dict
+        The fingerprints, keyed by file name.  Empty when nothing has
+        been marked yet.
+    """
+    path = kept_copies(bldir) / MARKS
+    return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+
+
+def mark_read(bldir, name, text):
+    """Record a document as read, or as written, in the state given.
+
+    Parameters
+    ----------
+    bldir : str or pathlib.Path
+        The build directory.
+    name : str
+        The file name of the document.
+    text : str
+        The document as it stood.
+    """
+    marks = read_marks(bldir)
+    marks[name] = fingerprint(text)
+    path = kept_copies(bldir) / MARKS
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(marks, indent=1, sort_keys=True), encoding="utf-8")
+
+
 ID_IN_DOCUMENT = re.compile(r"\^([\w.-]+)")
 
 
@@ -311,6 +377,7 @@ class MissionControlBuilder(BuilderBase):
         self.mcdir.mkdir(parents=True, exist_ok=True)
         self.left_out = {}
         wanted = self.whose_documents()
+        marks = read_marks(self.bldir)
         left_out = 0
         for person, lines in sorted(self.documents(self.existing_orders()).items()):
             if person not in wanted:
@@ -324,8 +391,12 @@ class MissionControlBuilder(BuilderBase):
                 if lost:
                     self.refuse(path, lost)
                     continue
+                if path.name in marks and marks[path.name] != fingerprint(existing):
+                    self.refuse_unread(path)
+                    continue
                 self.keep_a_copy(path, existing)
             path.write_text(written, encoding="utf-8")
+            mark_read(self.bldir, path.name, written)
         if left_out:
             print(
                 f"{left_out} documents were not built, of people who are not in the group. "
@@ -398,6 +469,20 @@ class MissionControlBuilder(BuilderBase):
             "it is: put it under a goal or a project, or take it out."
         )
 
+    @staticmethod
+    def refuse_unread(path):
+        """Say why a document that has changed since it was read was
+        left as it is."""
+        print(
+            f"{path.name} was left alone: it has been edited since it was last read, "
+            f"and a build would write over the edits."
+        )
+        print("Run 'regolith helper u-mcsync' to read them in, then build again.")
+        print(
+            "If the sync refuses the document, fix what it names first. To have the document "
+            "written afresh from the collections instead, move it out of the way and build."
+        )
+
     def keep_a_copy(self, path, existing):
         """Keep the document as it was before writing over it.
 
@@ -405,7 +490,7 @@ class MissionControlBuilder(BuilderBase):
         document, so that it is out of the way of whatever syncs the
         documents themselves.
         """
-        previous = Path(self.bldir) / "mission-control-previous"
+        previous = kept_copies(self.bldir)
         previous.mkdir(parents=True, exist_ok=True)
         (previous / path.name).write_text(existing, encoding="utf-8")
 
