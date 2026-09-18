@@ -1,6 +1,7 @@
 """Tests for reading the mission control documents back in."""
 
 import copy
+import json
 import os
 
 import pytest
@@ -467,6 +468,31 @@ def test_a_record_is_written_where_it_is_already_stored(mc_repo):
     main(["helper", "u-mcsync"])
     stored_in_db = (tmp_path / "db" / "mc_goals.yaml").read_text()
     assert "a goal, reworded" in stored_in_db
+
+
+def test_a_record_in_two_databases_is_written_where_a_read_shows_it(mc_repo, capsys):
+    # Test the order the sync writes in against the order a chained read
+    # resolves in.  A field comes from the last database holding the record,
+    # so that is where an edit has to go: written to the first, the build
+    # renders the copy the sync never touched and the document snaps back to
+    # what it said before, which is how Simon's edits kept vanishing
+    tmp_path, mcdir = mc_repo
+    second = tmp_path / "db2"
+    second.mkdir()
+    dump_yaml(second / "mc_goals.yaml", load_yaml(tmp_path / "db" / "mc_goals.yaml"))
+    rc = json.loads((tmp_path / "regolithrc.json").read_text())
+    rc["databases"].append({**rc["databases"][0], "name": "mc2", "path": "db2"})
+    (tmp_path / "regolithrc.json").write_text(json.dumps(rc))
+    path = mcdir / "pei.md"
+    path.write_text(path.read_text().replace("a goal", "a goal, reworded"))
+
+    main(["helper", "u-mcsync"])
+    said = capsys.readouterr().out
+    assert "mcg001 is stored in both mc and mc2" in said
+    assert "a goal, reworded" in (second / "mc_goals.yaml").read_text()
+    assert "a goal, reworded" not in (tmp_path / "db" / "mc_goals.yaml").read_text()
+    main(["build", "mission-control"])
+    assert "a goal, reworded" in path.read_text()
 
 
 def test_a_held_thing_of_no_project_is_not_dropped_on_the_next_sync(mc_repo):
