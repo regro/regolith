@@ -223,7 +223,9 @@ class MCSyncHelper(DbHelperBase):
         on.
 
         Somebody who copies a line to make a new one often leaves the id
-        on it.  Where one of the two says what is stored under that id,
+        on it.  A task copied into another week, saying the same thing,
+        is a task rolled, and is said to be.  Otherwise, where one of the
+        two says what is stored under that id,
         that one is the original and keeps it, and the other is stored as
         new: that is said, and the sync goes on.  Where neither does, or
         both do, there is nothing to tell them apart by, and nothing is
@@ -244,6 +246,13 @@ class MCSyncHelper(DbHelperBase):
         settled = True
         for copy in parsed.get("copied", ()):
             kind = copy["collection"].replace("mc_", "")[:-1]
+            if copy.get("rolled_to"):
+                print(
+                    f'{path.name}: "{copy["kept"]}" is under the week of {copy["rolled_from"]} and the week '
+                    f"of {copy['rolled_to']} with the id {copy['id']}, so it is rolled to {copy['rolled_to']}. "
+                    f"The next build takes it out of the week it left."
+                )
+                continue
             if copy["sure"]:
                 print(
                     f"{path.name}: two lines carried the id {copy['id']}. "

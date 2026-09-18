@@ -394,6 +394,49 @@ def test_a_task_under_a_copied_goal_stays_under_the_one_it_was_written_under():
     assert task_goal["a task of the new goal"] == "a brand new goal"
 
 
+@pytest.mark.parametrize(
+    "first_week, second_week, expected_week",
+    [
+        # Test that a task copied into another week, id and all, is a task
+        # rolled: the line under the later week is the task, moved, and the
+        # other is the week it left and is not stored
+        # C1: the new week written above the old, as a document writes its
+        # weeks, expect the task under the new week and nothing else written
+        (dt.date(2026, 9, 21), dt.date(2026, 9, 14), dt.date(2026, 9, 21)),
+        # C2: pasted below the old week instead, expect the same
+        (dt.date(2026, 9, 14), dt.date(2026, 9, 21), dt.date(2026, 9, 21)),
+    ],
+)
+def test_a_task_copied_into_another_week_is_rolled_there(first_week, second_week, expected_week):
+    document = parsed(
+        projects=[read_project(_id="pl-shock")],
+        goals=[read(_id="g-old", project="pl-shock")],
+        tasks=[
+            read_task(_id="t-old", goal="g-old", due_date=first_week),
+            read_task(_id="t-minted", goal="g-old", due_date=second_week),
+            # a piece written under the copy, pointing at the id the copy was given
+            read_task(_id="t-piece", goal="g-old", parent="t-minted", text="a piece of it", due_date=second_week),
+        ],
+    )
+    document["copied"] = [{"collection": "mc_tasks", "id": "t-old", "copy": "t-minted"}]
+    stored_task = dict(STORED_TASK, due_date=dt.date(2026, 9, 14), first_due_date=dt.date(2026, 9, 14))
+    writes, drops = changes(
+        document,
+        "pliu",
+        existing(projects=[STORED_PROJECT], goals=[stored(_id="g-old", project="pl-shock")], tasks=[stored_task]),
+        today=TODAY,
+    )
+    written = {t["_id"]: t for t in writes["mc_tasks"]}
+    assert set(written) == {"t-old", "t-piece"}
+    # the task moved and kept its history; the piece followed it
+    assert written["t-old"]["due_date"] == expected_week
+    assert written["t-old"]["first_due_date"] == dt.date(2026, 9, 14)
+    assert written["t-piece"]["parent"] == "t-old"
+    assert drops["mc_tasks"] == []
+    copy = document["copied"][0]
+    assert copy["sure"] and copy["rolled_to"] == expected_week
+
+
 def test_a_line_that_lost_its_id_does_not_go_to_somebody_else():
     # Test that matching on text stays within this person's records.  Two
     # people's goals say the same thing all the time -- "introduce project to
