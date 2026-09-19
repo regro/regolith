@@ -101,7 +101,11 @@ class DbHelperBase(HelperBase):
 
         A record is written where it is stored rather than in the first
         database that happens to be listed, since writing it anywhere
-        else would leave two of it and hide the one that is real.
+        else would leave two of it and hide the one that is real.  When
+        two databases hold it already, a chained read takes each field
+        from the last of them, so that is the one written: writing the
+        other would change a copy nothing shows, and a document built
+        from the collections would snap back to what it said before.
 
         Parameters
         ----------
@@ -116,10 +120,17 @@ class DbHelperBase(HelperBase):
             The name of the database holding it, or None when nothing
             does.
         """
-        for database in self.rc.client.collection_sources(collection):
-            if self.rc.client.find_one(database["name"], collection, {"_id": _id}):
-                return database["name"]
-        return None
+        holding = [
+            database["name"]
+            for database in self.rc.client.collection_sources(collection)
+            if self.rc.client.find_one(database["name"], collection, {"_id": _id})
+        ]
+        if len(holding) > 1:
+            print(
+                f"{_id} is stored in both {' and '.join(holding)}. The copy in {holding[-1]} is the one "
+                f"a read shows, so it is the one written; delete the other, or they will drift apart."
+            )
+        return holding[-1] if holding else None
 
     def first_source(self, collection):
         """Return the database a new record of a collection goes to.
