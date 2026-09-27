@@ -1510,6 +1510,24 @@
                 "string"
             ]
         },
+        "todos": {
+            "description": "The todos made from the task, one for each person named in braces in its text, so that a sync gives each of them one todo however often it reads the task.",
+            "required": false,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "assigned_to": {
+                        "description": "The id of the person the todo was made for.",
+                        "type": "string"
+                    },
+                    "uuid": {
+                        "description": "The uuid of the todo, in their todos.",
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "notes": {
             "description": "Free text about the task.",
             "required": false,

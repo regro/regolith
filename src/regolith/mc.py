@@ -1265,6 +1265,41 @@ def _close(record, was, today):
         record.setdefault("end_date", today)
 
 
+# a person named in braces in a task, which asks for a todo to be made for them
+BRACED = re.compile(r"\{(?P<person>[\w.-]+)\}")
+SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
+
+
+def todos_asked(text):
+    """Return who a task asks to be given a todo, and what it says.
+
+    Somebody writes ``{sbillinge}`` after a sentence in a task to hand
+    that sentence to that person.  What they are handed is the sentence
+    next before the braces.  When nothing comes before them, it is the
+    whole of the task.
+
+    Parameters
+    ----------
+    text : str
+        The text of the task.
+
+    Returns
+    -------
+    list of tuple of (str, str)
+        The id of each person named, with what their todo says, in the
+        order they are named.
+    """
+    asked = []
+    start = 0
+    for found in BRACED.finditer(text):
+        before = found.string[start : found.start()].strip()
+        start = found.end()
+        sentences = [sentence for sentence in SENTENCE_END.split(before) if sentence.strip()]
+        said = sentences[-1].strip() if sentences else " ".join(BRACED.sub("", text).split())
+        asked.append((found.group("person"), said))
+    return asked
+
+
 # what a lead is called when nobody is leading it.  Old projecta wrote "na" or
 # "tbd" by default; a mission control project simply has no lead
 NOBODY = ("", "na", "tbd", "none")

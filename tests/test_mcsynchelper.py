@@ -1,6 +1,7 @@
 """Tests for reading the mission control documents back in."""
 
 import copy
+import datetime as dt
 import json
 import os
 
@@ -383,6 +384,100 @@ def test_a_task_copied_into_the_coming_week_is_rolled(mc_repo, capsys):
     built = path.read_text()
     assert built.count("a task  ^mct001") == 1
     assert old_week not in built
+
+
+def ask_for_a_todo(tmp_path, mcdir, task_text):
+    """Give the task the words, and the people a todo can be made
+    for."""
+    dump_yaml(tmp_path / "db" / "todos.yaml", {"pliu": {"_id": "pliu"}, "sbillinge": {"_id": "sbillinge"}})
+    path = mcdir / "pei.md"
+    path.write_text(path.read_text().replace("a task  ^mct001", f"{task_text}  ^mct001"))
+
+
+def test_a_person_in_braces_is_given_a_todo(mc_repo, capsys):
+    # Test a todo asked for in a task.  Expect the person in braces to be given
+    # the sentence before them, assigned by whoever's document it is and due a
+    # week after the week the task is under, and the task to say so
+    tmp_path, mcdir = mc_repo
+    ask_for_a_todo(tmp_path, mcdir, "a task. Send Pei the data {sbillinge}")
+    main(["helper", "u-mcsync"])
+    assert 'made a todo for sbillinge, due 2026-09-14: "Send Pei the data"' in capsys.readouterr().out
+    [todo] = load_yaml(tmp_path / "db" / "todos.yaml")["sbillinge"]["todos"]
+    expected_todo = {
+        "description": "Send Pei the data",
+        "due_date": dt.date(2026, 9, 14),
+        "deadline": False,
+        "duration": 30.0,
+        "importance": 2,
+        "status": "started",
+        "assigned_by": "pliu",
+        "running_index": 1,
+    }
+    assert {key: todo[key] for key in expected_todo} == expected_todo
+    task = stored(mc_repo, "mc_tasks", "mct001")
+    assert task["text"] == "a task. Send Pei the data {sbillinge}"
+    assert task["todos"] == [{"assigned_to": "sbillinge", "uuid": todo["uuid"]}]
+
+
+@pytest.mark.parametrize(
+    "task_text, expected_descriptions",
+    [
+        # Test that a task asks once for each time it names somebody, however
+        # often it is read
+        # C1: named once, expect one todo
+        ("Send Pei the data {sbillinge}", ["Send Pei the data"]),
+        # C2: named twice, expect two, numbered one after the other
+        ("Get the data {sbillinge}. Send Pei the plot {sbillinge}", ["Get the data", "Send Pei the plot"]),
+    ],
+)
+def test_a_person_in_braces_is_given_a_todo_once(task_text, expected_descriptions, mc_repo):
+    tmp_path, mcdir = mc_repo
+    ask_for_a_todo(tmp_path, mcdir, task_text)
+    main(["helper", "u-mcsync"])
+    main(["helper", "u-mcsync"])
+    main(["build", "mission-control"])
+    main(["helper", "u-mcsync"])
+    todos = load_yaml(tmp_path / "db" / "todos.yaml")["sbillinge"]["todos"]
+    assert [todo["description"] for todo in todos] == expected_descriptions
+    assert [todo["running_index"] for todo in todos] == list(range(1, len(expected_descriptions) + 1))
+
+
+def test_a_task_reworded_does_not_ask_again(mc_repo):
+    # Test a task reworded after it has made a todo, expect no second todo
+    tmp_path, mcdir = mc_repo
+    ask_for_a_todo(tmp_path, mcdir, "Send Pei the data {sbillinge}")
+    main(["helper", "u-mcsync"])
+    path = mcdir / "pei.md"
+    path.write_text(path.read_text().replace("Send Pei the data", "Send Pei all the data"))
+    main(["helper", "u-mcsync"])
+    assert len(load_yaml(tmp_path / "db" / "todos.yaml")["sbillinge"]["todos"]) == 1
+
+
+@pytest.mark.parametrize(
+    "args, task_text, expected_said",
+    [
+        # Test the todos that are not made
+        # C1: a dry run, expect it to say what it would make
+        (
+            ["--dry-run"],
+            "Send Pei the data {sbillinge}",
+            'would make a todo for sbillinge, due 2026-09-14: "Send Pei the data"',
+        ),
+        # C2: somebody with no todos, expect it to say so and how to fix it
+        (
+            [],
+            "Send Pei the data {nobody}",
+            "Check the id in the braces, or add nobody to the todos in mc.",
+        ),
+    ],
+)
+def test_a_todo_that_cannot_be_made_is_not(args, task_text, expected_said, mc_repo, capsys):
+    tmp_path, mcdir = mc_repo
+    ask_for_a_todo(tmp_path, mcdir, task_text)
+    main(["helper", "u-mcsync", *args])
+    assert expected_said in capsys.readouterr().out
+    assert "todos" not in load_yaml(tmp_path / "db" / "todos.yaml")["sbillinge"]
+    assert "todos" not in stored(mc_repo, "mc_tasks", "mct001")
 
 
 @pytest.mark.parametrize(

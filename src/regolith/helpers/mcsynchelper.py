@@ -11,16 +11,19 @@ skipped whole rather than half applied.
 """
 
 import datetime as dt
+from collections import Counter
 from pathlib import Path
 
 from gooey import GooeyParser
 
 from regolith.builders.missioncontrolbuilder import MissionControlBuilder, kept_copies, live, mark_read
+from regolith.helpers.a_todohelper import add_todo
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.mc import (
     KEEP_FINISHED_DAYS,
     UNASSIGNED,
     DocumentError,
+    as_a_date,
     changes,
     document_name,
     in_the_group,
@@ -29,16 +32,22 @@ from regolith.mc import (
     period_of,
     project_prefix,
     retired,
+    todos_asked,
     unassigned,
 )
 from regolith.schemas import SCHEMAS, validate
-from regolith.tools import all_docs_from_collection
+from regolith.tools import all_docs_from_collection, get_uuid
 
 HELPER_TARGET = "u-mcsync"
 COLLECTIONS = ("mc_projects", "mc_goals", "mc_tasks")
 # a document that has lost more than this share of what it held is more
 # likely to be damaged than edited
 DROP_SHARE = 1 / 3
+# what a todo made from a task in a document is given.  It is due a week
+# after the week the task is under
+TODO_DAYS = 7
+TODO_DURATION = 30.0
+TODO_IMPORTANCE = 2
 
 
 def subparser(subpi):
@@ -56,7 +65,11 @@ def subparser(subpi):
         action="store_true",
         help="Say what would be written without writing it.",
     )
-    subpi.add_argument("--database", help="The database to write to.")
+    subpi.add_argument(
+        "--database",
+        help="The database a todo asked for in a task is written to, and a record goes to when "
+        "no database holds its collection. Defaults to the first database in regolithrc.json.",
+    )
     return subpi
 
 
@@ -64,7 +77,7 @@ class MCSyncHelper(DbHelperBase):
     """Read every mission control document back into the collections."""
 
     btype = HELPER_TARGET
-    needed_colls = list(COLLECTIONS) + ["people"]
+    needed_colls = list(COLLECTIONS) + ["people", "todos"]
 
     def construct_global_ctx(self):
         """Constructs the global context."""
@@ -366,6 +379,7 @@ class MCSyncHelper(DbHelperBase):
             print("Check the document, or run this again with --force to apply it anyway.")
             return
 
+        todos = self.todos_to_make(path, lead, writes["mc_tasks"])
         for collection, records in writes.items():
             for record in records:
                 valid, why = validate(collection, record, SCHEMAS)
@@ -378,7 +392,11 @@ class MCSyncHelper(DbHelperBase):
         )
         if rc.dry_run:
             self.report(path, writes, drops, wrote=False, new=new)
+            self.report_todos(path, todos, made=False)
             return
+        for person_id, todo in todos:
+            person_doc = rc.client.find_one(rc.database, "todos", {"_id": person_id})
+            add_todo(rc.client, rc.database, person_doc, todo)
         for collection, records in writes.items():
             for record in records:
                 where = self.where_stored(collection, record["_id"]) or self.first_source(collection)
@@ -390,6 +408,91 @@ class MCSyncHelper(DbHelperBase):
         # read in full, so a build may write over it as it stands
         mark_read(self.build_dir(), path.name, text)
         self.report(path, writes, drops, wrote=True, new=new)
+        self.report_todos(path, todos, made=True)
+
+    def todos_to_make(self, path, lead, tasks):
+        """Return the todos the tasks of a document ask for.
+
+        Somebody named in braces in a task, ``{sbillinge}``, is given the
+        sentence before the braces as a todo, assigned by whoever's
+        document it is and due a week after the week the task is under.
+        A task records the todos it has made, so however often it is
+        read, somebody named in it once is given one todo, and somebody
+        named twice is given two.  The task is changed here for that.
+
+        Parameters
+        ----------
+        path : pathlib.Path
+            The document that was read.
+        lead : str or None
+            The id of the person whose document it is.  None for the
+            unassigned document, which is nobody's to assign from.
+        tasks : list of dict
+            The tasks the document says to write.
+
+        Returns
+        -------
+        list of tuple of (str, dict)
+            The id of each person to be given a todo, with the todo.
+        """
+        rc = self.rc
+        todos = []
+        for task in tasks:
+            named = Counter()
+            for person_id, said in todos_asked(task["text"]):
+                # the second time a task names somebody asks for a second
+                # todo.  Counting, rather than matching the words, means a
+                # task reworded does not ask again
+                named[person_id] += 1
+                made = [todo for todo in task.get("todos", ()) if todo.get("assigned_to") == person_id]
+                if len(made) >= named[person_id]:
+                    continue
+                if lead is None:
+                    print(
+                        f'{path.name}: "{said}" names {person_id}, but {path.name} is nobody\'s document, '
+                        f"so there is nobody to assign it and no todo was made."
+                    )
+                    print("Move the task into the document of whoever is asking, then sync again.")
+                    continue
+                if not rc.client.find_one(rc.database, "todos", {"_id": person_id}):
+                    print(
+                        f'{path.name}: "{said}" names {person_id}, who has no todos in {rc.database}, '
+                        f"so no todo was made."
+                    )
+                    print(f"Check the id in the braces, or add {person_id} to the todos in {rc.database}.")
+                    continue
+                due = as_a_date(task["due_date"])
+                todo = {
+                    "description": said,
+                    "uuid": get_uuid(),
+                    "due_date": due + dt.timedelta(days=TODO_DAYS),
+                    "begin_date": dt.date.today(),
+                    "deadline": False,
+                    "duration": TODO_DURATION,
+                    "importance": TODO_IMPORTANCE,
+                    "status": "started",
+                    "assigned_by": lead,
+                }
+                task.setdefault("todos", []).append({"assigned_to": person_id, "uuid": todo["uuid"]})
+                todos.append((person_id, todo))
+        return todos
+
+    @staticmethod
+    def report_todos(path, todos, made):
+        """Say which todos were made, and for whom.
+
+        Parameters
+        ----------
+        path : pathlib.Path
+            The document that was read.
+        todos : list of tuple of (str, dict)
+            The id of each person given a todo, with the todo.
+        made : bool
+            Whether they were actually made.
+        """
+        did = "made" if made else "would make"
+        for person_id, todo in todos:
+            print(f'{path.name}: {did} a todo for {person_id}, due {todo["due_date"]}: "{todo["description"]}"')
 
     def build_dir(self):
         """Return the build directory of the mission control builder,

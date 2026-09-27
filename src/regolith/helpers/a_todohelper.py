@@ -15,6 +15,41 @@ TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]
 
 
+def add_todo(client, database, person, todo):
+    """Add a todo to the end of somebody's list and store it.
+
+    The todo is numbered after the last of theirs, so it can be picked
+    out by its number as the rest are.
+
+    Parameters
+    ----------
+    client : regolith client
+        The client to store it with.
+    database : str
+        The name of the database their todos are stored in.
+    person : dict
+        Their document in the todos collection.  The todo is added to it,
+        as well as stored.
+    todo : dict
+        The todo, without a number.
+    """
+    todolist = person.setdefault("todos", [])
+    # Whether the stored document already has a list to append to decides
+    # how the new task can be written, below
+    had_todos = len(todolist) > 0
+    todo["running_index"] = max([task.get("running_index", 0) for task in todolist] + [0]) + 1
+    todolist.append(todo)
+    # Append by setting the one new position, so the tasks already stored
+    # are not sent back with it.  A document with no todos yet has no list
+    # for that to append to, and setting a numbered field on it would
+    # store a mapping rather than a list, so that case writes the list.
+    appended = False
+    if had_todos:
+        appended = client.update_field(database, TARGET_COLL, person["_id"], f"todos.{len(todolist) - 1}", todo)
+    if not appended:
+        client.update_one(database, TARGET_COLL, {"_id": person["_id"]}, {"todos": todolist}, upsert=True)
+
+
 def subparser(subpi):
     date_kwargs = {}
     int_kwargs = {}
@@ -179,30 +214,24 @@ class TodoAdderHelper(DbHelperBase):
         else:
             importance = int(rc.importance)
 
-        todolist = person.get("todos", [])
-        # Whether the stored document already has a list to append to decides
-        # how the new task can be written, below
-        had_todos = len(todolist) > 0
         if not rc.deadline:
             rc.deadline = False
         todo_uuid = get_uuid()
-        todolist.append(
-            {
-                "description": rc.description,
-                "uuid": todo_uuid,
-                "due_date": due_date,
-                "begin_date": begin_date,
-                "deadline": rc.deadline,
-                "duration": float(rc.duration),
-                "importance": importance,
-                "status": "started",
-                "assigned_by": rc.assigned_by,
-            }
-        )
+        todo = {
+            "description": rc.description,
+            "uuid": todo_uuid,
+            "due_date": due_date,
+            "begin_date": begin_date,
+            "deadline": rc.deadline,
+            "duration": float(rc.duration),
+            "importance": importance,
+            "status": "started",
+            "assigned_by": rc.assigned_by,
+        }
         if rc.notes:
-            todolist[-1]["notes"] = rc.notes
+            todo["notes"] = rc.notes
         if rc.tags:
-            todolist[-1]["tags"] = rc.tags
+            todo["tags"] = rc.tags
         if rc.milestone_uuid:
             # get the prum that contains the milestone that has the uuid rc.milestone_uuid
             projecta = sorted(all_docs_from_collection(rc.client, rc.col2), key=_id_key)
@@ -238,19 +267,7 @@ class TodoAdderHelper(DbHelperBase):
                     "updated in projecta."
                 )
             rc.client.update_one(rc.database, "projecta", {"_id": target_prum.get("_id")}, target_prum)
-        indices = [todo.get("running_index", 0) for todo in todolist]
-        todolist[-1]["running_index"] = max(indices) + 1
-        # Append by setting the one new position, so the tasks already stored
-        # are not sent back with it.  A document with no todos yet has no list
-        # for that to append to, and setting a numbered field on it would
-        # store a mapping rather than a list, so that case writes the list.
-        appended = False
-        if had_todos:
-            appended = rc.client.update_field(
-                rc.database, rc.coll, rc.assigned_to, f"todos.{len(todolist) - 1}", todolist[-1]
-            )
-        if not appended:
-            rc.client.update_one(rc.database, rc.coll, {"_id": rc.assigned_to}, {"todos": todolist}, upsert=True)
+        add_todo(rc.client, rc.database, person, todo)
         print(f'The task "{rc.description}" for {rc.assigned_to} has been added in {TARGET_COLL} collection.')
 
         return
