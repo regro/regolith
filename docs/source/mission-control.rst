@@ -139,6 +139,14 @@ You type:
 - **A deletion.** Take a line out and its record is marked ``dropped``. Nothing
   is ever deleted from the database, so an accident costs nothing that the
   next build cannot put back.
+- **A todo for somebody.** Write a person's id in braces after a sentence in a
+  task, ``Send Pei the fits {sbillinge}.``, and the next sync gives them that
+  sentence as a todo: assigned by whoever's document it is, due a week after
+  the week the task is under, importance 2 and 30 minutes long. It goes to the
+  first database in the run control, or to ``--database``. Each time a task
+  names somebody is one todo, however often it is read, so rewording the task
+  does not make another. A task in ``unassigned.md`` makes none, since there is
+  nobody to assign it.
 
 Regolith types:
 

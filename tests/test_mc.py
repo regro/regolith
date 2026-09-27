@@ -17,6 +17,7 @@ from regolith.mc import (
     project_id,
     short_id,
     struck,
+    todos_asked,
     would_lose,
     wrap,
 )
@@ -37,6 +38,32 @@ from regolith.mc import (
 )
 def test_struck_marks_only_what_is_finished(text, status, expected):
     assert struck(text, status) == expected
+
+
+@pytest.mark.parametrize(
+    "text, expected_asked",
+    [
+        # Test who a task asks to be given a todo, and what they are given
+        # C1: a person in braces after the second sentence, expect that sentence
+        (
+            "Re-run the fits. Ask for the new background {sbillinge}",
+            [("sbillinge", "Ask for the new background")],
+        ),
+        # C2: the braces after the sentence's full stop, expect the stop kept
+        ("Ask for the data. {sbillinge}", [("sbillinge", "Ask for the data.")]),
+        # C3: two people, each after a sentence of their own, expect each given theirs
+        (
+            "Get the data {sbillinge}. Send Pei the plot {pliu}.",
+            [("sbillinge", "Get the data"), ("pliu", "Send Pei the plot")],
+        ),
+        # C4: nothing before the braces, expect the whole task
+        ("{sbillinge} send the plot", [("sbillinge", "send the plot")]),
+        # C5: nobody in braces, expect nobody asked
+        ("Re-run the fits", []),
+    ],
+)
+def test_a_person_in_braces_is_asked_for_the_sentence_before(text, expected_asked):
+    assert todos_asked(text) == expected_asked
 
 
 def test_short_id_is_short_and_readable():
