@@ -2296,10 +2296,16 @@ def print_task(task_list, stati, index=True):
     index : bool Optional  Default is True
       The bool that can suppress printing the preamble of importance, days to due and index
     """
+    # List deadline tasks only under Deadlines, not in their status groups too
+    deadline_list = []
+    if stati != ["finished"]:
+        deadline_list = [task for task in task_list if task.get("deadline") and task.get("status") in stati]
+        deadline_list.sort(key=lambda x: x.get("due_date"), reverse=True)
+    other_tasks = [task for task in task_list if task not in deadline_list]
     for status in stati:
-        if f"'status': '{status}'" in str(task_list):
+        if any(task.get("status") == status for task in other_tasks):
             print(f"{status}:")
-        for task in task_list:
+        for task in other_tasks:
             if index and task.get("status") != "finished":
                 task["preamble"] = (
                     f"({task.get('importance')})({task.get('days_to_due')} days): "
@@ -2325,8 +2331,6 @@ def print_task(task_list, stati, index=True):
         print("(importance)(days to due): (Task number) Task (decreasing priority going up)")
     print("-" * 76)
     if stati != ["finished"]:
-        deadline_list = [task for task in task_list if task.get("deadline") and task.get("status") in stati]
-        deadline_list.sort(key=lambda x: x.get("due_date"), reverse=True)
         for task in deadline_list:
             print(
                 f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index', 0)}) "
