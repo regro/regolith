@@ -9,6 +9,7 @@ import pytest
 
 from regolith.database import connect
 from regolith.fsclient import dump_yaml, load_yaml
+from regolith.helpers.mcsynchelper import brief
 from regolith.main import main
 from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
 
@@ -359,6 +360,28 @@ def test_a_copied_line_is_settled_or_refused(copied_line, expected_said, expecte
         assert goals["a new goal copied from it"] != "mcg001"
 
 
+@pytest.mark.parametrize(
+    "text, expected_brief",
+    [
+        # C1: a line longer than the width, expect it cut at the last space before the width and ended with ...
+        (
+            "have the app save the name/email in a config files in ~ so the respondent only has to enter that",
+            "have the app save the name/email in a...",
+        ),
+        # C2: a line within the width, expect it whole
+        ("a task", "a task"),
+        # C3: a line exactly the width, expect it whole
+        ("x" * 40, "x" * 40),
+        # C4: a line with no space before the width, expect it cut at the width
+        ("x" * 50, "x" * 40 + "..."),
+    ],
+)
+def test_brief_quotes_the_start_of_a_line(text, expected_brief):
+    # Test the quote the sync names a line by.  Expect a long line cut at a
+    # word and a short one left alone
+    assert brief(text) == expected_brief
+
+
 def test_a_task_copied_into_the_coming_week_is_rolled(mc_repo, capsys):
     # Test the roll somebody does by hand: copy the task's line into the coming
     # week and leave the old one, id and all.  Expect the task to move to the
@@ -373,7 +396,7 @@ def test_a_task_copied_into_the_coming_week_is_rolled(mc_repo, capsys):
 
     main(["helper", "u-mcsync"])
     said = capsys.readouterr().out
-    assert "rolled to 2026-09-14" in said
+    assert 'pei.md: "a task" rolled' in said
     assert "Take ^mct001 off" not in said
     tasks = load_yaml(repo / "db" / "mc_tasks.yaml")
     assert list(tasks) == ["mct001"]

@@ -48,6 +48,30 @@ DROP_SHARE = 1 / 3
 TODO_DAYS = 7
 TODO_DURATION = 30.0
 TODO_IMPORTANCE = 2
+# how much of a line the sync quotes when naming it
+QUOTED = 40
+
+
+def brief(text, width=QUOTED):
+    """Return the start of a line, enough to know it by.
+
+    Parameters
+    ----------
+    text : str
+        The line's words.
+    width : int, optional
+        The most characters to keep. Defaults to ``QUOTED``.
+
+    Returns
+    -------
+    str
+        The text, cut at the last space before ``width`` and ended with
+        ``...`` when it is longer than that.
+    """
+    if len(text) <= width:
+        return text
+    cut = text[:width].rsplit(" ", 1)[0] or text[:width]
+    return f"{cut.rstrip()}..."
 
 
 def subparser(subpi):
@@ -260,11 +284,7 @@ class MCSyncHelper(DbHelperBase):
         for copy in parsed.get("copied", ()):
             kind = copy["collection"].replace("mc_", "")[:-1]
             if copy.get("rolled_to"):
-                print(
-                    f'{path.name}: "{copy["kept"]}" is under the week of {copy["rolled_from"]} and the week '
-                    f"of {copy['rolled_to']} with the id {copy['id']}, so it is rolled to {copy['rolled_to']}. "
-                    f"The next build takes it out of the week it left."
-                )
+                print(f'{path.name}: "{brief(copy["kept"])}" rolled')
                 continue
             if copy["sure"]:
                 print(
