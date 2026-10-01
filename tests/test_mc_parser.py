@@ -256,6 +256,11 @@ def test_a_rolled_goal_in_the_archive_is_not_taken_for_a_copy():
         # is nothing there to indent it under.
         ("- [ ] no number  ^zzz999", "needs a number"),
         ("  - [ ] indented under nothing  ^zzz999", "needs a number"),
+        # C3: a task numbered like a goal, expect a refusal naming the number
+        # and the three-part shape, not a task hung under the project
+        ("- [ ] 1.1  numbered like a goal  ^zzz999", r"the number 1.1 names a goal or a project.*such as 1.1.1"),
+        # C4: a task numbered like a project, expect the same refusal
+        ("- [ ] 1  numbered like a project  ^zzz999", r"the number 1 names a goal or a project.*such as 1.1.1"),
     ],
 )
 def test_a_line_that_cannot_be_placed_says_which(line, expected_message):
