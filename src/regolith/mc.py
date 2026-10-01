@@ -924,7 +924,17 @@ class _Reader:
                     f"line {number}: this task is not under another one, so it needs a "
                     f"number saying which goal it belongs to, such as 1.1.1"
                 )
-            goal_number = ".".join(task_number.split(".")[:-1])
+            parts = task_number.strip(".").split(".")
+            # a number of two parts names a goal, and one part a project:
+            # both are in the same table, so a short number would quietly
+            # hang the task somewhere a build cannot show it
+            if len(parts) < 3:
+                raise DocumentError(
+                    f"line {number}: the number {task_number} names a goal or a project, not a task. "
+                    f"Give the task three parts, such as {'.'.join(parts + ['1'] * (3 - len(parts)))}, "
+                    f"to say which goal it is under"
+                )
+            goal_number = ".".join(parts[:-1])
             if goal_number not in self.by_number:
                 raise DocumentError(f"line {number}: there is no goal {goal_number}")
             task["goal"] = self.by_number[goal_number]
