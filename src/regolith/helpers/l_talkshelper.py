@@ -6,8 +6,6 @@ The presentations a talk has been given at are shown beside it, so that
 the id needed to build one can be found.
 """
 
-from gooey import GooeyParser
-
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.tools import all_docs_from_collection, get_person_contact, strip_str
@@ -17,11 +15,6 @@ HELPER_TARGET = "l-talks"
 
 
 def subparser(subpi):
-    int_kwargs = {}
-    if isinstance(subpi, GooeyParser):
-        int_kwargs["widget"] = "IntegerField"
-        int_kwargs["gooey_options"] = {"min": 1900, "max": 2100}
-
     subpi.add_argument(
         "-t",
         "--talk-id",
@@ -40,11 +33,14 @@ def subparser(subpi):
         help="Filter talks to those given by this person, by id or name.",
         type=strip_str,
     )
+    # a plain field rather than Gooey's IntegerField: a spin control always
+    # holds a number and is always passed, so from the GUI the filter could
+    # never be left off and every talk was filtered against its minimum
     subpi.add_argument(
         "-y",
         "--year",
-        help="Filter talks to those written in this year.",
-        **int_kwargs,
+        type=int,
+        help="Filter talks to those written in this year. Talks of every year are listed without it.",
     )
     subpi.add_argument(
         "--all",
@@ -146,7 +142,7 @@ class TalksListerHelper(SoutHelperBase):
                 or rc.presenter.casefold() in self._presenter_name(talk).casefold()
             ]
         if rc.year:
-            talks = [talk for talk in talks if talk.get("year") == int(rc.year)]
+            talks = [talk for talk in talks if talk.get("year") == rc.year]
 
         if not talks:
             print("No talks were found. Please loosen the filters and try again.")
