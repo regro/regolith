@@ -12,6 +12,7 @@ from regolith.mc import (
     initials,
     logical_lines,
     next_period,
+    normal_period,
     period_key,
     period_of,
     project_id,
@@ -331,6 +332,25 @@ def test_a_period_written_some_other_way_still_sorts():
     # Test that a period from before a group settled its calendar does not
     # bring the ordering down, since documents already carry them
     assert period_key("2026Q3", UCSB) > period_key("2026fall", UCSB)
+
+
+@pytest.mark.parametrize(
+    "written, expected_period",
+    [
+        # Test that a period name is the same period whatever its case, since
+        # a heading typed by hand says 2026Fall as readily as 2026fall
+        # C1: a capitalised name, expect the group's own spelling
+        ("2026Fall", "2026fall"),
+        ("2026SUMMER", "2026summer"),
+        # C2: already spelled the group's way, expect it unchanged
+        ("2026winter", "2026winter"),
+        # C3: a period written some other way, expect it left as it was
+        ("2026Q3", "2026Q3"),
+    ],
+)
+def test_a_period_is_the_same_whatever_its_case(written, expected_period):
+    assert normal_period(written, UCSB) == expected_period
+    assert period_key(written, UCSB) == period_key(expected_period, UCSB)
 
 
 @pytest.mark.parametrize(

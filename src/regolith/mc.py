@@ -171,9 +171,60 @@ def split_period(period, periods=None):
         way.
     """
     for _, _, name in period_starts(periods):
-        if period.endswith(name) and period[: -len(name)]:
+        # the name is read whatever its case, since a heading typed by hand
+        # says 2026Fall as readily as 2026fall and means the same period
+        if period.lower().endswith(name.lower()) and period[: -len(name)]:
             return period[: -len(name)], name
     return None
+
+
+def normal_period(period, periods=None):
+    """Return a period spelled the way the group names it.
+
+    A period name is read whatever its case, but one spelling has to be
+    stored: ``2026Fall`` and ``2026fall`` kept apart would sort as two
+    periods and each be given a section of its own.
+
+    Parameters
+    ----------
+    period : str
+        The period as it was written, e.g. ``2026Fall``.
+    periods : dict, optional
+        The periods as ``{name: "MM-DD"}``.  The default is semesters.
+
+    Returns
+    -------
+    str
+        The period with its name spelled as the group's calendar spells
+        it, e.g. ``2026fall``.  A period written some other way is
+        returned as it was.
+    """
+    split = split_period(period, periods) if isinstance(period, str) else None
+    if split is None:
+        return period
+    year, name = split
+    return f"{year}{name}"
+
+
+def normal_periods(record, periods=None):
+    """Spell the periods a goal holds the way the group names them.
+
+    Parameters
+    ----------
+    record : dict
+        The goal, changed in place.
+    periods : dict, optional
+        The periods as ``{name: "MM-DD"}``.  The default is semesters.
+
+    Returns
+    -------
+    dict
+        The same goal.
+    """
+    for key in ("period", "first_period"):
+        if key in record:
+            record[key] = normal_period(record[key], periods)
+    return record
 
 
 def period_key(period, periods=None):
@@ -1045,7 +1096,7 @@ def adopt(read, existing, claimed, elsewhere=None):
     return {}
 
 
-def changes(parsed, person, existing, today=None, elsewhere=None):
+def changes(parsed, person, existing, today=None, elsewhere=None, periods=None):
     """Return the records a document says to write, and the ids to drop.
 
     Nothing is deleted.  A line somebody removed sets the record's status
@@ -1070,6 +1121,9 @@ def changes(parsed, person, existing, today=None, elsewhere=None):
         Every record of each collection, as ``{collection: {id: record}}``,
         for finding one that is stored and is not this person's.  Without
         it a line naming such a record is read as a new one.
+    periods : dict, optional
+        The periods as ``{name: "MM-DD"}``, which say how a period's
+        name is spelled.  The default is semesters.
 
     Returns
     -------
@@ -1124,6 +1178,7 @@ def changes(parsed, person, existing, today=None, elsewhere=None):
         record["status"] = settled_status(read["status"], was.get("status"))
         # written once, so how long a goal has been carried is knowable
         record.setdefault("first_period", read["period"])
+        normal_periods(record, periods)
         # a goal of no project has no project to say whose it is, so it says
         # so itself: it belongs to whoever's document it was written in
         if unassigned(record):

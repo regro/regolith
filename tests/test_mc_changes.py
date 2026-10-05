@@ -6,6 +6,8 @@ import pytest
 
 from regolith.mc import adopt, changes, settled_status
 
+SEMESTERS = {"spring": "01-01", "summer": "06-01", "fall": "09-01"}
+
 TODAY = dt.date(2026, 9, 20)
 
 
@@ -65,6 +67,33 @@ def existing(projects=(), goals=(), tasks=()):
 )
 def test_a_status_survives_being_read(read_status, existing_status, expected):
     assert settled_status(read_status, existing_status) == expected
+
+
+@pytest.mark.parametrize(
+    "read_period, stored_first_period, expected_period, expected_first_period",
+    [
+        # Test that a period is stored spelled the group's way whatever case it
+        # was typed in, since 2026Fall and 2026fall kept apart would sort as
+        # two periods and each get a section of its own
+        # C1: a heading typed with a capital over a record first set in a
+        # capitalised period, expect both spelled the group's way
+        ("2026Fall", "2026Summer", "2026fall", "2026summer"),
+        # C2: a period written some other way, expect it left as it was
+        ("2026Q4", "2026Q3", "2026Q4", "2026Q3"),
+    ],
+)
+def test_a_period_is_stored_spelled_the_groups_way(
+    read_period, stored_first_period, expected_period, expected_first_period
+):
+    writes, drops = changes(
+        parsed(goals=[read(period=read_period)]),
+        "pliu",
+        existing(goals=[stored(first_period=stored_first_period)]),
+        today=TODAY,
+        periods=SEMESTERS,
+    )
+    assert writes["mc_goals"][0]["period"] == expected_period
+    assert writes["mc_goals"][0]["first_period"] == expected_first_period
 
 
 def test_something_newly_typed_is_written():

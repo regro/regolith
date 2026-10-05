@@ -31,6 +31,7 @@ from regolith.mc import (
     document_name,
     in_the_group,
     led_by,
+    normal_periods,
     parse_document,
     period_key,
     period_of,
@@ -516,6 +517,9 @@ class MissionControlBuilder(BuilderBase):
             with no lead goes to the unassigned document.
         """
         orders = orders or {}
+        # a period typed by hand may differ from a built one only in case, and
+        # kept apart the two would sort as different periods
+        self.gtx["mc_goals"] = [normal_periods(dict(goal), self.periods) for goal in self.gtx["mc_goals"]]
         by_person = self.documents_by_person()
         return {
             person: self.render_person(person, projects, orders.get(person, []))

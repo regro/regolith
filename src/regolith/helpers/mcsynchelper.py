@@ -372,7 +372,13 @@ class MCSyncHelper(DbHelperBase):
         # deleted.  The record is neither written nor dropped: the document
         # says nothing about it either way
         parsed["mentioned"] = list(parsed.get("mentioned", ())) + self.left_out_of_documents(existing)
-        writes, drops = changes(parsed, lead, existing, elsewhere=self.everything())
+        writes, drops = changes(
+            parsed,
+            lead,
+            existing,
+            elsewhere=self.everything(),
+            periods=getattr(rc, "mission_control_periods", None),
+        )
         if not self.copies_are_settled(path, parsed):
             return
         held = sum(len(records) for records in existing.values())

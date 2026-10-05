@@ -127,6 +127,9 @@ def test_a_goal_line_says_how_long_it_has_been_carried(goal, expected_ending):
         ),
         # C4: no goal has a period, expect None
         ([{"_id": "g1"}], None, None),
+        # C5: a period typed with a capital, expect it read as the same period
+        # rather than sorting as a later one
+        ([{"period": "2026Summer"}, {"period": "2026fall"}], None, "2026fall"),
     ],
 )
 def test_the_latest_period_is_the_one_that_came_round_last(goals, periods, expected_latest):
