@@ -1242,6 +1242,16 @@ helper_map = [
         "No talks were found. Please loosen the filters and try again.\n",
     ),
     (
+        # A filter on the year the talk was written, expect the talk
+        ["helper", "l_talks", "--year", "2024"],
+        "30-graphite-rock - (18sb_nslsii)\n",
+    ),
+    (
+        # A filter on a year no talk was written in, expect the message
+        ["helper", "l_talks", "--year", "1900"],
+        "No talks were found. Please loosen the filters and try again.\n",
+    ),
+    (
         # The verbose form, expect the presenter, the description and how the talk is built
         ["helper", "l_talks", "--verbose"],
         "30-graphite-rock - (18sb_nslsii)\n"
