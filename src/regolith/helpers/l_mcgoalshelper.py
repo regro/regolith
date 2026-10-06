@@ -8,7 +8,7 @@ somebody agreed to get done this period and how far along it is.
 from gooey import GooeyParser
 
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.mc import CLOSED, HELD, period_key, unassigned
+from regolith.mc import CLOSED, HELD, normal_period, normal_periods, period_key, unassigned
 from regolith.tools import all_docs_from_collection, key_value_pair_filter
 
 TARGET_COLL = "mc_goals"
@@ -53,7 +53,11 @@ class MCGoalsListerHelper(SoutHelperBase):
         super().construct_global_ctx()
         rc = self.rc
         rc.coll = f"{TARGET_COLL}"
-        self.gtx[rc.coll] = list(all_docs_from_collection(rc.client, rc.coll))
+        periods = getattr(rc, "mission_control_periods", None)
+        # a period typed by hand may differ from a built one only in case
+        self.gtx[rc.coll] = [
+            normal_periods(dict(goal), periods) for goal in all_docs_from_collection(rc.client, rc.coll)
+        ]
         self.gtx["mc_projects"] = list(all_docs_from_collection(rc.client, "mc_projects"))
 
     def sout(self):
@@ -78,8 +82,9 @@ class MCGoalsListerHelper(SoutHelperBase):
             goals = [g for g in goals if g.get("status") not in CLOSED + HELD]
         if rc.carried:
             goals = [g for g in goals if g.get("first_period") != g.get("period")]
-        period = rc.period or (
-            None if rc.all else self.latest(goals, getattr(rc, "mission_control_periods", None))
+        periods = getattr(rc, "mission_control_periods", None)
+        period = (
+            normal_period(rc.period, periods) if rc.period else (None if rc.all else self.latest(goals, periods))
         )
         if period:
             goals = [g for g in goals if g.get("period") == period]

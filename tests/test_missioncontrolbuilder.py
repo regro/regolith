@@ -215,6 +215,26 @@ def test_a_carried_goal_says_so_in_both_periods(expected_line, documents):
     assert expected_line in documents["pliu"]
 
 
+def test_a_period_typed_in_another_case_is_the_same_period():
+    # Test a goal stored under a period typed by hand, 2026Summer, beside one
+    # the build wrote as 2026summer.  Expect one summer section in the archive
+    # holding both, and the fall goal under the current heading, rather than
+    # the capitalised spelling sorting as a later period and taking over
+    typed = dict(GOALS[4], _id="g-typed", period="2026Summer", first_period="2026Summer", text="Typed by hand")
+    built = dict(
+        GOALS[4], _id="g-built", period="2026summer", first_period="2026summer", text="Written by a build"
+    )
+    this_period = dict(GOALS[1], period="2026fall", first_period="2026fall")
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": [typed, built, this_period], "mc_tasks": []}
+    document = "\n".join(builder.documents()["pliu"])
+    assert "## Goals — 2026fall" in document
+    assert "2026Summer" not in document
+    assert document.count("### Goals — 2026summer") == 1
+    assert "~~Typed by hand~~" in document
+    assert "~~Written by a build~~" in document
+
+
 @pytest.mark.parametrize(
     "expected_line",
     [
