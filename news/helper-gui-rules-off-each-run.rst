@@ -1,6 +1,6 @@
 **Added:**
 
-* ``helper-gui`` starts each run's output with a line of dashes naming the helper, so one run's output can be told from the next in the console. The command line is unchanged
+* ``helper-gui`` starts each run's output with the helper's name between dashes, so one run's output can be told from the next in the console. The command line is unchanged
 
 **Changed:**
 

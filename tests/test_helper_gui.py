@@ -61,8 +61,9 @@ def test_the_old_helper_gui_name_still_runs():
         # Test the line that sets one run's output off from the last in the
         # GUI console, which Gooey marks by setting GOOEY for the program it
         # runs
-        # C1: run from the GUI, expect a line of dashes naming the helper
-        ({"GOOEY": "1"}, "---- l-talks -----------------------------------------------------------"),
+        # C1: run from the GUI, expect the helper's name between short runs of
+        # dashes, short so the line never wraps in a narrow window
+        ({"GOOEY": "1"}, "----- l-talks -----"),
         # C2: run from the command line, expect no line, so the tests and the
         # terminal see what they always saw
         ({}, None),

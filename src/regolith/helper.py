@@ -190,8 +190,10 @@ def helpr(btype, rc):
     return HELPERS[btype][0](rc)
 
 
-# how wide the line setting one run's output off from the last is drawn
-RULE_WIDTH = 72
+# how many dashes go either side of the helper's name in the line setting
+# one run's output off from the last.  Short, so it never wraps in a
+# narrow window
+RULE_DASHES = 5
 
 
 def gui_rule(target, environ=None):
@@ -213,9 +215,10 @@ def gui_rule(target, environ=None):
     Returns
     -------
     str or None
-        A line of dashes naming the helper, or None away from the GUI.
+        The helper's name between dashes, or None away from the GUI.
     """
     environ = os.environ if environ is None else environ
     if environ.get("GOOEY") != "1":
         return None
-    return f"---- {target} ".ljust(RULE_WIDTH, "-")
+    dashes = "-" * RULE_DASHES
+    return f"{dashes} {target} {dashes}"
