@@ -6,7 +6,7 @@ from gooey import Gooey, GooeyParser
 from regolith import commands
 from regolith.commands import CONNECTED_COMMANDS
 from regolith.database import connect
-from regolith.helper import HELPERS
+from regolith.helper import HELPERS, gui_rule
 from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
 from regolith.schemas import SCHEMAS
 from regolith.tools import update_schemas
@@ -42,6 +42,11 @@ def main(args=None):
     parser = create_parser()
     ns = parser.parse_args()
     ns.cmd = "helper"
+    # Gooey shows every run in one console, so each run's output starts
+    # with a line saying where it begins and which helper it is from
+    rule = gui_rule(ns.helper_target)
+    if rule:
+        print(rule, flush=True)
     if os.path.exists(rc.user_config):
         rc._update(load_rcfile(rc.user_config))
     rc._update(load_rcfile("regolithrc.json"))

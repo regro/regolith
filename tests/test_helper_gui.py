@@ -12,7 +12,7 @@ import tomllib
 
 import pytest
 
-from regolith.helper import HELPERS
+from regolith.helper import HELPERS, gui_rule
 
 
 def parser_for(target):
@@ -53,6 +53,26 @@ def test_the_old_helper_gui_name_still_runs():
     old = (root / "scripts" / "helper_gui").read_text()
     assert "helper-gui" in old
     assert "from regolith.helper_gui_main import main" in old
+
+
+@pytest.mark.parametrize(
+    "environ, expected_rule",
+    [
+        # Test the line that sets one run's output off from the last in the
+        # GUI console, which Gooey marks by setting GOOEY for the program it
+        # runs
+        # C1: run from the GUI, expect the helper's name between short runs of
+        # dashes, short so the line never wraps in a narrow window
+        ({"GOOEY": "1"}, "----- l-talks -----"),
+        # C2: run from the command line, expect no line, so the tests and the
+        # terminal see what they always saw
+        ({}, None),
+        # C3: GOOEY set to something else, expect no line
+        ({"GOOEY": "0"}, None),
+    ],
+)
+def test_a_gui_run_starts_with_a_rule(environ, expected_rule):
+    assert gui_rule("l-talks", environ) == expected_rule
 
 
 def test_the_targets_are_listed_in_the_order_they_are_read_in():
