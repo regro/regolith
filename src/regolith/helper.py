@@ -1,5 +1,7 @@
 """Generic helper."""
 
+import os
+
 from regolith.lazy import LazyRegistry
 
 # The import path of each helper and its subparser rather than the objects
@@ -186,3 +188,34 @@ FAST_UPDATER_WHITELIST = ["u-milestone", "f-prum"]
 def helpr(btype, rc):
     """Returns helper of the appropriate type."""
     return HELPERS[btype][0](rc)
+
+
+# how wide the line setting one run's output off from the last is drawn
+RULE_WIDTH = 72
+
+
+def gui_rule(target, environ=None):
+    """Return the line that sets one run's output off from the last.
+
+    The helper GUI keeps every run's output in one console, where it is
+    hard to see where one ends and the next begins.  Gooey sets GOOEY
+    in the environment of the program it runs, so the line is drawn
+    only there: the command line gets a fresh prompt instead, and the
+    tests see what they always saw.
+
+    Parameters
+    ----------
+    target : str
+        The helper being run, e.g. ``l-talks``.
+    environ : mapping, optional
+        The environment to look in.  The default is the process's own.
+
+    Returns
+    -------
+    str or None
+        A line of dashes naming the helper, or None away from the GUI.
+    """
+    environ = os.environ if environ is None else environ
+    if environ.get("GOOEY") != "1":
+        return None
+    return f"---- {target} ".ljust(RULE_WIDTH, "-")
