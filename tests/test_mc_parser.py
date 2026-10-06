@@ -277,6 +277,51 @@ def test_prose_around_the_lines_is_left_alone():
 
 
 @pytest.mark.parametrize(
+    "line, expected_text, expected_status",
+    [
+        # Test the notes a render writes at the end of a goal line, which say
+        # what became of the goal and are not part of its words
+        # C1: one note, expect the words and the id read without it
+        ("- 1.1  get clean PDFs  ^g1  (carried since 2026Q2)", "get clean PDFs", "active"),
+        # C2: two notes, as a render writes for a goal carried from an earlier
+        # period and finished in this one, expect both left out and the id
+        # still read, rather than the first note and the id becoming the words
+        (
+            "- 1.1  ~~get clean PDFs~~  ^g1  (carried since 2026Q2)  (finished 2026-09-12)",
+            "get clean PDFs",
+            "finished",
+        ),
+        # C3: a parenthesis somebody typed, expect it kept as part of the words
+        ("- 1.1  get clean PDFs (by Friday)  ^g1", "get clean PDFs (by Friday)", "active"),
+    ],
+)
+def test_the_notes_at_the_end_of_a_goal_are_not_its_words(line, expected_text, expected_status):
+    text = "## Projects\n\n1. **p**  ^p1\n\n## Goals — 2026Q3\n\n" + line
+    goal = parse_document(text)["goals"][0]
+    assert goal["_id"] == "g1"
+    assert goal["text"] == expected_text
+    assert goal["status"] == expected_status
+
+
+def test_a_goal_carried_and_then_finished_reads_back_as_itself():
+    # Test the round trip of a goal that was carried from an earlier period and
+    # finished in this one, which a render writes with two notes.  Expect it
+    # read back under its own id, rather than as a new goal whose words hold
+    # the first note
+    carried_and_finished = dict(GOALS[0], status="finished", end_date="2026-09-12")
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": [carried_and_finished], "mc_tasks": []}
+    document = "\n".join(builder.documents()["pliu"])
+    # the build wraps a long line, so the notes are looked for one at a time
+    assert "carried since 2026Q2" in document
+    assert "(finished 2026-09-12)" in document
+    read = parse_document(document)["goals"]
+    assert [g["_id"] for g in read] == [GOALS[0]["_id"]]
+    assert read[0]["text"] == GOALS[0]["text"]
+    assert read[0]["status"] == "finished"
+
+
+@pytest.mark.parametrize(
     "projects, goals, tasks",
     [
         # Test that what is rendered can be read back as what was rendered,

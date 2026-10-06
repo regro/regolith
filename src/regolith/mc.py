@@ -448,12 +448,14 @@ DESCRIPTION_LINE = re.compile(r"^\s+description:\s*(?P<text>.*?)\s*$")
 PROSE_LINE = re.compile(r"^\s+(?P<text>\S.*?)\s*$")
 # A goal may be indented, to put it under the goal above, and may carry a box,
 # since somebody writing a list of things to do writes boxes beside them.  The
-# note at the end is only read as one when it says what a render writes there;
-# any other parenthesis is what somebody typed and stays in the text.
+# notes at the end are only read as notes when they say what a render writes
+# there; any other parenthesis is what somebody typed and stays in the text.
+# A render can write more than one: a goal carried from an earlier period and
+# finished in this one says both.
 GOAL_LINE = re.compile(
     r"^(?P<indent>\s*)-\s+(?:\[(?P<box>[ xX])\]\s+)?(?P<number>\d+(?:\.\d+)*\.?)?\s*"
     r"(?P<text>.*?)\s*(?:\^(?P<id>[\w.-]+))?"
-    r"\s*(?:\((?P<note>(?:carried since|finished|dropped|→ rolled to)[^)]*)\))?\s*$"
+    r"(?P<notes>(?:\s*\((?:carried since|finished|dropped|→ rolled to)[^)]*\))*)\s*$"
 )
 TASK_LINE = re.compile(
     r"^(?P<indent>\s*)-\s+\[(?P<box>[ xX])\]\s+(?P<number>[\d.]+)?\s*"
