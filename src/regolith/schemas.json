@@ -1475,6 +1475,11 @@
             "required": false,
             "type": "string"
         },
+        "lead": {
+            "description": "The id of the person whose task it is, for a task on deck that is not of any goal yet. A task of a goal belongs to whoever the goal belongs to, and does not carry this.",
+            "required": false,
+            "type": "string"
+        },
         "due_date": {
             "description": "When the task is due.  Moving this is how a task rolls forward, and it decides which week the task is rendered under.",
             "required": true,

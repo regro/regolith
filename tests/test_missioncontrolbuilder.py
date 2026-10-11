@@ -50,7 +50,7 @@ GOALS = [
         "period": "2026Q3",
         "first_period": "2026Q3",
         "text": "Port the solver to GPU",
-        "status": "on-deck",
+        "status": "wishlist",
     },
     {
         "_id": "g-tutorial",
@@ -158,11 +158,9 @@ def test_a_project_with_no_lead_goes_to_the_unassigned_document(documents):
         # under, so the document follows the meeting
         # C1: an open goal in the current period, expect the goals section
         ("## Goals — 2026Q3", "Get the fits converging"),
-        # C2: a goal held back, expect the on-deck section: active work that
-        # is not being done this week
-        ("## On-deck", "Port the solver to GPU"),
-        # C3: a goal not being worked on, expect the wishlist
-        ("## Wishlist", "A tutorial notebook"),
+        # C2: a goal held back, expect the wishlist
+        ("## Wishlist goals", "Port the solver to GPU"),
+        ("## Wishlist goals", "A tutorial notebook"),
         # C4: a goal from a past period, expect the archive
         ("### Goals — 2026Q2", "Reproduce the 2019 result"),
     ],
@@ -191,7 +189,7 @@ def test_a_held_goal_carries_its_breakdown():
         "people": [],
     }
     document = "\n".join(builder.documents()["pliu"])
-    wishlist = document.split("## Wishlist")[1]
+    wishlist = document.split("## Wishlist goals")[1]
     assert "- 1.1  Relaunch with these  ^g-wish" in wishlist
     assert "  - [ ] XANESCalculator  ^g-one" in wishlist
     assert "  - [x] ~~LJCalculator~~  ^g-two" in wishlist
@@ -706,8 +704,8 @@ def test_every_section_is_written_even_with_nothing_in_it():
         "## Projects",
         "## Goals — ",
         f"## Week of {monday}",
-        "## On-deck",
-        "## Wishlist",
+        "## On-deck tasks",
+        "## Wishlist goals",
         "## Archive",
     ]:
         assert heading in document
@@ -784,7 +782,7 @@ def test_a_build_leaves_a_document_that_holds_work_of_its_own(tmp_path, capsys):
     builder = render_into(tmp_path, BUILDABLE)
     builder.render()
     path = builder.mcdir / "pei.md"
-    typed = path.read_text().replace("## On-deck", "ask about the beamtime\n\n## On-deck")
+    typed = path.read_text().replace("## On-deck tasks", "ask about the beamtime\n\n## On-deck tasks")
     path.write_text(typed)
 
     builder.render()
@@ -927,6 +925,15 @@ IDEA = {
     "period": "2026fall",
     "first_period": "2026fall",
     "text": "write the OpEd about instrument access",
+    "status": "wishlist",
+}
+
+ON_DECK = {
+    "_id": "t-deck",
+    "goal": "g-converge",
+    "due_date": "2026-09-04",
+    "first_due_date": "2026-09-04",
+    "text": "Try the other background model",
     "status": "on-deck",
 }
 
@@ -944,9 +951,43 @@ def test_a_held_thing_of_no_project_is_written_without_a_number():
     }
     document = "\n".join(builder.documents()["pliu"])
     assert "- write the OpEd about instrument access  ^g-idea" in document
-    # and it is under the holding heading, not among the goals of the period
-    on_deck = document.split("## On-deck")[1]
-    assert "^g-idea" in on_deck.split("## Wishlist")[0]
+    assert "^g-idea" in document.split("## Wishlist goals")[1].split("## Archive")[0]
+
+
+@pytest.mark.parametrize(
+    "task, expected_line",
+    [
+        # Test where a task on deck is written: under its own heading, out of
+        # the weeks, numbered against its goal while the goal is of the period
+        # C1: a task of a goal of the period, expect it numbered as in a week
+        (ON_DECK, "- [ ] 1.1.1  Try the other background model  ^t-deck"),
+        # C2: a task of no goal yet, expect it written without a number
+        (dict(ON_DECK, goal="tbd", lead="pliu"), "- [ ] Try the other background model  ^t-deck"),
+        # C3: a task of a goal that is finished, which a week would not show,
+        # expect it still on deck rather than lost with the goal
+        (dict(ON_DECK, goal="g-repro"), "Try the other background model  ^t-deck"),
+    ],
+)
+def test_a_task_on_deck_is_written_under_its_own_heading(task, expected_line):
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": GOALS, "mc_tasks": TASKS + [task], "people": []}
+    document = "\n".join(builder.documents()["pliu"])
+    on_deck = document.split("## On-deck tasks")[1].split("## Wishlist goals")[0]
+    assert expected_line in on_deck
+    assert "^t-deck" not in document.split("## On-deck tasks")[0]
+
+
+def test_a_piece_of_a_task_on_deck_goes_with_it():
+    # Test a task pasted down with a piece under it, which the piece may have
+    # ticked off.  Expect the piece under the task on deck, not in the week
+    # its due date falls in
+    piece = dict(ON_DECK, _id="t-piece", parent="t-deck", text="Check the Qmax", status="finished")
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": GOALS, "mc_tasks": TASKS + [ON_DECK, piece], "people": []}
+    document = "\n".join(builder.documents()["pliu"])
+    on_deck = document.split("## On-deck tasks")[1].split("## Wishlist goals")[0]
+    assert "  - [x] ~~Check the Qmax~~  ^t-piece" in on_deck
+    assert "^t-piece" not in document.split("## On-deck tasks")[0]
 
 
 def test_a_held_thing_goes_to_the_document_of_whoever_wrote_it():

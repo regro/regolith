@@ -385,9 +385,9 @@ BUILT = """# Mission control — Simon Billinge
 
 - [ ] 1.1.1  a stored task  ^t1
 
-## On-deck
+## On-deck tasks
 
-## Wishlist
+## Wishlist goals
 
 ## Archive
 """
@@ -415,7 +415,7 @@ BUILT = """# Mission control — Simon Billinge
         # C4: a note left in the margin, which no section holds and so no
         # sync can store.  This is the one that cost Simon a morning's work
         (
-            BUILT.replace("## On-deck", "remember to ask about the beamtime\n\n## On-deck"),
+            BUILT.replace("## On-deck tasks", "remember to ask about the beamtime\n\n## On-deck tasks"),
             ["remember to ask about the beamtime"],
         ),
         # C5: a line whose number and id changed but whose text did not, which
