@@ -67,15 +67,14 @@ class CVBuilder(LatexBuilderBase):
                 reverse=True,
             )
             bibfile = make_bibtex_file(pubs, pid=person["_id"], person_dir=self.bldir)
-            emps = person.get("employment", [])
-            # an entry dated with begin_date and end_date has no years for the
-            # template to write, which would say present for both
-            emps = [with_years(em) for em in emps if not em.get("not_in_cv", False)]
-            for e in emps:
-                e["position"] = e.get("position_full", e.get("position").title())
-            emps.sort(key=ene_date_key, reverse=True)
-            edu = [with_years(e) for e in person.get("education", [])]
-            edu.sort(key=ene_date_key, reverse=True)
+            employment = [
+                with_years(job) for job in person.get("employment", []) if not job.get("not_in_cv", False)
+            ]
+            for job in employment:
+                job["position"] = job.get("position_full", job.get("position").title())
+            employment.sort(key=ene_date_key, reverse=True)
+            education = [with_years(degree) for degree in person.get("education", [])]
+            education.sort(key=ene_date_key, reverse=True)
             teach = person.get("teaching", [])
             for t in teach:
                 t["position"] = t.get("position").title()
@@ -112,9 +111,8 @@ class CVBuilder(LatexBuilderBase):
             aghs = awards_grants_honors(person, "honors")
             service = awards_grants_honors(person, "service", funding=False)
             # TODO: pull this out so we can use it everywhere
-            for ee in [emps, edu]:
-                for e in ee:
-                    dereference_institution(e, self.gtx["institutions"])
+            for entry in employment + education:
+                dereference_institution(entry, self.gtx["institutions"])
 
             undergrads = filter_employment_for_advisees(
                 self.gtx["people"], begin_period, "undergrad", person["_id"]
@@ -168,8 +166,8 @@ class CVBuilder(LatexBuilderBase):
                 pubs=pubs,
                 names=names,
                 bibfile=bibfile,
-                education=edu,
-                employment=emps,
+                education=education,
+                employment=employment,
                 presentations=presentations,
                 sentencecase=sentencecase,
                 monthstyle=month_fullnames,

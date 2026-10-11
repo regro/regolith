@@ -108,14 +108,12 @@ def gets(seq, key, default=None):
 
 
 def with_years(entry):
-    """Return an entry with its years filled in from its dates.
+    """Fill in the begin and end years of an entry from its dates.
 
-    A template writes a span from ``begin_year`` and ``end_year`` and
-    says ``present`` for a year it does not find.  An entry dated with
-    ``begin_date`` and ``end_date`` has the years, just not under those
-    names, so they are copied over, in place as the builders fill in
-    the rest of an entry.  A year already there is left alone, and an
-    entry with no end stays open.
+    The CV and resume templates write a span from ``begin_year`` and
+    ``end_year``, so an entry dated with ``begin_date`` and ``end_date``
+    is given the years those dates fall in.  A year already there is
+    kept.
 
     Parameters
     ----------
@@ -125,16 +123,14 @@ def with_years(entry):
     Returns
     -------
     dict
-        The same entry, with ``begin_year`` and ``end_year`` filled in
-        where its dates say what they are.
+        The same entry.
     """
-    # get_dates fills the months and days it assumes into what it is given,
-    # which a template would then write as if somebody had said them
-    found = get_dates(dict(entry))
-    if "begin_year" not in entry and found.get("begin_date"):
-        entry["begin_year"] = found["begin_date"].year
+    # get_dates writes the months and days it assumes into the dict it is given
+    dates = get_dates(dict(entry))
+    if "begin_year" not in entry and dates.get("begin_date"):
+        entry["begin_year"] = dates["begin_date"].year
     if "end_year" not in entry and entry.get("end_date"):
-        entry["end_year"] = found["end_date"].year
+        entry["end_year"] = dates["end_date"].year
     return entry
 
 

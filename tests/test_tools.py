@@ -1592,7 +1592,6 @@ def test_with_years_fills_the_years_a_template_writes(entry, expected_years):
     entry = dict(entry, organization="Columbia University")
     filled = with_years(entry)
     assert {k: v for k, v in filled.items() if k.endswith("_year")} == expected_years
-    # the entry is filled in place, as the builders fill in the rest of it
     assert filled is entry
     assert filled["organization"] == "Columbia University"
 
