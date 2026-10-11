@@ -32,6 +32,7 @@ from regolith.mc import (
     in_the_group,
     led_by,
     normal_periods,
+    of_no_goal,
     parse_document,
     period_key,
     period_of,
@@ -565,23 +566,56 @@ class MissionControlBuilder(BuilderBase):
         ]
         goals = in_document_order(mine, order, lambda g: g["_id"])
         goal_number = self.number_goals(goals, number_of)
+        theirs = {g["_id"] for g in goals}
+        tasks = [
+            t
+            for t in live(self.gtx["mc_tasks"])
+            if t["goal"] in theirs or (of_no_goal(t) and t.get("lead") == self.owner(person))
+        ]
+        on_deck = self.on_deck(tasks)
         # what hangs under something finished goes with it: a finished goal
         # keeps no tasks, and a finished task keeps no sub tasks
         finished_goals = {g["_id"] for g in goals if g["status"] == "finished"}
-        tasks = [
-            t for t in live(self.gtx["mc_tasks"]) if t["goal"] in goal_number and t["goal"] not in finished_goals
+        weekly = [
+            t
+            for t in tasks
+            if t["_id"] not in on_deck and t["goal"] in goal_number and t["goal"] not in finished_goals
         ]
-        tasks = [t for t in tasks if not self.under_something_finished(t, tasks)]
-        self.left_out[person] = self.not_written(person, {p["_id"] for p in projects}, goal_number, tasks)
+        weekly = [t for t in weekly if not self.under_something_finished(t, weekly)]
+        held = [t for t in tasks if t["_id"] in on_deck]
+        self.left_out[person] = self.not_written(person, {p["_id"] for p in projects}, goal_number, weekly + held)
 
         lines = [f"# Mission control — {self.display_name(person)}", ""]
         lines += self.render_projects(projects)
         lines += self.render_goals(goals, goal_number)
-        lines += self.render_weeks(tasks, goal_number, order)
-        lines += self.render_bucket("On-deck", goals, goal_number, "on-deck")
-        lines += self.render_bucket("Wishlist", goals, goal_number, "wishlist")
+        lines += self.render_weeks(weekly, goal_number, order)
+        lines += self.render_on_deck(held, goal_number, order)
+        lines += self.render_bucket("Wishlist goals", goals, goal_number, "wishlist")
         lines += self.render_archive(goals, goal_number, done)
         return [written for line in one_blank_between(lines) for written in wrap(line)]
+
+    @staticmethod
+    def on_deck(tasks):
+        """Return the ids of the tasks on deck, with everything under
+        them.
+
+        Parameters
+        ----------
+        tasks : list of dict
+            The tasks to look through.
+
+        Returns
+        -------
+        set of str
+            The ids held out of the weeks.
+        """
+        held = {t["_id"] for t in tasks if t["status"] == "on-deck"}
+        growing = True
+        while growing:
+            under = {t["_id"] for t in tasks if t["_id"] not in held and t.get("parent") in held}
+            held |= under
+            growing = bool(under)
+        return held
 
     @staticmethod
     def under_something_finished(task, tasks):
@@ -742,8 +776,46 @@ class MissionControlBuilder(BuilderBase):
             lines += self.render_task(child, "", children, order, depth + 1)
         return lines
 
+    def render_on_deck(self, tasks, goal_number, order=()):
+        """Return the lines of the on-deck section.
+
+        A task on deck is written as it is in a week, numbered against
+        its goal while that goal is of the period.  The heading is
+        written whether or not there is anything under it, so that a
+        document has somewhere to move a task to.
+
+        Parameters
+        ----------
+        tasks : list of dict
+            The tasks on deck, pieces included.
+        goal_number : dict
+            The number of each goal that has one, keyed by id.
+        order : list of str, optional
+            The ids in the order the document had them.
+
+        Returns
+        -------
+        list of str
+            The lines of the section.
+        """
+        shown = {t["_id"] for t in tasks}
+        children = defaultdict(list)
+        for task in tasks:
+            parent = task.get("parent")
+            children[parent if parent in shown else None].append(task)
+        lines = ["## On-deck tasks", ""]
+        counts = defaultdict(int)
+        for task in in_document_order(children[None], order, lambda t: t["_id"]):
+            number = ""
+            if task["goal"] in goal_number:
+                counts[task["goal"]] += 1
+                number = f"{goal_number[task['goal']]}.{counts[task['goal']]}"
+            lines += self.render_task(task, number, children, order, depth=0)
+        lines.append("")
+        return lines
+
     def render_bucket(self, heading, goals, goal_number, status):
-        """Return the lines of the on-deck or wishlist section.
+        """Return the lines of the wishlist section.
 
         The heading is written whether or not there is anything under
         it, so that a document has somewhere to move a goal to.

@@ -4,7 +4,7 @@ import datetime as dt
 
 import pytest
 
-from regolith.mc import adopt, changes, settled_status
+from regolith.mc import adopt, changes, settled_status, week_of
 
 SEMESTERS = {"spring": "01-01", "summer": "06-01", "fall": "09-01"}
 
@@ -94,6 +94,80 @@ def test_a_period_is_stored_spelled_the_groups_way(
     )
     assert writes["mc_goals"][0]["period"] == expected_period
     assert writes["mc_goals"][0]["first_period"] == expected_first_period
+
+
+def on_wishlist(**kw):
+    """Return a wishlist line as the parser hands it over: it says
+    nothing about its project."""
+    line = read(status="wishlist", **kw)
+    del line["project"]
+    return line
+
+
+@pytest.mark.parametrize(
+    "goals, stored_goals, expected",
+    [
+        # Test what a wishlist line is of.  The line says nothing about its
+        # project, so a goal pasted down keeps the project it has, and a new
+        # one is of none and of whoever's document it is in
+        # C1: a stored goal of a project, expect the project kept
+        ([on_wishlist()], [stored()], {"g1": ("p1", None)}),
+        # C2: a new goal, expect it of no project and of the person
+        ([on_wishlist(_id="g-new")], [], {"g-new": ("tbd", "pliu")}),
+        # C3: a new piece under a goal of a project, expect it of that project
+        (
+            [on_wishlist(), on_wishlist(_id="g-piece", parent="g1")],
+            [stored()],
+            {"g1": ("p1", None), "g-piece": ("p1", None)},
+        ),
+    ],
+)
+def test_a_wishlist_goal_keeps_its_project_or_is_of_none(goals, stored_goals, expected):
+    writes, drops = changes(parsed(goals=goals), "pliu", existing(goals=stored_goals), today=TODAY)
+    assert {g["_id"]: (g["project"], g.get("lead")) for g in writes["mc_goals"]} == expected
+
+
+def on_deck(**kw):
+    """Return an on-deck line as the parser hands it over: it says
+    nothing about its goal or its week."""
+    line = {"_id": "t1", "text": "a task", "status": "on-deck"}
+    line.update(kw)
+    return line
+
+
+@pytest.mark.parametrize(
+    "tasks, stored_tasks, expected",
+    [
+        # Test what a task on deck is of and when it is due.  The line says
+        # nothing about either, so a task pasted down keeps its goal and its
+        # dates, and a new one is of no goal, of the person, and due the week
+        # it was read
+        # C1: a stored task, expect its goal and dates kept
+        (
+            [on_deck()],
+            [{"_id": "t1", "goal": "g1", "due_date": dt.date(2026, 9, 7), "first_due_date": dt.date(2026, 9, 7)}],
+            {"t1": ("g1", None, dt.date(2026, 9, 7), dt.date(2026, 9, 7))},
+        ),
+        # C2: a new task, expect it of no goal, of the person, due this week
+        ([on_deck(_id="t-new")], [], {"t-new": ("tbd", "pliu", week_of(TODAY), week_of(TODAY))}),
+        # C3: a new piece under a stored task, expect it of that task's goal
+        (
+            [on_deck(), on_deck(_id="t-piece", parent="t1")],
+            [{"_id": "t1", "goal": "g1", "due_date": dt.date(2026, 9, 7), "first_due_date": dt.date(2026, 9, 7)}],
+            {
+                "t1": ("g1", None, dt.date(2026, 9, 7), dt.date(2026, 9, 7)),
+                "t-piece": ("g1", None, week_of(TODAY), week_of(TODAY)),
+            },
+        ),
+    ],
+)
+def test_a_task_on_deck_keeps_its_goal_or_is_of_none(tasks, stored_tasks, expected):
+    writes, drops = changes(parsed(tasks=tasks), "pliu", existing(tasks=stored_tasks), today=TODAY)
+    written = {
+        t["_id"]: (t["goal"], t.get("lead"), t["due_date"], t["first_due_date"]) for t in writes["mc_tasks"]
+    }
+    assert written == expected
+    assert all(t["status"] == "on-deck" for t in writes["mc_tasks"])
 
 
 def test_something_newly_typed_is_written():

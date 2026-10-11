@@ -30,7 +30,7 @@ def subparser(subpi):
     subpi.add_argument(
         "--held",
         action="store_true",
-        help=f"List the goals on the {' and '.join(HELD)} instead of the ones being worked on.",
+        help="List the goals on the wishlist instead of the ones being worked on.",
     )
     subpi.add_argument(
         "--all",

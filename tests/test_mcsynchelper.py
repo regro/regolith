@@ -11,6 +11,7 @@ from regolith.database import connect
 from regolith.fsclient import dump_yaml, load_yaml
 from regolith.helpers.mcsynchelper import brief
 from regolith.main import main
+from regolith.mc import week_of
 from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
 
 DOCUMENT = """# Mission control — Pei Liu
@@ -118,14 +119,28 @@ def stored(where, collection, _id):
         ),
         # C2: a task ticked, expect it finished
         (lambda t: t.replace("- [ ] 1.1.1", "- [x] 1.1.1"), "mc_tasks", "mct001", "status", "finished"),
-        # C3: a goal moved under the on-deck heading, expect it held
+        # C3: a goal moved to the wishlist with its task moved on deck, since
+        # a week has no goal 1.1 to number the task against any more, expect
+        # the goal held
         (
             lambda t: t.replace(
-                "## Goals — 2026Q3\n\n- 1.1  a goal  ^mcg001\n",
-                "## Goals — 2026Q3\n\n## On-deck\n\n- 1.1  a goal  ^mcg001\n",
+                "## Goals — 2026Q3\n\n- 1.1  a goal  ^mcg001\n\n## Week of 2026-09-07\n\n",
+                "## Goals — 2026Q3\n\n## Wishlist goals\n\n- 1.1  a goal  ^mcg001\n\n## On-deck tasks\n\n",
             ),
             "mc_goals",
             "mcg001",
+            "status",
+            "wishlist",
+        ),
+        # C4: a task cut from its week and pasted on deck, number and all,
+        # expect it on deck and still of its goal
+        (
+            lambda t: t.replace(
+                "## Week of 2026-09-07\n\n- [ ] 1.1.1  a task  ^mct001\n",
+                "## Week of 2026-09-07\n\n## On-deck tasks\n\n- [ ] 1.1.1  a task  ^mct001\n",
+            ),
+            "mc_tasks",
+            "mct001",
             "status",
             "on-deck",
         ),
@@ -619,7 +634,7 @@ def test_a_held_thing_of_no_project_is_not_dropped_on_the_next_sync(mc_repo):
     # find it missing and drop what somebody had just written down
     _, mcdir = mc_repo
     path = mcdir / "pei.md"
-    path.write_text(path.read_text() + "\n## On-deck\n\n- an idea nobody has taken on\n")
+    path.write_text(path.read_text() + "\n## Wishlist goals\n\n- an idea nobody has taken on\n")
     main(["helper", "u-mcsync"])
     rc = copy.copy(DEFAULT_RC)
     rc._update(load_rcfile("regolithrc.json"))
@@ -628,10 +643,62 @@ def test_a_held_thing_of_no_project_is_not_dropped_on_the_next_sync(mc_repo):
         idea = next(g for g in rc.client.all_documents("mc_goals") if g["text"] == "an idea nobody has taken on")
     assert idea["project"] == "tbd"
     assert idea["lead"] == "pliu"
-    assert idea["status"] == "on-deck"
+    assert idea["status"] == "wishlist"
 
     main(["helper", "u-mcsync"])
-    assert stored(mc_repo, "mc_goals", idea["_id"])["status"] == "on-deck"
+    assert stored(mc_repo, "mc_goals", idea["_id"])["status"] == "wishlist"
+
+
+def test_a_task_pasted_down_and_back_up_keeps_its_record(mc_repo):
+    # Test the round trip a task makes through on deck.  Pasted down with its
+    # number and id, it keeps its goal and its history; built, it is written
+    # on deck; pasted back into a week, it is the same task due that week
+    repo, mcdir = mc_repo
+    path = mcdir / "pei.md"
+    week = "## Week of 2026-09-07\n\n- [ ] 1.1.1  a task  ^mct001\n"
+    path.write_text(
+        path.read_text().replace(
+            week, "## Week of 2026-09-07\n\n## On-deck tasks\n\n- [ ] 1.1.1  a task  ^mct001\n"
+        )
+    )
+    main(["helper", "u-mcsync"])
+    task = stored(mc_repo, "mc_tasks", "mct001")
+    assert task["status"] == "on-deck"
+    assert task["goal"] == "mcg001"
+    assert str(task["first_due_date"]) == "2026-09-07"
+
+    main(["build", "mission-control"])
+    built = path.read_text()
+    assert "## On-deck tasks\n\n- [ ] 1.1.1  a task  ^mct001" in built
+
+    this_week = f"## Week of {week_of(dt.date.today()).isoformat()}\n"
+    assert this_week in built
+    path.write_text(
+        built.replace("## On-deck tasks\n\n- [ ] 1.1.1  a task  ^mct001\n", "## On-deck tasks\n").replace(
+            this_week, this_week + "\n- [ ] 1.1.1  a task  ^mct001\n"
+        )
+    )
+    main(["helper", "u-mcsync"])
+    task = stored(mc_repo, "mc_tasks", "mct001")
+    assert task["status"] == "active"
+    assert task["due_date"] == week_of(dt.date.today())
+    assert str(task["first_due_date"]) == "2026-09-07"
+
+
+def test_a_task_typed_on_deck_is_of_no_goal_yet(mc_repo):
+    # Test a task typed straight on deck, which says nothing about its goal.
+    # Expect it stored as of no goal, as whose it is, and due the week it was
+    # read, until somebody moves it up and numbers it
+    repo, mcdir = mc_repo
+    path = mcdir / "pei.md"
+    path.write_text(path.read_text() + "\n## On-deck tasks\n\n- [ ] something to pick up  ^mct777\n")
+    main(["helper", "u-mcsync"])
+    task = stored(mc_repo, "mc_tasks", "mct777")
+    assert task["goal"] == "tbd"
+    assert task["lead"] == "pliu"
+    assert task["status"] == "on-deck"
+    main(["build", "mission-control"])
+    assert "- [ ] something to pick up  ^mct777" in path.read_text()
 
 
 def test_a_finished_project_keeps_its_goals_though_the_document_drops_them(mc_repo, capsys):

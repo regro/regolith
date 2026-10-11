@@ -70,12 +70,13 @@ be opened from anywhere.
       - [ ] Re-integrate the images  ^bfvvj6
     - [x] 1.1.1  ~~Send Simon the convergence plot~~  ^uxah3a
 
-    ## On-deck
+    ## On-deck tasks
+
+    - [ ] 1.2.2  Try the other background model  ^t5d3ck
+
+    ## Wishlist goals
 
     - 2.2  Port the solver to the GPU  ^gpu111
-
-    ## Wishlist
-
     - A tutorial notebook  ^tut222
       - [ ] Pick a dataset  ^pk3n2d
 
@@ -105,9 +106,14 @@ in front of each. The number says which goal a task is of: ``1.2.1`` is the
 first task of goal ``1.2``. A task indented under another is a piece of it and
 carries no number.
 
-**On-deck** and **Wishlist** hold goals that are not this period's work. A goal
-here need not have a number yet: it is an idea that nobody has made a project
-of. A breakdown can be written under it, indented, with boxes.
+**On-deck tasks** holds tasks that are not this week's work, and **Wishlist
+goals** holds goals that are not this period's. Paste a line down as it is,
+number, id and all: the id keeps it the same record, and the number is kept as
+a reminder of where it came from but not read, since the numbers of a period
+move. Paste it back up and fix the number by hand. A line typed here need not
+have a number: it is of no goal or project until it is moved up and given one.
+A breakdown can be written under a wishlist goal, indented, with boxes. Move a
+line by cutting it: one whose id is in two places is refused.
 
 **Archive** is written from the database and not read back. Finished projects
 are one struck line each, and under them the goals of each past period, struck
@@ -129,9 +135,10 @@ You type:
   Either does it; the strike is believed when they disagree, since the box is
   the one that gets forgotten. A struck project is finished, and goes to the
   archive on the next build with everything under it.
-- **A move.** Drag a goal from Goals to On-deck to hold it, and back to take it
-  up again. Move a task to another week to roll it. Reorder lines to say what
-  matters most: a build keeps the order you chose.
+- **A move.** Cut a task from its week to On-deck tasks to hold it, or a goal
+  from Goals to Wishlist goals, and back to take it up again. Move a task to
+  another week to roll it. Reorder lines to say what matters most: a build
+  keeps the order you chose.
 - **A new line.** A goal needs a number saying which project it is of, and a
   task at the top level needs one saying which goal. A sub task is just
   indented under its task. A project needs its number and its name in bold.
