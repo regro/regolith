@@ -107,6 +107,33 @@ def gets(seq, key, default=None):
         yield x.get(key, default)
 
 
+def with_years(entry):
+    """Fill in the begin and end years of an entry from its dates.
+
+    The CV and resume templates write a span from ``begin_year`` and
+    ``end_year``, so an entry dated with ``begin_date`` and ``end_date``
+    is given the years those dates fall in.  A year already there is
+    kept.
+
+    Parameters
+    ----------
+    entry : dict
+        The employment or education entry, filled in place.
+
+    Returns
+    -------
+    dict
+        The same entry.
+    """
+    # get_dates writes the months and days it assumes into the dict it is given
+    dates = get_dates(dict(entry))
+    if "begin_year" not in entry and dates.get("begin_date"):
+        entry["begin_year"] = dates["begin_date"].year
+    if "end_year" not in entry and entry.get("end_date"):
+        entry["end_year"] = dates["end_date"].year
+    return entry
+
+
 def month_and_year(m=None, y=None):
     """Creates a string from month and year data, if available."""
     if y is None:

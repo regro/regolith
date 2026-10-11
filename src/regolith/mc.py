@@ -467,12 +467,19 @@ STRUCK = re.compile(r"^~~(?P<text>.*)~~$")
 MARKER = re.compile(r"^\s*(?:#+\s+|-\s+(?:\[[ xX]\]\s+)?|\d+\.\s+)")
 WIDTH = 79
 GOALS_HEADING = re.compile(r"^Goals\s+—\s+(?P<period>\S+)$")
-# what a section holding a goal back is called.  Backburner is what the
-# heading used to say, and is still read so that a document written before the
-# rename keeps working.
-HELD_HEADINGS = {"on-deck": "on-deck", "backburner": "on-deck", "wishlist": "wishlist"}
-# what a goal says instead of a project when it is not of one yet
+# On-deck holds tasks and the wishlist holds goals.  The old headings both
+# held goals and are still read, into the wishlist.
+HELD_HEADINGS = {
+    "on-deck tasks": "on-deck",
+    "wishlist goals": "wishlist",
+    "on-deck": "wishlist",
+    "backburner": "wishlist",
+    "wishlist": "wishlist",
+}
+# what a goal says instead of a project, and a task instead of a goal, when
+# it is not of one yet
 UNASSIGNED_PROJECT = "tbd"
+UNASSIGNED_GOAL = "tbd"
 WEEK_HEADING = re.compile(r"^Week of\s+(?P<monday>\d{4}-\d{2}-\d{2})$")
 
 
@@ -740,8 +747,8 @@ class _Reader:
         # the ids of the lines stored so far, as against the archive, which
         # only mentions what it shows
         self.stored = set()
-        # which kind of line each id in the document was first written on
         self.kind_of = {}
+        self.place_of = {}
         # lines that carried an id another line had already taken
         self.copied = []
 
@@ -822,9 +829,9 @@ class _Reader:
             return
         if self.section == "projects" and self.project(line, number):
             return
-        if self.section in ("goals", "on-deck", "wishlist", "archive") and self.goal(line, number):
+        if self.section in ("goals", "wishlist", "archive") and self.goal(line, number):
             return
-        if self.section == "week" and self.task(line, number):
+        if self.section in ("week", "on-deck") and self.task(line, number):
             return
 
     def enter(self, hashes, title):
@@ -897,8 +904,7 @@ class _Reader:
         project["project_description"] = f"{described} {text}".strip() if described else text
 
     def goal(self, line, number):
-        """Read a line of a goals, on-deck, wishlist or archive
-        section."""
+        """Read a line of a goals, wishlist or archive section."""
         found = GOAL_LINE.match(line)
         if not found or found.group("text") is None:
             return False
@@ -919,48 +925,39 @@ class _Reader:
             self.mentioned_text.append(text)
             return True
 
-        # a goal indented under another is a piece of it, the way a sub task is
-        # a piece of a task.  Only the holding sections take one: a goal of the
-        # period is somebody's work and says which project it is of
+        held = self.section == "wishlist"
+        self.one_place(found.group("id"), number)
         indent = len(found.group("indent").expandtabs(4))
         under = None
-        if self.section in HELD:
+        if held:
             while self.goal_stack and self.goal_stack[-1][0] >= indent:
                 self.goal_stack.pop()
             if self.goal_stack:
                 under = self.goal_stack[-1][1]
         goal_number = found.group("number")
-        if under is not None:
-            # a piece of the goal above, so it is of whatever that is of
-            project = under["project"]
-        elif goal_number is None:
-            if self.section not in HELD:
-                raise DocumentError(f"line {number}: a goal needs a number saying which project it is of")
-            # a thing held on deck or on the wishlist is an idea that has not
-            # been made anybody's work yet, so it does not have to say which
-            # project it is of.  It says so when somebody gives it a number
-            project = UNASSIGNED_PROJECT
-        else:
-            project_number = goal_number.split(".")[0]
-            if project_number not in self.by_number:
-                raise DocumentError(f"line {number}: there is no project {project_number}")
-            project = self.by_number[project_number]
         ticked = (found.group("box") or " ").lower() == "x"
         goal = {
             "_id": self.own_id(found.group("id"), self.mint, "mc_goals", number),
-            "project": project,
-            "period": self.held_period if self.section in HELD else self.period,
+            "period": self.held_period if held else self.period,
             "text": text,
             # a strike is believed over a box, since the box is what gets forgotten
             "status": "finished" if (struck_out or ticked) else self.goal_status(struck_out),
         }
-        if under is not None:
-            goal["parent"] = under["_id"]
-        self.goals.append(goal)
-        if self.section in HELD:
+        if held:
+            # a number on the wishlist is whatever the line was pasted down
+            # with, and is not read: the numbers of a period move
+            if under is not None:
+                goal["parent"] = under["_id"]
             self.goal_stack.append((indent, goal))
-        if goal_number is not None:
+        elif goal_number is None:
+            raise DocumentError(f"line {number}: a goal needs a number saying which project it is of")
+        else:
+            project_number = goal_number.split(".")[0]
+            if project_number not in self.by_number:
+                raise DocumentError(f"line {number}: there is no project {project_number}")
+            goal["project"] = self.by_number[project_number]
             self.by_number[goal_number] = goal["_id"]
+        self.goals.append(goal)
         return True
 
     def goal_status(self, struck_out):
@@ -970,11 +967,13 @@ class _Reader:
         return self.section if self.section in HELD else "active"
 
     def task(self, line, number):
-        """Read a line of a week section."""
+        """Read a line of a week or on-deck section."""
         found = TASK_LINE.match(line)
         if not found:
             return False
         text, struck_out = read_text(found.group("text"))
+        held = self.section == "on-deck"
+        self.one_place(found.group("id"), number)
         # any indent at all puts a task under the one above it.  People do not
         # count spaces, so what matters is deeper or not, never how much
         indent = len(found.group("indent").expandtabs(4))
@@ -982,16 +981,22 @@ class _Reader:
         task = {
             "_id": self.own_id(found.group("id"), self.mint, "mc_tasks", number),
             # a strike is believed over a box, since the box is what gets forgotten
-            "status": "finished" if (struck_out or ticked) else "active",
+            "status": "finished" if (struck_out or ticked) else "on-deck" if held else "active",
             "text": text,
-            "due_date": self.monday,
         }
+        if not held:
+            task["due_date"] = self.monday
         while self.stack and self.stack[-1][0] >= indent:
             self.stack.pop()
         if self.stack:
             parent = self.stack[-1][1]
             task["parent"] = parent["_id"]
-            task["goal"] = parent["goal"]
+            if "goal" in parent:
+                task["goal"] = parent["goal"]
+        elif held:
+            # a number on deck is whatever the line was pasted down with, and
+            # is not read: the numbers of a period move
+            pass
         else:
             task_number = found.group("number")
             if task_number is None:
@@ -1016,6 +1021,38 @@ class _Reader:
         self.stack.append((indent, task))
         self.tasks.append(task)
         return True
+
+    def place(self):
+        """Return where the reader is, and whether that is a holding
+        section."""
+        if self.section == "week":
+            return f"the week of {self.monday.isoformat()}", False
+        if self.section == "goals":
+            return f"Goals — {self.period}", False
+        if self.section == "on-deck":
+            return "On-deck tasks", True
+        if self.section == "wishlist":
+            return "Wishlist goals", True
+        return self.section, False
+
+    def one_place(self, carried, number):
+        """Refuse a line whose id is on another line, when either is in
+        a holding section.
+
+        A line is moved on deck or to the wishlist by cutting it.  A
+        copy left behind would say the thing is in two places, and there
+        is no telling a paste down from a paste up.
+        """
+        if carried is None:
+            return
+        here = self.place()
+        there = self.place_of.setdefault(carried, here)
+        if there != here and (here[1] or there[1]):
+            raise DocumentError(
+                f"line {number}: ^{carried} is under {there[0]} and under {here[0]}. A thing is in "
+                f"one place at a time: cut a line to move it rather than copying it, and take one "
+                f"of the two out."
+            )
 
     def result(self):
         """Return what was read."""
@@ -1193,7 +1230,8 @@ def changes(parsed, person, existing, today=None, elsewhere=None, periods=None):
 
     for read in parsed["goals"]:
         given = read["_id"]
-        read["project"] = adopted.get(read["project"], read["project"])
+        if "project" in read:
+            read["project"] = adopted.get(read["project"], read["project"])
         was = adopt(read, existing["mc_goals"], seen["mc_goals"], elsewhere.get("mc_goals"))
         if read["_id"] != given:
             adopted[given] = read["_id"]
@@ -1202,22 +1240,16 @@ def changes(parsed, person, existing, today=None, elsewhere=None, periods=None):
         record["status"] = settled_status(read["status"], was.get("status"))
         # written once, so how long a goal has been carried is knowable
         record.setdefault("first_period", read["period"])
+        record.setdefault("project", UNASSIGNED_PROJECT)
         normal_periods(record, periods)
-        # a goal of no project has no project to say whose it is, so it says
-        # so itself: it belongs to whoever's document it was written in
-        if unassigned(record):
-            record["lead"] = person
-            if person is None:
-                record.pop("lead", None)
-        else:
-            record.pop("lead", None)
         _close(record, was, today)
         writes["mc_goals"].append(record)
         seen["mc_goals"].add(record["_id"])
 
     for read in parsed["tasks"]:
         given = read["_id"]
-        read["goal"] = adopted.get(read["goal"], read["goal"])
+        if "goal" in read:
+            read["goal"] = adopted.get(read["goal"], read["goal"])
         if read.get("parent"):
             read["parent"] = adopted.get(read["parent"], read["parent"])
         was = adopt(read, existing["mc_tasks"], seen["mc_tasks"], elsewhere.get("mc_tasks"))
@@ -1226,10 +1258,15 @@ def changes(parsed, person, existing, today=None, elsewhere=None, periods=None):
         record = dict(was)
         record.update({k: v for k, v in read.items() if k != "status"})
         record["status"] = settled_status(read["status"], was.get("status"))
-        record.setdefault("first_due_date", read["due_date"])
+        record.setdefault("goal", UNASSIGNED_GOAL)
+        record.setdefault("due_date", week_of(today))
+        record.setdefault("first_due_date", record["due_date"])
         _close(record, was, today)
         writes["mc_tasks"].append(record)
         seen["mc_tasks"].add(record["_id"])
+
+    _settle_pieces(writes["mc_goals"], "project", UNASSIGNED_PROJECT, person)
+    _settle_pieces(writes["mc_tasks"], "goal", UNASSIGNED_GOAL, person)
 
     # some things a document does not say anything about: the archive shows a
     # goal without saying what to store, and a project finished long ago is
@@ -1350,6 +1387,21 @@ def _rolled(copy, first, later, records, adopted):
     return True
 
 
+def _settle_pieces(records, link, unassigned_link, person):
+    """Give a piece pasted under a held line the link of the line above
+    it, and whatever is of nothing yet the person whose document it is
+    in."""
+    by_id = {record["_id"]: record for record in records}
+    for record in records:
+        above = by_id.get(record.get("parent"))
+        if above is not None and record[link] == unassigned_link and above[link] != unassigned_link:
+            record[link] = above[link]
+        if record[link] == unassigned_link and person is not None:
+            record["lead"] = person
+        else:
+            record.pop("lead", None)
+
+
 def _close(record, was, today):
     """Date a record that has just been finished, and only just."""
     if record["status"] == "finished" and was.get("status") != "finished":
@@ -1454,6 +1506,25 @@ def as_a_date(value):
         return dt.date.fromisoformat(str(value)[:10])
     except ValueError:
         return None
+
+
+def of_no_goal(task):
+    """Return True if a task is not of any goal yet.
+
+    A task typed on deck says nothing about which goal it is of until
+    somebody moves it into a week and numbers it.
+
+    Parameters
+    ----------
+    task : dict
+        The task to look at.
+
+    Returns
+    -------
+    bool
+        Whether the task is of a goal.
+    """
+    return task.get("goal") == UNASSIGNED_GOAL
 
 
 def unassigned(goal):

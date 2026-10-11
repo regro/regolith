@@ -28,6 +28,7 @@ from regolith.mc import (
     document_name,
     in_the_group,
     led_by,
+    of_no_goal,
     parse_document,
     period_of,
     project_prefix,
@@ -250,7 +251,11 @@ class MCSyncHelper(DbHelperBase):
             # found by whose it is, or it would read as deleted every sync
             if goal.get("project") in projects or (unassigned(goal) and goal.get("lead") == lead)
         }
-        tasks = {task["_id"]: task for task in live(self.gtx["mc_tasks"]) if task.get("goal") in goals}
+        tasks = {
+            task["_id"]: task
+            for task in live(self.gtx["mc_tasks"])
+            if task.get("goal") in goals or (of_no_goal(task) and task.get("lead") == lead)
+        }
         return {"mc_projects": projects, "mc_goals": goals, "mc_tasks": tasks}
 
     def taken(self):

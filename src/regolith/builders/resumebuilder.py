@@ -13,6 +13,7 @@ from regolith.tools import (
     make_bibtex_file,
     merge_collections_superior,
     month_and_year,
+    with_years,
 )
 
 
@@ -52,13 +53,12 @@ class ResumeBuilder(LatexBuilderBase):
                 reverse=True,
             )
             bibfile = make_bibtex_file(pubs, pid=p["_id"], person_dir=self.bldir)
-            emp = p.get("employment", [])
-            emp = [em for em in emp if not em.get("not_in_cv", False)]
-            for e in emp:
-                e["position"] = e.get("position_full", e.get("position").title())
-            emp.sort(key=ene_date_key, reverse=True)
-            edu = p.get("education", [])
-            edu.sort(key=ene_date_key, reverse=True)
+            employment = [with_years(job) for job in p.get("employment", []) if not job.get("not_in_cv", False)]
+            for job in employment:
+                job["position"] = job.get("position_full", job.get("position").title())
+            employment.sort(key=ene_date_key, reverse=True)
+            education = [with_years(degree) for degree in p.get("education", [])]
+            education.sort(key=ene_date_key, reverse=True)
             current_projects = filter_projects(all_docs_from_collection(rc.client, "projects"), names, active=True)
             past_projects = filter_projects(all_docs_from_collection(rc.client, "projects"), names, active=False)
             grants = list(all_docs_from_collection(rc.client, "grants"))
@@ -76,8 +76,8 @@ class ResumeBuilder(LatexBuilderBase):
                 pubs=pubs,
                 names=names,
                 bibfile=bibfile,
-                education=edu,
-                employment=emp,
+                education=education,
+                employment=employment,
                 current_projects=current_projects,
                 past_projects=past_projects,
                 pi_grants=pi_grants,

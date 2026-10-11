@@ -27,11 +27,11 @@ DOCUMENT = """# Mission control — Adib Kabir
   - [ ] check the Qmax cutoff  ^4mynvu
 - [x] 1.2.1  talk to Simon  ^uxah3a
 
-## On-deck
+## On-deck tasks
 
-- 1.3  port the solver  ^gpu111
+- [ ] 1.1.2  look at the new detector data  ^d3ck01
 
-## Wishlist
+## Wishlist goals
 
 - 1.4  a tutorial  ^tut222
 
@@ -60,11 +60,12 @@ def test_the_document_says_who_it_is_for(read):
         # Test what is read out of each part of the document
         # C1: the projects, in the order they are written
         ("projects", ["ak-nano"]),
-        # C2: the goals of the current period, the on-deck section and the wishlist,
-        # but not the archive, which only says what a past period was
-        ("goals", ["a8s8ec", "dab3ap", "gpu111", "tut222"]),
-        # C3: the tasks, including the ones nested under another
-        ("tasks", ["66e5ty", "bfvvj6", "4mynvu", "uxah3a"]),
+        # C2: the goals of the current period and the wishlist, but not the
+        # archive, which only says what a past period was
+        ("goals", ["a8s8ec", "dab3ap", "tut222"]),
+        # C3: the tasks, including the ones nested under another and the one
+        # on deck
+        ("tasks", ["66e5ty", "bfvvj6", "4mynvu", "uxah3a", "d3ck01"]),
     ],
 )
 def test_each_part_of_the_document_is_read(kind, expected_ids, read):
@@ -77,7 +78,7 @@ HELD_ABOVE_AND_BELOW = """# Mission control — Adib Kabir
 
 1. **nanodiamond-pdf**  ^ak-nano
 
-## Wishlist
+## Wishlist goals
 
 - 1.4  a tutorial  ^tut222
 
@@ -85,24 +86,24 @@ HELD_ABOVE_AND_BELOW = """# Mission control — Adib Kabir
 
 - 1.1  get clean PDFs  ^a8s8ec
 
-## On-deck
+## On-deck tasks
 
-- 1.3  port the solver  ^gpu111
+- [ ] 1.1.1  look at the new detector data  ^d3ck01
 """
 
 
 @pytest.mark.parametrize(
     "period, expected_periods",
     [
-        # Test the period a held line is given.  A holding section has no
+        # Test the period a wishlist line is given.  A holding section has no
         # heading saying one, so it must not depend on which heading happens
         # to come before it: above the goals it would get none, and none does
         # not validate
-        # C1: a period given, expect it on the wishlist line above the goals and
-        # the on-deck line below them alike, and the goals heading's on its own
-        ("2026Q4", {"tut222": "2026Q4", "a8s8ec": "2026Q3", "gpu111": "2026Q4"}),
+        # C1: a period given, expect it on the wishlist line above the goals,
+        # and the goals heading's on its own
+        ("2026Q4", {"tut222": "2026Q4", "a8s8ec": "2026Q3"}),
         # C2: none given, expect the period today falls in
-        (None, {"tut222": "today", "a8s8ec": "2026Q3", "gpu111": "today"}),
+        (None, {"tut222": "today", "a8s8ec": "2026Q3"}),
     ],
 )
 def test_a_held_line_is_given_a_period_whatever_heading_came_before(period, expected_periods):
@@ -120,15 +121,84 @@ def test_a_held_line_is_given_a_period_whatever_heading_came_before(period, expe
         ("a8s8ec", "active"),
         # C2: a goal struck through, expect finished
         ("dab3ap", "finished"),
-        # C3: a goal under the on-deck heading, expect it held there
-        ("gpu111", "on-deck"),
-        # C4: a goal under the wishlist heading, expect wishlist
+        # C3: a goal under the wishlist heading, expect wishlist
         ("tut222", "wishlist"),
     ],
 )
 def test_a_goal_takes_its_status_from_its_marks_and_its_section(_id, expected_status, read):
     goal = next(g for g in read["goals"] if g["_id"] == _id)
     assert goal["status"] == expected_status
+
+
+@pytest.mark.parametrize(
+    "line, expected",
+    [
+        # Test a task pasted down on deck, which keeps the number and the id it
+        # came with and says nothing a sync should read about which goal or
+        # which week it is of: the id keeps it the same record
+        # C1: a task with its number and id, expect it on deck under its id,
+        # with no goal and no week read from the line
+        ("- [ ] 1.1.1  a task pasted down  ^66e5ty", {"_id": "66e5ty", "status": "on-deck"}),
+        # C2: a task typed with no number, expect it on deck all the same
+        ("- [ ] typed on deck  ^d3ck02", {"_id": "d3ck02", "status": "on-deck"}),
+        # C3: a task ticked, expect it finished wherever it is
+        ("- [x] 1.1.1  ~~done~~  ^66e5ty", {"_id": "66e5ty", "status": "finished"}),
+    ],
+)
+def test_a_task_on_deck_keeps_its_id_and_says_nothing_else(line, expected):
+    text = "## Projects\n\n1. **p**  ^p1\n\n## Goals — 2026Q3\n\n- 1.1  g  ^g1\n\n## On-deck tasks\n\n" + line
+    task = parse_document(text)["tasks"][0]
+    assert {k: task[k] for k in expected} == expected
+    assert "goal" not in task
+    assert "due_date" not in task
+
+
+def test_a_sub_task_on_deck_hangs_under_the_task_above_it():
+    # Test a task pasted down with its pieces, expect the pieces under it as
+    # they are in a week
+    text = (
+        "## Projects\n\n1. **p**  ^p1\n\n## On-deck tasks\n\n"
+        "- [ ] 1.1.1  a task  ^66e5ty\n  - [ ] a piece of it  ^bfvvj6\n"
+    )
+    tasks = {t["_id"]: t for t in parse_document(text)["tasks"]}
+    assert tasks["bfvvj6"]["parent"] == "66e5ty"
+    assert tasks["bfvvj6"]["status"] == "on-deck"
+
+
+@pytest.mark.parametrize(
+    "first, second, expected_message",
+    [
+        # Test a line whose id is in two places.  A thing is moved on deck or
+        # to the wishlist by cutting it, and a copy left behind cannot be told
+        # from a paste back up, so neither is guessed at
+        # C1: a task in a week and on deck, expect the document refused naming
+        # both places
+        (
+            "## Week of 2026-09-07\n\n- [ ] 1.1.1  a task  ^66e5ty\n",
+            "## On-deck tasks\n\n- [ ] 1.1.1  a task  ^66e5ty\n",
+            r"\^66e5ty is under the week of 2026-09-07 and under On-deck tasks",
+        ),
+        # C2: a goal in the period and on the wishlist, expect the same
+        (
+            "## Goals — 2026Q3\n\n- 1.1  g  ^g1\n",
+            "## Wishlist goals\n\n- 1.1  g  ^g1\n",
+            r"\^g1 is under Goals — 2026Q3 and under Wishlist goals",
+        ),
+        # C3: a task in two weeks, expect no refusal, since that is a roll
+        (
+            "## Week of 2026-09-14\n\n- [ ] 1.1.1  a task  ^66e5ty\n",
+            "## Week of 2026-09-07\n\n- [ ] 1.1.1  a task  ^66e5ty\n",
+            None,
+        ),
+    ],
+)
+def test_a_thing_is_in_one_place_at_a_time(first, second, expected_message):
+    text = "## Projects\n\n1. **p**  ^p1\n\n## Goals — 2026Q3\n\n- 1.1  g  ^g1\n\n" + first + "\n" + second
+    if expected_message is None:
+        parse_document(text)
+    else:
+        with pytest.raises(DocumentError, match=expected_message):
+            parse_document(text)
 
 
 @pytest.mark.parametrize(
@@ -163,8 +233,10 @@ def test_a_task_belongs_to_the_task_it_is_written_under(read):
 
 
 def test_a_task_is_due_in_the_week_it_is_written_under(read):
-    # Test that moving a task between week headings is what moves its due date
-    assert all(t["due_date"] == dt.date(2026, 9, 7) for t in read["tasks"])
+    # Test that moving a task between week headings is what moves its due
+    # date, and that a task on deck has no week to be due in
+    weekly = [t for t in read["tasks"] if t["_id"] != "d3ck01"]
+    assert all(t["due_date"] == dt.date(2026, 9, 7) for t in weekly)
 
 
 def test_something_typed_without_an_id_is_given_one(read):
@@ -298,7 +370,7 @@ def test_prose_around_the_lines_is_left_alone():
     # Test that a document is read forgivingly.  People will write notes to
     # each other in it, and that must not stop it being read.
     text = DOCUMENT.replace("## Goals — 2026Q3\n", "## Goals — 2026Q3\n\nSome note we typed in the meeting.\n")
-    assert len(parse_document(text)["goals"]) == 4
+    assert len(parse_document(text)["goals"]) == 3
 
 
 @pytest.mark.parametrize(
@@ -514,17 +586,17 @@ def test_a_project_does_not_take_an_id_another_one_has():
 @pytest.mark.parametrize(
     "heading, expected_status",
     [
-        # Test which heading holds a goal back.  The section was called the
-        # backburner before it was called on-deck, so a document written then
-        # still reads.
+        # Test which heading holds a goal back.  On-deck and the backburner
+        # held goals before on-deck came to hold tasks, so a document written
+        # then still reads, into the wishlist
         # C1: the heading the renderer writes now
-        ("On-deck", "on-deck"),
+        ("Wishlist goals", "wishlist"),
         # C2: what it used to write
-        ("Backburner", "on-deck"),
-        # C3: written in whatever case somebody typed
-        ("on-deck", "on-deck"),
-        # C4: the other held section, which did not change
         ("Wishlist", "wishlist"),
+        ("On-deck", "wishlist"),
+        ("Backburner", "wishlist"),
+        # C3: written in whatever case somebody typed
+        ("wishlist GOALS", "wishlist"),
     ],
 )
 def test_a_goal_is_held_by_whichever_heading_it_is_under(heading, expected_status):
@@ -546,36 +618,30 @@ HELD_DOCUMENT = """# Mission control — Adib Kabir
 
 - 1.1  a goal of the project  ^g1
 
-## On-deck
+## Wishlist goals
 
 - an idea nobody has taken on
-- 1.2  one that is of the project  ^g2
-
-## Wishlist
-
-- something for one day
+- 1.2  one pasted down with its number  ^g2
 """
 
 
 @pytest.mark.parametrize(
-    "text, expected_project",
+    "text",
     [
-        # Test that a thing held on deck or on the wishlist need not say which
-        # project it is of.  It is an idea somebody wrote down rather than
-        # work anybody has taken on, and making them number it is what stops
-        # them writing it down at all.
-        # C1: no number, expect it is of no project yet
-        ("an idea nobody has taken on", "tbd"),
-        # C2: a number, expect it is of that project, so that an idea can be
-        # taken on by giving it one
-        ("one that is of the project", "p1"),
-        # C3: the wishlist reads the same way as on-deck
-        ("something for one day", "tbd"),
+        # Test that a line on the wishlist says nothing about which project it
+        # is of.  An idea need not be numbered, and a goal pasted down keeps
+        # the number it came with without the number being read: the numbers
+        # of a period move, and the id already says which goal it is
+        # C1: no number, expect no project read
+        "an idea nobody has taken on",
+        # C2: a number, expect no project read either
+        "one pasted down with its number",
     ],
 )
-def test_a_held_thing_need_not_be_of_a_project(text, expected_project):
+def test_a_wishlist_line_says_nothing_about_its_project(text):
     goal = next(g for g in parse_document(HELD_DOCUMENT)["goals"] if g["text"] == text)
-    assert goal["project"] == expected_project
+    assert "project" not in goal
+    assert goal["status"] == "wishlist"
 
 
 BREAKDOWN = """# Mission control — Caden Myers
@@ -584,7 +650,7 @@ BREAKDOWN = """# Mission control — Caden Myers
 
 1. **diffpy.cmi relaunch**  ^p1
 
-## Wishlist
+## Wishlist goals
 
 - [ ] 1. Relaunch with these from the wishlist:
   - [ ] XANESCalculator
@@ -600,26 +666,25 @@ BREAKDOWN = """# Mission control — Caden Myers
         # is how anybody writes one down.  Every indented line used to be
         # passed over in silence, so a build would not write the document and
         # a sync would not store what was in it.
-        # C1: the line the others hang under, which is of the project it names
-        ("Relaunch with these from the wishlist:", {"project": "p1", "parent": None, "status": "wishlist"}),
-        # C2: a piece of it, which is of whatever its goal is and says which
-        # goal by hanging off it rather than by carrying a number
-        ("XANESCalculator", {"project": "p1", "parent": "the one above", "status": "wishlist"}),
+        # C1: the line the others hang under
+        ("Relaunch with these from the wishlist:", {"parent": None, "status": "wishlist"}),
+        # C2: a piece of it, which says which goal it is of by hanging off it
+        # rather than by carrying a number
+        ("XANESCalculator", {"parent": "the one above", "status": "wishlist"}),
         # C3: a piece somebody has ticked, which is done whatever section it
         # is in, the way a ticked task is
-        ("LJCalculator", {"project": "p1", "parent": "the one above", "status": "finished"}),
+        ("LJCalculator", {"parent": "the one above", "status": "finished"}),
         # C4: a line ending in a parenthesis of its own, which is what
         # somebody typed and not the note a render writes there
         (
             "Merge the ase adapter (please update the below, copied from the old MC)",
-            {"project": "p1", "parent": None, "status": "wishlist"},
+            {"parent": None, "status": "wishlist"},
         ),
     ],
 )
 def test_a_held_thing_can_have_a_breakdown_under_it(text, expected):
     goals = {g["text"]: g for g in parse_document(BREAKDOWN)["goals"]}
     goal = goals[text]
-    assert goal["project"] == expected["project"]
     assert goal["status"] == expected["status"]
     if expected["parent"] is None:
         assert "parent" not in goal

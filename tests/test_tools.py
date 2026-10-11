@@ -58,6 +58,7 @@ from regolith.tools import (
     strip_str,
     update_schemas,
     validate_meeting,
+    with_years,
 )
 
 PEOPLE_COLL = [
@@ -1569,6 +1570,30 @@ def test_fragment_retrieval(input, expected):
 )
 def test_month_and_year(input, expected):
     assert month_and_year(input[0], input[1]) == expected
+
+
+@pytest.mark.parametrize(
+    "entry, expected_years",
+    [
+        # Test the years a CV or resume writes a span from, for an entry dated
+        # either way the people collection allows
+        # C1: dated with begin_date and end_date, expect the years of both
+        ({"begin_date": "2008-01-01", "end_date": "2025-12-31"}, {"begin_year": 2008, "end_year": 2025}),
+        # C2: dated with begin_date and no end, expect a begin year and the end
+        # left open, which the template writes as present
+        ({"begin_date": "2026-01-01"}, {"begin_year": 2026}),
+        # C3: dated with years already, expect them left as they are
+        ({"begin_year": 2008, "end_year": 2025}, {"begin_year": 2008, "end_year": 2025}),
+        # C4: dated both ways, expect the years given to win over the dates
+        ({"begin_year": 2007, "begin_date": "2008-01-01"}, {"begin_year": 2007}),
+    ],
+)
+def test_with_years_fills_the_years_a_template_writes(entry, expected_years):
+    entry = dict(entry, organization="Columbia University")
+    filled = with_years(entry)
+    assert {k: v for k, v in filled.items() if k.endswith("_year")} == expected_years
+    assert filled is entry
+    assert filled["organization"] == "Columbia University"
 
 
 @pytest.mark.parametrize(
