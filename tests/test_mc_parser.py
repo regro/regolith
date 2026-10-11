@@ -311,9 +311,9 @@ def test_two_lines_sharing_an_id_are_both_read(kind, expected_texts, collection)
         # which no collection can hold and no guess should settle.  Expect the
         # document refused with a message naming the line, both kinds and what
         # to do, rather than the sync falling over
-        # C1: a task copied under On-deck, where a line is a goal
+        # C1: a task's id on a goal line of a later period
         (
-            "## On-deck\n\n- a held goal  ^h1\n  - [ ] a task  ^66e5ty",
+            "## Goals — 2026Q4\n\n- 1.1  a task  ^66e5ty",
             r"line \d+: \^66e5ty is the id of a task written earlier.*read as a goal.*Take the id off",
         ),
         # C2: a goal copied into a week, where a line is a task
@@ -324,7 +324,7 @@ def test_two_lines_sharing_an_id_are_both_read(kind, expected_texts, collection)
     ],
 )
 def test_a_line_copied_to_where_it_is_another_kind_is_refused(line, expected_message):
-    text = DOCUMENT.split("## On-deck")[0] + line + "\n"
+    text = DOCUMENT.split("## On-deck tasks")[0] + line + "\n"
     with pytest.raises(DocumentError, match=expected_message):
         parse_document(text)
 
