@@ -20,6 +20,7 @@ from regolith.tools import (
     make_bibtex_file,
     merge_collections_superior,
     remove_duplicate_docs,
+    with_years,
 )
 
 
@@ -67,11 +68,13 @@ class CVBuilder(LatexBuilderBase):
             )
             bibfile = make_bibtex_file(pubs, pid=person["_id"], person_dir=self.bldir)
             emps = person.get("employment", [])
-            emps = [em for em in emps if not em.get("not_in_cv", False)]
+            # an entry dated with begin_date and end_date has no years for the
+            # template to write, which would say present for both
+            emps = [with_years(em) for em in emps if not em.get("not_in_cv", False)]
             for e in emps:
                 e["position"] = e.get("position_full", e.get("position").title())
             emps.sort(key=ene_date_key, reverse=True)
-            edu = person.get("education", [])
+            edu = [with_years(e) for e in person.get("education", [])]
             edu.sort(key=ene_date_key, reverse=True)
             teach = person.get("teaching", [])
             for t in teach:

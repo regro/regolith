@@ -13,6 +13,7 @@ from regolith.tools import (
     make_bibtex_file,
     merge_collections_superior,
     month_and_year,
+    with_years,
 )
 
 
@@ -53,11 +54,13 @@ class ResumeBuilder(LatexBuilderBase):
             )
             bibfile = make_bibtex_file(pubs, pid=p["_id"], person_dir=self.bldir)
             emp = p.get("employment", [])
-            emp = [em for em in emp if not em.get("not_in_cv", False)]
+            # an entry dated with begin_date and end_date has no years for the
+            # template to write, which would say present for both
+            emp = [with_years(em) for em in emp if not em.get("not_in_cv", False)]
             for e in emp:
                 e["position"] = e.get("position_full", e.get("position").title())
             emp.sort(key=ene_date_key, reverse=True)
-            edu = p.get("education", [])
+            edu = [with_years(e) for e in p.get("education", [])]
             edu.sort(key=ene_date_key, reverse=True)
             current_projects = filter_projects(all_docs_from_collection(rc.client, "projects"), names, active=True)
             past_projects = filter_projects(all_docs_from_collection(rc.client, "projects"), names, active=False)

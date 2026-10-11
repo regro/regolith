@@ -107,6 +107,37 @@ def gets(seq, key, default=None):
         yield x.get(key, default)
 
 
+def with_years(entry):
+    """Return an entry with its years filled in from its dates.
+
+    A template writes a span from ``begin_year`` and ``end_year`` and
+    says ``present`` for a year it does not find.  An entry dated with
+    ``begin_date`` and ``end_date`` has the years, just not under those
+    names, so they are copied over, in place as the builders fill in
+    the rest of an entry.  A year already there is left alone, and an
+    entry with no end stays open.
+
+    Parameters
+    ----------
+    entry : dict
+        The employment or education entry, filled in place.
+
+    Returns
+    -------
+    dict
+        The same entry, with ``begin_year`` and ``end_year`` filled in
+        where its dates say what they are.
+    """
+    # get_dates fills the months and days it assumes into what it is given,
+    # which a template would then write as if somebody had said them
+    found = get_dates(dict(entry))
+    if "begin_year" not in entry and found.get("begin_date"):
+        entry["begin_year"] = found["begin_date"].year
+    if "end_year" not in entry and entry.get("end_date"):
+        entry["end_year"] = found["end_date"].year
+    return entry
+
+
 def month_and_year(m=None, y=None):
     """Creates a string from month and year data, if available."""
     if y is None:
