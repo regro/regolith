@@ -124,7 +124,19 @@ class MCSyncHelper(DbHelperBase):
 
         found = self.documents(mcdir)
         for path, person in found:
-            self.read_one(path, person)
+            try:
+                self.read_one(path, person)
+            except Exception as error:
+                # the collections are written once every document is read, so
+                # a document that brings the sync down would lose what every
+                # other document said, with each of them already reported as
+                # written
+                print(
+                    f"{path.name} could not be read, so nothing was written from it: "
+                    f"{type(error).__name__}: {error}"
+                )
+                print("This is a problem in regolith rather than in the document. Please report it, saying")
+                print("which document it was. The other documents are still written.")
         self.say_who_is_missing(mcdir, {person for _, person in found})
 
     def say_who_is_missing(self, mcdir, read):

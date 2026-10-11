@@ -227,6 +227,36 @@ def test_a_document_that_cannot_be_read_is_skipped_whole(mc_repo, capsys):
     assert stored(mc_repo, "mc_tasks", "mct999") is None
 
 
+def test_a_document_that_brings_the_sync_down_does_not_lose_the_others(mc_repo, capsys, mocker):
+    # Test a document the sync falls over on, through a fault in regolith
+    # rather than in the document.  The collections are written once every
+    # document is read, so expect the fault reported against that document
+    # and what the other documents said still written, rather than every
+    # document lost with each already reported as written
+    repo, mcdir = mc_repo
+    dump_yaml(
+        repo / "db" / "people.yaml",
+        {"pliu": {"_id": "pliu", "name": "Pei Liu"}, "awu": {"_id": "awu", "name": "Ann Wu"}},
+    )
+    (mcdir / "ann.md").write_text("# Mission control — Ann Wu\n\n## Projects\n\n1. **a new project**\n")
+    from regolith.helpers.mcsynchelper import MCSyncHelper
+
+    read_one = MCSyncHelper.read_one
+
+    def falls_over_on_pei(self, path, person):
+        if path.name == "pei.md":
+            raise RuntimeError("a fault in regolith")
+        return read_one(self, path, person)
+
+    mocker.patch.object(MCSyncHelper, "read_one", falls_over_on_pei)
+    main(["helper", "u-mcsync"])
+    out = capsys.readouterr().out
+    assert "pei.md could not be read, so nothing was written from it: RuntimeError: a fault in regolith" in out
+    assert "ann.md: wrote 1, 1 of them new" in out
+    projects = load_yaml(repo / "db" / "mc_projects.yaml")
+    assert any(p.get("name") == "a new project" for p in projects.values())
+
+
 def test_a_dry_run_says_what_it_would_do_and_does_nothing(mc_repo, capsys):
     # Test that the run which changes nothing still reports what it found
     _, mcdir = mc_repo

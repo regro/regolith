@@ -747,6 +747,7 @@ class _Reader:
         # the ids of the lines stored so far, as against the archive, which
         # only mentions what it shows
         self.stored = set()
+        self.kind_of = {}
         self.place_of = {}
         # lines that carried an id another line had already taken
         self.copied = []
@@ -756,7 +757,7 @@ class _Reader:
         self.ids.add(_id)
         return _id
 
-    def own_id(self, carried, mint, collection):
+    def own_id(self, carried, mint, collection, number):
         """Return the id a line is stored under.
 
         A line carries the id it was written with, unless another line
@@ -776,19 +777,39 @@ class _Reader:
             How to make a new one.
         collection : str
             The collection the line belongs to.
+        number : int
+            The line number, for saying which line cannot be read.
 
         Returns
         -------
         str
             The id to store it under.
+
+        Raises
+        ------
+        DocumentError
+            When the id was first written on a line of another kind: a
+            task copied under On-deck, say, where a line is a goal.  No
+            collection can hold both, and which one the id belongs to is
+            not for a guess to settle.
         """
         if carried and carried in self.stored:
+            was = self.kind_of[carried]
+            if was != collection:
+                raise DocumentError(
+                    f"line {number}: ^{carried} is the id of a {KIND[was]} written earlier in the "
+                    f"document, but this line is read as a {KIND[collection]}. Take the id off this "
+                    f"line so it is stored as a new {KIND[collection]}, or move the line to where a "
+                    f"{KIND[was]} is written."
+                )
             fresh = mint()
             self.copied.append({"collection": collection, "id": carried, "copy": fresh})
             self.stored.add(fresh)
+            self.kind_of[fresh] = collection
             return fresh
         _id = carried or mint()
         self.stored.add(_id)
+        self.kind_of[_id] = collection
         return _id
 
     def mint_project(self, name):
@@ -806,7 +827,7 @@ class _Reader:
             return
         if not line.strip():
             return
-        if self.section == "projects" and self.project(line):
+        if self.section == "projects" and self.project(line, number):
             return
         if self.section in ("goals", "wishlist", "archive") and self.goal(line, number):
             return
@@ -838,7 +859,7 @@ class _Reader:
         else:
             self.section = None
 
-    def project(self, line):
+    def project(self, line, number):
         """Read a line of the projects section."""
         deliverable = DELIVERABLE_LINE.match(line)
         if deliverable and self.projects:
@@ -864,7 +885,7 @@ class _Reader:
             return False
         text, struck_out = read_text(found.group("text"))
         project = {
-            "_id": self.own_id(found.group("id"), lambda: self.mint_project(text), "mc_projects"),
+            "_id": self.own_id(found.group("id"), lambda: self.mint_project(text), "mc_projects", number),
             "name": text,
             "status": "finished" if struck_out else "active",
         }
@@ -916,7 +937,7 @@ class _Reader:
         goal_number = found.group("number")
         ticked = (found.group("box") or " ").lower() == "x"
         goal = {
-            "_id": self.own_id(found.group("id"), self.mint, "mc_goals"),
+            "_id": self.own_id(found.group("id"), self.mint, "mc_goals", number),
             "period": self.held_period if held else self.period,
             "text": text,
             # a strike is believed over a box, since the box is what gets forgotten
@@ -958,7 +979,7 @@ class _Reader:
         indent = len(found.group("indent").expandtabs(4))
         ticked = found.group("box").lower() == "x"
         task = {
-            "_id": self.own_id(found.group("id"), self.mint, "mc_tasks"),
+            "_id": self.own_id(found.group("id"), self.mint, "mc_tasks", number),
             # a strike is believed over a box, since the box is what gets forgotten
             "status": "finished" if (struck_out or ticked) else "on-deck" if held else "active",
             "text": text,
@@ -1265,6 +1286,8 @@ def changes(parsed, person, existing, today=None, elsewhere=None, periods=None):
 
 
 PARSED_KIND = {"mc_projects": "projects", "mc_goals": "goals", "mc_tasks": "tasks"}
+# what a line of each collection is called when talking to whoever wrote it
+KIND = {"mc_projects": "project", "mc_goals": "goal", "mc_tasks": "task"}
 
 
 def _settle_copy(copy, parsed, existing, elsewhere, adopted):
