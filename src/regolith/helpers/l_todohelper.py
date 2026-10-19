@@ -95,6 +95,13 @@ def subparser(subpi):
         help="Search this collection by giving key element pairs. '-f description paper' will return tasks "
         "with description containing 'paper' ",
     )
+    subpi.add_argument(
+        "-i",
+        "--index",
+        nargs="+",
+        type=int,
+        help="List only the tasks with these indices. '-i 12 15' will return tasks 12 and 15",
+    )
 
     return subpi
 
@@ -154,6 +161,15 @@ class TodoListerHelper(SoutHelperBase):
             rc.stati = PROJECTUM_ACTIVE_STATI
         if rc.filter:
             gather_todos = key_value_pair_filter(gather_todos, rc.filter)
+        if rc.index:
+            gather_todos = [todo for todo in gather_todos if todo.get("running_index") in rc.index]
+            found_indices = [todo.get("running_index") for todo in gather_todos]
+            for index in rc.index:
+                if index not in found_indices:
+                    print(
+                        f"There is no task with index {index}. "
+                        "Please check the index against the full list from regolith helper l_todo."
+                    )
         if rc.short:
             for todo in gather_todos[::-1]:
                 if todo.get("duration") is None or float(todo.get("duration")) > float(rc.short):
