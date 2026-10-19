@@ -581,6 +581,36 @@ helper_map = [
         "Deadlines:\n"
         "------------------------------\n",
     ),
+    (
+        ["helper", "l_todo", "--assigned-to", "sbillinge", "--date", "2020-05-01", "-i", "1"],
+        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+        "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+        "--------------------------------------------------------------------------------\n"
+        "----------------------------------------------------------------------------\n"
+        "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
+        "----------------------------------------------------------------------------\n"
+        "2020-07-19(79 days): (1) read paper (79|2|60.0|reading,downtime|scopatz|1saefa)\n"
+        "------------------------------\n"
+        "Deadlines:\n"
+        "------------------------------\n",
+    ),
+    (
+        ["helper", "l_todo", "--assigned-to", "sbillinge", "--date", "2020-05-01", "-i", "2", "99"],
+        "There is no task with index 99. Please check the index against the full list from regolith helper l_todo.\n"
+        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+        "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+        "--------------------------------------------------------------------------------\n"
+        "started:\n"
+        "(0)(89 days): (2) prepare the presentation (89|0|30.0|downtime|sbillinge|2saefa)\n"
+        "     - about 10 minutes\n"
+        "     - don't forget to upload to the website\n"
+        "----------------------------------------------------------------------------\n"
+        "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
+        "----------------------------------------------------------------------------\n"
+        "------------------------------\n"
+        "Deadlines:\n"
+        "------------------------------\n",
+    ),
     (["helper", "l_todo", "--assigned-to", "wrong_id"], "The id you entered can't be found in todos.yml.\n"),
     (
         ["helper", "l_todo", "-o", "--date", "2021-4-10", "--assigned-to", "sbillinge", "--short"],
