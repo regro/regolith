@@ -2311,7 +2311,7 @@ def validate_meeting(meeting, date):
         raise ValueError(f'{meeting.get("_id")} does not have a presentation title')
 
 
-def print_task(task_list, stati, index=True):
+def print_task(task_list, stati, index=True, verbose=True):
     """Print tasks in a nice format.
 
     Parameters
@@ -2322,6 +2322,8 @@ def print_task(task_list, stati, index=True):
       The list of task stati that will be printed
     index : bool Optional  Default is True
       The bool that can suppress printing the preamble of importance, days to due and index
+    verbose : bool Optional  Default is True
+      The bool that, when False, suppresses printing the notes of each task
     """
     # List deadline tasks only under Deadlines, not in their status groups too
     deadline_list = []
@@ -2348,7 +2350,7 @@ def print_task(task_list, stati, index=True):
                     f"({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|"
                     f"{','.join(task.get('tags', []))}|{task.get('assigned_by')}|{task.get('uuid', [])[:6]})"
                 )
-                if task.get("notes"):
+                if verbose and task.get("notes"):
                     for note in task.get("notes"):
                         print(f"     - {note}")
     print("-" * 76)
@@ -2365,7 +2367,7 @@ def print_task(task_list, stati, index=True):
                 f"{str(task.get('duration'))}|{','.join(task.get('tags', []))}"
                 f"|{task.get('assigned_by')}|{task.get('uuid')[:6]})"
             )
-            if task.get("notes"):
+            if verbose and task.get("notes"):
                 for note in task.get("notes"):
                     print(f"     - {note}")
         print(f"{'-' * 30}\nDeadlines:\n{'-' * 30}")
