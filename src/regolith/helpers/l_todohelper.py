@@ -66,6 +66,7 @@ def subparser(subpi):
         **listbox_kwargs,
     )
     subpi.add_argument("-o", "--outstandingreview", help="List outstanding reviews", action="store_true")
+    subpi.add_argument("-v", "--verbose", action="store_true", help="Also print the notes of each task")
     subpi.add_argument(
         "-a",
         "--assigned-to",
@@ -212,7 +213,7 @@ class TodoListerHelper(SoutHelperBase):
         print("(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)")
         print("-" * 80)
         if len(gather_todos) != 0:
-            print_task(gather_todos, stati=rc.stati)
+            print_task(gather_todos, stati=rc.stati, verbose=rc.verbose)
 
         if rc.outstandingreview:
             prop = self.gtx["proposalReviews"]
