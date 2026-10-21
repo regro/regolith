@@ -540,6 +540,65 @@ def test_a_task_copied_into_another_week_is_rolled_there(first_week, second_week
     assert copy["sure"] and copy["rolled_to"] == expected_week
 
 
+@pytest.mark.parametrize(
+    "stored_status, expected_status, expected_week, expected_rolled_to",
+    [
+        # Test a task copied between its week and on deck, id and all.  On deck
+        # is a week not chosen yet, so the copy is a roll whichever way round
+        # the lines are written, and what was stored says which way it went
+        # C1: a task in a week, copied on deck, expect it rolled on deck,
+        # keeping the week it was last due in
+        ("active", "on-deck", dt.date(2026, 9, 14), "on-deck"),
+        # C2: a task on deck, copied into a week, expect it brought back into
+        # that week
+        ("on-deck", "active", dt.date(2026, 9, 21), dt.date(2026, 9, 21)),
+    ],
+)
+def test_a_task_copied_between_a_week_and_on_deck_is_rolled(
+    stored_status, expected_status, expected_week, expected_rolled_to
+):
+    document = parsed(
+        projects=[read_project(_id="pl-shock")],
+        goals=[read(_id="g-old", project="pl-shock")],
+        tasks=[
+            read_task(_id="t-old", goal="g-old", due_date=dt.date(2026, 9, 21)),
+            # a piece written under the old line, copied on deck with it
+            read_task(
+                _id="t-piece", goal="g-old", parent="t-old", text="a piece of it", due_date=dt.date(2026, 9, 21)
+            ),
+            on_deck(_id="t-minted", text=STORED_TASK["text"]),
+            on_deck(_id="t-piece-minted", parent="t-minted", text="a piece of it"),
+        ],
+    )
+    document["copied"] = [
+        {"collection": "mc_tasks", "id": "t-old", "copy": "t-minted"},
+        {"collection": "mc_tasks", "id": "t-piece", "copy": "t-piece-minted"},
+    ]
+    stored_task = dict(
+        STORED_TASK, status=stored_status, due_date=dt.date(2026, 9, 14), first_due_date=dt.date(2026, 9, 7)
+    )
+    stored_piece = dict(stored_task, _id="t-piece", parent="t-old", text="a piece of it")
+    writes, drops = changes(
+        document,
+        "pliu",
+        existing(
+            projects=[STORED_PROJECT],
+            goals=[stored(_id="g-old", project="pl-shock")],
+            tasks=[stored_task, stored_piece],
+        ),
+        today=TODAY,
+    )
+    written = {t["_id"]: t for t in writes["mc_tasks"]}
+    assert set(written) == {"t-old", "t-piece"}
+    assert written["t-old"]["status"] == expected_status
+    assert written["t-old"]["due_date"] == expected_week
+    assert written["t-old"]["first_due_date"] == dt.date(2026, 9, 7)
+    assert written["t-old"]["goal"] == "g-old"
+    assert written["t-piece"]["parent"] == "t-old"
+    assert drops["mc_tasks"] == []
+    assert document["copied"][0]["rolled_to"] == expected_rolled_to
+
+
 def test_a_line_that_lost_its_id_does_not_go_to_somebody_else():
     # Test that matching on text stays within this person's records.  Two
     # people's goals say the same thing all the time -- "introduce project to

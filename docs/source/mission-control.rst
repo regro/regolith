@@ -137,8 +137,11 @@ You type:
   archive on the next build with everything under it.
 - **A move.** Cut a task from its week to On-deck tasks to hold it, or a goal
   from Goals to Wishlist goals, and back to take it up again. Move a task to
-  another week to roll it. Reorder lines to say what matters most: a build
-  keeps the order you chose.
+  another week to roll it. Copying works for a task too: copy its line into
+  another week, or onto On-deck tasks (a week not chosen yet), and leave the
+  old one; the sync says it rolled and the next build takes the old line out.
+  A goal has to be cut. Reorder lines to say what matters most: a build keeps
+  the order you chose.
 - **A new line.** A goal needs a number saying which project it is of, and a
   task at the top level needs one saying which goal. A sub task is just
   indented under its task. A project needs its number and its name in bold.
