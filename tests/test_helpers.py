@@ -615,8 +615,6 @@ helper_map = [
         "--------------------------------------------------------------------------------\n"
         "started:\n"
         "(0)(89 days): (2) prepare the presentation (89|0|30.0|downtime|sbillinge|2saefa)\n"
-        "     - about 10 minutes\n"
-        "     - don't forget to upload to the website\n"
         "----------------------------------------------------------------------------\n"
         "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
         "----------------------------------------------------------------------------\n"
