@@ -316,6 +316,9 @@ class MissionControlBuilder(BuilderBase):
     # mc.DEFAULT_PERIODS gives, and stands for a builder made without a
     # runcontrol, as the sync helper makes one to name documents with.
     periods = None
+    # the day a week starts on, which a group says in regolithrc.json.  None
+    # is Monday
+    week_start = None
     # whose documents to write.  None is everybody in the group, which is the
     # point: a group of any age has more people who have left than people in
     # it, and nobody wants to read through the documents of both.
@@ -338,6 +341,7 @@ class MissionControlBuilder(BuilderBase):
         # group says in regolithrc.json and which decides both the period a new
         # goal belongs to and the order the archive reads in
         self.periods = getattr(rc, "mission_control_periods", None)
+        self.week_start = getattr(rc, "mission_control_week_start", None)
         self.only_people = getattr(rc, "people", None)
         self.build_all = bool(getattr(rc, "build_all", False))
         self.keep_finished_days = getattr(rc, "mission_control_keep_finished_days", KEEP_FINISHED_DAYS)
@@ -729,13 +733,13 @@ class MissionControlBuilder(BuilderBase):
         for task in children[None]:
             due = as_a_date(task.get("due_date"))
             if due is not None:
-                by_week[week_of(due)].append(task)
+                by_week[week_of(due, self.week_start)].append(task)
         lines = []
-        by_week.setdefault(week_of(dt.date.today()), [])
-        for monday in sorted(by_week, reverse=True):
-            lines += [f"## Week of {monday.isoformat()}", ""]
+        by_week.setdefault(week_of(dt.date.today(), self.week_start), [])
+        for start in sorted(by_week, reverse=True):
+            lines += [f"## Week of {start.isoformat()}", ""]
             counts = defaultdict(int)
-            roots = in_document_order(by_week[monday], order, lambda t: t["_id"])
+            roots = in_document_order(by_week[start], order, lambda t: t["_id"])
             for task in sorted(roots, key=lambda t: number_key(goal_number[t["goal"]])):
                 counts[task["goal"]] += 1
                 number = f"{goal_number[task['goal']]}.{counts[task['goal']]}"

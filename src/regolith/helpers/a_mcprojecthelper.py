@@ -198,12 +198,12 @@ class MCProjectAdderHelper(DbHelperBase):
             "status": rc.status,
         }
         taken.add(goal["_id"])
-        monday = week_of(today)
+        week = week_of(today, getattr(rc, "mission_control_week_start", None))
         task = {
             "_id": short_id(taken),
             "goal": goal["_id"],
-            "due_date": monday,
-            "first_due_date": monday,
+            "due_date": week,
+            "first_due_date": week,
             "text": TBD,
             "status": rc.status,
         }

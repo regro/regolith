@@ -190,6 +190,21 @@ The order the periods are given in does not matter, since they are put in the
 order they come round by the dates. That order is what mission control sorts an
 archive by, rather than the letters of the names, which do not agree with it.
 
+``mission_control_week_start``
+==============================
+The day of the week a mission control week starts on, by name. Each week of
+tasks is headed with the date of this day, and a build adds a new, empty week
+when this day comes round. If none is provided it defaults to ``monday``. A
+group that meets on Wednesdays, and plans the week from that meeting, says:
+
+.. code-block:: json
+
+    "mission_control_week_start": "wednesday"
+
+Changing it moves every task to the week its due date falls in under the new
+start, so the tasks of the week the change is made in show up under the week
+before it, ready to be rolled into the new week.
+
 ``mission_control_also_build``
 ==============================
 The people to write a mission control document for besides the group's own

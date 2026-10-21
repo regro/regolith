@@ -109,22 +109,38 @@ def documents():
 
 
 @pytest.mark.parametrize(
-    "date, expected_monday",
+    "date, week_start, expected_week",
     [
         # Test which week a date is rendered under, since a task is grouped by
         # the week its due date falls in
-        # C1: a Monday, expect itself
-        (dt.date(2026, 9, 7), dt.date(2026, 9, 7)),
+        # C1: a Monday, with weeks starting on Monday, expect itself
+        (dt.date(2026, 9, 7), None, dt.date(2026, 9, 7)),
         # C2: midweek, expect the Monday before it
-        (dt.date(2026, 9, 9), dt.date(2026, 9, 7)),
+        (dt.date(2026, 9, 9), None, dt.date(2026, 9, 7)),
         # C3: the Sunday that ends the week, expect the same Monday
-        (dt.date(2026, 9, 13), dt.date(2026, 9, 7)),
+        (dt.date(2026, 9, 13), None, dt.date(2026, 9, 7)),
         # C4: the next Monday, expect the following week
-        (dt.date(2026, 9, 14), dt.date(2026, 9, 14)),
+        (dt.date(2026, 9, 14), None, dt.date(2026, 9, 14)),
+        # C5: weeks starting on Wednesday, for a group that meets then,
+        # 1. a Wednesday, expect itself
+        (dt.date(2026, 10, 21), "wednesday", dt.date(2026, 10, 21)),
+        # 2. the Tuesday after, expect the same Wednesday
+        (dt.date(2026, 10, 27), "wednesday", dt.date(2026, 10, 21)),
+        # 3. the Monday before, expect the Wednesday of the week before
+        (dt.date(2026, 10, 19), "wednesday", dt.date(2026, 10, 14)),
+        # C6: the day written with a capital, as somebody types it, expect it read
+        (dt.date(2026, 10, 23), "Wednesday", dt.date(2026, 10, 21)),
     ],
 )
-def test_week_of_places_a_date_in_its_week(date, expected_monday):
-    assert week_of(date) == expected_monday
+def test_week_of_places_a_date_in_its_week(date, week_start, expected_week):
+    assert week_of(date, week_start) == expected_week
+
+
+def test_a_week_cannot_start_on_a_day_that_is_not_one():
+    # Test a week start that is mistyped in regolithrc.json.  Expect an
+    # error saying which setting to fix, rather than weeks placed anywhere
+    with pytest.raises(ValueError, match="mission_control_week_start"):
+        week_of(dt.date(2026, 10, 21), "weds-ish")
 
 
 @pytest.mark.parametrize(
@@ -254,6 +270,17 @@ def test_weeks_run_backwards_from_the_most_recent(documents):
     # meeting reads in
     doc = documents["pliu"]
     assert doc.index("## Week of 2026-09-07") < doc.index("## Week of 2026-08-31")
+
+
+def test_weeks_start_on_the_day_the_group_says():
+    # Test a group whose week turns over on Wednesday.  Expect a task due on a
+    # Friday under the Wednesday before it, rather than the Monday
+    builder = MissionControlBuilder.__new__(MissionControlBuilder)
+    builder.gtx = {"mc_projects": PROJECTS, "mc_goals": GOALS, "mc_tasks": TASKS}
+    builder.week_start = "wednesday"
+    doc = "\n".join(builder.documents()["pliu"])
+    assert "## Week of 2026-09-09" in doc
+    assert "## Week of 2026-09-07" not in doc
 
 
 def test_nobody_has_to_type_the_numbers_or_the_ids(documents):

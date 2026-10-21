@@ -395,6 +395,7 @@ class MCSyncHelper(DbHelperBase):
             existing,
             elsewhere=self.everything(),
             periods=getattr(rc, "mission_control_periods", None),
+            week_start=getattr(rc, "mission_control_week_start", None),
         )
         if not self.copies_are_settled(path, parsed):
             return

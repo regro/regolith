@@ -102,7 +102,8 @@ group's own, set by ``mission_control_periods``. A goal that was set in an
 earlier period says so in the note at the end.
 
 **Weeks** hold the tasks, one section per week, most recent first, with a box
-in front of each. The number says which goal a task is of: ``1.2.1`` is the
+in front of each. A week starts on a Monday unless the group sets
+``mission_control_week_start``. The number says which goal a task is of: ``1.2.1`` is the
 first task of goal ``1.2``. A task indented under another is a piece of it and
 carries no number.
 
@@ -245,8 +246,8 @@ something down should cost nothing.
 Settings
 ========
 
-Four run control settings, all optional, described under :doc:`rc`:
-``mission_control_dir``, ``mission_control_periods``,
+Five run control settings, all optional, described under :doc:`rc`:
+``mission_control_dir``, ``mission_control_periods``, ``mission_control_week_start``,
 ``mission_control_also_build`` and ``mission_control_keep_finished_days``.
 
 When something goes wrong
