@@ -170,6 +170,15 @@ def test_a_task_on_deck_keeps_its_goal_or_is_of_none(tasks, stored_tasks, expect
     assert all(t["status"] == "on-deck" for t in writes["mc_tasks"])
 
 
+def test_a_new_task_on_deck_is_due_in_the_week_the_group_keeps():
+    # Test a new task on deck for a group whose week starts on Wednesday.
+    # Expect it due the Wednesday before the Sunday it was read, not the Monday
+    writes, _ = changes(
+        parsed(tasks=[on_deck(_id="t-new")]), "pliu", existing(), today=TODAY, week_start="wednesday"
+    )
+    assert writes["mc_tasks"][0]["due_date"] == dt.date(2026, 9, 16)
+
+
 def test_something_newly_typed_is_written():
     # Test that a line somebody typed becomes a record, which is what makes
     # the document worth typing into

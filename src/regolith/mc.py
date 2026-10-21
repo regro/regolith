@@ -44,20 +44,42 @@ def short_id(taken=(), length=ID_LENGTH):
             return candidate
 
 
-def week_of(date):
-    """Return the Monday of the week a date falls in.
+# The day a week starts on, for a group that has not said.  A group whose week
+# turns over on its group meeting says so in regolithrc.json under
+# mission_control_week_start, as the name of the day.
+WEEKDAYS = ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")
+DEFAULT_WEEK_START = "monday"
+
+
+def week_of(date, week_start=None):
+    """Return the first day of the week a date falls in.
 
     Parameters
     ----------
     date : datetime.date
         The date to place.
+    week_start : str, optional
+        The name of the day a week starts on, e.g. ``wednesday``.  The
+        default is Monday.
 
     Returns
     -------
     datetime.date
-        The Monday of that week.
+        The first day of that week.
+
+    Raises
+    ------
+    ValueError
+        When the day a week starts on is not the name of a day.
     """
-    return date - dt.timedelta(days=date.weekday())
+    day = (week_start or DEFAULT_WEEK_START).strip().lower()
+    if day not in WEEKDAYS:
+        raise ValueError(
+            f"The week is set to start on {week_start!r}, which is not a day of the week. "
+            f"Please set mission_control_week_start in regolithrc.json to the name of a day, "
+            f"such as wednesday."
+        )
+    return date - dt.timedelta(days=(date.weekday() - WEEKDAYS.index(day)) % 7)
 
 
 # When the periods of the year begin, for a group that has not said.  Most
@@ -480,7 +502,7 @@ HELD_HEADINGS = {
 # it is not of one yet
 UNASSIGNED_PROJECT = "tbd"
 UNASSIGNED_GOAL = "tbd"
-WEEK_HEADING = re.compile(r"^Week of\s+(?P<monday>\d{4}-\d{2}-\d{2})$")
+WEEK_HEADING = re.compile(r"^Week of\s+(?P<start>\d{4}-\d{2}-\d{2})$")
 
 
 def read_text(raw):
@@ -738,7 +760,7 @@ class _Reader:
         self.tasks = []
         self.section = None
         self.period = None
-        self.monday = None
+        self.week = None
         self.by_number = {}
         self.stack = []
         self.goal_stack = []
@@ -851,7 +873,7 @@ class _Reader:
             self.period = goals.group("period")
         elif week:
             self.section = "week"
-            self.monday = dt.date.fromisoformat(week.group("monday"))
+            self.week = dt.date.fromisoformat(week.group("start"))
         elif title.lower() in HELD_HEADINGS:
             self.section = HELD_HEADINGS[title.lower()]
         elif title == "Archive":
@@ -985,7 +1007,7 @@ class _Reader:
             "text": text,
         }
         if not held:
-            task["due_date"] = self.monday
+            task["due_date"] = self.week
         while self.stack and self.stack[-1][0] >= indent:
             self.stack.pop()
         if self.stack:
@@ -1026,7 +1048,7 @@ class _Reader:
         """Return where the reader is, and whether that is a holding
         section."""
         if self.section == "week":
-            return f"the week of {self.monday.isoformat()}", False
+            return f"the week of {self.week.isoformat()}", False
         if self.section == "goals":
             return f"Goals — {self.period}", False
         if self.section == "on-deck":
@@ -1157,7 +1179,7 @@ def adopt(read, existing, claimed, elsewhere=None):
     return {}
 
 
-def changes(parsed, person, existing, today=None, elsewhere=None, periods=None):
+def changes(parsed, person, existing, today=None, elsewhere=None, periods=None, week_start=None):
     """Return the records a document says to write, and the ids to drop.
 
     Nothing is deleted.  A line somebody removed sets the record's status
@@ -1185,6 +1207,9 @@ def changes(parsed, person, existing, today=None, elsewhere=None, periods=None):
     periods : dict, optional
         The periods as ``{name: "MM-DD"}``, which say how a period's
         name is spelled.  The default is semesters.
+    week_start : str, optional
+        The name of the day a week starts on, which says the week a task
+        typed on deck is due in.  The default is Monday.
 
     Returns
     -------
@@ -1259,7 +1284,7 @@ def changes(parsed, person, existing, today=None, elsewhere=None, periods=None):
         record.update({k: v for k, v in read.items() if k != "status"})
         record["status"] = settled_status(read["status"], was.get("status"))
         record.setdefault("goal", UNASSIGNED_GOAL)
-        record.setdefault("due_date", week_of(today))
+        record.setdefault("due_date", week_of(today, week_start))
         record.setdefault("first_due_date", record["due_date"])
         _close(record, was, today)
         writes["mc_tasks"].append(record)
