@@ -168,26 +168,28 @@ def test_a_sub_task_on_deck_hangs_under_the_task_above_it():
 @pytest.mark.parametrize(
     "first, second, expected_message",
     [
-        # Test a line whose id is in two places.  A thing is moved on deck or
-        # to the wishlist by cutting it, and a copy left behind cannot be told
-        # from a paste back up, so neither is guessed at
-        # C1: a task in a week and on deck, expect the document refused naming
-        # both places
-        (
-            "## Week of 2026-09-07\n\n- [ ] 1.1.1  a task  ^66e5ty\n",
-            "## On-deck tasks\n\n- [ ] 1.1.1  a task  ^66e5ty\n",
-            r"\^66e5ty is under the week of 2026-09-07 and under On-deck tasks",
-        ),
-        # C2: a goal in the period and on the wishlist, expect the same
+        # Test a line whose id is in two places.  A goal is moved to the
+        # wishlist by cutting it, and a copy left behind cannot be told from a
+        # paste back up, so neither is guessed at.  A task copied anywhere it
+        # can be written is a roll, which the changes settle
+        # C1: a goal in the period and on the wishlist, expect the document
+        # refused naming both places
         (
             "## Goals — 2026Q3\n\n- 1.1  g  ^g1\n",
             "## Wishlist goals\n\n- 1.1  g  ^g1\n",
             r"\^g1 is under Goals — 2026Q3 and under Wishlist goals",
         ),
-        # C3: a task in two weeks, expect no refusal, since that is a roll
+        # C2: a task in two weeks, expect no refusal, since that is a roll
         (
             "## Week of 2026-09-14\n\n- [ ] 1.1.1  a task  ^66e5ty\n",
             "## Week of 2026-09-07\n\n- [ ] 1.1.1  a task  ^66e5ty\n",
+            None,
+        ),
+        # C3: a task in a week and on deck, expect no refusal, since on deck is
+        # a week not chosen yet and that is a roll too
+        (
+            "## Week of 2026-09-07\n\n- [ ] 1.1.1  a task  ^66e5ty\n",
+            "## On-deck tasks\n\n- [ ] 1.1.1  a task  ^66e5ty\n",
             None,
         ),
     ],

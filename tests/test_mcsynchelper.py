@@ -454,6 +454,29 @@ def test_a_task_copied_into_the_coming_week_is_rolled(mc_repo, capsys):
     assert old_week not in built
 
 
+def test_a_task_copied_on_deck_is_rolled_there(mc_repo, capsys):
+    # Test holding a task by copying its line on deck and leaving the old one,
+    # as a task is rolled into the coming week.  Expect the task on deck
+    # keeping its history, the sync to say it rolled, and the next build to
+    # take the line out of its week rather than refuse the document.
+    repo, mcdir = mc_repo
+    path = mcdir / "pei.md"
+    path.write_text(path.read_text() + "\n## On-deck tasks\n\n- [ ] 1.1.1  a task  ^mct001\n")
+
+    main(["helper", "u-mcsync"])
+    said = capsys.readouterr().out
+    assert 'pei.md: "a task" rolled on deck' in said
+    tasks = load_yaml(repo / "db" / "mc_tasks.yaml")
+    assert list(tasks) == ["mct001"]
+    assert tasks["mct001"]["status"] == "on-deck"
+    assert str(tasks["mct001"]["first_due_date"]) == "2026-09-07"
+
+    main(["build", "mission-control"])
+    built = path.read_text()
+    assert built.count("a task  ^mct001") == 1
+    assert built.index("## On-deck tasks") < built.index("a task  ^mct001")
+
+
 def ask_for_a_todo(tmp_path, mcdir, task_text):
     """Give the task the words, and the people a todo can be made
     for."""

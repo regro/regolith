@@ -277,8 +277,8 @@ class MCSyncHelper(DbHelperBase):
         on.
 
         Somebody who copies a line to make a new one often leaves the id
-        on it.  A task copied into another week, saying the same thing,
-        is a task rolled, and is said to be.  Otherwise, where one of the
+        on it.  A task copied into another week or on deck, saying the
+        same thing, is a task rolled, and is said to be.  Otherwise, where one of the
         two says what is stored under that id,
         that one is the original and keeps it, and the other is stored as
         new: that is said, and the sync goes on.  Where neither does, or
@@ -300,6 +300,12 @@ class MCSyncHelper(DbHelperBase):
         settled = True
         for copy in parsed.get("copied", ()):
             kind = copy["collection"].replace("mc_", "")[:-1]
+            if copy.get("rolled_to") == "on-deck":
+                print(f'{path.name}: "{brief(copy["kept"])}" rolled on deck')
+                continue
+            if copy.get("rolled_from") == "on-deck":
+                print(f'{path.name}: "{brief(copy["kept"])}" brought back from on deck')
+                continue
             if copy.get("rolled_to"):
                 print(f'{path.name}: "{brief(copy["kept"])}" rolled')
                 continue

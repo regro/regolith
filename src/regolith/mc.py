@@ -1061,15 +1061,19 @@ class _Reader:
         """Refuse a line whose id is on another line, when either is in
         a holding section.
 
-        A line is moved on deck or to the wishlist by cutting it.  A
-        copy left behind would say the thing is in two places, and there
-        is no telling a paste down from a paste up.
+        A goal is moved to the wishlist by cutting it.  A copy left
+        behind would say the thing is in two places, and there is no
+        telling a paste down from a paste up.  A task is different: on
+        deck is a week not chosen yet, so a task copied there from its
+        week is rolled, as a task copied into another week is, and
+        ``changes`` settles the two lines as one.
         """
         if carried is None:
             return
         here = self.place()
-        there = self.place_of.setdefault(carried, here)
-        if there != here and (here[1] or there[1]):
+        there, there_section = self.place_of.setdefault(carried, (here, self.section))
+        rolled = {self.section, there_section} <= TASK_SECTIONS
+        if there != here and (here[1] or there[1]) and not rolled:
             raise DocumentError(
                 f"line {number}: ^{carried} is under {there[0]} and under {here[0]}. A thing is in "
                 f"one place at a time: cut a line to move it rather than copying it, and take one "
@@ -1090,6 +1094,8 @@ class _Reader:
 
 
 HELD = ("on-deck", "wishlist")
+# the sections a task is written in, between which a copy is a roll
+TASK_SECTIONS = {"week", "on-deck"}
 OPEN = ("proposed", "active")
 
 
@@ -1352,7 +1358,7 @@ def _settle_copy(copy, parsed, existing, elsewhere, adopted):
     stored = existing[copy["collection"]].get(copy["id"]) or (elsewhere.get(copy["collection"]) or {}).get(
         copy["id"]
     )
-    if _rolled(copy, first, later, records, adopted):
+    if _rolled(copy, first, later, records, adopted, stored):
         return
     first_matches = bool(stored) and _said(first) == _said(stored)
     later_matches = bool(stored) and _said(later) == _said(stored)
@@ -1371,7 +1377,7 @@ def _said(record):
     return record.get("text") or record.get("name")
 
 
-def _rolled(copy, first, later, records, adopted):
+def _rolled(copy, first, later, records, adopted, stored=None):
     """Settle two lines sharing an id as a task rolled to another week,
     when that is what they are.
 
@@ -1382,11 +1388,17 @@ def _rolled(copy, first, later, records, adopted):
     week it left: it is not stored, and the next build takes it out.
     Anything written under either line follows the task.
 
+    On deck is a week not chosen yet, so a task copied there from its
+    week is rolled there.  The one exception is a task that was on deck
+    already: then the copy is the line in the week, and the task has been
+    brought back into that week.
+
     Parameters
     ----------
     copy : dict
         The two ids, as the parser noted them.  ``kept``, ``sure``,
-        ``rolled_from`` and ``rolled_to`` are written onto it.
+        ``rolled_from`` and ``rolled_to`` are written onto it, a week
+        or ``on-deck``.
     first, later : dict
         The two lines, the first carrying ``copy["id"]`` and the later
         the id it was given instead.
@@ -1395,6 +1407,9 @@ def _rolled(copy, first, later, records, adopted):
         of.
     adopted : dict
         The ids records turned out to have, for references to follow.
+    stored : dict, optional
+        What is stored under the id, which says whether the task was on
+        deck already.
 
     Returns
     -------
@@ -1402,13 +1417,25 @@ def _rolled(copy, first, later, records, adopted):
         Whether the two lines were a roll, and have been settled as one.
     """
     weeks = [as_a_date(line.get("due_date")) for line in (first, later)]
-    if _said(first) != _said(later) or None in weeks or weeks[0] == weeks[1]:
+    if _said(first) != _said(later) or weeks[0] == weeks[1]:
         return False
-    rolled, stale = (later, first) if weeks[1] > weeks[0] else (first, later)
+    if None in weeks:
+        # a line on deck is the only one read without a week
+        on_deck, in_week = (first, later) if weeks[0] is None else (later, first)
+        brought_back = (stored or {}).get("status") == "on-deck"
+        rolled, stale = (in_week, on_deck) if brought_back else (on_deck, in_week)
+    else:
+        rolled, stale = (later, first) if weeks[1] > weeks[0] else (first, later)
     rolled["_id"] = copy["id"]
     records.remove(stale)
     adopted[copy["copy"]] = copy["id"]
-    copy.update(sure=True, kept=_said(rolled), new=None, rolled_from=min(weeks), rolled_to=max(weeks))
+    copy.update(
+        sure=True,
+        kept=_said(rolled),
+        new=None,
+        rolled_from=as_a_date(stale.get("due_date")) or "on-deck",
+        rolled_to=as_a_date(rolled.get("due_date")) or "on-deck",
+    )
     return True
 
 
