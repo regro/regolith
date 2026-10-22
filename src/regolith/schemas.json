@@ -2494,6 +2494,45 @@
                         "required": false,
                         "type": "string"
                     },
+                    "editorial_board": {
+                        "description": "present only when the service is on the editorial board of a journal or collection, which is needed for the conflict of interest (COA) forms",
+                        "required": false,
+                        "type": "dict",
+                        "schema": {
+                            "journal": {
+                                "description": "the name of the journal or collection",
+                                "required": true,
+                                "type": "string"
+                            },
+                            "role": {
+                                "description": "the role of this person on the board",
+                                "required": true,
+                                "type": "string",
+                                "eallowed": "EDITORIAL_BOARD_ROLES"
+                            },
+                            "members": {
+                                "description": "the other members of the board",
+                                "required": false,
+                                "type": "list",
+                                "schema": {
+                                    "type": "dict",
+                                    "schema": {
+                                        "id": {
+                                            "description": "the _id, name or aka of the member in the people or contacts collection",
+                                            "required": true,
+                                            "type": "string"
+                                        },
+                                        "role": {
+                                            "description": "the role of the member on the board",
+                                            "required": true,
+                                            "type": "string",
+                                            "eallowed": "EDITORIAL_BOARD_ROLES"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "month": {
                         "description": "Use month and year if the servicedoesn't extend more than one year.Otherwise use begin_year and end_year",
                         "required": false,
@@ -2566,6 +2605,11 @@
                         "type": "string",
                         "description": "profession, department, school, university",
                         "eallowed": "SERVICE_TYPES"
+                    },
+                    "uuid": {
+                        "description": "a uuid for the entry, used by builders to select it, e.g., for synergistic activities",
+                        "required": false,
+                        "type": "string"
                     }
                 }
             },
