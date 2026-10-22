@@ -1385,14 +1385,37 @@
                     "month": 3,
                     "notes": [
                         "something"
-                    ]
+                    ],
+                    "uuid": "2b6f94e0-7d13-4c85-a0f9-1e3b8c5d7a26"
                 },
                 {
                     "name": "National Steering Committee",
                     "type": "profession",
                     "begin_year": 2018,
                     "end_year": 2021,
-                    "notes": "something"
+                    "notes": "something",
+                    "uuid": "8a1d0f52-3c6e-4b7a-9e21-5f0c7d4b2a90"
+                },
+                {
+                    "name": "Co-editor, Journal of Nuclear Software",
+                    "type": "profession",
+                    "begin_date": "2019-01-01",
+                    "description": "Handle about 40 manuscripts a year on fuel cycle simulation.",
+                    "editorial_board": {
+                        "journal": "Journal of Nuclear Software",
+                        "role": "co-editor",
+                        "members": [
+                            {
+                                "id": "sbillinge",
+                                "role": "editor-in-chief"
+                            },
+                            {
+                                "id": "afriend",
+                                "role": "co-editor"
+                            }
+                        ]
+                    },
+                    "uuid": "c4e7b913-0d2a-4f68-b5c1-7a9e3f20d6e4"
                 }
             ],
             "skills": [

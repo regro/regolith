@@ -34,6 +34,48 @@ def test_exemplars(key):
         assert v[0]
 
 
+@pytest.mark.parametrize(
+    "editorial_board, expected_valid",
+    [
+        (
+            # C1: journal, role and members each with an id and role, expect valid
+            {
+                "journal": "Journal of Nuclear Software",
+                "role": "co-editor",
+                "members": [{"id": "sbillinge", "role": "editor-in-chief"}],
+            },
+            True,
+        ),
+        # C2: journal and role with no members, expect valid
+        ({"journal": "Journal of Nuclear Software", "role": "editor-in-chief"}, True),
+        # C3: no journal, expect invalid
+        ({"role": "co-editor"}, False),
+        (
+            # C4: a member with no id, expect invalid
+            {
+                "journal": "Journal of Nuclear Software",
+                "role": "co-editor",
+                "members": [{"role": "editor-in-chief"}],
+            },
+            False,
+        ),
+    ],
+)
+def test_service_editorial_board(editorial_board, expected_valid):
+    # Test validation of an editorial board held in a people service entry
+    person = copy.deepcopy(EXEMPLARS["people"][0])
+    person["service"] = [
+        {
+            "name": "Co-editor, Journal of Nuclear Software",
+            "type": "profession",
+            "uuid": "c4e7b913-0d2a-4f68-b5c1-7a9e3f20d6e4",
+            "editorial_board": editorial_board,
+        }
+    ]
+    actual_valid, _ = validate("people", person, SCHEMAS)
+    assert actual_valid == expected_valid
+
+
 BAD_PROJECTUM = {
     "_id": "sb_firstprojectum",
     "begin_date": "2020-04-28",

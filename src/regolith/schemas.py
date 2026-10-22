@@ -99,6 +99,7 @@ alloweds = {
         "cancelled",
         "postponed",
     ],
+    "EDITORIAL_BOARD_ROLES": ["editor-in-chief", "co-editor", "member"],
     "PROJECT_TYPES": ["ossoftware", "funded", "outreach"],
     "PROJECTUM_ACTIVE_STATI": PROJECTUM_ACTIVE_STATI,
     "PROJECTUM_PAUSED_STATI": PROJECTUM_PAUSED_STATI,
