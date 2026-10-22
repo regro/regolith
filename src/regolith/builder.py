@@ -31,6 +31,7 @@ BUILDERS = LazyRegistry(
         "resume": "regolith.builders.resumebuilder:ResumeBuilder",
         "review-man": "regolith.builders.manuscriptreviewbuilder:ManRevBuilder",
         "review-prop": "regolith.builders.proposalreviewbuilder:PropRevBuilder",
+        "synergistic-activities": "regolith.builders.synergisticactivitiesbuilder:SynergisticActivitiesBuilder",
     }
 )
 

@@ -1,0 +1,20 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{times}
+\usepackage{enumitem}
+\pagestyle{empty}
+
+\begin{document}
+\begin{center}
+{\large\textbf{Synergistic Activities}}\\[2pt]
+{{ latex_safe(person['name']) }}
+\end{center}
+
+\begin{enumerate}[leftmargin=*]
+{%- for activity in activities %}
+\item \textbf{ {{-latex_safe(activity['name'])-}} }{% if activity['years'] %} ({{ activity['years'] }}){% endif %}.
+{%- if activity.get('description') %} {{ latex_safe(activity['description']) }}{% endif %}
+{%- endfor %}
+\end{enumerate}
+\end{document}
