@@ -157,6 +157,37 @@ def make_db():
         rmtree(repo)
 
 
+@pytest.fixture
+def make_fresh_db(tmp_path):
+    """A test fixture that yields a filesystem database of the people
+    collection, made new for each test.
+
+    For tests that change documents every other test reads, which would
+    leak through the session-wide ``make_db``.
+    """
+    cwd = os.getcwd()
+    rc = {
+        "default_user_id": "sbillinge",
+        "databases": [
+            {
+                "name": "test",
+                "url": str(tmp_path),
+                "public": True,
+                "path": "db",
+                "local": True,
+                "backend": "filesystem",
+            }
+        ],
+    }
+    (tmp_path / "regolithrc.json").write_text(json.dumps(rc))
+    fspath = tmp_path / "db"
+    fspath.mkdir()
+    exemplars_to_fs(fspath, ["people"])
+    os.chdir(tmp_path)
+    yield tmp_path
+    os.chdir(cwd)
+
+
 @pytest.fixture(scope="module")
 def make_mongodb():
     """A test fixture that creates and destroys a git repo in a

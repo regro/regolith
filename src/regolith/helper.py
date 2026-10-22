@@ -169,6 +169,10 @@ UPDATER_HELPER_SPECS = {
         "regolith.helpers.u_milestonehelper:MilestoneUpdaterHelper",
         "regolith.helpers.u_milestonehelper:subparser",
     ),
+    "u-service-uuids": (
+        "regolith.helpers.u_serviceuuidshelper:ServiceUuidsUpdaterHelper",
+        "regolith.helpers.u_serviceuuidshelper:subparser",
+    ),
     "u-todo": (
         "regolith.helpers.u_todohelper:TodoUpdaterHelper",
         "regolith.helpers.u_todohelper:subparser",
