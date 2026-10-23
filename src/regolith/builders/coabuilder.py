@@ -2,8 +2,9 @@
 
 For the specified person it returns the name and institution of all
 graduate student and post-doc advisors, all graduate student advisees,
-all post-doc advisees in the past 60 months and all coauthors in the
-past 48 months.
+all post-doc advisees in the past 60 months, all coauthors in the past
+48 months, and the editorial board members of the boards in their
+service in the past 24 months.
 """
 
 import datetime as dt
@@ -18,10 +19,11 @@ from nameparser import HumanName
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates, is_after, month_to_int
 from regolith.sorters import position_key
-from regolith.tools import all_docs_from_collection, filter_publications, fuzzy_retrieval
+from regolith.tools import all_docs_from_collection, filter_publications, fuzzy_retrieval, get_person_contact
 
 NUM_COAUTHOR_MONTHS = 48
 NUM_POSTDOC_MONTHS = None
+NUM_EDITOR_MONTHS = 24
 
 
 def get_advisors_name_inst(advisee, rc):
@@ -380,46 +382,59 @@ def unmerge(ws, cells):
     return
 
 
-def get_person(person_id, rc):
-    """Get the person's name."""
-    person_found = fuzzy_retrieval(
-        all_docs_from_collection(rc.client, "people"), ["name", "aka", "_id"], person_id, case_sensitive=False
-    )
-    if person_found:
-        return person_found
-    person_found = fuzzy_retrieval(
-        all_docs_from_collection(rc.client, "contacts"), ["name", "aka", "_id"], person_id, case_sensitive=False
-    )
-    if not person_found:
-        print("WARNING: {} missing from people and contacts. Check aka.".format(person_id))
-        person_found = {"name": person_id}
-    return person_found
+def get_editorial_board_collaborators(person, people, contacts, since_date, until_date):
+    """Return the board members a person lists in table 5 of the NSF
+    form.
 
+    An editor-in-chief lists the whole board.  Anyone else lists the
+    editors-in-chief and the other co-editors.
 
-def find_coeditors(person, rc):
-    """Get the coeditors info of the person.
+    Parameters
+    ----------
+    person : dict
+        The person whose editorial boards, held in their service, are listed.
+    people : list of dict
+        The people collection.
+    contacts : list of dict
+        The contacts collection.
+    since_date : datetime.date
+        The date before which a board the person has left is not listed.
+    until_date : datetime.date
+        The date of the form, the last active date of a board the person is still on.
 
-    Return (last, first, inst, journal).
+    Returns
+    -------
+    editors : list of dict
+        The board members to list, each with their document, the journal,
+        their role and the last active date.
+    missing : list of str
+        The board members found in neither people nor contacts, each with
+        the journal whose board lists them.
     """
-    emps = person.get("employment")
-    if emps is None:
-        return set()
-
-    def coeditor_id_journals(_emps):
-        for emp in _emps:
-            if emp.get("position") == "editor":
-                _journal = emp.get("department", "")
-                coeditor_ids = emp.get("coworkers", [])
-                for _coeditor_id in coeditor_ids:
-                    yield _coeditor_id, _journal
-
-    coeditor_inst_journals = set()
-    for coeditor_id, journal in coeditor_id_journals(emps):
-        coeditor = get_person(coeditor_id, rc)
-        coeditor_name = HumanName(coeditor.get("name"), "")
-        inst_name = get_inst_name(coeditor, rc)
-        coeditor_inst_journals.add((coeditor_name.last, coeditor_name.first, inst_name, journal, "co-editor"))
-    return coeditor_inst_journals
+    editors, missing = [], []
+    for entry in person.get("service", []):
+        board = entry.get("editorial_board")
+        if not board:
+            continue
+        end_date = get_dates(entry).get("end_date") or until_date
+        if end_date < since_date:
+            continue
+        for member in board.get("members", []):
+            if board["role"] != "editor-in-chief" and member["role"] == "member":
+                continue
+            found = get_person_contact(member["id"], people, contacts)
+            if found is None:
+                missing.append(f"{member['id']} ({board['journal']})")
+                continue
+            editors.append(
+                {
+                    "person": found,
+                    "journal": board["journal"],
+                    "type": member["role"],
+                    "interaction_date": min(end_date, until_date),
+                }
+            )
+    return editors, missing
 
 
 class RecentCollaboratorsBuilder(BuilderBase):
@@ -438,6 +453,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
             os.path.dirname(os.path.dirname(__file__)), "templates", "coa_template_doe.xlsx"
         )
         self.cmds = ["excel"]
+        self.missing_editors = []
         try:
             rc.verbose
         except AttributeError:
@@ -525,20 +541,30 @@ class RecentCollaboratorsBuilder(BuilderBase):
                 for my_collab in collabs
             ]
             print(*output)
+        editors, missing_editors = get_editorial_board_collaborators(
+            person, gtx["people"], gtx["contacts"], rc.editor_since_date, rc.date
+        )
+        for editor in editors:
+            board_member = editor.pop("person")
+            editor["name"] = HumanName(board_member["name"])
+            editor["institution"] = get_inst_name(board_member, rc)
+        self.missing_editors.extend(f"{editor} in the service of {person['_id']}" for editor in missing_editors)
         person["name"] = HumanName(person.get("name"))
-        results = {"person_info": person, "collabs": collabs}
+        results = {"person_info": person, "collabs": collabs, "editors": editors}
         return results
 
     @staticmethod
     def fill_in_tab(ws, ppl, start_row, template_cell_style=None, cols="ABCDE"):
-        """Add the information in person, institution pairs into the
-        table 4 in nsf table."""
+        """Add the information in person, institution pairs into a table
+        in nsf table."""
         nsf_mappings = {
             "co-author": "A:",
             "collaborator": "C:",
             "phd_advisor": "G:",
             "phd_advisee": "T:",
+            "editor-in-chief": "B:",
             "co-editor": "E:",
+            "member": "E:",
         }
         more_rows = len(ppl) - 1
         if more_rows > 0:
@@ -550,17 +576,18 @@ class RecentCollaboratorsBuilder(BuilderBase):
                 ws[f"A{row}"].value = nsf_mappings.get(person.get("type"))
                 ws[f"B{row}"].value = f"{person.get('name').last}, " f"{person.get('name').first}"
                 ws[f"C{row}"].value = person.get("institution")
+                ws[f"D{row}"].value = person.get("journal")
                 if isinstance(person.get("interaction_date"), dt.date):
                     ws[f"E{row}"].value = person.get("interaction_date", dt.date.today()).strftime("%m/%d/%Y")
         return
 
-    def render_template1(self, person_info, collabs, **kwargs):
+    def render_template1(self, person_info, collabs, editors, **kwargs):
         """Render the nsf template."""
         template = self.template
         wb = openpyxl.load_workbook(template)
         ws = wb.worksheets[0]
         nsf_collabs = copy(collabs)
-        advis, coauths, coeditors = [], [], []
+        advis, coauths = [], []
         pi_row_number = 17
         ws[f"B{pi_row_number}"].value = f"{person_info.get('name').last}, " f"{person_info.get('name').first}"
         ws[f"C{pi_row_number}"].value = person_info.get("institution")
@@ -575,10 +602,12 @@ class RecentCollaboratorsBuilder(BuilderBase):
                 advis.append(collab)
             if collab.get("type") == "co-author":
                 coauths.append(collab)
-            if collab.get("type") == "co-editor":
-                coeditors.append(collab)
         style = copy_cell_style(ws["A17"])
 
+        # Tables are filled from the bottom up, since filling one inserts rows
+        # that move every table below it
+        if editors:
+            self.fill_in_tab(ws, editors, start_row=64, template_cell_style=style)
         if coauths:
             self.fill_in_tab(ws, coauths, start_row=52, template_cell_style=style)
         if advis:
@@ -587,8 +616,6 @@ class RecentCollaboratorsBuilder(BuilderBase):
         #     self.fill_in_tab(
         #         ws, [person_info], start_row=17, template_cell_style=style
         #     )
-        if coeditors:
-            self.fill_in_tab(ws, coeditors, start_row=120, template_cell_style=style)
         wb.save(os.path.join(self.bldir, "{}_nsf.xlsx".format(person_info["_id"])))
         return locals()
 
@@ -622,9 +649,16 @@ class RecentCollaboratorsBuilder(BuilderBase):
         if not hasattr(rc, "date"):
             rc.date = dt.date.today()
         get_since_dates(rc)
+        rc.editor_since_date = rc.date - relativedelta(months=NUM_EDITOR_MONTHS)
         rc.post_doc_window_months = NUM_POSTDOC_MONTHS
         print(f"filtering coauthors for papers since {rc.pub_since_date}")
         for target in rc.people:
             query_results = self.query_ppl(target)
             self.render_template1(**query_results)
             self.render_template2(**query_results)
+        if self.missing_editors:
+            sys.exit(
+                "These editorial board members are in neither people nor contacts: "
+                f"{', '.join(self.missing_editors)}. They were left off the forms. Please add them to "
+                "contacts, or correct the id, name or aka given in the editorial board, and rerun."
+            )
