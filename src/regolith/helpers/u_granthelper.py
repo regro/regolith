@@ -1,10 +1,13 @@
 """Helper for updating a grant in the grants collection."""
 
+from pathlib import Path
+
 from dateutil import parser as date_parser
 from gooey import GooeyParser
 
 from regolith.dates import get_dates, has_dates
 from regolith.fsclient import _id_key
+from regolith.grant_budget import budget_from_text, budget_notes, budget_to_text, edit_text, make_budget
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.schemas import alloweds
 from regolith.tools import (
@@ -25,10 +28,12 @@ DATE_FIELDS = {"begin_date": "begin", "end_date": "end"}
 def subparser(subpi):
     date_kwargs = {}
     notes_kwargs = {}
+    file_kwargs = {}
     status_kwargs = {"choices": alloweds["GRANT_STATI"]}
     if isinstance(subpi, GooeyParser):
         date_kwargs["widget"] = "DateChooser"
         notes_kwargs["widget"] = "Textarea"
+        file_kwargs["widget"] = "FileChooser"
         status_kwargs["widget"] = "Dropdown"
 
     subpi.add_argument(
@@ -56,6 +61,26 @@ def subparser(subpi):
         help="Notes to add to the grant's existing notes",
         type=strip_str,
         **notes_kwargs,
+    )
+    subpi.add_argument(
+        "--edit-budget",
+        action="store_true",
+        help="Open the grant's budget periods in your text editor (set by the EDITOR environment variable). "
+        "A grant with no budget starts with one period per grant year. Not available in the helper GUI: "
+        "use --budget-file there.",
+    )
+    subpi.add_argument(
+        "--budget-file",
+        type=strip_str,
+        help="A YAML file of budget periods to replace the grant's budget with, written the way "
+        "--edit-budget shows it",
+        **file_kwargs,
+    )
+    subpi.add_argument(
+        "--annual-amounts",
+        nargs="+",
+        type=float,
+        help="Replace the budget with one period per grant year, with these amounts, one for each year",
     )
     subpi.add_argument(
         "--public-database",
@@ -127,6 +152,57 @@ class GrantUpdaterHelper(DbHelperBase):
             updates["notes"] = " ".join(([existing_notes] if existing_notes else []) + rc.notes)
         return updates
 
+    def _budget(self, grant, updated_grant):
+        rc = self.rc
+        chosen = [option for option in ("edit_budget", "budget_file", "annual_amounts") if getattr(rc, option)]
+        if not chosen:
+            return None
+        if len(chosen) > 1:
+            raise RuntimeError(
+                f"Only one of --{', --'.join(option.replace('_', '-') for option in chosen)} can be given. "
+                "Please re-run with just one of them."
+            )
+        dates = get_dates(dict(updated_grant)) if has_dates(updated_grant) else {}
+        grant_dates = (dates.get("begin_date"), dates.get("end_date"))
+        amount = updated_grant.get("amount")
+        if rc.annual_amounts or (rc.edit_budget and not grant.get("budget")):
+            if not all(grant_dates):
+                raise RuntimeError(
+                    f"{rc.grant_id} has no begin and end dates, so its budget years are not known. "
+                    "Please re-run with --begin-date and --end-date."
+                )
+        if rc.annual_amounts:
+            return make_budget(*grant_dates, annual_amounts=rc.annual_amounts)
+        if rc.budget_file:
+            budget, problems = budget_from_text(Path(rc.budget_file).read_text(encoding="utf-8"))
+            if problems:
+                raise ValueError(
+                    f"The budget in {rc.budget_file} has these problems:\n    "
+                    + "\n    ".join(problems)
+                    + "\nPlease correct the file and re-run."
+                )
+            return budget
+        starting_budget = grant.get("budget") or make_budget(*grant_dates, amount=amount)
+        original_text = budget_to_text(rc.grant_id, starting_budget, grant_dates, amount)
+        text = original_text
+        while True:
+            edited_text = edit_text(text)
+            if edited_text == original_text:
+                print(f"The budget of {rc.grant_id} was not changed.")
+                return None
+            budget, problems = budget_from_text(edited_text)
+            if not problems:
+                return budget
+            print("The budget has these problems:\n    " + "\n    ".join(problems))
+            answer = input(
+                "Press Enter to fix them in the editor, or type q and Enter to leave the budget as it was: "
+            )
+            if answer.strip().lower().startswith("q"):
+                print(f"The budget of {rc.grant_id} was not changed.")
+                return None
+            body = "\n".join(line for line in edited_text.splitlines() if not line.startswith("# PROBLEM: "))
+            text = "".join(f"# PROBLEM: {problem}\n" for problem in problems) + body + "\n"
+
     def _target_databases(self, updates):
         rc = self.rc
         parts = {
@@ -167,7 +243,12 @@ class GrantUpdaterHelper(DbHelperBase):
             return
 
         updates = self._updates(grant)
+        budget = self._budget(grant, {**grant, **updates})
+        if budget is not None:
+            updates["budget"] = budget
         if not updates:
+            if rc.edit_budget:
+                return
             raise RuntimeError(
                 f"Nothing was given to update in {rc.grant_id}. "
                 "Please re-run with at least one option, for example --awardnr DMR-0001."
@@ -207,6 +288,12 @@ class GrantUpdaterHelper(DbHelperBase):
                 'a public database. To keep them private, add a database with "public": false to '
                 "regolithrc.json."
             )
+        if "budget" in updates:
+            dates = get_dates(dict(updated_grant)) if has_dates(updated_grant) else {}
+            for note in budget_notes(
+                updates["budget"], (dates.get("begin_date"), dates.get("end_date")), updated_grant.get("amount")
+            ):
+                print(f"Note: {note}")
         for field, prefix in DATE_FIELDS.items():
             stale = _legacy_fields(grant, prefix) if field in updates else []
             if stale:
