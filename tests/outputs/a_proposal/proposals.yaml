@@ -88,9 +88,7 @@ dmref15:
     - qdu
     - dhsu
     - sbillinge
-  begin_day: 1
-  begin_month: May
-  begin_year: 2018
+  begin_date: '2018-05-01'
   call_for_proposals: http://www.nsf.gov/pubs/2014/nsf14591/nsf14591.htm
   cpp_info:
     cppflag: true
@@ -102,9 +100,7 @@ dmref15:
     single_pi: true
   currency: USD
   duration: 3
-  end_day: 1
-  end_month: May
-  end_year: 2019
+  end_date: '2019-05-01'
   funder: NSF
   notes: Quite an idea
   pi: Simon Billinge

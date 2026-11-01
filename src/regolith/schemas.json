@@ -808,12 +808,12 @@
             ]
         },
         "begin_day": {
-            "description": "start day of the grant",
+            "description": "start day of the grant. Legacy, kept so older entries still validate: please use begin_date instead.",
             "required": false,
             "type": "integer"
         },
         "begin_month": {
-            "description": "start month of the grant",
+            "description": "start month of the grant. Legacy, kept so older entries still validate: please use begin_date instead.",
             "required": false,
             "anyof_type": [
                 "string",
@@ -821,7 +821,7 @@
             ]
         },
         "begin_year": {
-            "description": "start year of the grant",
+            "description": "start year of the grant. Legacy, kept so older entries still validate: please use begin_date instead.",
             "required": false,
             "type": "integer"
         },
@@ -841,7 +841,7 @@
             "type": "string"
         },
         "end_date": {
-            "description": "start date of the grant (if string, in format YYYY-MM-DD)",
+            "description": "end date of the grant (if string, in format YYYY-MM-DD)",
             "required": false,
             "anyof_type": [
                 "string",
@@ -849,7 +849,7 @@
             ]
         },
         "end_day": {
-            "description": "end day of the grant",
+            "description": "end day of the grant. Legacy, kept so older entries still validate: please use end_date instead.",
             "required": false,
             "type": [
                 "string",
@@ -857,7 +857,7 @@
             ]
         },
         "end_month": {
-            "description": "end month of the grant",
+            "description": "end month of the grant. Legacy, kept so older entries still validate: please use end_date instead.",
             "required": false,
             "anyof_type": [
                 "string",
@@ -865,7 +865,7 @@
             ]
         },
         "end_year": {
-            "description": "end year of the grant",
+            "description": "end year of the grant. Legacy, kept so older entries still validate: please use end_date instead.",
             "required": false,
             "type": "integer"
         },
@@ -3576,7 +3576,7 @@
             ]
         },
         "begin_date": {
-            "description": "start date of the proposed grant in format YYYY-MM-DD",
+            "description": "start date of the proposed grant, in format YYYY-MM-DD",
             "required": false,
             "anyof_type": [
                 "string",
@@ -3584,12 +3584,12 @@
             ]
         },
         "begin_day": {
-            "description": "start day of the proposed grant",
+            "description": "start day of the proposed grant. Legacy, kept so older entries still validate: please use begin_date instead.",
             "required": false,
             "type": "integer"
         },
         "begin_month": {
-            "description": "start month of the proposed grant",
+            "description": "start month of the proposed grant. Legacy, kept so older entries still validate: please use begin_date instead.",
             "required": false,
             "anyof_type": [
                 "string",
@@ -3597,7 +3597,7 @@
             ]
         },
         "begin_year": {
-            "description": "start year of the proposed grant",
+            "description": "start year of the proposed grant. Legacy, kept so older entries still validate: please use begin_date instead.",
             "required": false,
             "type": "integer"
         },
@@ -3658,7 +3658,7 @@
             "type": "string"
         },
         "due_date": {
-            "description": "day that the proposal is due",
+            "description": "date that the proposal is due, in format YYYY-MM-DD",
             "required": false,
             "anyof_type": [
                 "string",
@@ -3674,7 +3674,7 @@
             ]
         },
         "end_date": {
-            "description": "end date of the proposed grant in format YYYY-MM-DD",
+            "description": "end date of the proposed grant, in format YYYY-MM-DD",
             "required": false,
             "anyof_type": [
                 "string",
@@ -3682,7 +3682,7 @@
             ]
         },
         "end_day": {
-            "description": "end day of the proposed grant",
+            "description": "end day of the proposed grant. Legacy, kept so older entries still validate: please use end_date instead.",
             "required": false,
             "type": [
                 "string",
@@ -3690,7 +3690,7 @@
             ]
         },
         "end_month": {
-            "description": "end month of the proposed grant",
+            "description": "end month of the proposed grant. Legacy, kept so older entries still validate: please use end_date instead.",
             "required": false,
             "anyof_type": [
                 "string",
@@ -3698,7 +3698,7 @@
             ]
         },
         "end_year": {
-            "description": "end year of the proposed grant",
+            "description": "end year of the proposed grant. Legacy, kept so older entries still validate: please use end_date instead.",
             "required": false,
             "type": "integer"
         },
@@ -3737,7 +3737,7 @@
             "eallowed": "PROPOSAL_STATI"
         },
         "submitted_date": {
-            "description": "date that the proposal was submitted",
+            "description": "date that the proposal was submitted, in format YYYY-MM-DD",
             "required": false,
             "anyof_type": [
                 "string",
@@ -3745,12 +3745,12 @@
             ]
         },
         "submitted_day": {
-            "description": "day that the proposal was submitted",
+            "description": "day that the proposal was submitted. Legacy, kept so older entries still validate: please use submitted_date instead.",
             "required": false,
             "type": "integer"
         },
         "submitted_month": {
-            "description": "month that the proposal was submitted",
+            "description": "month that the proposal was submitted. Legacy, kept so older entries still validate: please use submitted_date instead.",
             "required": false,
             "anyof_type": [
                 "string",
@@ -3758,7 +3758,7 @@
             ]
         },
         "submitted_year": {
-            "description": "Year that the proposal was submitted",
+            "description": "year that the proposal was submitted. Legacy, kept so older entries still validate: please use submitted_date instead.",
             "required": false,
             "type": "integer"
         },
