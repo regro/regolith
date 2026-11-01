@@ -433,8 +433,13 @@ class FileSystemClient:
             return deepcopy(self.chained_db.get(collname, {})).values()
         return self.chained_db.get(collname, {}).values()
 
-    def insert_one(self, dbname, collname, doc):
-        """Inserts one document to a database/collection."""
+    def insert_one(self, dbname, collname, doc, partial=False):
+        """Inserts one document to a database/collection.
+
+        The filesystem does not validate on write, so partial, which
+        marks a document as one part of a record split across databases,
+        changes nothing here.
+        """
         self.load_collection(dbname, collname, round_trip=True)
         coll = self.dbs[dbname][collname]
         coll[doc["_id"]] = doc
@@ -557,8 +562,12 @@ class FileSystemClient:
         self.mark_dirty(dbname, collname)
         return True
 
-    def update_one(self, dbname, collname, filter, update, **kwargs):
-        """Updates one document."""
+    def update_one(self, dbname, collname, filter, update, partial=False, **kwargs):
+        """Updates one document.
+
+        The filesystem does not validate on write, so partial changes
+        nothing here.
+        """
         self.load_collection(dbname, collname, round_trip=True)
         coll = self.dbs[dbname][collname]
         doc = self.find_one(dbname, collname, filter)

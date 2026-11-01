@@ -188,6 +188,45 @@ def make_fresh_db(tmp_path):
     os.chdir(cwd)
 
 
+@pytest.fixture
+def make_split_grants_db(tmp_path):
+    """A test fixture that yields a public and a private filesystem
+    database, with each exemplar grant split between them.
+
+    The public database holds the public part of each grant and the
+    collections a grant refers to; the private database holds the
+    private part of each grant.
+    """
+    from regolith.tools import split_grant
+
+    cwd = os.getcwd()
+    rc = {
+        "default_user_id": "sbillinge",
+        "groupname": "ERGS",
+        "databases": [
+            {
+                "name": name,
+                "url": str(tmp_path),
+                "public": public,
+                "path": name,
+                "local": True,
+                "backend": "filesystem",
+            }
+            for name, public in (("public", True), ("private", False))
+        ],
+    }
+    (tmp_path / "regolithrc.json").write_text(json.dumps(rc))
+    for name in ("public", "private"):
+        (tmp_path / name).mkdir()
+    exemplars_to_fs(tmp_path / "public", ["people", "proposals", "contacts", "institutions", "groups"])
+    parts = [split_grant(grant) for grant in deepcopy(EXEMPLARS["grants"])]
+    dump_yaml(str(tmp_path / "public" / "grants.yaml"), {public["_id"]: public for public, _ in parts})
+    dump_yaml(str(tmp_path / "private" / "grants.yaml"), {private["_id"]: private for _, private in parts})
+    os.chdir(tmp_path)
+    yield tmp_path
+    os.chdir(cwd)
+
+
 @pytest.fixture(scope="module")
 def make_mongodb():
     """A test fixture that creates and destroys a git repo in a

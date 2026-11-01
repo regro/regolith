@@ -55,8 +55,10 @@ from regolith.tools import (
     missing_fields,
     month_and_year,
     number_suffix,
+    public_and_private_databases,
     remove_duplicate_docs,
     search_collection,
+    split_grant,
     string_to_slice,
     strip_str,
     update_schemas,
@@ -858,6 +860,71 @@ def test_merge_collections_superior(input, expected):
     b = input[1]
     target_id = "linked_to"
     assert merge_collections_superior(a, b, target_id) == expected
+
+
+# Test that a grant splits into a public part and a private part, both carrying its id
+@pytest.mark.parametrize(
+    "grant, expected_public_part, expected_private_part",
+    [
+        # C1: public and private fields, expect each in its own part
+        pytest.param(
+            {
+                "_id": "g1",
+                "title": "T",
+                "awardnr": "A1",
+                "begin_date": "2026-01-01",
+                "account": "GG",
+                "budget": [],
+            },
+            {"_id": "g1", "title": "T", "awardnr": "A1", "begin_date": "2026-01-01"},
+            {"_id": "g1", "account": "GG", "budget": []},
+            id="mixed",
+        ),
+        # C2: legacy split dates, expect them public like the ISO dates
+        pytest.param(
+            {"_id": "g1", "begin_year": 2026, "end_month": 3},
+            {"_id": "g1", "begin_year": 2026, "end_month": 3},
+            {"_id": "g1"},
+            id="legacy-dates",
+        ),
+        # C3: only the id, expect two parts holding only the id
+        pytest.param({"_id": "g1"}, {"_id": "g1"}, {"_id": "g1"}, id="id-only"),
+    ],
+)
+def test_split_grant(grant, expected_public_part, expected_private_part):
+    assert split_grant(grant) == (expected_public_part, expected_private_part)
+
+
+# Test choosing the public and private databases from the public flags, or from the names given
+@pytest.mark.parametrize(
+    "databases, names, expected_databases",
+    [
+        # C1: one public and one private database, expect them in that order
+        pytest.param(
+            [{"name": "priv", "public": False}, {"name": "pub", "public": True}],
+            (None, None),
+            ("pub", "priv"),
+            id="flags",
+        ),
+        # C2: names given, expect them used over the flags
+        pytest.param(
+            [{"name": "pub", "public": True}, {"name": "pub2", "public": True}, {"name": "priv", "public": False}],
+            ("pub2", None),
+            ("pub2", "priv"),
+            id="named",
+        ),
+        # C3: only a public database, expect no private one
+        pytest.param([{"name": "pub", "public": True}], (None, None), ("pub", None), id="public-only"),
+    ],
+)
+def test_public_and_private_databases(databases, names, expected_databases):
+    assert public_and_private_databases(databases, *names) == expected_databases
+
+
+# Test that a database name not in regolithrc.json is refused with the names that are
+def test_public_and_private_databases_unknown_name():
+    with pytest.raises(ValueError, match="There is no database called secret in regolithrc.json"):
+        public_and_private_databases([{"name": "pub", "public": True}], None, "secret")
 
 
 @pytest.mark.parametrize(

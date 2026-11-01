@@ -120,6 +120,52 @@ def test_grant_seeded_from_legacy_proposal(grants_db):
     assert stored("proposals", "mypropsal")["status"] == "accepted"
 
 
+def stored_part(database, grant_id):
+    return _client_call("find_one", database, "grants", {"_id": grant_id})
+
+
+# Test that a grant is split into a public part and a private part, which read back as one grant
+def test_grant_split_between_databases(make_split_grants_db):
+    main(
+        [
+            "helper",
+            "a_grant",
+            "sympy21",
+            "--from-proposal",
+            "SymPy-2.1",
+            "--funder",
+            "NumFOCUS",
+            "--awardnr",
+            "NF-2.1",
+            "--account",
+            "GG-21",
+        ]
+    )
+    expected_public_part = {
+        "_id": "sympy21",
+        "amount": 3000.0,
+        "awardnr": "NF-2.1",
+        "begin_date": dt.date(2019, 6, 1),
+        "currency": "USD",
+        "end_date": dt.date(2030, 12, 31),
+        "funder": "NumFOCUS",
+        "team": [{"name": "Anthony Scopatz 2.1", "position": "pi", "institution": "University of 2.1"}],
+        "title": "SymPy 2.1 Release Support",
+    }
+    expected_private_part = {
+        "_id": "sympy21",
+        "account": "GG-21",
+        "institution": "Columbia University",
+        "person_months_academic": 0,
+        "person_months_summer": 1,
+        "proposal_id": "SymPy-2.1",
+        "status": "accepted",
+    }
+    assert with_iso_dates(stored_part("public", "sympy21")) == expected_public_part
+    assert stored_part("private", "sympy21") == expected_private_part
+    assert with_iso_dates(stored("grants", "sympy21")) == {**expected_public_part, **expected_private_part}
+
+
 # Test adding a grant with no proposal behind it, where the pi defaults to the group pi, scopatz
 def test_grant_without_proposal(grants_db):
     main(

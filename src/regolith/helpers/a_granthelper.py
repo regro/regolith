@@ -14,6 +14,8 @@ from regolith.tools import (
     fuzzy_retrieval,
     get_person_affiliation,
     get_pi_id,
+    public_and_private_databases,
+    split_grant,
     strip_str,
     validate_doc,
 )
@@ -75,12 +77,25 @@ def subparser(subpi):
     subpi.add_argument("--program", help="The program the work was funded under", type=strip_str)
     subpi.add_argument("--admin", help="The unit or group administering the grant", type=strip_str)
     subpi.add_argument("-n", "--notes", nargs="+", help="Notes about the grant", type=strip_str, **notes_kwargs)
+    subpi.add_argument(
+        "--public-database",
+        type=strip_str,
+        help="The database for the public part of the grant: its title, amount, currency, award number, "
+        "funder, team and dates. Defaults to the first database marked public in regolithrc.json.",
+    )
+    subpi.add_argument(
+        "--private-database",
+        type=strip_str,
+        help="The database for the rest of the grant, such as the account and budget. Defaults to the "
+        "first database marked private in regolithrc.json.",
+    )
     # Do not delete --database arg
     subpi.add_argument(
         "-d",
         "--database",
         type=strip_str,
-        help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
+        help="The database that will be updated when regolithrc.json has no public and private pair. "
+        "Defaults to the first database in the regolithrc.json file.",
     )
     return subpi
 
@@ -170,6 +185,29 @@ class GrantAdderHelper(DbHelperBase):
                     "collection with their institution, for example with the u_contact helper)"
                 )
 
+    def _store(self, grant):
+        rc = self.rc
+        public_database, private_database = public_and_private_databases(
+            rc.databases, rc.public_database, rc.private_database
+        )
+        public_part, private_part = split_grant(grant)
+        if public_database and private_database and public_database != private_database:
+            rc.client.insert_one(public_database, rc.coll, public_part, partial=True)
+            rc.client.insert_one(private_database, rc.coll, private_part, partial=True)
+            print(f"{rc.grant_id} has been added in {TARGET_COLL}")
+            print(f"    public details in {public_database}, private details in {private_database}")
+            return
+        database = private_database or rc.database
+        rc.client.insert_one(database, rc.coll, grant)
+        print(f"{rc.grant_id} has been added in {TARGET_COLL}")
+        private_fields = sorted(key for key in private_part if key != "_id")
+        if database != private_database and private_fields:
+            print(
+                f"    No database in regolithrc.json is marked private, so its private details "
+                f"({', '.join(private_fields)}) were stored in {database} too. To keep them private, add a "
+                'database with "public": false to regolithrc.json.'
+            )
+
     def db_updater(self):
         rc = self.rc
         if any(doc["_id"] == rc.grant_id for doc in self.gtx[TARGET_COLL]):
@@ -256,12 +294,16 @@ class GrantAdderHelper(DbHelperBase):
                 "Please correct the options, or the proposal it was seeded from, and re-run."
             )
 
-        rc.client.insert_one(rc.database, rc.coll, grant)
-        print(f"{rc.grant_id} has been added in {TARGET_COLL}")
+        self._store(grant)
         if proposal:
             print(f"    seeded from the proposal {proposal['_id']}")
             if proposal.get("status") != "accepted":
-                rc.client.update_one(rc.database, PROPOSAL_COLL, {"_id": proposal["_id"]}, {"status": "accepted"})
+                rc.client.update_one(
+                    self.where_stored(PROPOSAL_COLL, proposal["_id"]) or rc.database,
+                    PROPOSAL_COLL,
+                    {"_id": proposal["_id"]},
+                    {"status": "accepted"},
+                )
                 print(f"    the proposal {proposal['_id']} has been marked accepted")
         unset = [option for option in ("awardnr", "account") if not grant.get(option)]
         if unset:

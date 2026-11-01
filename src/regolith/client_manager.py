@@ -350,11 +350,15 @@ class ClientManager:
             if doc_matches(merged, filter):
                 yield deepcopy(merged) if copy else merged
 
-    def insert_one(self, dbname, collname, doc):
-        """Inserts one document to a database/collection."""
+    def insert_one(self, dbname, collname, doc, partial=False):
+        """Inserts one document to a database/collection.
+
+        With partial set, the document is one part of a record split
+        across databases, so fields the schema requires may be absent.
+        """
         client = self._client_for_dbname(dbname)
         if client is not None:
-            client.insert_one(dbname, collname, doc)
+            client.insert_one(dbname, collname, doc, partial=partial)
 
     def insert_many(self, dbname, collname, docs):
         """Inserts many documents into a database/collection."""
