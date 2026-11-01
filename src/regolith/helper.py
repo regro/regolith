@@ -57,6 +57,10 @@ LISTER_HELPER_SPECS = {
         "regolith.helpers.l_projectahelper:ProjectaListerHelper",
         "regolith.helpers.l_projectahelper:subparser",
     ),
+    "l-proposals": (
+        "regolith.helpers.l_proposalshelper:ProposalsListerHelper",
+        "regolith.helpers.l_proposalshelper:subparser",
+    ),
     "l-reimbstatus": (
         "regolith.helpers.reimbstatushelper:ReimbstatusHelper",
         "regolith.helpers.reimbstatushelper:subparser",
