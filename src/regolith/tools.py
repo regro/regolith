@@ -1309,6 +1309,44 @@ def split_grant(grant):
     return public_part, private_part
 
 
+def find_grant(grants, id_or_alias):
+    """Find a grant from its id or its alias.
+
+    An exact id wins. Otherwise the id and alias are matched ignoring
+    case, and when nothing matches, the grants whose id or alias
+    contains what was given are offered instead.
+
+    Parameters
+    ----------
+    grants : list of dict
+        The grants to look in.
+    id_or_alias : str
+        The id or alias of the grant, or part of one.
+
+    Returns
+    -------
+    grant : dict or None
+        The grant, or None when there is no single grant it names.
+    candidates : list of dict
+        The grants it might mean when there is no single one, such as two
+        grants sharing an alias or grants whose id or alias contains it.
+    """
+    exact = [grant for grant in grants if grant.get("_id") == id_or_alias]
+    if exact:
+        return exact[0], []
+    wanted = id_or_alias.casefold()
+    named = [
+        grant
+        for grant in grants
+        if wanted in (str(grant.get("_id", "")).casefold(), str(grant.get("alias", "")).casefold())
+    ]
+    if len(named) == 1:
+        return named[0], []
+    if named:
+        return None, named
+    return None, fragment_retrieval(grants, ["_id", "alias"], id_or_alias)
+
+
 def public_and_private_databases(databases, public_name=None, private_name=None):
     """Return the names of the databases for public and private
     information.

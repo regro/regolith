@@ -29,6 +29,7 @@ from regolith.tools import (
     filter_presentations,
     filter_publications,
     filter_software,
+    find_grant,
     format_affiliation,
     fragment_retrieval,
     fuzzy_retrieval,
@@ -893,6 +894,35 @@ def test_merge_collections_superior(input, expected):
 )
 def test_split_grant(grant, expected_public_part, expected_private_part):
     assert split_grant(grant) == (expected_public_part, expected_private_part)
+
+
+# Test finding a grant from its id or alias
+@pytest.mark.parametrize(
+    "id_or_alias, expected_grant_id, expected_candidate_ids",
+    [
+        # C1: an exact id, expect that grant even though another grant's alias matches ignoring case
+        pytest.param("g1", "g1", [], id="exact-id"),
+        # C2: an alias in another case, expect the grant with that alias
+        pytest.param("DMREF", "g2", [], id="alias-any-case"),
+        # C3: an alias two grants share, expect no grant and both offered
+        pytest.param("shared", None, ["g3", "g4"], id="shared-alias"),
+        # C4: part of an alias, expect no grant and the grants containing it offered
+        pytest.param("dmr", None, ["g2"], id="fragment"),
+        # C5: nothing like any grant, expect no grant and nothing offered
+        pytest.param("zzz", None, [], id="no-match"),
+    ],
+)
+def test_find_grant(id_or_alias, expected_grant_id, expected_candidate_ids):
+    grants = [
+        {"_id": "g1", "alias": "first"},
+        {"_id": "g2", "alias": "dmref"},
+        {"_id": "g3", "alias": "shared"},
+        {"_id": "g4", "alias": "shared"},
+        {"_id": "g5", "alias": "G1"},
+    ]
+    grant, candidates = find_grant(grants, id_or_alias)
+    assert (grant or {}).get("_id") == expected_grant_id
+    assert [candidate["_id"] for candidate in candidates] == expected_candidate_ids
 
 
 # Test choosing the public and private databases from the public flags, or from the names given
