@@ -15,10 +15,21 @@ from ruamel.yaml.error import YAMLError
 PERIOD_FIELDS = ("begin_date", "end_date", "amount", "student_months", "postdoc_months", "ss_months")
 DATE_FIELDS = ("begin_date", "end_date")
 NUMBER_FIELDS = ("amount", "student_months", "postdoc_months", "ss_months")
+# The months of funding in each period, used for planning appointments. Absent means none, so they are
+# shown as 0 for editing
+MONTH_FIELDS = ("student_months", "postdoc_months", "ss_months")
 
 
 def _as_date(value):
     return value if isinstance(value, dt.date) else dt.date.fromisoformat(str(value))
+
+
+def _shown(value):
+    if isinstance(value, dt.date):
+        return value.isoformat()
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    return value
 
 
 def yearly_periods(begin_date, end_date):
@@ -126,19 +137,18 @@ def budget_to_text(grant_id, budget, grant_dates=None, grant_amount=None):
     if isinstance(grant_amount, (int, float)):
         lines.append(f"# The grant amount is {grant_amount:,.2f}; the periods should add up to it.")
     lines += [
-        "# Each period has a begin_date and end_date (YYYY-MM-DD) and an amount. It may also have",
-        "# student_months, postdoc_months and ss_months (summer months).",
+        "# Each period has a begin_date and end_date (YYYY-MM-DD), an amount, and the months of funding",
+        "# it pays for, used for planning appointments: student_months and postdoc_months in the academic",
+        "# year and ss_months in the summer.",
         "# Save and close the editor to store the budget. To leave it unchanged, close without saving.",
         "",
     ]
     for period in budget:
-        fields = [field for field in PERIOD_FIELDS if period.get(field) is not None]
+        period = {**{field: 0 for field in MONTH_FIELDS}, **{k: v for k, v in period.items() if v is not None}}
+        fields = [field for field in PERIOD_FIELDS if field in period]
         fields += sorted(key for key in period if key not in PERIOD_FIELDS)
         for position, field in enumerate(fields):
-            value = period[field]
-            if isinstance(value, dt.date):
-                value = value.isoformat()
-            lines.append(f"{'- ' if position == 0 else '  '}{field}: {value}")
+            lines.append(f"{'- ' if position == 0 else '  '}{field}: {_shown(period[field])}")
     if not budget:
         lines.append("[]")
     return "\n".join(lines) + "\n"

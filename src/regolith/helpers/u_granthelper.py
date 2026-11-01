@@ -13,7 +13,7 @@ from regolith.schemas import alloweds
 from regolith.tools import (
     PUBLIC_GRANT_FIELDS,
     all_docs_from_collection,
-    fragment_retrieval,
+    find_grant,
     public_and_private_databases,
     strip_str,
     validate_doc,
@@ -39,7 +39,7 @@ def subparser(subpi):
     subpi.add_argument(
         "grant_id",
         type=strip_str,
-        help="The id of the grant to update, or a fragment of it to list the grants it matches",
+        help="The id or alias of the grant to update, in any case, or part of one to list the grants it matches",
     )
     subpi.add_argument("--awardnr", help="The number of the award from the agency", type=strip_str)
     subpi.add_argument("--account", help="The account number that holds the funds", type=strip_str)
@@ -228,19 +228,21 @@ class GrantUpdaterHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
-        grant = next((doc for doc in self.gtx[rc.coll] if doc["_id"] == rc.grant_id), None)
+        grant, matches = find_grant(self.gtx[rc.coll], rc.grant_id)
         if not grant:
-            matches = fragment_retrieval(self.gtx[rc.coll], ["_id", "alias"], rc.grant_id)
             if not matches:
                 raise RuntimeError(
                     f"No grant matches {rc.grant_id}. "
-                    "Please re-run with the id, or part of the id, of an existing grant."
+                    "Please re-run with the id or alias, or part of one, of an existing grant."
                 )
-            print(f"There is no grant with the id {rc.grant_id}. Grants with similar ids:")
+            print(f"No single grant has the id or alias {rc.grant_id}. Grants it might mean:")
             for match in matches:
                 print(f"    {match.get('_id')}     alias: {match.get('alias', '')}")
             print("Please re-run the helper giving the complete id.")
             return
+        if grant["_id"] != rc.grant_id:
+            print(f"Updating the grant {grant['_id']} (alias {grant.get('alias', '')})")
+            rc.grant_id = grant["_id"]
 
         updates = self._updates(grant)
         budget = self._budget(grant, {**grant, **updates})

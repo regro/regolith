@@ -167,11 +167,29 @@ def test_grant_budget_replaced(grant_id, extra_args, budget_text, expected_budge
     assert budget_dates_as_text(stored_part("private", grant_id)["budget"]) == expected_budget
 
 
-# Test that a fragment of a grant id lists the grants it matches and changes nothing
+# Test that a grant can be named by its alias, in any case, and is then updated under its id
+@pytest.mark.parametrize(
+    "named_as, expected_grant_id",
+    [
+        # C1: the alias as stored, expect the grant with that alias updated
+        pytest.param("sym2.0", "SymPy-2.0", id="alias"),
+        # C2: the alias in another case, expect the same grant updated
+        pytest.param("SYM2.0", "SymPy-2.0", id="alias-other-case"),
+        # C3: the id in another case, expect the grant with that id updated
+        pytest.param("DMREF15", "dmref15", id="id-other-case"),
+    ],
+)
+def test_grant_named_by_alias(named_as, expected_grant_id, make_split_grants_db, capsys):
+    main(["helper", "u_grant", named_as, "--awardnr", "X-1"])
+    assert f"Updating the grant {expected_grant_id}" in capsys.readouterr().out
+    assert stored_part("public", expected_grant_id)["awardnr"] == "X-1"
+
+
+# Test that part of an id or alias lists the grants it might mean and changes nothing
 def test_grant_fragment_lists_matches(make_split_grants_db, capsys):
-    main(["helper", "u_grant", "sym", "--awardnr", "X"])
+    main(["helper", "u_grant", "SymPy", "--awardnr", "X"])
     expected_output = (
-        "There is no grant with the id sym. Grants with similar ids:\n"
+        "No single grant has the id or alias SymPy. Grants it might mean:\n"
         "    SymPy-1.1     alias: sym\n"
         "    SymPy-2.0     alias: sym2.0\n"
         "Please re-run the helper giving the complete id.\n"

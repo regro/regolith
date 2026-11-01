@@ -17,6 +17,27 @@ def test_version():
     assert sys.stdout.getvalue() == "{}\n".format(__version__)
 
 
+# Test that asking for help shows the options of the helper named, or the helpers there are
+@pytest.mark.parametrize(
+    "args, expected_texts",
+    [
+        # C1: -h after a helper, expect that helper's options
+        pytest.param(["helper", "u_grant", "-h"], ["--edit-budget", "--annual-amounts"], id="helper-short"),
+        # C2: --help after a helper, expect that helper's options
+        pytest.param(["helper", "l_grants", "--help"], ["--current", "--verbose"], id="helper-long"),
+        # C3: -h with no helper, expect the helpers listed
+        pytest.param(["helper", "-h"], ["helper_target", "u-grant"], id="no-helper"),
+    ],
+)
+def test_helper_help(args, expected_texts, capsys):
+    with pytest.raises(SystemExit) as exit_info:
+        main(args)
+    assert exit_info.value.code == 0
+    output = capsys.readouterr().out
+    for expected_text in expected_texts:
+        assert expected_text in output
+
+
 def test_user_rc(make_db):
     repo = make_db
     DEFAULT_RC.user_config = os.path.join(repo, "user.json")
