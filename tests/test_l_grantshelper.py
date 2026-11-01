@@ -2,7 +2,7 @@
 
 import pytest
 
-from regolith.helpers.l_grantshelper import missing_fields
+from regolith.helpers.l_grantshelper import missing_grant_fields
 
 COMPLETE_GRANT = {
     "_id": "dmref26",
@@ -43,4 +43,4 @@ COMPLETE_GRANT = {
 )
 def test_missing_fields(changes, expected_missing):
     grant = {key: value for key, value in {**COMPLETE_GRANT, **changes}.items() if value is not None}
-    assert missing_fields(grant) == expected_missing
+    assert missing_grant_fields(grant) == expected_missing

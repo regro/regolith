@@ -37,7 +37,7 @@ EXPECTED_FIELDS = (
 )
 
 
-def missing_fields(grant):
+def missing_grant_fields(grant):
     """Return the expected fields a grant has no value for.
 
     Parameters
@@ -156,7 +156,7 @@ class GrantsListerHelper(SoutHelperBase):
                     f"to {get_dates(g).get('end_date')}"
                 )
                 if rc.verbose:
-                    missing = missing_fields(g)
+                    missing = missing_grant_fields(g)
                     if missing:
                         print(f"      missing: {', '.join(missing)}")
                     funds_entries = g.get("funds_available")
