@@ -26,10 +26,13 @@ def create_parser():
     p.add_argument("--version", action="store_true")
 
     # helper subparser
+    # Help is left to the helper's own parser, built in main, which knows the
+    # helper's options
     subp.add_parser(
         "helper",
         help="runs an available helper target",
         formatter_class=RawTextHelpFormatter,
+        add_help=False,
     )
 
     # rc subparser
@@ -317,13 +320,19 @@ def main(args=None):
         print(__version__)
         return rc
     if args1.cmd == "helper":
-        p = ArgumentParser(prog="regolith helper")
+        p = ArgumentParser(prog="regolith helper", add_help=False)
+        p.add_argument(
+            "-h", "--help", action="store_true", dest="helper_help", help="show this help message and exit"
+        )
         p.add_argument(
             "helper_target",
             help="helper target to run. Currently valid targets are: \n{}".format([k for k in HELPERS]),
         )
         if len(rest) == 0:
             p.print_help()
+        if rest and rest[0] in ("-h", "--help"):
+            p.print_help()
+            p.exit()
         args2, rest2 = p.parse_known_args(rest, namespace=args0)
         # a target typed with underscores is the same target as one typed with
         # hyphens, and everything after this sees the name it is listed under
@@ -331,6 +340,9 @@ def main(args=None):
         # it is not apparent from this but the following line calls the subparser in
         #   in the helper module to get the rest of the args.
         HELPERS[args2.helper_target][1](p)
+        if args2.helper_help:
+            p.print_help()
+            p.exit()
         if len(rest2) == 0:
             p.print_help()
         args3, rest3 = p.parse_known_args(rest, namespace=args0)

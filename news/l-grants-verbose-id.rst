@@ -17,7 +17,7 @@
 
 **Fixed:**
 
-* <news item>
+* regolith helper <helper> -h now shows that helper's options, instead of only the general help.
 
 **Security:**
 
