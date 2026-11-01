@@ -585,13 +585,9 @@
             "alias": "sym2.0",
             "amount": 3000.0,
             "awardnr": "NF-1234",
-            "begin_day": 1,
-            "begin_month": 6,
-            "begin_year": 2019,
+            "begin_date": "2019-06-01",
             "call_for_proposals": "https://groups.google.com/d/msg/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
-            "end_day": 31,
-            "end_month": "December",
-            "end_year": 2030,
+            "end_date": "2030-12-31",
             "funder": "NumFOCUS",
             "funds_available": [
                 {
@@ -2353,9 +2349,7 @@
                 "sbillinge"
             ],
             "call_for_proposals": "http://www.nsf.gov/pubs/2014/nsf14591/nsf14591.htm",
-            "begin_day": 1,
-            "begin_month": "May",
-            "begin_year": 2018,
+            "begin_date": "2018-05-01",
             "cpp_info": {
                 "cppflag": true,
                 "other_agencies_submitted": "None",
@@ -2368,9 +2362,7 @@
             "currency": "USD",
             "submitted_date": "2015-02-02",
             "duration": 3,
-            "end_day": 1,
-            "end_month": "May",
-            "end_year": 2019,
+            "end_date": "2019-05-01",
             "funder": "NSF",
             "notes": "Quite an idea",
             "pi": "Simon Billinge",
