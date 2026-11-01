@@ -15,6 +15,7 @@ from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta
 from gooey import GooeyParser
 
+from regolith.appointments import is_outside
 from regolith.dates import get_dates
 
 # from regolith.schemas import APPOINTMENTS_TYPES
@@ -220,7 +221,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 max(get_dates(appt)["end_date"] for appt in appts),
             )
             for appt in appts:
-                if appt.get("grant") in BLACKLIST:
+                if appt.get("grant") in BLACKLIST or is_outside(appt):
                     continue
                 this_grant = fuzzy_retrieval(appointed_grants, ["_id", "alias"], appt.get("grant"))
                 if not this_grant:

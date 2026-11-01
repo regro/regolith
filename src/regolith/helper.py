@@ -153,6 +153,10 @@ UPDATER_HELPER_SPECS = {
         "regolith.helpers.f_todohelper:subparser",
     ),
     # change something that is there
+    "u-appointments": (
+        "regolith.helpers.u_appointmentshelper:AppointmentsUpdaterHelper",
+        "regolith.helpers.u_appointmentshelper:subparser",
+    ),
     "u-contact": (
         "regolith.helpers.u_contacthelper:ContactUpdaterHelper",
         "regolith.helpers.u_contacthelper:subparser",
