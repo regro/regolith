@@ -156,6 +156,7 @@ class GrantsListerHelper(SoutHelperBase):
                     f"to {get_dates(g).get('end_date')}"
                 )
                 if rc.verbose:
+                    print(f"      _id: {g['_id']}")
                     missing = missing_grant_fields(g)
                     if missing:
                         print(f"      missing: {', '.join(missing)}")

@@ -243,10 +243,11 @@ helper_map = [
         "  sym2.0         \t awardnr: NF-1234        \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n",
     ),
     (
-        # l_grants verbose lists the details a grant is still missing
+        # l_grants verbose gives each grant's id and lists the details it is still missing
         ["helper", "l_grants", "--current", "--date", "2020-05-25", "--verbose"],
         "\nAdministered by: apam\n"
         "  sym2.0         \t awardnr: NF-1234        \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n"
+        "      _id: SymPy-2.0\n"
         "      missing: currency, account, institution\n"
         "      funds available: $2,100 on 2021-01-03\n",
     ),
