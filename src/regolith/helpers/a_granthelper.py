@@ -29,6 +29,8 @@ CPP_INFO_FIELDS = {
     "person_months_summer": "person_months_summer",
     "project_scope": "scope",
 }
+# Proposals with these statuses may still be funded and seeded into a grant
+SEEDABLE_STATI = ("submitted", "pending", "accepted")
 TEAM_FIELDS = ("name", "position", "institution", "cv", "subaward_amount", "admin_people")
 # Grant fields set directly from options of the same name
 OPTION_FIELDS = ("title", "funder", "currency", "institution", "awardnr", "account", "alias", "program", "admin")
@@ -147,6 +149,23 @@ class GrantAdderHelper(DbHelperBase):
             "Please re-run with the complete id of an existing proposal."
         )
 
+    def _unseeded_proposals(self):
+        seeded = {doc.get("proposal_id") for doc in self.gtx[TARGET_COLL]}
+        return [
+            doc["_id"]
+            for doc in self.gtx[PROPOSAL_COLL]
+            if doc.get("status") in SEEDABLE_STATI and doc["_id"] not in seeded
+        ]
+
+    def _no_proposal_note(self):
+        candidates = self._unseeded_proposals()
+        if not candidates:
+            return "no proposal was given with --from-proposal, and no proposal is waiting to become a grant"
+        return (
+            "no proposal was given with --from-proposal. These proposals have not been turned into a grant: "
+            f"{', '.join(candidates)} (see them with the l_proposals helper)"
+        )
+
     def _resolve_team_institutions(self, team, missing):
         for member in team:
             if member.get("institution"):
@@ -226,6 +245,8 @@ class GrantAdderHelper(DbHelperBase):
         grant["status"] = "accepted"
 
         missing = []
+        if not proposal and any(field not in grant for field in ("title", "amount", "funder")):
+            missing.append(f"a proposal to seed the grant from, or the details below: {self._no_proposal_note()}")
         for field, option in (
             ("title", "--title"),
             ("amount", "--amount"),
@@ -258,6 +279,8 @@ class GrantAdderHelper(DbHelperBase):
 
         rc.client.insert_one(rc.database, rc.coll, grant)
         print(f"{rc.grant_id} has been added in {TARGET_COLL}")
+        if not proposal:
+            print(f"    not seeded from a proposal: {self._no_proposal_note()}")
         if proposal:
             print(f"    seeded from the proposal {proposal['_id']}")
             if proposal.get("status") != "accepted":
