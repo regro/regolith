@@ -170,11 +170,3 @@ regolith.builders.cpbuilder module
     :members:
     :undoc-members:
     :show-inheritance:
-
-regolith.builders.appraisalbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.builders.appraisalbuilder
-    :members:
-    :undoc-members:
-    :show-inheritance:
