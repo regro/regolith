@@ -204,6 +204,18 @@ def test_grant_reports_everything_missing(grants_db):
     assert stored("grants", "myaward") is None
 
 
+# Test that a grant missing its details, with no proposal given, points to the proposals it could be seeded from
+def test_grant_without_proposal_reports_candidates(grants_db):
+    with pytest.raises(RuntimeError) as error:
+        main(["helper", "a_grant", "myaward", "--begin-date", "2026-09-01"])
+    message = str(error.value)
+    expected_candidates = "SymPy-1.1, SymPy-2.1, mypropsal"
+    assert "a proposal to seed the grant from" in message
+    assert expected_candidates in message
+    assert "the title (give it with --title)" in message
+    assert stored("grants", "myaward") is None
+
+
 # Test that a grant that cannot be added is refused with a message saying what to do
 @pytest.mark.parametrize(
     "extra_args, expected_error, expected_message",
