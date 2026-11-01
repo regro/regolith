@@ -13,7 +13,6 @@
     person_months_summer: 0.0
     project_scope: ''
   currency: Bitcoin
-  due_date: tbd
   end_date: 2022-02-14
   funder: ''
   notes:
@@ -21,8 +20,14 @@
   pi: scopatz
   status: inprep
   team:
-    - name: ''
-      subaward_amount: 0
+    - name: Anthony Scopatz
+      position: pi
+    - name: Kurt Godel
+      position: copi
+    - name: MC Escher
+      position: copi
+    - name: Johann Sebastian Bach
+      position: copi
   title: To destroy numbers
 SymPy-1.1:
   amount: 3000.0
