@@ -99,6 +99,10 @@ UPDATER_HELPER_SPECS = {
         "regolith.helpers.a_expensehelper:ExpenseAdderHelper",
         "regolith.helpers.a_expensehelper:subparser",
     ),
+    "a-grant": (
+        "regolith.helpers.a_granthelper:GrantAdderHelper",
+        "regolith.helpers.a_granthelper:subparser",
+    ),
     "a-grppub-readlist": (
         "regolith.helpers.a_grppub_readlisthelper:GrpPubReadListAdderHelper",
         "regolith.helpers.a_grppub_readlisthelper:subparser",
