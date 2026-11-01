@@ -5,7 +5,7 @@ import datetime as dt
 import dateutil.parser as date_parser
 from gooey import GooeyParser
 
-from regolith.dates import get_dates, is_current
+from regolith.dates import get_dates, has_dates, is_current
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.tools import (
@@ -19,6 +19,42 @@ from regolith.tools import (
 TARGET_COLL = "grants"
 HELPER_TARGET = "l-grants"
 BLACKLIST = ["they_pay", "collgf", "physmatch", "ta", "chemmatch", "summer@seas"]
+# Fields the schema does not require, since they are often not known when a grant is added, but that a
+# finished grant should have
+EXPECTED_FIELDS = (
+    "title",
+    "amount",
+    "currency",
+    "funder",
+    "program",
+    "awardnr",
+    "account",
+    "alias",
+    "admin",
+    "institution",
+    "status",
+    "team",
+)
+
+
+def missing_fields(grant):
+    """Return the expected fields a grant has no value for.
+
+    Parameters
+    ----------
+    grant : dict
+        The grant, merged with the proposal it was seeded from.
+
+    Returns
+    -------
+    list of str
+        The names of the expected fields that are absent or empty, with
+        begin_date and end_date standing for the dates in either style.
+    """
+    missing = [field for field in EXPECTED_FIELDS if grant.get(field) in (None, "", [], "missing")]
+    dates = get_dates(dict(grant)) if has_dates(grant) else {}
+    missing += [field for field in ("begin_date", "end_date") if not dates.get(field)]
+    return missing
 
 
 def subparser(subpi):
@@ -32,7 +68,8 @@ def subparser(subpi):
         "--verbose",
         action="store_true",
         default=False,
-        help="if set, additional information will be printed about each grant",
+        help="if set, additional information will be printed about each grant, including the details "
+        "it is still missing",
     )
     subpi.add_argument(
         "-r",
@@ -119,6 +156,9 @@ class GrantsListerHelper(SoutHelperBase):
                     f"to {get_dates(g).get('end_date')}"
                 )
                 if rc.verbose:
+                    missing = missing_fields(g)
+                    if missing:
+                        print(f"      missing: {', '.join(missing)}")
                     funds_entries = g.get("funds_available")
                     if funds_entries:
                         funds_entries.sort(
