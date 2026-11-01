@@ -248,6 +248,41 @@ helper_map = [
         "  sym2.0         \t awardnr: NF-1234        \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n"
         "      funds available: $2,100 on 2021-01-03\n",
     ),
+    # l_proposals leaves out declined proposals and those already seeded into a grant
+    (
+        ["helper", "l_proposals", "--verbose"],
+        "\nsubmitted:\n"
+        "  mypropsal | funder not set | USD 1,000,000 | 2030-05-01 to 2030-12-31 | no grant yet\n"
+        "      A very fine proposal indeed\n"
+        "      team: Anthony Scopatz, Robert Flanagan\n"
+        "      submitted: 1999-08-18\n"
+        "      notes: Quite an idea\n"
+        "\npending:\n"
+        "  SymPy-1.1 | funder not set | USD 3,000 | 2030-05-01 to 2030-12-31 | no grant yet\n"
+        "      SymPy 1.1 Release Support\n"
+        "      team: scopatz\n"
+        "\naccepted:\n"
+        "  SymPy-2.1 | funder not set | USD 3,000 | 2019-06-01 to 2030-12-31 | no grant yet\n"
+        "      SymPy 2.1 Release Support\n"
+        "      team: Anthony Scopatz 2.1\n",
+    ),
+    # l_proposals with a status lists every proposal with it, showing the grant seeded from each
+    (
+        ["helper", "l_proposals", "--status", "submitted", "--verbose"],
+        "\nsubmitted:\n"
+        "  mypropsal | funder not set | USD 1,000,000 | 2030-05-01 to 2030-12-31 | no grant yet\n"
+        "      A very fine proposal indeed\n"
+        "      team: Anthony Scopatz, Robert Flanagan\n"
+        "      submitted: 1999-08-18\n"
+        "      notes: Quite an idea\n"
+        "  abc42 | funder not set | USD 42,000 | 2020-06-01 to 2020-12-31 | grant: abc42\n"
+        "      The answer to life, the universe, and everything\n"
+        "      team: sbillinge\n",
+    ),
+    (
+        ["helper", "l_proposals", "--status", "declined"],
+        "There are no proposals to list. Use --all to list every proposal.\n",
+    ),
     (
         ["helper", "l_members", "--current", "-v"],
         "    -- Assistant Scientists --\n"
