@@ -215,13 +215,15 @@ class MakeAppointmentsHelper(SoutHelperBase):
             person_dates = group_member_employment_start_end(person, "bg")
             emps = [person_date for person_date in person_dates if not person_date.get("permanent")]
             emps.sort(key=lambda x: x.get("end_date", 0))
-            is_fully_appointed(
-                person,
-                min(get_dates(appt)["begin_date"] for appt in appts),
-                max(get_dates(appt)["end_date"] for appt in appts),
-            )
+            # Everything is checked from the projection date on, since what is past cannot be changed
+            check_begin = max(projection_from_date, min(get_dates(appt)["begin_date"] for appt in appts))
+            check_end = max(get_dates(appt)["end_date"] for appt in appts)
+            if check_begin <= check_end:
+                is_fully_appointed(person, check_begin, check_end)
             for appt in appts:
                 if appt.get("grant") in BLACKLIST or is_outside(appt):
+                    continue
+                if get_dates(appt)["end_date"] < projection_from_date:
                     continue
                 this_grant = fuzzy_retrieval(appointed_grants, ["_id", "alias"], appt.get("grant"))
                 if not this_grant:
@@ -231,6 +233,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
                         )
                     )
                 appt_begin, appt_end = get_dates(appt)["begin_date"], get_dates(appt)["end_date"]
+                appt_begin = max(appt_begin, projection_from_date)
                 outdated_period, depleted_period = False, False
                 for x in range((appt_end - appt_begin).days + 1):
                     day = appt_begin + relativedelta(days=x)
@@ -312,14 +315,17 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     f"grant {grant.get('alias')} does not have a correct budget end date."
                     f" grant end: {grant['end_date']} budget end: {budget_end}"
                 )
-            days_to_go = (grant["end_date"] - projection_from_date).days
+            days_to_go = max((grant["end_date"] - projection_from_date).days, 1)
             this_burn = grant["burn"]
             end_amount = (
                 this_burn.get(grant["end_date"])["student_days"]
                 + this_burn.get(grant["end_date"])["ss_days"]
                 + this_burn.get(grant["end_date"])["postdoc_days"]
             )
-            if end_amount > 15.25:
+            # A grant that ended before the projection date cannot be underspent or overspent from here on
+            if grant["end_date"] < projection_from_date:
+                pass
+            elif end_amount > 15.25:
                 underspent.append(
                     (
                         grant["end_date"],

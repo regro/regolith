@@ -18,7 +18,7 @@
 
 **Fixed:**
 
-* <news item>
+* The makeappointments helper now checks from the projection date on. Before, it reported gaps, outdated and depleted appointments, and underspent grants from the beginning of time, whatever date was given.
 
 **Security:**
 
