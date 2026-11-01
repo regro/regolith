@@ -66,15 +66,33 @@ def test_make_budget_wrong_number_of_amounts():
         make_budget(D(2026, 9, 1), D(2028, 8, 31), annual_amounts=[1, 2, 3])
 
 
-# Test that a budget written out for editing reads back unchanged
+# Test that a budget written out for editing reads back with the months of funding it did not give as 0
 def test_budget_round_trip():
     budget = [
         {"begin_date": D(2026, 9, 1), "end_date": D(2027, 8, 31), "amount": 100.0, "student_months": 12.0},
         {"begin_date": D(2027, 9, 1), "end_date": D(2028, 8, 31), "amount": 200.5, "ss_months": 1.0},
     ]
+    expected_budget = [
+        {**budget[0], "postdoc_months": 0.0, "ss_months": 0.0},
+        {**budget[1], "student_months": 0.0, "postdoc_months": 0.0},
+    ]
     text = budget_to_text("g1", budget, (D(2026, 9, 1), D(2028, 8, 31)), 300.5)
     assert "# The grant runs from 2026-09-01 to 2028-08-31." in text
-    assert budget_from_text(text) == (budget, [])
+    assert budget_from_text(text) == (expected_budget, [])
+
+
+# Test that each period is shown for editing with all its fields, whole numbers without a decimal point
+def test_budget_to_text_shows_every_field():
+    budget = [{"begin_date": D(2026, 9, 1), "end_date": D(2027, 8, 31), "amount": 100.0, "ss_months": 1.5}]
+    expected_period = (
+        "- begin_date: 2026-09-01\n"
+        "  end_date: 2027-08-31\n"
+        "  amount: 100\n"
+        "  student_months: 0\n"
+        "  postdoc_months: 0\n"
+        "  ss_months: 1.5\n"
+    )
+    assert budget_to_text("g1", budget).endswith(expected_period)
 
 
 # Test that every problem in an edited budget is reported together, so they can be fixed in one go

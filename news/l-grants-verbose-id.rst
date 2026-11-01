@@ -1,6 +1,7 @@
 **Added:**
 
 * The l_grants helper with --verbose now prints each grant's _id under its alias, so it can be given to u_grant.
+* The u_grant budget editor now shows student_months, postdoc_months and ss_months in every budget period, as 0 when a period has none, so the months used for planning appointments can be filled in.
 
 **Changed:**
 
