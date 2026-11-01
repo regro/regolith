@@ -18,7 +18,7 @@ from nameparser import HumanName
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates, is_after, month_to_int
-from regolith.sorters import position_key
+from regolith.sorters import ene_date_key, position_key
 from regolith.tools import all_docs_from_collection, filter_publications, fuzzy_retrieval, get_person_contact
 
 NUM_COAUTHOR_MONTHS = 48
@@ -202,8 +202,7 @@ def get_recent_org(person_info):
         employment = person_info.get("employment", []) + person_info.get("education", [])
         if len(employment) == 0:
             return ""
-        # sort by end_year
-        employment = sorted(employment, key=lambda d: d.get("end_year", float("inf")), reverse=True)
+        employment = sorted(employment, key=ene_date_key, reverse=True)
         organization = employment[0].get("organization", employment[0].get("institution"))
     else:
         organization = ""

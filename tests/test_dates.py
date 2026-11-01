@@ -9,6 +9,7 @@ from regolith.dates import (
     find_gaps_overlaps,
     get_dates,
     get_due_date,
+    has_dates,
     has_finished,
     has_started,
     is_after,
@@ -240,6 +241,26 @@ def test_find_gaps_overlaps(input, flag, expected):
 def test_get_dates(input, expected):
     actual = get_dates(input[0], input[1])
     assert actual == expected
+
+
+# Test detection of date information in either the ISO or the legacy style
+@pytest.mark.parametrize(
+    "thing, expected_has_dates",
+    [
+        # C1: an ISO begin_date, expect True
+        pytest.param({"begin_date": "2020-01-01"}, True, id="iso-begin-date"),
+        # C2: a legacy end_year, expect True
+        pytest.param({"end_year": 2020, "end_month": "Feb"}, True, id="legacy-end-year"),
+        # C3: a point-in-time year, expect True
+        pytest.param({"year": 2020}, True, id="point-year"),
+        # C4: only a month and day with no year or date, expect False
+        pytest.param({"month": "Feb", "day": 2}, False, id="month-day-only"),
+        # C5: date fields present but empty, expect False
+        pytest.param({"begin_date": "", "end_year": None}, False, id="empty-fields"),
+    ],
+)
+def test_has_dates(thing, expected_has_dates):
+    assert has_dates(thing) == expected_has_dates
 
 
 @pytest.mark.parametrize("year,month,expected", [(2020, 2, 29), (2020, "Feb", 29)])
