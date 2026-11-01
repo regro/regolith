@@ -294,6 +294,7 @@ helper_map = [
         "    current organization: The University of South Carolina\n"
         "    current position: Assistant Professor\n",
     ),
+    # l_members verbose shows each person's own positions, and their positions in the group named in the rc
     (
         ["helper", "l_members", "-v"],
         "    -- Assistant Scientists --\n"
@@ -307,12 +308,14 @@ helper_map = [
         "    github_id: ascopatz | orcid: 0000-0002-9432-4248\n"
         "    current organization: The University of South Carolina\n"
         "    current position: Assistant Professor\n"
+        "    ERGS position: assistant professor\n"
         "    -- Undergrads --\n"
         "Abstract Being, intern\n"
         "    email: None | group_id: abeing\n"
         "    github_id: None | orcid: None\n"
+        "    ERGS position: intern\n"
         "    current organization: The University of South Carolina\n"
-        "    current position: Assistant Professor\n",
+        "    current position: Intern\n",
     ),
     (
         ["helper", "l_members", "--prior", "-v"],
@@ -322,12 +325,14 @@ helper_map = [
         "    github_id: ascopatz | orcid: 0000-0002-9432-4248\n"
         "    current organization: The University of South Carolina\n"
         "    current position: Assistant Professor\n"
+        "    ERGS position: assistant professor\n"
         "    -- Undergrads --\n"
         "Abstract Being, intern\n"
         "    email: None | group_id: abeing\n"
         "    github_id: None | orcid: None\n"
+        "    ERGS position: intern\n"
         "    current organization: The University of South Carolina\n"
-        "    current position: Assistant Professor\n",
+        "    current position: Intern\n",
     ),
     (["helper", "l_members", "--filter", "name ", "sco "], "scopatz    \n"),
     (

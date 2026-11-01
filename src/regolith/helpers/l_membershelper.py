@@ -113,6 +113,7 @@ class MembersListerHelper(SoutHelperBase):
             ]
             if position_keys:
                 person["position_key"] = max(position_keys)[0]
+                person["positions"] = positions
                 cleaned_people.append(person)
             else:
                 print(f"Person {person['name']} has no positions in group {group_id}")
@@ -138,7 +139,7 @@ class MembersListerHelper(SoutHelperBase):
                 print("{}, {}".format(person.get("name"), person.get("position")))
                 print("    email: {} | group_id: {}".format(person.get("email"), person.get("_id")))
                 print("    github_id: {} | orcid: {}".format(person.get("github_id"), person.get("orcid_id")))
-                for position in positions:
+                for position in person["positions"]:
                     if is_current(position):
                         inst = fuzzy_retrieval(
                             gtx["institutions"], ["aka", "name", "_id"], position.get("organization")
@@ -154,8 +155,8 @@ class MembersListerHelper(SoutHelperBase):
                             )
                         )
                     if not person.get("active"):
-                        if position.get("group") == "bg":
-                            print("    billinge group position: {}".format(position.get("position")))
+                        if position.get("group") == group_id:
+                            print(f"    {group.get('name', group_id)} position: {position.get('position')}")
             else:
                 print("{}".format(person.get("name")))
         return

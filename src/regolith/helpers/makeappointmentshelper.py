@@ -27,7 +27,6 @@ from regolith.tools import (
     fuzzy_retrieval,
     get_pi_id,
     grant_burn,
-    group_member_employment_start_end,
     is_fully_appointed,
     merge_collections_superior,
 )
@@ -212,9 +211,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
             if not person.get("appts"):
                 continue
             appts = person.get("appts")
-            person_dates = group_member_employment_start_end(person, "bg")
-            emps = [person_date for person_date in person_dates if not person_date.get("permanent")]
-            emps.sort(key=lambda x: x.get("end_date", 0))
             # Everything is checked from the projection date on, since what is past cannot be changed
             check_begin = max(projection_from_date, min(get_dates(appt)["begin_date"] for appt in appts))
             check_end = max(get_dates(appt)["end_date"] for appt in appts)

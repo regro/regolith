@@ -18,6 +18,8 @@
 
 **Fixed:**
 
+* The l_members helper with --verbose now shows each person's own current organization and position; before, everyone was shown with those of one person. It also reads the group from groupname in regolithrc.json instead of assuming the group bg.
+* The makeappointments helper no longer assumes the group bg, and no longer stops when a group member's employment has no end date; the employment it read was never used.
 * The makeappointments helper now checks from the projection date on. Before, it reported gaps, outdated and depleted appointments, and underspent grants from the beginning of time, whatever date was given.
 
 **Security:**
