@@ -295,6 +295,7 @@ helper_map = [
         "    current organization: The University of South Carolina\n"
         "    current position: Assistant Professor\n",
     ),
+    # l_members verbose shows each person's own positions, and their positions in the group named in the rc
     (
         ["helper", "l_members", "-v"],
         "    -- Assistant Scientists --\n"
@@ -308,12 +309,14 @@ helper_map = [
         "    github_id: ascopatz | orcid: 0000-0002-9432-4248\n"
         "    current organization: The University of South Carolina\n"
         "    current position: Assistant Professor\n"
+        "    ERGS position: assistant professor\n"
         "    -- Undergrads --\n"
         "Abstract Being, intern\n"
         "    email: None | group_id: abeing\n"
         "    github_id: None | orcid: None\n"
+        "    ERGS position: intern\n"
         "    current organization: The University of South Carolina\n"
-        "    current position: Assistant Professor\n",
+        "    current position: Intern\n",
     ),
     (
         ["helper", "l_members", "--prior", "-v"],
@@ -323,12 +326,14 @@ helper_map = [
         "    github_id: ascopatz | orcid: 0000-0002-9432-4248\n"
         "    current organization: The University of South Carolina\n"
         "    current position: Assistant Professor\n"
+        "    ERGS position: assistant professor\n"
         "    -- Undergrads --\n"
         "Abstract Being, intern\n"
         "    email: None | group_id: abeing\n"
         "    github_id: None | orcid: None\n"
+        "    ERGS position: intern\n"
         "    current organization: The University of South Carolina\n"
-        "    current position: Assistant Professor\n",
+        "    current position: Intern\n",
     ),
     (["helper", "l_members", "--filter", "name ", "sco "], "scopatz    \n"),
     (
@@ -1088,28 +1093,21 @@ helper_map = [
         "1. col as a new institution.\n"
         "2. columbiau      Columbia University.\n",
     ),
+    # makeappointments checks from the projection date on: appointments that ended before it, and grants
+    # that ended before it, are not reported
     (
         ["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31"],
-        "WARNING: appointment gap for scopatz from 2019-02-01 to 2019-12-31\n"
-        "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
-        "appointments on outdated grants:\n"
-        "    person: scopatz, appointment: s20, grant: sym,\n"
-        "            from 2020-01-01 until 2020-05-15\n"
+        "WARNING: appointment gap for scopatz from 2020-08-31 to 2020-08-31\n"
         "appointments on depleted grants:\n"
-        "    person: scopatz, appointment: f19, grant: dmref15,\n"
-        "            from 2019-02-07 until 2019-03-31\n"
         "    person: scopatz, appointment: ss20, grant: abc42,\n"
-        "            from 2020-07-15 until 2020-08-31\n"
+        "            from 2020-08-31 until 2020-08-31\n"
         "    person: scopatz, appointment: ss21, grant: future_grant,\n"
         "            from 2020-09-06 until 2021-08-31\n"
         "underspent grants:\n"
-        "    dmref15: end: 2019-05-01\n"
-        "      projected underspend: 54.55 months, balance as of 2020-08-31: 0\n"
-        "      required ss+gra burn: -3.41\n"
         "    sym: end: 2030-12-31\n"
         "      projected underspend: 8.0 months, balance as of 2020-08-31: 0\n"
         "      required ss+gra burn: 0.06\n"
-        "cumulative underspend = 62.55 months, cumulative months to support = 0\n"
+        "cumulative underspend = 8.0 months, cumulative months to support = 0\n"
         "overspent grants:\n"
         "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
         "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
@@ -1117,26 +1115,17 @@ helper_map = [
     ),
     (
         ["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31 ", "-v"],
-        "WARNING: appointment gap for scopatz from 2019-02-01 to 2019-12-31\n"
-        "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
-        "appointments on outdated grants:\n"
-        "    person: scopatz, appointment: s20, grant: sym,\n"
-        "            from 2020-01-01 until 2020-05-15\n"
+        "WARNING: appointment gap for scopatz from 2020-08-31 to 2020-08-31\n"
         "appointments on depleted grants:\n"
-        "    person: scopatz, appointment: f19, grant: dmref15,\n"
-        "            from 2019-02-07 until 2019-03-31\n"
         "    person: scopatz, appointment: ss20, grant: abc42,\n"
-        "            from 2020-07-15 until 2020-08-31\n"
+        "            from 2020-08-31 until 2020-08-31\n"
         "    person: scopatz, appointment: ss21, grant: future_grant,\n"
         "            from 2020-09-06 until 2021-08-31\n"
         "underspent grants:\n"
-        "    dmref15: end: 2019-05-01\n"
-        "      projected underspend: 54.55 months, balance as of 2020-08-31: 0\n"
-        "      required ss+gra burn: -3.41\n"
         "    sym: end: 2030-12-31\n"
         "      projected underspend: 8.0 months, balance as of 2020-08-31: 0\n"
         "      required ss+gra burn: 0.06\n"
-        "cumulative underspend = 62.55 months, cumulative months to support = 0\n"
+        "cumulative underspend = 8.0 months, cumulative months to support = 0\n"
         "overspent grants:\n"
         "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
         "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
@@ -1144,26 +1133,17 @@ helper_map = [
     ),
     (
         ["helper", "makeappointments", "run", "--no-plot", "--projection-from-date", "2020-08-31"],
-        "WARNING: appointment gap for scopatz from 2019-02-01 to 2019-12-31\n"
-        "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
-        "appointments on outdated grants:\n"
-        "    person: scopatz, appointment: s20, grant: sym,\n"
-        "            from 2020-01-01 until 2020-05-15\n"
+        "WARNING: appointment gap for scopatz from 2020-08-31 to 2020-08-31\n"
         "appointments on depleted grants:\n"
-        "    person: scopatz, appointment: f19, grant: dmref15,\n"
-        "            from 2019-02-07 until 2019-03-31\n"
         "    person: scopatz, appointment: ss20, grant: abc42,\n"
-        "            from 2020-07-15 until 2020-08-31\n"
+        "            from 2020-08-31 until 2020-08-31\n"
         "    person: scopatz, appointment: ss21, grant: future_grant,\n"
         "            from 2020-09-06 until 2021-08-31\n"
         "underspent grants:\n"
-        "    dmref15: end: 2019-05-01\n"
-        "      projected underspend: 54.55 months, balance as of 2020-08-31: 0\n"
-        "      required ss+gra burn: -3.41\n"
         "    sym: end: 2030-12-31\n"
         "      projected underspend: 8.0 months, balance as of 2020-08-31: 0\n"
         "      required ss+gra burn: 0.06\n"
-        "cumulative underspend = 62.55 months, cumulative months to support = 0\n"
+        "cumulative underspend = 8.0 months, cumulative months to support = 0\n"
         "overspent grants:\n"
         "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
         "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n",

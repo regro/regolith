@@ -1711,7 +1711,7 @@
         "appointments": {
             "type": "dict",
             "required": false,
-            "description": "begin and end date, grant loading status and notes about appointments"
+            "description": "appointments keyed by id, each with begin_date and end_date, type, loading, status and notes, and either the grant (id or alias) or the outside_funding that pays for it. Kept in a private database; plan and update them with the u_appointments helper"
         },
         "activities": {
             "type": "list",
