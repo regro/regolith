@@ -27,7 +27,7 @@ from habanero import Crossref
 from requests.exceptions import ConnectionError, HTTPError
 
 from regolith.common import fallback, string_types, unicode_type  # noqa: F401  (re-exported)
-from regolith.dates import date_to_float, get_dates, is_current, month_to_int
+from regolith.dates import date_to_float, get_dates, has_dates, is_current, month_to_int
 from regolith.dbpaths import dbdirname, dbpathname  # noqa: F401  (re-exported)
 from regolith.schemas import alloweds
 from regolith.sorters import doc_date_key_high, ene_date_key, id_key
@@ -411,6 +411,25 @@ def filter_committees(person, begin_period, type):
     return mycommittees
 
 
+def _end_date_or_none(entry):
+    # get_dates writes the months and days it assumes into the dict it is given
+    entry_dates = get_dates(dict(entry)) if has_dates(entry) else {}
+    return entry_dates.get("end_date", entry_dates.get("date"))
+
+
+def _short_month_name(entry):
+    month = entry.get("month") or entry.get("begin_month")
+    if not month and entry.get("begin_date"):
+        month = get_dates({"begin_date": entry["begin_date"]})["begin_date"].month
+    return SHORT_MONTH_NAMES[month_to_int(month)] if month else None
+
+
+def _event_date(event):
+    if event.get("date"):
+        return get_dates({"date": event["date"]})["date"]
+    return date(event["year"], month_to_int(event["month"]), event.get("day", 28))
+
+
 def filter_facilities(people, begin_period, type, verbose=False):
     facilities = []
     for p in people:
@@ -418,19 +437,9 @@ def filter_facilities(people, begin_period, type, verbose=False):
         svc = copy(p.get("facilities", []))
         for i in svc:
             if i.get("type") == type:
-                if i.get("year"):
-                    end_year = i.get("year")
-                elif i.get("end_year"):
-                    end_year = i.get("end_year")
-                else:
-                    end_year = date.today().year
-                end_date = date(end_year, i.get("end_month", 12), i.get("end_day", 28))
-                if end_date >= begin_period:
-                    if not i.get("month"):
-                        month = i.get("begin_month", 0)
-                        i["month"] = SHORT_MONTH_NAMES[month_to_int(month)]
-                    else:
-                        i["month"] = SHORT_MONTH_NAMES[month_to_int(i["month"])]
+                end_date = _end_date_or_none(i)
+                if end_date is None or end_date >= begin_period:
+                    i["month"] = _short_month_name(i)
                     myfacility.append(i)
         if verbose:
             print("p['facilities'] = {}".format(myfacility))
@@ -461,32 +470,18 @@ def filter_patents(patentscoll, people, target, since=None, before=None):
                 case_sensitive=False,
             )
             if person in inventors:
-                if i.get("end_year"):
-                    end_year = i.get("end_year")
-                else:
-                    end_year = date.today().year
-                end_date = date(end_year, i.get("end_month", 12), i.get("end_day", 28))
+                end_date = _end_date_or_none(i)
                 if since:
-                    if end_date >= since:
-                        if not i.get("month"):
-                            month = i.get("begin_month", 0)
-                            i["month"] = SHORT_MONTH_NAMES[month_to_int(month)]
-                        else:
-                            i["month"] = SHORT_MONTH_NAMES[month_to_int(i["month"])]
+                    if end_date is None or end_date >= since:
+                        i["month"] = _short_month_name(i)
 
-                        events = [
-                            event
-                            for event in i["events"]
-                            if date(event["year"], event["month"], event.get("day", 28)) > since
-                        ]
                         events = sorted(
-                            events, key=lambda event: date(event["year"], event["month"], event.get("day", 28))
+                            (event for event in i["events"] if _event_date(event) > since), key=_event_date
                         )
                         i["events"] = events
                         patents.append(i)
                 else:
-                    events = [event for event in i["events"]]
-                    events = sorted(events, key=lambda event: date(event["year"], event["month"], 28))
+                    events = sorted(i["events"], key=_event_date)
                     i["events"] = events
                     patents.append(i)
     return patents
@@ -513,35 +508,21 @@ def filter_licenses(patentscoll, people, target, since=None, before=None):
                 case_sensitive=False,
             )
             if person in inventors:
-                if i.get("end_year"):
-                    end_year = i.get("end_year")
-                else:
-                    end_year = date.today().year
-                end_date = date(end_year, i.get("end_month", 12), i.get("end_day", 28))
+                end_date = _end_date_or_none(i)
                 if since:
-                    if end_date >= since:
-                        if not i.get("month"):
-                            month = i.get("begin_month", 0)
-                            i["month"] = SHORT_MONTH_NAMES[month_to_int(month)]
-                        else:
-                            i["month"] = SHORT_MONTH_NAMES[month_to_int(i["month"])]
+                    if end_date is None or end_date >= since:
+                        i["month"] = _short_month_name(i)
                         total = sum([event.get("amount") for event in i["events"]])
                         i["total_amount"] = total
-                        events = [
-                            event
-                            for event in i["events"]
-                            if date(event["year"], event["month"], event.get("day", 28)) > since
-                        ]
                         events = sorted(
-                            events, key=lambda event: date(event["year"], event["month"], event.get("day", 28))
+                            (event for event in i["events"] if _event_date(event) > since), key=_event_date
                         )
                         i["events"] = events
                         licenses.append(i)
                 else:
-                    total = sum([event.get("amount") for event in events])
+                    total = sum([event.get("amount") for event in i["events"]])
                     i["total_amount"] = total
-                    events = [event for event in i["events"]]
-                    events = sorted(events, key=lambda event: date(event["year"], event["month"], 28))
+                    events = sorted(i["events"], key=_event_date)
                     i["events"] = events
                     licenses.append(i)
 
@@ -940,20 +921,20 @@ def awards(
                     "_key": date_to_float(x["year"], x.get("month", 0)),
                 }
                 a.append(d)
-        elif "begin_year" in x and "end_year" in x:
-            if date(x.get("begin_year", 12, 31)) > since:
+        elif has_dates(x):
+            # get_dates writes the months and days it assumes into the dict it is given
+            honor_dates = get_dates(dict(x))
+            begin_date = honor_dates.get("begin_date", honor_dates.get("date"))
+            end_date = honor_dates.get("end_date")
+            if begin_date and date(begin_date.year, 12, 31) > since:
+                if end_date and end_date.year != begin_date.year:
+                    year_span = f"{begin_date.year}-{end_date.year}"
+                else:
+                    year_span = f"{begin_date.year}"
                 d = {
                     "description": latex_safe(x["name"]),
-                    "year": "{}-{}".format(x["begin_year"], x["end_year"]),
-                    "_key": date_to_float(x["begin_year"], x.get("month", 0)),
-                }
-                a.append(d)
-        elif "begin_year" in x:
-            if date(x.get("begin_year"), 12, 31) > since:
-                d = {
-                    "description": latex_safe(x["name"]),
-                    "year": "{}".format(x["begin_year"]),
-                    "_key": date_to_float(x["begin_year"], x.get("month", 0)),
+                    "year": year_span,
+                    "_key": date_to_float(begin_date.year, x.get("month", 0)),
                 }
                 a.append(d)
     a.sort(key=(lambda x: x.get("_key", 0.0)), reverse=True)

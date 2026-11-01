@@ -12,6 +12,7 @@ from regolith import tools
 from regolith.runcontrol import DEFAULT_RC
 from regolith.tools import (
     MISSING_INFO,
+    awards,
     awards_grants_honors,
     collect_appts,
     collection_str,
@@ -23,6 +24,8 @@ from regolith.tools import (
     dbpathname,
     dereference_institution,
     filter_employment_for_advisees,
+    filter_facilities,
+    filter_licenses,
     filter_presentations,
     filter_publications,
     filter_software,
@@ -1805,6 +1808,74 @@ def test_is_fully_appointed(appts, start, end, expected):
 )
 def test_awards_grants_honors(input, expected):
     assert awards_grants_honors(PEOPLE_COLL[0], input, funding=True, service_types=None) == expected
+
+
+# Test the year span and sort key of honors dated in the point, ISO and legacy styles
+def test_awards():
+    person = {
+        "honors": [
+            {"name": "Prize", "year": 2015},
+            {"name": "Chair", "begin_year": 2016, "end_year": 2017},
+            {"name": "Fellow", "begin_date": "2018-01-01", "end_date": "2020-12-31"},
+            {"name": "Member", "begin_year": 2019},
+        ]
+    }
+    expected_awards = [
+        {"description": "Member", "year": "2019", "_key": 2019.0},
+        {"description": "Fellow", "year": "2018-2020", "_key": 2018.0},
+        {"description": "Chair", "year": "2016-2017", "_key": 2016.0},
+        {"description": "Prize", "year": 2015, "_key": 2015.0},
+    ]
+    assert awards(person) == expected_awards
+
+
+# Test which facilities are kept since a date, and the month they display, for ISO and legacy dates
+@pytest.mark.parametrize(
+    "facility, expected_month",
+    [
+        # C1: ISO dates ending after the period begins, expect it kept with the month of its begin_date
+        pytest.param({"begin_date": "2019-03-01", "end_date": "2021-02-28"}, "Mar", id="iso-kept"),
+        # C2: legacy dates ending after the period begins, expect it kept with its begin_month
+        pytest.param({"begin_year": 2019, "begin_month": "Jun", "end_year": 2021}, "Jun", id="legacy-kept"),
+        # C3: no end date, expect it kept as ongoing
+        pytest.param({"begin_date": "2010-04-01"}, "Apr", id="ongoing-kept"),
+        # C4: 1. ISO dates, 2. legacy dates, ending before the period begins, expect it dropped
+        pytest.param({"begin_date": "2010-01-01", "end_date": "2012-12-31"}, None, id="iso-dropped"),
+        pytest.param({"begin_year": 2010, "end_year": 2012}, None, id="legacy-dropped"),
+    ],
+)
+def test_filter_facilities(facility, expected_month):
+    people = [{"_id": "m1", "facilities": [{"type": "shared", "name": "laser", **facility}]}]
+    actual = filter_facilities(people, dt.date(2015, 1, 1), "shared")
+    if expected_month is None:
+        assert actual == []
+    else:
+        assert actual[0]["facilities"][0]["month"] == expected_month
+
+
+# Test the events and total amount of a license, with events dated in the ISO and legacy styles
+@pytest.mark.parametrize(
+    "since, expected_event_amounts",
+    [
+        # C1: no since date, expect every event, oldest first
+        pytest.param(None, [5, 10], id="all-events"),
+        # C2: a since date between the events, expect only the later event
+        pytest.param(dt.date(2019, 6, 1), [10], id="events-since"),
+    ],
+)
+def test_filter_licenses(since, expected_event_amounts):
+    people = [{"_id": "m1", "name": "Member One", "aka": []}]
+    patents = [
+        {
+            "status": "active",
+            "type": "license",
+            "inventors": ["m1"],
+            "events": [{"date": "2020-05-01", "amount": 10}, {"year": 2019, "month": 3, "amount": 5}],
+        }
+    ]
+    actual = filter_licenses(patents, people, "m1", since=since)
+    assert [event["amount"] for event in actual[0]["events"]] == expected_event_amounts
+    assert actual[0]["total_amount"] == 15
 
 
 @pytest.mark.parametrize(

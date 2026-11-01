@@ -2,7 +2,19 @@
 
 import string
 
-from regolith.dates import date_to_float
+from regolith.dates import date_to_float, get_dates, has_dates
+
+FAR_FUTURE_YEAR = 4242
+EPOCH_YEAR = 1970
+
+
+def _dates_of(document):
+    # get_dates writes the months and days it assumes into the dict it is given
+    return get_dates(dict(document)) if has_dates(document) else {}
+
+
+def _to_float(day):
+    return date_to_float(day.year, day.month, day.day)
 
 
 def doc_date_key(document):
@@ -18,7 +30,9 @@ def doc_date_key(document):
     -------
     the float serialization of the date information in the document
     """
-    return date_to_float(document.get("year", 1970), document.get("month", "jan"))
+    dates = _dates_of(document)
+    day = dates.get("date") or dates.get("begin_date")
+    return _to_float(day) if day else date_to_float(EPOCH_YEAR, "jan")
 
 
 def doc_date_key_high(document):
@@ -34,7 +48,9 @@ def doc_date_key_high(document):
     -------
     the float serialization of the end date information in the document
     """
-    return date_to_float(document.get("year", 1970), document.get("month", "dec"))
+    dates = _dates_of(document)
+    day = dates.get("date") or dates.get("end_date")
+    return _to_float(day) if day else date_to_float(EPOCH_YEAR, "dec")
 
 
 def ene_date_key(document):
@@ -44,13 +60,16 @@ def ene_date_key(document):
     Parameters
     ----------
     document: dict
-        the document that is expected to contain date-like information in "end_year" and/or "end_month"
+        the document that is expected to contain an end date, as ``end_date`` or ``end_year``/``end_month``.
+        A document without one is treated as ongoing and sorts as the latest.
 
     Returns
     -------
     the float serialization of the date information in the document
     """
-    return date_to_float(document.get("end_year", 4242), document.get("end_month", "dec"))
+    dates = _dates_of(document)
+    day = dates.get("end_date") or dates.get("date")
+    return _to_float(day) if day else date_to_float(FAR_FUTURE_YEAR, "dec")
 
 
 def category_val(document):
@@ -98,16 +117,34 @@ def id_key(document):
     return document.get("_id", "")
 
 
-def date_key(x):
-    if "end_year" in x:
-        v = date_to_float(x["end_year"], x.get("end_month", "jan"), x.get("end_day", 0))
-    elif "year" in x:
-        v = date_to_float(x["year"], x.get("month", "jan"), x.get("day", 0))
-    elif "begin_year" in x:
-        v = date_to_float(x["begin_year"], x.get("begin_month", "jan"), x.get("begin_day", 0))
-    else:
-        raise KeyError("could not find year in " + str(x))
-    return v
+def date_key(document):
+    """Convert the latest date in a document to a float for sorting.
+
+    The end date is used when there is one, otherwise the point date,
+    otherwise the begin date.
+
+    Parameters
+    ----------
+    document : dict
+        The document, dated in either the ISO or the legacy year/month/day style.
+
+    Returns
+    -------
+    float
+        The float serialization of the date.
+
+    Raises
+    ------
+    KeyError
+        When the document carries no date information.
+    """
+    dates = _dates_of(document)
+    day = dates.get("end_date") or dates.get("date") or dates.get("begin_date")
+    if not day:
+        raise KeyError(
+            f"Could not find a date in {document}. Please add a begin_date, end_date or date to this entry."
+        )
+    return _to_float(day)
 
 
 POSITION_LEVELS = {

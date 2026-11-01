@@ -317,6 +317,28 @@ def get_dates(thing, date_field_prefix=None):
     return dates_no_nones
 
 
+DATE_FIELDS = ("date", "year", "begin_date", "begin_year", "end_date", "end_year")
+
+
+def has_dates(thing):
+    """Return True when a dict-like thing carries any date information.
+
+    Dates may be given as ISO ``begin_date``/``end_date``/``date`` values
+    or in the legacy ``begin_year``/``end_year``/``year`` style.
+
+    Parameters
+    ----------
+    thing : dict
+        The document to inspect.
+
+    Returns
+    -------
+    bool
+        The answer to whether any date field holds a value.
+    """
+    return any(thing.get(field) for field in DATE_FIELDS)
+
+
 def get_due_date(thing):
     """
 
