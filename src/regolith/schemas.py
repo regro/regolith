@@ -206,7 +206,7 @@ class NoDescriptionValidator(Validator):
             )
 
 
-def validate(coll, record, schemas):
+def validate(coll, record, schemas, partial=False):
     """Validate a record for a given db.
 
     Parameters
@@ -217,6 +217,11 @@ def validate(coll, record, schemas):
         The record to be validated
     schemas : dict
         The schema to validate against
+    partial : bool, optional
+        The switch for checking a record that holds only part of a
+        document, such as the private half of a grant whose public half
+        is stored in another database.  The fields it has are checked,
+        but fields the schema requires may be absent.
 
     Returns
     -------
@@ -228,6 +233,6 @@ def validate(coll, record, schemas):
     if coll in schemas:
         schema = copy.deepcopy(schemas[coll])
         v = NoDescriptionValidator(schema)
-        return v.validate(record), v.errors
+        return v.validate(record, update=partial), v.errors
     else:
         return True, ()

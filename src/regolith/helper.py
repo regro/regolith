@@ -153,6 +153,10 @@ UPDATER_HELPER_SPECS = {
         "regolith.helpers.u_contacthelper:ContactUpdaterHelper",
         "regolith.helpers.u_contacthelper:subparser",
     ),
+    "u-grant": (
+        "regolith.helpers.u_granthelper:GrantUpdaterHelper",
+        "regolith.helpers.u_granthelper:subparser",
+    ),
     "u-institution": (
         "regolith.helpers.u_institutionshelper:InstitutionsUpdaterHelper",
         "regolith.helpers.u_institutionshelper:subparser",

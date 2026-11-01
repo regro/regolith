@@ -573,12 +573,16 @@ class MongoClient:
             return deepcopy(self.chained_db.get(collname, {})).values()
         return self.chained_db.get(collname, {}).values()
 
-    def insert_one(self, dbname, collname, doc):
-        """Inserts one document to a database/collection."""
+    def insert_one(self, dbname, collname, doc, partial=False):
+        """Inserts one document to a database/collection.
+
+        With partial set, the document is one part of a record split
+        across databases, so fields the schema requires may be absent.
+        """
         from regolith.tools import validate_doc
 
         doc = doc_cleanup(doc)
-        valid, potential_error = validate_doc(collname, doc, self.rc)
+        valid, potential_error = validate_doc(collname, doc, self.rc, partial=partial)
         if not valid:
             raise ValueError(potential_error)
         coll = self.client[dbname][collname]
@@ -713,15 +717,19 @@ class MongoClient:
         result = self.client[dbname][collname].update_one({"_id": _id}, {"$set": {path: bson_cleanup(value)}})
         return result.matched_count > 0
 
-    def update_one(self, dbname, collname, filter, update, **kwargs):
-        """Updates one document."""
+    def update_one(self, dbname, collname, filter, update, partial=False, **kwargs):
+        """Updates one document.
+
+        With partial set, the document is one part of a record split
+        across databases, so fields the schema requires may be absent.
+        """
         from regolith.tools import validate_doc
 
         filter["_id"].replace(".", "")
         doc = self.find_one(dbname, collname, filter)
         newdoc = dict(filter if doc is None else doc)
         newdoc.update(update)
-        valid, potential_error = validate_doc(collname, newdoc, self.rc)
+        valid, potential_error = validate_doc(collname, newdoc, self.rc, partial=partial)
         if not valid:
             raise ValueError(potential_error)
         coll = self.client[dbname][collname]

@@ -1262,6 +1262,95 @@ def merge_collections_all(a, b, target_id):
     return adis + intersect + bdis
 
 
+# The grant fields that may be shown publicly. Every other field of a grant, such as the account number
+# and the budget, is private and is stored in a database marked "public": false
+PUBLIC_GRANT_FIELDS = (
+    "title",
+    "amount",
+    "currency",
+    "awardnr",
+    "funder",
+    "team",
+    "begin_date",
+    "end_date",
+    "begin_day",
+    "begin_month",
+    "begin_year",
+    "end_day",
+    "end_month",
+    "end_year",
+)
+
+
+def split_grant(grant):
+    """Split a grant into the part that may be public and the private
+    rest.
+
+    Both parts carry the grant's id, so that reading the collection from
+    every database joins them back into one grant.
+
+    Parameters
+    ----------
+    grant : dict
+        The grant to split.
+
+    Returns
+    -------
+    public_part : dict
+        The id and the fields listed in PUBLIC_GRANT_FIELDS.
+    private_part : dict
+        The id and every other field.
+    """
+    public_part = {"_id": grant["_id"]}
+    private_part = {"_id": grant["_id"]}
+    for key, value in grant.items():
+        if key != "_id":
+            (public_part if key in PUBLIC_GRANT_FIELDS else private_part)[key] = value
+    return public_part, private_part
+
+
+def public_and_private_databases(databases, public_name=None, private_name=None):
+    """Return the names of the databases for public and private
+    information.
+
+    Parameters
+    ----------
+    databases : list of dict
+        The databases from regolithrc.json, each with a name and a public
+        flag.
+    public_name : str, optional
+        The name of the public database to use instead of the first one
+        marked public.
+    private_name : str, optional
+        The name of the private database to use instead of the first one
+        marked private.
+
+    Returns
+    -------
+    public_name : str or None
+        The name of the public database, or None when there is none.
+    private_name : str or None
+        The name of the private database, or None when there is none.
+
+    Raises
+    ------
+    ValueError
+        When a name given is not one of the databases.
+    """
+    names = [database["name"] for database in databases]
+    for name in (public_name, private_name):
+        if name and name not in names:
+            raise ValueError(
+                f"There is no database called {name} in regolithrc.json. "
+                f"Please re-run with one of: {', '.join(names)}."
+            )
+    if not public_name:
+        public_name = next((database["name"] for database in databases if database.get("public")), None)
+    if not private_name:
+        private_name = next((database["name"] for database in databases if not database.get("public")), None)
+    return public_name, private_name
+
+
 def merge_collections_superior(a, b, target_id):
     """Merge two collections into a single merged collection.
 
@@ -2460,12 +2549,12 @@ def remove_duplicate_docs(coll, key):
     return newcoll
 
 
-def validate_doc(collection_name, doc, rc):
+def validate_doc(collection_name, doc, rc, partial=False):
     from pprint import pformat
 
     from regolith.schemas import validate
 
-    v = validate(collection_name, doc, rc.schemas)
+    v = validate(collection_name, doc, rc.schemas, partial=partial)
     error_message = ""
     if v[0] is False:
         error_message += f"ERROR in {doc['_id']}:\n{pformat(v[1])}\n"
