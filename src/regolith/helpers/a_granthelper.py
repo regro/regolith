@@ -279,8 +279,6 @@ class GrantAdderHelper(DbHelperBase):
 
         rc.client.insert_one(rc.database, rc.coll, grant)
         print(f"{rc.grant_id} has been added in {TARGET_COLL}")
-        if not proposal:
-            print(f"    not seeded from a proposal: {self._no_proposal_note()}")
         if proposal:
             print(f"    seeded from the proposal {proposal['_id']}")
             if proposal.get("status") != "accepted":
@@ -289,4 +287,6 @@ class GrantAdderHelper(DbHelperBase):
         unset = [option for option in ("awardnr", "account") if not grant.get(option)]
         if unset:
             print(f"    still to fill in when known: {', '.join(unset)}")
+        if not proposal:
+            print(f"    not seeded from a proposal: {self._no_proposal_note()}")
         return
