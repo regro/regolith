@@ -100,7 +100,14 @@ def test_grant_seeded_from_proposal(grants_db):
         "team": [{"name": "Anthony Scopatz 2.1", "position": "pi", "institution": "University of 2.1"}],
         "title": "SymPy 2.1 Release Support",
     }
-    assert with_iso_dates(stored("grants", "sympy21")) == expected_grant
+    grant = dict(stored("grants", "sympy21"))
+    budget = grant.pop("budget")
+    assert with_iso_dates(grant) == expected_grant
+    # One budget period per grant year, from 2019-09-01 to 2030-12-31, sharing the 3000 awarded
+    expected_years = 12
+    assert len(budget) == expected_years
+    assert sum(period["amount"] for period in budget) == 3000.0
+    assert (str(budget[0]["begin_date"]), str(budget[-1]["end_date"])) == ("2019-09-01", "2030-12-31")
 
 
 # Test that a proposal with legacy dates and no team gives a grant with ISO dates and a team built from
@@ -162,8 +169,46 @@ def test_grant_split_between_databases(make_split_grants_db):
         "status": "accepted",
     }
     assert with_iso_dates(stored_part("public", "sympy21")) == expected_public_part
-    assert stored_part("private", "sympy21") == expected_private_part
-    assert with_iso_dates(stored("grants", "sympy21")) == {**expected_public_part, **expected_private_part}
+    private_part = stored_part("private", "sympy21")
+    assert "budget" in private_part
+    assert "budget" not in stored_part("public", "sympy21")
+    private_part.pop("budget")
+    assert private_part == expected_private_part
+    grant = dict(stored("grants", "sympy21"))
+    grant.pop("budget")
+    assert with_iso_dates(grant) == {**expected_public_part, **expected_private_part}
+
+
+# Test that the annual amounts given become the budget, one per grant year
+@pytest.mark.parametrize(
+    "annual_amounts, expected_error",
+    [
+        # C1: one amount for each of the three grant years, expect a period for each with that amount
+        pytest.param(["100", "200", "300"], None, id="one-per-year"),
+        # C2: two amounts for three grant years, expect a ValueError asking for one per year
+        pytest.param(["100", "200"], "Please give one amount for each year", id="too-few"),
+    ],
+)
+def test_grant_annual_amounts(annual_amounts, expected_error, grants_db):
+    args = ["helper", "a_grant", "newgrant", "--title", "A new grant", "--amount", "600", "--funder", "DOE"]
+    args += ["--begin-date", "2026-09-01", "--end-date", "2029-08-31", "--institution", "Columbia University"]
+    args += ["--annual-amounts"] + annual_amounts
+    if expected_error:
+        with pytest.raises(ValueError, match=expected_error):
+            main(args)
+        assert stored("grants", "newgrant") is None
+        return
+    main(args)
+    expected_budget = [
+        {"begin_date": "2026-09-01", "end_date": "2027-08-31", "amount": 100.0},
+        {"begin_date": "2027-09-01", "end_date": "2028-08-31", "amount": 200.0},
+        {"begin_date": "2028-09-01", "end_date": "2029-08-31", "amount": 300.0},
+    ]
+    budget = [
+        {**period, **{key: str(period[key]) for key in ("begin_date", "end_date")}}
+        for period in stored("grants", "newgrant")["budget"]
+    ]
+    assert budget == expected_budget
 
 
 # Test adding a grant with no proposal behind it, where the pi defaults to the group pi, scopatz

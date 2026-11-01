@@ -6,6 +6,7 @@ from gooey import GooeyParser
 
 from regolith.dates import get_dates
 from regolith.fsclient import _id_key
+from regolith.grant_budget import make_budget
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.tools import (
     MISSING_INFO,
@@ -77,6 +78,14 @@ def subparser(subpi):
     subpi.add_argument("--program", help="The program the work was funded under", type=strip_str)
     subpi.add_argument("--admin", help="The unit or group administering the grant", type=strip_str)
     subpi.add_argument("-n", "--notes", nargs="+", help="Notes about the grant", type=strip_str, **notes_kwargs)
+    subpi.add_argument(
+        "--annual-amounts",
+        nargs="+",
+        type=float,
+        help="The amount for each grant year, one per year, for the budget. Without it, the budget has one "
+        "period per grant year with the amount shared between them by their length. Change the budget "
+        "later with u_grant --edit-budget.",
+    )
     subpi.add_argument(
         "--public-database",
         type=strip_str,
@@ -287,6 +296,9 @@ class GrantAdderHelper(DbHelperBase):
                 f"The begin date {grant['begin_date']} is after the end date {grant['end_date']}. "
                 "Please re-run with a begin date that is before the end date."
             )
+        grant["budget"] = make_budget(
+            grant["begin_date"], grant["end_date"], amount=grant["amount"], annual_amounts=rc.annual_amounts
+        )
         valid, error_message = validate_doc(TARGET_COLL, grant, rc)
         if not valid:
             raise ValueError(
@@ -295,6 +307,11 @@ class GrantAdderHelper(DbHelperBase):
             )
 
         self._store(grant)
+        shared = "" if rc.annual_amounts else ", with the amount shared between them by their length"
+        print(
+            f"    budget: {len(grant['budget'])} yearly periods{shared}. Change it with u_grant {rc.grant_id} "
+            "--edit-budget"
+        )
         if proposal:
             print(f"    seeded from the proposal {proposal['_id']}")
             if proposal.get("status") != "accepted":
