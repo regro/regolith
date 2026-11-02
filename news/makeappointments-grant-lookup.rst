@@ -4,6 +4,7 @@
 
 **Changed:**
 
+* The makeappointments helper now includes every grant still running on or after the projection date, not only grants with appointments, so a current grant no one is appointed on yet shows as unspent and is plotted.
 * The makeappointments helper now plots only grants that end on or after the projection date, unless --verbose is given; before, grants that ended up to two years earlier were plotted too.
 
 **Deprecated:**

@@ -32,6 +32,17 @@ GRANTS = {
         "begin_date": "2025-09-01",
         "end_date": "2028-08-31",
     },
+    "unused": {
+        "_id": "unused",
+        "alias": "unused",
+        "title": "A current grant no one is appointed on",
+        "amount": 1.0,
+        "funder": "NSF",
+        "team": [],
+        "begin_date": "2025-01-01",
+        "end_date": "2028-12-31",
+        "budget": [{"begin_date": "2025-01-01", "end_date": "2028-12-31", "student_months": 12}],
+    },
     "old": {
         "_id": "old",
         "alias": "old",
@@ -108,18 +119,21 @@ def group_db(tmp_path):
     os.chdir(cwd)
 
 
-# Test that grants are found whatever case an appointment names them in, and that grants with no budget and
-# grants not in the collection are reported together instead of stopping the run
+# Test that grants are found whatever case an appointment names them in, that grants with no budget and
+# grants not in the collection are reported together instead of stopping the run, and that a current grant
+# no one is appointed on is reported as unspent
 def test_makeappointments_reports_grant_problems(group_db, capsys):
     main(["helper", "makeappointments", "run", "--no-plot", "--projection-from-date", "2026-01-01"])
     output = capsys.readouterr().out
     expected_reports = [
         "appointments on grants not in the grants collection (check the grant id or alias):\n"
         "    person: stu, appointment: w27, grant: nogrant\n",
-        "grants with appointments but no budget, so their spending is not known: diffai\n",
+        "grants with no budget, so their spending is not known: diffai\n",
     ]
     for expected_report in expected_reports:
         assert expected_report in output
+    expected_unused_grant = "    unused: end: 2028-12-31\n      projected underspend: 12.0 months"
+    assert expected_unused_grant in output
     assert "KECK" not in output and "keck" not in output.split("underspent grants:")[0]
 
 
@@ -127,10 +141,11 @@ def test_makeappointments_reports_grant_problems(group_db, capsys):
 @pytest.mark.parametrize(
     "extra_args, expected_titles",
     [
-        # C1: a projection date after the old grant ended, expect only the current grant plotted
-        pytest.param([], ["Keck"], id="current-only"),
+        # C1: a projection date after the old grant ended, expect only the current grants plotted, with or
+        # without appointments
+        pytest.param([], ["Keck", "unused"], id="current-only"),
         # C2: --verbose, expect the ended grant plotted too
-        pytest.param(["--verbose"], ["Keck", "old"], id="verbose"),
+        pytest.param(["--verbose"], ["Keck", "old", "unused"], id="verbose"),
     ],
 )
 def test_makeappointments_plots(extra_args, expected_titles, group_db, monkeypatch):

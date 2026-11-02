@@ -201,10 +201,14 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 person.update({"appts": appts})
                 collecting_grants_with_appts.extend([appt.get("grant") for appt in appts])
         grants_with_appts = list(set(collecting_grants_with_appts))
+        # The grants to plan with: those with appointments, and every grant still running on or after the
+        # projection date, since a current grant no one is appointed on yet is money waiting to be spent
         appointed_grants = [
             grant
             for grant in most_grants
-            if grant.get("_id") in grants_with_appts or grant.get("alias") in grants_with_appts
+            if grant.get("_id") in grants_with_appts
+            or grant.get("alias") in grants_with_appts
+            or (get_dates(grant).get("end_date") or date.min) >= projection_from_date
         ]
         grants_end, grants_begin = None, None
         for grant in list(appointed_grants):
@@ -394,12 +398,10 @@ class MakeAppointmentsHelper(SoutHelperBase):
             for appt in not_found:
                 print(appt)
         if no_budget:
-            print(
-                f"grants with appointments but no budget, so their spending is not known: {', '.join(no_budget)}"
-            )
+            print(f"grants with no budget, so their spending is not known: {', '.join(no_budget)}")
             print("    add a budget with: regolith helper u_grant <grant> --edit-budget")
         if no_dates:
-            print(f"grants with appointments but no begin or end date: {', '.join(no_dates)}")
+            print(f"grants with no begin or end date: {', '.join(no_dates)}")
         if budget_mismatch:
             print("grants whose budget periods do not run from the grant's begin date to its end date:")
             for grant_info in budget_mismatch:
