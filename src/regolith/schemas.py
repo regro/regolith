@@ -119,7 +119,7 @@ alloweds = {
         "cancelled",
     ],
     "REVIEW_RECOMMENDATIONS": ["reject", "asis", "smalledits", "diffjournal", "majoredits"],
-    "SERVICE_TYPES": ["profession", "university", "school", "department"],
+    "SERVICE_TYPES": ["profession", "university", "school", "department", "outreach"],
     "SORTED_POSITION": SORTED_POSITION,
     "TODO_STATI": ["started", "finished", "cancelled", "paused"],
     "OPTIONAL_KEYS_INSTITUTIONS": [

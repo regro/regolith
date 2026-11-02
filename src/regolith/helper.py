@@ -123,6 +123,10 @@ UPDATER_HELPER_SPECS = {
         "regolith.helpers.a_mcprojecthelper:MCProjectAdderHelper",
         "regolith.helpers.a_mcprojecthelper:subparser",
     ),
+    "a-person": (
+        "regolith.helpers.a_personhelper:PersonAdderHelper",
+        "regolith.helpers.a_personhelper:subparser",
+    ),
     "a-presentation": (
         "regolith.helpers.a_presentationhelper:PresentationAdderHelper",
         "regolith.helpers.a_presentationhelper:subparser",
@@ -138,6 +142,10 @@ UPDATER_HELPER_SPECS = {
     "a-proprev": (
         "regolith.helpers.a_proprevhelper:PropRevAdderHelper",
         "regolith.helpers.a_proprevhelper:subparser",
+    ),
+    "a-service": (
+        "regolith.helpers.a_servicehelper:ServiceAdderHelper",
+        "regolith.helpers.a_servicehelper:subparser",
     ),
     "a-todo": (
         "regolith.helpers.a_todohelper:TodoAdderHelper",
@@ -188,6 +196,10 @@ UPDATER_HELPER_SPECS = {
     "u-milestone": (
         "regolith.helpers.u_milestonehelper:MilestoneUpdaterHelper",
         "regolith.helpers.u_milestonehelper:subparser",
+    ),
+    "u-person": (
+        "regolith.helpers.u_personhelper:PersonUpdaterHelper",
+        "regolith.helpers.u_personhelper:subparser",
     ),
     "u-proposal": (
         "regolith.helpers.u_proposalhelper:ProposalUpdaterHelper",

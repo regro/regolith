@@ -2603,7 +2603,7 @@
                     "type": {
                         "required": true,
                         "type": "string",
-                        "description": "profession, department, school, university",
+                        "description": "profession, department, school, university or outreach",
                         "eallowed": "SERVICE_TYPES"
                     },
                     "uuid": {
