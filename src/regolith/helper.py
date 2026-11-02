@@ -53,6 +53,10 @@ LISTER_HELPER_SPECS = {
         "regolith.helpers.l_milestoneshelper:MilestonesListerHelper",
         "regolith.helpers.l_milestoneshelper:subparser",
     ),
+    "l-person": (
+        "regolith.helpers.l_personhelper:PersonListerHelper",
+        "regolith.helpers.l_personhelper:subparser",
+    ),
     "l-progress": (
         "regolith.helpers.l_progressreporthelper:ProgressReportHelper",
         "regolith.helpers.l_progressreporthelper:subparser",

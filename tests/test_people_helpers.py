@@ -210,3 +210,55 @@ def test_edit_unchanged(make_split_grants_db, monkeypatch, capsys):
     )
     assert "public:\n  - type: profession\n" in shown_texts[0]
     assert "The service of sbillinge was not changed." in capsys.readouterr().out
+
+
+# Test listing a person, with where each part of their record is stored and, when asked, a field in full
+@pytest.mark.parametrize(
+    "extra_args, expected_texts, unexpected_texts",
+    [
+        # C1: no options, expect the summary and where each list is stored, but no list in full
+        pytest.param(
+            [],
+            ["sbillinge: Simon J. L. Billinge\n", "        service: 4 entries in public\n"],
+            ["# service, under the database"],
+            id="summary",
+        ),
+        # C2: --field service, expect it in full under its database, as the editor shows it
+        pytest.param(
+            ["--field", "service"],
+            ["# service, under the database each part is stored in", "public:\n  - type: profession\n"],
+            [],
+            id="field",
+        ),
+        # C3: --since in mid December 2017, expect entries ending before it left out, the one in December 2017
+        # kept, and a warning not to use the listing as a file
+        pytest.param(
+            ["--field", "service", "--since", "2017-12-15"],
+            ["do not use this as a --file", "Co-organizer JUAMI", "Applied Physics program committee"],
+            ["Ad hoc tenure committee", "Believe it or Not"],
+            id="since",
+        ),
+    ],
+)
+def test_person_listed(extra_args, expected_texts, unexpected_texts, make_split_grants_db, capsys):
+    main(["helper", "l_person", "sbillinge"] + extra_args)
+    output = capsys.readouterr().out
+    for expected_text in expected_texts:
+        assert expected_text in output
+    for unexpected_text in unexpected_texts:
+        assert unexpected_text not in output
+
+
+# Test that part of a name lists the one person it matches, or offers the people it might mean
+@pytest.mark.parametrize(
+    "wanted, expected_text",
+    [
+        # C1: part of one person's name, expect them listed
+        pytest.param("scopa", "scopatz: Anthony Scopatz\n", id="one-match"),
+        # C2: part shared by several, expect them offered
+        pytest.param("a", "People it might mean:", id="several"),
+    ],
+)
+def test_person_listed_by_fragment(wanted, expected_text, make_split_grants_db, capsys):
+    main(["helper", "l_person", wanted])
+    assert expected_text in capsys.readouterr().out
