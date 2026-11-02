@@ -2,6 +2,7 @@
 helper, where people's appointments are kept in a private database."""
 
 import copy
+import json
 
 import pytest
 
@@ -98,6 +99,29 @@ def test_appointments_shown(appointments_db, capsys):
     assert "# Appointments for A Student from today until their position ends on 2027-06-30" in output
     assert "- _id: f26\n" in output and "- _id: s26\n" not in output
     assert "# ALERT: There is a gap in the appointments from 2027-01-01 to 2027-06-30." in output
+
+
+# Test that the group is found from the groupname in regolithrc.json, whether it is the group's name, id or
+# one of its akas, so the gaps in a funded position are found
+@pytest.mark.parametrize(
+    "groupname",
+    [
+        # C1: the group's name, expect the gap found
+        pytest.param("ERGS", id="name"),
+        # C2: the group's id, expect the gap found
+        pytest.param("ergs", id="id"),
+        # C3: one of the group's akas, in another case, expect the gap found
+        pytest.param("scopatz group", id="aka"),
+    ],
+)
+def test_appointments_group_from_groupname(groupname, appointments_db, capsys):
+    rc_file = appointments_db / "regolithrc.json"
+    rc = json.loads(rc_file.read_text())
+    rc["groupname"] = groupname
+    rc_file.write_text(json.dumps(rc))
+    main(["helper", "u_appointments", "stu", "--date", TODAY])
+    expected_alert = "# ALERT: There is a gap in the appointments from 2027-01-01 to 2027-06-30."
+    assert expected_alert in capsys.readouterr().out
 
 
 # Test that the editor starts with the gaps filled, and that the appointments saved replace those from today

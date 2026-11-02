@@ -42,6 +42,9 @@ LEGACY_OUTSIDE_GRANTS = (
     "startup",
     "they_pay",
 )
+# How far ahead a plan reaches by default, so a position with a placeholder end date far in the future
+# does not fill decades of quarters
+PLANNING_YEARS = 5
 # The days a grant may be overspent by before it counts as run out, as in makeappointments
 OVERSPEND_ALLOWANCE_DAYS = 5
 BURN_KEYS = {"gra": "student_days", "pd": "postdoc_days", "ss": "ss_days"}
@@ -184,9 +187,28 @@ def daily_loading(appointments, begin_date, end_date):
     return loading
 
 
-def gap_appointments(person, appointments, group_id, today):
+def planning_end(today, until=None):
+    """Return the last day a plan reaches.
+
+    Parameters
+    ----------
+    today : datetime.date
+        The first day of the plan.
+    until : datetime.date, optional
+        The last day to plan to. The default is PLANNING_YEARS from today.
+
+    Returns
+    -------
+    datetime.date
+        The last day of the plan.
+    """
+    return until or today + relativedelta(years=PLANNING_YEARS, days=-1)
+
+
+def gap_appointments(person, appointments, group_id, today, until=None):
     """Return proposed appointments on the future grant that fill the
-    gaps in a person's funding from today until their position ends.
+    gaps in a person's funding from today until their position ends, or
+    until the end of the plan if that is sooner.
 
     A gap is filled in each quarter, with the loading the person still
     needs, so the plan shows what is not yet funded.
@@ -201,6 +223,8 @@ def gap_appointments(person, appointments, group_id, today):
         The id of the group.
     today : datetime.date
         The first day to plan from.
+    until : datetime.date, optional
+        The last day to plan to. The default is PLANNING_YEARS from today.
 
     Returns
     -------
@@ -213,8 +237,11 @@ def gap_appointments(person, appointments, group_id, today):
             continue
         academic_type, summer_type = FUNDED_POSITIONS[position["position"]]
         begin_date = max(today, position["begin_date"] or today)
-        loading = daily_loading(appointments, begin_date, position["end_date"])
-        for quarter_begin, quarter_end, quarter_id in quarter_periods(begin_date, position["end_date"]):
+        end_date = min(position["end_date"], planning_end(today, until))
+        if begin_date > end_date:
+            continue
+        loading = daily_loading(appointments, begin_date, end_date)
+        for quarter_begin, quarter_end, quarter_id in quarter_periods(begin_date, end_date):
             days = _days(quarter_begin, quarter_end)
             short = {day: round(1 - loading[day], 4) for day in days}
             appointment_type = summer_type if quarter_id.startswith(SUMMER_PREFIX) else academic_type
@@ -274,7 +301,7 @@ def _shown(value):
     return value
 
 
-def appointments_to_text(person, appointments, end_date=None, alerts=None):
+def appointments_to_text(person, appointments, end_date=None, alerts=None, plan_end=None):
     """Return appointments as YAML to edit, with a header saying how.
 
     Parameters
@@ -287,6 +314,9 @@ def appointments_to_text(person, appointments, end_date=None, alerts=None):
         The day the person's funded position ends, shown for reference.
     alerts : list of str, optional
         The alerts about the appointments, shown at the top.
+    plan_end : datetime.date, optional
+        The last day the plan reaches, shown when it is before the end
+        of the position.
 
     Returns
     -------
@@ -294,7 +324,9 @@ def appointments_to_text(person, appointments, end_date=None, alerts=None):
         The text to edit.
     """
     lines = [f"# Appointments for {person.get('name', person['_id'])} from today"]
-    if end_date:
+    if end_date and plan_end and plan_end < end_date:
+        lines[0] += f" until {plan_end}. Their position ends on {end_date}: use --until to plan further"
+    elif end_date:
         lines[0] += f" until their position ends on {end_date}"
     lines += [
         "# One entry per appointment. Each has begin_date and end_date (YYYY-MM-DD), a type (gra, ss, pd or",
@@ -404,7 +436,7 @@ def appointments_from_text(text):
     return appointments, problems
 
 
-def appointment_alerts(person, appointments, grants, all_appointments, group_id, today):
+def appointment_alerts(person, appointments, grants, all_appointments, group_id, today, until=None):
     """Return the alerts about a person's appointments from today on.
 
     These do not stop the appointments being stored, since a plan may
@@ -425,6 +457,9 @@ def appointment_alerts(person, appointments, grants, all_appointments, group_id,
         The id of the group.
     today : datetime.date
         The first day to check.
+    until : datetime.date, optional
+        The last day to look for gaps to. The default is PLANNING_YEARS
+        from today.
 
     Returns
     -------
@@ -495,7 +530,10 @@ def appointment_alerts(person, appointments, grants, all_appointments, group_id,
         if position["end_date"] < today:
             continue
         begin_date = max(today, position["begin_date"] or today)
-        loading = daily_loading(appointments, begin_date, position["end_date"])
+        end_date = min(position["end_date"], planning_end(today, until))
+        if begin_date > end_date:
+            continue
+        loading = daily_loading(appointments, begin_date, end_date)
         for first, last in _ranges(day for day, value in loading.items() if value < 0.9999):
             alerts.append(f"There is a gap in the appointments from {first} to {last}.")
         for first, last in _ranges(day for day, value in loading.items() if value > 1.0001):
