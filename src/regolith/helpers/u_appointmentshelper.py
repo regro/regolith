@@ -13,6 +13,7 @@ from regolith.appointments import (
     funded_employment,
     gap_appointments,
     new_appointment_id,
+    planning_end,
 )
 from regolith.dates import get_dates, has_dates
 from regolith.fsclient import _id_key
@@ -60,8 +61,8 @@ def subparser(subpi):
     subpi.add_argument(
         "--group",
         type=strip_str,
-        help="The id of the group in the group field of employment. Defaults to the id of the group named "
-        "by groupname in regolithrc.json.",
+        help="The id of the group in the group field of employment. Defaults to the id of the group whose "
+        "id, name or aka is the groupname in regolithrc.json.",
     )
     subpi.add_argument(
         "--private-database",
@@ -77,6 +78,12 @@ def subparser(subpi):
         "the first database in the regolithrc.json file.",
     )
     subpi.add_argument("--date", help="The date to plan from. Defaults to today.", type=strip_str, **date_kwargs)
+    subpi.add_argument(
+        "--until",
+        help="The last date to plan to, if before their position ends. Defaults to five years from today.",
+        type=strip_str,
+        **date_kwargs,
+    )
     return subpi
 
 
@@ -124,14 +131,8 @@ class AppointmentsUpdaterHelper(DbHelperBase):
         if rc.group:
             return rc.group
         groupname = str(rc._get("groupname", "") or "")
-        group = next(
-            (
-                group
-                for group in self.gtx["groups"]
-                if str(group.get("name", "")).casefold() == groupname.casefold()
-            ),
-            None,
-        )
+        # groupname may be the group's id, its name or one of its akas
+        group = fuzzy_retrieval(self.gtx["groups"], ["_id", "name", "aka"], groupname, case_sensitive=False)
         return group["_id"] if group else groupname
 
     def _all_appointments(self, person_id, appointments):
@@ -152,7 +153,11 @@ class AppointmentsUpdaterHelper(DbHelperBase):
             self._all_appointments(person["_id"], appointments),
             self._group_id(),
             today,
+            self._until(),
         )
+
+    def _until(self):
+        return date_parser.parse(self.rc.until).date() if self.rc.until else None
 
     def _store(self, person_id, appointments):
         rc = self.rc
@@ -216,9 +221,10 @@ class AppointmentsUpdaterHelper(DbHelperBase):
         ]
         end_date = max(position_ends) if position_ends else None
         alerts = self._alerts(person, planned, today)
+        plan_end = planning_end(today, self._until())
 
         if not rc.edit and not rc.file:
-            print(appointments_to_text(person, planned, end_date, alerts), end="")
+            print(appointments_to_text(person, planned, end_date, alerts, plan_end), end="")
             return
 
         if rc.file:
@@ -232,11 +238,11 @@ class AppointmentsUpdaterHelper(DbHelperBase):
                 )
         else:
             plan = sorted(
-                planned + gap_appointments(person, planned, group_id, today),
+                planned + gap_appointments(person, planned, group_id, today, self._until()),
                 key=lambda appointment: str(appointment.get("begin_date", "")),
             )
             gap_alerts = self._alerts(person, plan, today)
-            original_text = appointments_to_text(person, plan, end_date, gap_alerts)
+            original_text = appointments_to_text(person, plan, end_date, gap_alerts, plan_end)
             text = original_text
             while True:
                 edited_text = edit_text(text)

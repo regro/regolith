@@ -140,6 +140,34 @@ def test_gap_appointments(appointments, expected_gaps):
     assert {(g["grant"], g["status"]) for g in gaps} == {("future_grant", "proposed")}
 
 
+# Test that a plan stops at its horizon when a position ends later, such as at a placeholder date
+@pytest.mark.parametrize(
+    "until, expected_last_day",
+    [
+        # C1: no horizon given, expect the plan to stop five years from today
+        pytest.param(None, D(2031, 10, 31), id="default"),
+        # C2: a horizon given, expect the plan to stop there
+        pytest.param(D(2027, 6, 30), D(2027, 6, 30), id="until"),
+    ],
+)
+def test_gap_appointments_horizon(until, expected_last_day):
+    person = {
+        "_id": "p",
+        "employment": [
+            {
+                "position": "graduate research assistant",
+                "group": "bg",
+                "begin_date": "2026-01-01",
+                "end_date": "2100-12-31",
+            }
+        ],
+    }
+    gaps = gap_appointments(person, [], "bg", TODAY, until)
+    assert max(gap["end_date"] for gap in gaps) == expected_last_day
+    alerts = appointment_alerts(person, [], [], [], "bg", TODAY, until)
+    assert alerts == [f"There is a gap in the appointments from 2026-11-01 to {expected_last_day}."]
+
+
 # Test giving a new appointment an id from the quarter it begins in
 @pytest.mark.parametrize(
     "begin_date, taken_ids, expected_id",
