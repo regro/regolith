@@ -1094,10 +1094,12 @@ helper_map = [
         "2. columbiau      Columbia University.\n",
     ),
     # makeappointments checks from the projection date on: appointments that ended before it, and grants
-    # that ended before it, are not reported
+    # that ended before it, are not reported, while every grant still running is, with or without appointments
     (
         ["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31"],
         "WARNING: appointment gap for scopatz from 2020-08-31 to 2020-08-31\n"
+        "grants with no budget, so their spending is not known: SymPy-2.0\n"
+        "    add a budget with: regolith helper u_grant <grant> --edit-budget\n"
         "appointments on depleted grants:\n"
         "    person: scopatz, appointment: ss20, grant: abc42,\n"
         "            from 2020-08-31 until 2020-08-31\n"
@@ -1116,6 +1118,8 @@ helper_map = [
     (
         ["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31 ", "-v"],
         "WARNING: appointment gap for scopatz from 2020-08-31 to 2020-08-31\n"
+        "grants with no budget, so their spending is not known: SymPy-2.0\n"
+        "    add a budget with: regolith helper u_grant <grant> --edit-budget\n"
         "appointments on depleted grants:\n"
         "    person: scopatz, appointment: ss20, grant: abc42,\n"
         "            from 2020-08-31 until 2020-08-31\n"
@@ -1134,6 +1138,8 @@ helper_map = [
     (
         ["helper", "makeappointments", "run", "--no-plot", "--projection-from-date", "2020-08-31"],
         "WARNING: appointment gap for scopatz from 2020-08-31 to 2020-08-31\n"
+        "grants with no budget, so their spending is not known: SymPy-2.0\n"
+        "    add a budget with: regolith helper u_grant <grant> --edit-budget\n"
         "appointments on depleted grants:\n"
         "    person: scopatz, appointment: ss20, grant: abc42,\n"
         "            from 2020-08-31 until 2020-08-31\n"
