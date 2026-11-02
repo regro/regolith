@@ -33,6 +33,10 @@ LISTER_HELPER_SPECS = {
         "regolith.helpers.l_grantshelper:GrantsListerHelper",
         "regolith.helpers.l_grantshelper:subparser",
     ),
+    "l-hiringplan": (
+        "regolith.helpers.l_hiringplanhelper:HiringPlanHelper",
+        "regolith.helpers.l_hiringplanhelper:subparser",
+    ),
     "l-mcgoals": (
         "regolith.helpers.l_mcgoalshelper:MCGoalsListerHelper",
         "regolith.helpers.l_mcgoalshelper:subparser",
