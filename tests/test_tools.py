@@ -9,6 +9,7 @@ import pytest
 import requests_mock
 
 from regolith import tools
+from regolith.dates import get_dates
 from regolith.runcontrol import DEFAULT_RC
 from regolith.tools import (
     MISSING_INFO,
@@ -25,6 +26,7 @@ from regolith.tools import (
     dereference_institution,
     filter_employment_for_advisees,
     filter_facilities,
+    filter_grants,
     filter_licenses,
     filter_presentations,
     filter_publications,
@@ -369,6 +371,63 @@ def test_filter_publications(args, kwargs, expected):
 def test_author_publications():
     citations = [{"author": ["CJ", "SJLB"]}, {"editor": "SJLB"}]
     filter_publications(citations, {"SJLB"})
+
+
+# Test that the dates filter_grants writes back into a grant agree with each
+# other, so the grant can still be sorted and its dates read again
+@pytest.mark.parametrize(
+    "grant, expected_begin_and_end",
+    [
+        # C1: grant dated only with year, month and day fields, expect those dates
+        pytest.param(
+            {
+                "begin_year": 2025,
+                "begin_month": "Aug",
+                "begin_day": 1,
+                "end_year": 2028,
+                "end_month": "jul",
+                "end_day": 31,
+            },
+            ((2025, 8, 1), (2028, 7, 31)),
+            id="year-month-day-only",
+        ),
+        # C2: grant dated only with ISO dates, expect those dates
+        pytest.param(
+            {"begin_date": "2026-05-01", "end_date": "2029-04-30"},
+            ((2026, 5, 1), (2029, 4, 30)),
+            id="iso-only",
+        ),
+        # C3: grant with ISO dates merged with a proposal that ends on the 31st
+        # of another month, expect the grant's ISO dates, not the proposal's
+        # 31st carried into April
+        pytest.param(
+            {
+                "begin_year": 2025,
+                "begin_month": "Aug",
+                "begin_day": 1,
+                "end_year": 2028,
+                "end_month": "jul",
+                "end_day": 31,
+                "begin_date": dt.date(2026, 5, 1),
+                "end_date": dt.date(2029, 4, 30),
+            },
+            ((2026, 5, 1), (2029, 4, 30)),
+            id="iso-merged-with-proposal-ending-on-31st",
+        ),
+    ],
+)
+def test_filter_grants_dates(grant, expected_begin_and_end):
+    grant = {"_id": "grant1", "team": [{"name": "Simon Billinge", "position": "co-pi"}], **grant}
+    actual_grants, _, _ = filter_grants([grant], {"Simon Billinge"}, pi=False, multi_pi=True)
+    actual_dates = get_dates(actual_grants[0])
+    expected_begin, expected_end = (dt.date(*ymd) for ymd in expected_begin_and_end)
+    assert (actual_dates["begin_date"], actual_dates["end_date"]) == (expected_begin, expected_end)
+    actual_grant = actual_grants[0]
+    assert (
+        actual_grant["end_year"],
+        actual_grant["end_month"],
+        actual_grant["end_day"],
+    ) == expected_begin_and_end[1]
 
 
 def test_a_missing_bibtexparser_says_so(tmp_path, monkeypatch):
