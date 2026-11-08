@@ -33,6 +33,30 @@ from regolith.tools import (
 )
 
 
+def published_or_non_article(publications):
+    """Return the publications that have a DOI or are not journal
+    articles.
+
+    Journal articles without a DOI are taken to be unpublished and are
+    left out. Each publication appears once, those with a DOI first.
+
+    Parameters
+    ----------
+    publications : list of dict
+        The citations to select from.
+
+    Returns
+    -------
+    list of dict
+        The selected citations.
+    """
+    published = [pub for pub in publications if pub.get("doi")]
+    unpublished_non_articles = [
+        pub for pub in publications if not pub.get("doi") and pub.get("entrytype") != "article"
+    ]
+    return published + unpublished_non_articles
+
+
 class ActivitylogBuilder(LatexBuilderBase):
     """Build CV from database entries."""
 
@@ -346,11 +370,7 @@ class ActivitylogBuilder(LatexBuilderBase):
         pubs = filter_publications(
             all_docs_from_collection(rc.client, "citations"), names, reverse=True, bold=False, since=begin_period
         )
-        # remove unpublished papers
-        # unpubs = [pub for pub in pubs if len(pub.get("doi") == 0)]
-        pubed = [pub for pub in pubs if len(pub.get("doi", "")) > 0]
-        non_arts = [pub for pub in pubs if pub.get("entrytype") != "article"]
-        pubs = pubed + non_arts
+        pubs = published_or_non_article(pubs)
         bibfile = make_bibtex_file(pubs, pid=me["_id"], person_dir=self.bldir)
         articles = [prc for prc in pubs if prc.get("entrytype") == "article" and not prc.get("peer_rev_conf")]
         NONARTICLETYPES = [
