@@ -315,6 +315,7 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
         for datename in datenames:
             grant[f"{datename}year"] = grant_dates[f"{datename}date"].year
             grant[f"{datename}month"] = grant_dates[f"{datename}date"].month
+            grant[f"{datename}day"] = grant_dates[f"{datename}date"].day
         team_names = set(gets(grant["team"], "name"))
         if len(team_names & names) == 0:
             continue
